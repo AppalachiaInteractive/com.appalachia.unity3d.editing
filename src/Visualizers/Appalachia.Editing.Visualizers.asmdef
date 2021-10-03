@@ -1,0 +1,21 @@
+{
+    "name": "Appalachia.Core.Editing.Visualizers",
+    "rootNamespace": "",
+    "references": [
+        "GUID:195705ddaa6fe6c42a576177c5d36a5c",
+        "GUID:4c32fdd75da6bc94f9b79f03f11f5e30",
+        "GUID:36d8f80e87e14524585781443a3734b1",
+        "GUID:f4fdde409c50efd46a1da0e28fcb4b3a",
+        "GUID:1d9bff6eb4c4a694e9d9687c9a3d170b",
+        "GUID:d8b63aba1907145bea998dd612889d6b"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

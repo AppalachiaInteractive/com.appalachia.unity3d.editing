@@ -1,0 +1,18 @@
+{
+    "name": "Appalachia.Editing.Behaviours",
+    "rootNamespace": "",
+    "references": [
+        "GUID:195705ddaa6fe6c42a576177c5d36a5c",
+        "GUID:4c32fdd75da6bc94f9b79f03f11f5e30",
+        "GUID:e8046dbd0ac978f44b9e6e8e8787ca30"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

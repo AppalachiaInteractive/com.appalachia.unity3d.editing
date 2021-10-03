@@ -1,0 +1,152 @@
+using System;
+using UnityEngine;
+
+namespace Appalachia.Core.Editing
+{
+    [ExecuteAlways]
+    public class Grounder : MonoBehaviour
+    {
+        public Transform reference;
+        public Vector3 offset;
+
+        public LayerMask layers;
+
+        public bool terrainOnly = true;
+
+        private RaycastHit[] hits = new RaycastHit[16];
+
+        public Vector3 _lastPosition;
+        public Quaternion _lastRotation;
+
+        public Vector3 _targetPosition;
+        public Quaternion _targetRotation;
+
+        public float positionLerpSpeed = .1f;
+        public float rotationLerpSpeed = .1f;
+
+        public bool freeze;
+        public bool locked;
+        private RaycastHit[] _hits = new RaycastHit[12];
+
+        void Update()
+        {
+            try
+            {
+                if (freeze)
+                {
+                    if (locked)
+                    {
+                        transform.position =  _targetPosition;
+                        transform.rotation = _targetRotation;
+                        
+                        return;
+                    }
+                    
+                    if (transform.position == _targetPosition && transform.rotation == _targetRotation)
+                    {
+                        locked = true;
+                    }
+                    else
+                    {
+                        locked = false;
+                    }
+                    
+                    if (locked)
+                    {
+                        transform.position =  _targetPosition;
+                        transform.rotation = _targetRotation;
+                        
+                        return;
+                    }
+                    
+                    transform.position = Vector3.Lerp(transform.position, _targetPosition, positionLerpSpeed);
+                    
+                    transform.rotation = Quaternion.Slerp(transform.rotation, _targetRotation, rotationLerpSpeed);
+
+
+                    return;
+                }
+
+                if (reference == null)
+                {
+                    reference = Camera.main?.transform;
+
+                    if (reference == null)
+                    {
+                        return;
+                    }
+                }
+
+                if (hits == null)
+                {
+                    hits = new RaycastHit[16];
+                }
+
+                var t = transform;
+
+                var position = t.position;
+                var rotation = t.rotation;
+
+
+
+                var transformedOffset = reference.TransformPoint(offset);
+
+                var rayOrigin = transformedOffset;
+
+                Vector3 targetPosition = rayOrigin;
+                Vector3 targetNormal = Vector3.up;
+                
+                if (terrainOnly)
+                {
+                    var terrain = Terrain.activeTerrain;
+
+                    targetPosition.y = terrain.SampleHeight(rayOrigin);
+
+                    targetNormal = terrain.terrainData.GetInterpolatedNormal(targetPosition.x, targetPosition.z);
+
+                }
+                else
+                {
+                    var ray = new Ray(rayOrigin, Vector3.down);
+
+                    var hitCount = Physics.RaycastNonAlloc(ray, _hits, 128f, layers, QueryTriggerInteraction.Ignore);
+
+                    if (hitCount > 0)
+                    {
+                        var hit = _hits[0];
+
+                        targetPosition.y = hit.point.y;
+
+                        targetNormal = hit.normal;
+                    }
+                }
+
+
+                _targetPosition = targetPosition;
+                
+                var targetUp = (targetNormal + Vector3.up + Vector3.up) / 3f;
+                var newForward = Vector3.Cross(reference.right, targetUp);
+                _targetRotation = Quaternion.LookRotation(newForward, targetUp);
+
+                if (position == _lastPosition &&
+                    rotation == _lastRotation &&
+                    _targetPosition == _lastPosition &&
+                    _targetRotation == _lastRotation)
+                {
+                    return;
+                }
+
+                t.position = Vector3.Lerp(position, _targetPosition, positionLerpSpeed);
+                t.rotation = Quaternion.Slerp(rotation, _targetRotation, rotationLerpSpeed);
+
+                _lastPosition = position;
+                _lastRotation = rotation;
+            }
+            catch (Exception ex)
+            {
+                Debug.LogError(ex);
+            }
+
+        }
+    }
+}
