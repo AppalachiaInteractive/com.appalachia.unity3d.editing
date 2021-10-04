@@ -28,9 +28,11 @@ namespace Appalachia.Editing.Assets.Organization
 
                 if (assetType == null)
                 {
-                    var contentLines = File.ReadAllLines(assetPath)
-                                           .Where(l => l.StartsWith(" "))
+                    var allFileLines = File.ReadAllLines(assetPath)
                                            .ToArray();
+                    var contentLines = allFileLines
+                                      .Where(l => l.StartsWith(" "))
+                                      .ToArray();
 
                     var fields = new List<string>();
                     var values = new List<string>();
@@ -62,7 +64,7 @@ namespace Appalachia.Editing.Assets.Organization
                             assetPath,
                             likelihood,
                             type,
-                            string.Join("\n", contentLines)
+                            string.Join("\n", allFileLines)
                         );
                         continue;
                     }
@@ -72,9 +74,9 @@ namespace Appalachia.Editing.Assets.Organization
                     var scriptPath = AssetDatabase.GetAssetPath(scriptAsset);
                     var scriptGuid = AssetDatabase.AssetPathToGUID(scriptPath);
 
-                    for (var i = 0; i < contentLines.Length; i++)
+                    for (var i = 0; i < allFileLines.Length; i++)
                     {
-                        var line = contentLines[i];
+                        var line = allFileLines[i];
 
                         if (line.StartsWith("  m_Script: "))
                         {
@@ -87,18 +89,18 @@ namespace Appalachia.Editing.Assets.Organization
                             var oldScriptGuid = line.Substring(start, 24);
 
                             var newLine = line.Replace(oldScriptGuid, scriptGuid);
-                            contentLines[i] = newLine;
+                            allFileLines[i] = newLine;
                         }
                     }
 
-                    File.WriteAllLines(assetPath, contentLines);
+                    File.WriteAllLines(assetPath, allFileLines);
 
                     LogResult(
                         "SUCCESS",
                         assetPath,
                         likelihood,
                         type,
-                        string.Join("\n", contentLines)
+                        string.Join("\n", allFileLines)
                     );
                 }
                 else
@@ -112,13 +114,6 @@ namespace Appalachia.Editing.Assets.Organization
 
                     typePathCollection[assetType].Add(assetPath);    
                 }
-            }
-
-            foreach (var type in typePathCollection.Keys)
-            {
-                var count = typePathCollection[type].Count;
-
-                //Debug.Log($"{type.Name}: {count}\n{string.Join(", ", typePathCollection[type])}");
             }
         }
 
