@@ -2,7 +2,6 @@
 
 using System;
 using System.Diagnostics;
-using Appalachia.Utility;
 using Appalachia.Utility.Colors;
 using Sirenix.OdinInspector;
 
@@ -15,13 +14,12 @@ namespace Appalachia.Editing.Attributes
     [Conditional("UNITY_EDITOR")]
     public sealed class ToggleButtonAttribute : Attribute
     {
-        public string MemberMethod;
-
-        public string Label;
-
         public bool Bold;
 
         public Colors.Enum False;
+
+        public string Label;
+        public string MemberMethod;
 
         public Colors.Enum True;
 

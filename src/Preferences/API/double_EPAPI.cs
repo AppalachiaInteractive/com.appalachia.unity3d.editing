@@ -30,12 +30,12 @@ namespace Appalachia.Editing.Preferences.API
 
         private static double Round(float d)
         {
-            return System.Math.Round(d, 4, MidpointRounding.AwayFromZero);
+            return Math.Round(d, 4, MidpointRounding.AwayFromZero);
         }
 
         private static float Round(double d)
         {
-            return (float) System.Math.Round(d, 4, MidpointRounding.AwayFromZero);
+            return (float) Math.Round(d, 4, MidpointRounding.AwayFromZero);
         }
     }
 }

@@ -10,6 +10,9 @@ namespace Appalachia.Editing.Visualizers.Base
 {
     public abstract class InstancedIndirectVisualization : EditorOnlyMonoBehaviour
     {
+        private static readonly int IndirectShaderDataBuffer =
+            Shader.PropertyToID("IndirectShaderDataBuffer");
+
         [OnValueChanged(nameof(Regenerate))]
         public CameraPreCullManager preCullManager;
 
@@ -20,7 +23,6 @@ namespace Appalachia.Editing.Visualizers.Base
         public Material visualizationMaterial;
 
         [ReadOnly] public int visualizationCount;
-        private int _bufferVisualizationCount;
 
         public ShadowCastingMode shadowMode = ShadowCastingMode.On;
 
@@ -28,39 +30,56 @@ namespace Appalachia.Editing.Visualizers.Base
 
         [ReadOnly] public int framesRendered;
 
+        private Bounds _bounds;
+        private int _bufferVisualizationCount;
+        private Vector3[] _positions;
+
+        private bool _prepared;
+        private Quaternion[] _rotations;
+        private Vector3[] _scales;
+
+        protected IndirectShaderData[] _transforms;
+
         protected Material _visualizationMaterial;
 
         private ComputeBuffer indirectDataBuffer;
 
-        protected IndirectShaderData[] _transforms;
+        protected abstract bool ShouldRegenerate { get; }
+        protected abstract bool CanVisualize { get; }
+        protected abstract bool CanGenerate { get; }
 
-        private static readonly int IndirectShaderDataBuffer = Shader.PropertyToID("IndirectShaderDataBuffer");
+        public override EditorOnlyExclusionStyle exclusionStyle =>
+            EditorOnlyExclusionStyle.Component;
 
-        private Bounds _bounds;
-        private Vector3[] _positions;
-        private Quaternion[] _rotations;
-        private Vector3[] _scales;
+        private void OnDisable()
+        {
+            indirectDataBuffer?.Release();
+            indirectDataBuffer = null;
+            _transforms = null;
+            _positions = null;
+            _rotations = null;
+            _scales = null;
+
+            WhenDisabled();
+        }
 
         protected override void Internal_OnEnable()
         {
             Regenerate();
         }
 
-        protected abstract bool ShouldRegenerate { get; }
-        protected abstract bool CanVisualize { get; }
-        protected abstract bool CanGenerate { get; }
         private void PreCull(Camera c)
         {
             if (ShouldRegenerate)
             {
                 Regenerate();
             }
-            
+
             if (!CanVisualize)
             {
                 return;
             }
-            
+
             if ((_visualizationMaterial != null) && _visualizationMaterial.enableInstancing)
             {
                 framesRendered += 1;
@@ -86,8 +105,11 @@ namespace Appalachia.Editing.Visualizers.Base
         [Button]
         protected void Regenerate()
         {
-            if (!CanGenerate) return;
-            
+            if (!CanGenerate)
+            {
+                return;
+            }
+
             framesRendered = 0;
 
             if (preCullManager == null)
@@ -113,7 +135,9 @@ namespace Appalachia.Editing.Visualizers.Base
 
             if ((visualizationMaterial == null) || !visualizationMaterial.enableInstancing)
             {
-                Debug.LogError("Visualization material must be assigned with one with instancing enabled.");
+                Debug.LogError(
+                    "Visualization material must be assigned with one with instancing enabled."
+                );
 
                 return;
             }
@@ -136,30 +160,21 @@ namespace Appalachia.Editing.Visualizers.Base
             {
                 PrepareSubsequentGenerations();
             }
-            
+
             _bounds = GetBounds();
             GetPositionData(_bounds, out _positions, out _rotations, out _scales);
         }
 
-        private bool _prepared;
         protected abstract void PrepareInitialGeneration();
         protected abstract void PrepareSubsequentGenerations();
 
         protected abstract Bounds GetBounds();
 
-        protected abstract void GetPositionData(Bounds bounds, out Vector3[] positions, out Quaternion[] rotations, out Vector3[] scales);
-
-        private void OnDisable()
-        {
-            indirectDataBuffer?.Release();
-            indirectDataBuffer = null;
-            _transforms = null;
-            _positions = null;
-            _rotations = null;
-            _scales = null;
-
-            WhenDisabled();
-        }
+        protected abstract void GetPositionData(
+            Bounds bounds,
+            out Vector3[] positions,
+            out Quaternion[] rotations,
+            out Vector3[] scales);
 
         protected abstract void WhenDisabled();
 
@@ -171,17 +186,22 @@ namespace Appalachia.Editing.Visualizers.Base
 
             for (var i = 0; i < visualizationCount; ++i)
             {
-                var matrix = Matrix4x4.Translate(_positions[i]) * Matrix4x4.Rotate(_rotations[i]) * Matrix4x4.Scale(_scales[i]);
+                var matrix = Matrix4x4.Translate(_positions[i]) *
+                             Matrix4x4.Rotate(_rotations[i]) *
+                             Matrix4x4.Scale(_scales[i]);
 
                 _transforms[i].PositionMatrix = matrix;
                 _transforms[i].InversePositionMatrix = matrix.inverse;
             }
 
-            if (visualizationCount != _bufferVisualizationCount || indirectDataBuffer == null)
+            if ((visualizationCount != _bufferVisualizationCount) || (indirectDataBuffer == null))
             {
                 indirectDataBuffer?.Release();
 
-                indirectDataBuffer = new ComputeBuffer(visualizationCount, UnsafeUtility.SizeOf<IndirectShaderData>());
+                indirectDataBuffer = new ComputeBuffer(
+                    visualizationCount,
+                    UnsafeUtility.SizeOf<IndirectShaderData>()
+                );
             }
 
             RefreshBuffers();
@@ -201,8 +221,6 @@ namespace Appalachia.Editing.Visualizers.Base
             public Matrix4x4 PositionMatrix;
             public Matrix4x4 InversePositionMatrix;
         }
-
-        public override EditorOnlyExclusionStyle exclusionStyle => EditorOnlyExclusionStyle.Component;
     }
 }
 #endif

@@ -7,28 +7,31 @@ using UnityEngine;
 
 namespace Appalachia.Editing.Preferences
 {
-    [ShowInInspector, InlineProperty, HideReferenceObjectPicker]
+    [ShowInInspector]
+    [InlineProperty]
+    [HideReferenceObjectPicker]
     public sealed class PREF<T>
     {
-        [HideLabel, InlineProperty, OnValueChanged(nameof(UIApplyValue))]
+        private readonly T _defaultValue;
+        private readonly string _grouping;
+        private readonly T _high;
+
+        private bool _isAwake;
+        private readonly string _key;
+        private readonly string _label;
+        private readonly T _low;
+        private string _niceLabel;
+        private readonly int _order;
+
+        private readonly PREF_STATE<T> _prefs;
+        private bool _reset;
+
+        [HideLabel]
+        [InlineProperty]
+        [OnValueChanged(nameof(UIApplyValue))]
         [SerializeField]
         [InlineButton(nameof(Reset), " Reset ")]
         private T _value;
-
-        
-        private bool _isAwake;
-
-        private PREF_STATE<T> _prefs;
-
-        private T _defaultValue;
-        private T _low;
-        private T _high;
-        private string _key;
-        private string _grouping;
-        private string _label;
-        private string _niceLabel;
-        private int _order;
-        private bool _reset;
 
         internal PREF(
             string key,
@@ -75,6 +78,7 @@ namespace Appalachia.Editing.Preferences
         internal string Key => _key;
         internal string Grouping => _grouping;
         internal string Label => _label;
+
         internal string NiceLabel
         {
             get => _niceLabel;

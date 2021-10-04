@@ -22,7 +22,9 @@ namespace Appalachia.Editing.Preferences.API
 
         public int Draw(string label, int value, int low, int high)
         {
-            var val = low != high ? EditorGUILayout.IntSlider(label, value, low, high) : EditorGUILayout.IntField(label, value);
+            var val = low != high
+                ? EditorGUILayout.IntSlider(label, value, low, high)
+                : EditorGUILayout.IntField(label, value);
 
             return val;
         }

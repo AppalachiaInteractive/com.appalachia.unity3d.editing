@@ -18,10 +18,45 @@ namespace Appalachia.Editing.Attributes.Drawers
     {
         private const string _PRF_PFX = nameof(SmartLabelAttributeDrawer) + ".";
 
-        private static readonly ProfilerMarker _PRF_DrawPropertyLayout = new ProfilerMarker(_PRF_PFX + nameof(DrawPropertyLayout));
+        private static readonly ProfilerMarker _PRF_DrawPropertyLayout =
+            new(_PRF_PFX + nameof(DrawPropertyLayout));
 
         private static readonly ProfilerMarker _PRF_DrawPropertyLayout_CallNextDrawer =
-            new ProfilerMarker(_PRF_PFX + nameof(DrawPropertyLayout) + ".CallNextDrawer");
+            new(_PRF_PFX + nameof(DrawPropertyLayout) + ".CallNextDrawer");
+
+        private static readonly ProfilerMarker _PRF_DrawInlineEditorPropertyLayout =
+            new(_PRF_PFX + nameof(DrawInlineEditorPropertyLayout));
+
+        private static readonly ProfilerMarker _PRF_DrawGeneralPropertyLayout =
+            new(_PRF_PFX + nameof(DrawGeneralPropertyLayout));
+
+        private static readonly ProfilerMarker _PRF_DrawTogglePropertyLayout =
+            new(_PRF_PFX + nameof(DrawTogglePropertyLayout));
+
+        private SmartLabelContext _propertyContext;
+
+        private IPropertyValueEntry<bool> boolValueEntry;
+
+        /// <summary>
+        ///     Gets the attribute that the OdinAttributeDrawer draws for.
+        /// </summary>
+        public IPropertyValueEntry<bool> BoolValueEntry
+        {
+            get
+            {
+                if (boolValueEntry == null)
+                {
+                    boolValueEntry = Property.ValueEntry as IPropertyValueEntry<bool>;
+                    if (boolValueEntry == null)
+                    {
+                        Property.Update(true);
+                        boolValueEntry = Property.ValueEntry as IPropertyValueEntry<bool>;
+                    }
+                }
+
+                return boolValueEntry;
+            }
+        }
 
         protected override void DrawPropertyLayout(GUIContent label)
         {
@@ -37,7 +72,6 @@ namespace Appalachia.Editing.Attributes.Drawers
                     return;
                 }
 
-                
                 var inlineEditor = false;
 
                 for (var i = 0; i < Property.Attributes.Count; i++)
@@ -61,14 +95,11 @@ namespace Appalachia.Editing.Attributes.Drawers
                 }
                 else
                 {
-                    DrawGeneralPropertyLayout(label);                
+                    DrawGeneralPropertyLayout(label);
                 }
             }
         }
 
-        private SmartLabelContext _propertyContext;
-        
-        private static readonly ProfilerMarker _PRF_DrawInlineEditorPropertyLayout = new ProfilerMarker(_PRF_PFX + nameof(DrawInlineEditorPropertyLayout));
         private void DrawInlineEditorPropertyLayout(GUIContent label)
         {
             using (_PRF_DrawInlineEditorPropertyLayout.Auto())
@@ -81,30 +112,38 @@ namespace Appalachia.Editing.Attributes.Drawers
                 }
 
                 SmartLabelAttributeHelper.UpdateLabel(_propertyContext, attribute, label);
-                
+
                 var labelText = _propertyContext.OutputLabelText;
-                
+
                 TitleAttributeHelper.Title(
                     labelText,
                     null,
                     TextAlignment.Left,
                     false,
                     attribute.Bold,
-                    attribute.HasPropertyColor && !_propertyContext.ColorError && attribute.Color != null ? _propertyContext.ColorHelper.GetValue() : default
+                    attribute.HasPropertyColor &&
+                    !_propertyContext.ColorError &&
+                    (attribute.Color != null)
+                        ? _propertyContext.ColorHelper.GetValue()
+                        : default
                 );
 
-                bool pushedColorDeep = false;
-                
+                var pushedColorDeep = false;
+
                 if (!attribute.ShallowColor)
                 {
-                    SmartLabelAttributeHelper.PushColor(_propertyContext, attribute, out pushedColorDeep);
+                    SmartLabelAttributeHelper.PushColor(
+                        _propertyContext,
+                        attribute,
+                        out pushedColorDeep
+                    );
                 }
 
                 using (_PRF_DrawPropertyLayout_CallNextDrawer.Auto())
                 {
                     CallNextDrawer(null);
                 }
-                
+
                 if (pushedColorDeep)
                 {
                     GUIHelper.PopLabelColor();
@@ -112,50 +151,61 @@ namespace Appalachia.Editing.Attributes.Drawers
             }
         }
 
-        private static readonly ProfilerMarker _PRF_DrawGeneralPropertyLayout = new ProfilerMarker(_PRF_PFX + nameof(DrawGeneralPropertyLayout));
-
         private void DrawGeneralPropertyLayout(GUIContent label)
         {
             using (_PRF_DrawGeneralPropertyLayout.Auto())
             {
                 var attribute = Attribute;
-                var propertyContext = SmartLabelAttributeHelper.GetPropertyContext(this, Property, attribute);
+                var propertyContext =
+                    SmartLabelAttributeHelper.GetPropertyContext(this, Property, attribute);
 
                 SmartLabelAttributeHelper.UpdateLabel(propertyContext, attribute, label);
 
                 GUILayout.BeginHorizontal();
-                
+
                 var labelText = propertyContext.OutputLabelText;
 
                 if (!attribute.Postfix)
                 {
-                    SmartLabelAttributeHelper.PushLabel(propertyContext, attribute, out var pushedColor);
+                    SmartLabelAttributeHelper.PushLabel(
+                        propertyContext,
+                        attribute,
+                        out var pushedColor
+                    );
                     GUILayout.Label(labelText, GUILayoutOptions.ExpandWidth(false));
                     SmartLabelAttributeHelper.PopLabel(pushedColor);
                 }
 
-                bool pushedColorDeep = false;
-                
+                var pushedColorDeep = false;
+
                 if (!attribute.ShallowColor)
                 {
-                    SmartLabelAttributeHelper.PushColor(propertyContext, attribute, out pushedColorDeep);
+                    SmartLabelAttributeHelper.PushColor(
+                        propertyContext,
+                        attribute,
+                        out pushedColorDeep
+                    );
                 }
-                
+
                 using (_PRF_DrawPropertyLayout_CallNextDrawer.Auto())
                 {
                     GUILayout.BeginVertical();
-                    CallNextDrawer((GUIContent) null);
+                    CallNextDrawer(null);
                     GUILayout.EndVertical();
                 }
-                
+
                 if (pushedColorDeep)
                 {
                     GUIHelper.PopLabelColor();
                 }
-                
+
                 if (attribute.Postfix)
                 {
-                    SmartLabelAttributeHelper.PushLabel(propertyContext, attribute, out var pushedColor);
+                    SmartLabelAttributeHelper.PushLabel(
+                        propertyContext,
+                        attribute,
+                        out var pushedColor
+                    );
                     GUILayout.Label(labelText, GUILayoutOptions.ExpandWidth(false));
                     SmartLabelAttributeHelper.PopLabel(pushedColor);
                 }
@@ -164,43 +214,23 @@ namespace Appalachia.Editing.Attributes.Drawers
             }
         }
 
-        private IPropertyValueEntry<bool> boolValueEntry;
-
-        /// <summary>
-        /// Gets the attribute that the OdinAttributeDrawer draws for.
-        /// </summary>
-        public IPropertyValueEntry<bool> BoolValueEntry
-        {
-            get
-            {
-                if (boolValueEntry == null)
-                {
-                    boolValueEntry = Property.ValueEntry as IPropertyValueEntry<bool>;
-                    if (boolValueEntry == null)
-                    {
-                        Property.Update(true);
-                        boolValueEntry = Property.ValueEntry as IPropertyValueEntry<bool>;
-                    }
-                }
-                return boolValueEntry;
-            }
-        }
-        
-        private static readonly ProfilerMarker _PRF_DrawTogglePropertyLayout = new ProfilerMarker(_PRF_PFX + nameof(DrawTogglePropertyLayout));
-
         private void DrawTogglePropertyLayout(GUIContent label)
         {
             using (_PRF_DrawTogglePropertyLayout.Auto())
             {
                 var attribute = Attribute;
-                var propertyContext = SmartLabelAttributeHelper.GetPropertyContext(this, Property, attribute);
+                var propertyContext =
+                    SmartLabelAttributeHelper.GetPropertyContext(this, Property, attribute);
                 var valueEntry = BoolValueEntry;
-                
+
                 SmartLabelAttributeHelper.UpdateLabel(propertyContext, attribute, label);
-                
+
                 if (string.IsNullOrWhiteSpace(_propertyContext.OutputLabelText))
                 {
-                    valueEntry.SmartValue = EditorGUILayout.ToggleLeft(GUIContent.none, valueEntry.SmartValue);
+                    valueEntry.SmartValue = EditorGUILayout.ToggleLeft(
+                        GUIContent.none,
+                        valueEntry.SmartValue
+                    );
                     return;
                 }
 
@@ -209,35 +239,46 @@ namespace Appalachia.Editing.Attributes.Drawers
                 var labelText = _propertyContext.OutputLabelText;
 
                 var pushedColor = false;
-                
+
                 if (attribute.Postfix)
                 {
                     EditorGUIUtility.labelWidth = 1;
                 }
                 else
                 {
-                    SmartLabelAttributeHelper.PushLabel(propertyContext, attribute, out pushedColor);
+                    SmartLabelAttributeHelper.PushLabel(
+                        propertyContext,
+                        attribute,
+                        out pushedColor
+                    );
                     GUILayout.Label(labelText, GUILayoutOptions.ExpandWidth(false));
                 }
-                
-                valueEntry.SmartValue = EditorGUILayout.Toggle(string.Empty, valueEntry.SmartValue, GUILayoutOptions.ExpandWidth(false));
-                
+
+                valueEntry.SmartValue = EditorGUILayout.Toggle(
+                    string.Empty,
+                    valueEntry.SmartValue,
+                    GUILayoutOptions.ExpandWidth(false)
+                );
+
                 /*
                 valueEntry.SmartValue = attribute.Postfix
                     ? EditorGUILayout.ToggleLeft(label, valueEntry.SmartValue)
                     : EditorGUILayout.Toggle(label, valueEntry.SmartValue);*/
-                    
+
                 if (attribute.Postfix)
                 {
-                    SmartLabelAttributeHelper.PushLabel(propertyContext, attribute, out pushedColor);
+                    SmartLabelAttributeHelper.PushLabel(
+                        propertyContext,
+                        attribute,
+                        out pushedColor
+                    );
                     GUILayout.Label(labelText, GUILayoutOptions.ExpandWidth(false));
                 }
-                
+
                 SmartLabelAttributeHelper.PopLabel(pushedColor);
 
                 GUILayout.EndHorizontal();
             }
         }
-
     }
 }

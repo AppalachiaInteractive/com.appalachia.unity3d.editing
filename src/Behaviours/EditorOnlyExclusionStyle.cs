@@ -4,6 +4,6 @@ namespace Appalachia.Editing.Behaviours
     {
         Component = 0,
         ObjectIfNoConflict = 10,
-        ObjectForceConflict = 20,
+        ObjectForceConflict = 20
     }
 }

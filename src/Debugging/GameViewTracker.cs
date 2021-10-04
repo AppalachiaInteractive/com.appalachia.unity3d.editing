@@ -6,18 +6,18 @@ namespace Appalachia.Editing.Debugging
 {
     public static class GameViewTracker
     {
-        [InitializeOnLoadMethod]
-        static void InitializeOnLoadMethod()
-        {
-            EditorApplication.update += ResetState;
-        }
-
         private const string k_MenuName = "Tools/Toggle GameView tracking %T";
 
         private static Camera _mainCamera;
 
         // Custom labels can be defined.
-        private static PREF<bool> s_Enabled = PREFS.REG("Tracking", "GameView", true);
+        private static readonly PREF<bool> s_Enabled = PREFS.REG("Tracking", "GameView", true);
+
+        [InitializeOnLoadMethod]
+        private static void InitializeOnLoadMethod()
+        {
+            EditorApplication.update += ResetState;
+        }
 
         [MenuItem(k_MenuName, true)]
         public static bool ToggleGameViewTrackingValidate()
@@ -35,20 +35,20 @@ namespace Appalachia.Editing.Debugging
         private static void ResetState()
         {
             EditorApplication.update -= ResetState;
-            
+
             if (s_Enabled.v)
             {
                 Enable();
             }
         }
-        
+
         private static void ToggleEnabled()
         {
             if (!s_Enabled.v)
             {
                 Enable();
             }
-            else 
+            else
             {
                 Disable();
             }

@@ -10,12 +10,12 @@ namespace Appalachia.Editing.Debugging.Handle
         // ReSharper disable once MemberHidesStaticFromOuterClass
         private const string _PRF_PFX = nameof(GizmoState) + ".";
 
-        private static readonly ProfilerMarker _PRF_GizmoState = new ProfilerMarker(_PRF_PFX + nameof(GizmoState));
-        private static readonly ProfilerMarker _PRF_Dispose = new ProfilerMarker(_PRF_PFX + nameof(Dispose));
-        private static readonly ProfilerMarker _PRF_New = new ProfilerMarker(_PRF_PFX + nameof(New));
-        private static readonly ProfilerMarker _PRF_Reset = new ProfilerMarker(_PRF_PFX + nameof(Reset));
-        private static readonly ProfilerMarker _PRF_Initialize = new ProfilerMarker(_PRF_PFX + nameof(Initialize));
-            
+        private static readonly ProfilerMarker _PRF_GizmoState = new(_PRF_PFX + nameof(GizmoState));
+        private static readonly ProfilerMarker _PRF_Dispose = new(_PRF_PFX + nameof(Dispose));
+        private static readonly ProfilerMarker _PRF_New = new(_PRF_PFX + nameof(New));
+        private static readonly ProfilerMarker _PRF_Reset = new(_PRF_PFX + nameof(Reset));
+        private static readonly ProfilerMarker _PRF_Initialize = new(_PRF_PFX + nameof(Initialize));
+
         private Color _color;
         private bool _sRGB;
 #pragma warning disable 612

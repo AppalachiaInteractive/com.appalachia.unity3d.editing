@@ -13,7 +13,7 @@ namespace Appalachia.Editing.Attributes.Drawers
     public class SerializedEnumDrawer : PropertyDrawer
     {
         private const string _PRF_PFX = nameof(SerializedEnumDrawer) + ".";
-        private static readonly ProfilerMarker _PRF_OnGUI = new ProfilerMarker(_PRF_PFX + nameof(OnGUI));
+        private static readonly ProfilerMarker _PRF_OnGUI = new(_PRF_PFX + nameof(OnGUI));
 
         public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
         {

@@ -20,8 +20,11 @@ namespace Appalachia.Editing.Attributes.Drawers
     ///     Draws properties marked with <see cref="T:Sirenix.OdinInspector.SmartInlineButtonAttribute" />
     /// </summary>
     [DrawerPriority(DrawerPriorityLevel.WrapperPriority)]
-    public sealed class SmartInlineButtonAttributeDrawer<T> : OdinAttributeDrawer<SmartInlineButtonAttribute, T>
+    public sealed class
+        SmartInlineButtonAttributeDrawer<T> : OdinAttributeDrawer<SmartInlineButtonAttribute, T>
     {
+        private SmartInlineButtonContext<T> _propertyContext;
+
         protected override void DrawPropertyLayout(GUIContent label)
         {
             using (_PRF_DrawPropertyLayout.Auto())
@@ -38,9 +41,8 @@ namespace Appalachia.Editing.Attributes.Drawers
             }
         }
 
-        private SmartInlineButtonContext<T> _propertyContext;
-        
-        private SmartInlineButtonContext<T> PreparePropertyContext(SmartInlineButtonAttribute attribute)
+        private SmartInlineButtonContext<T> PreparePropertyContext(
+            SmartInlineButtonAttribute attribute)
         {
             using (_PRF_PreparePropertyContext.Auto())
             {
@@ -54,16 +56,21 @@ namespace Appalachia.Editing.Attributes.Drawers
                         _propertyContext.ErrorMessage
                     );
 
-                    _propertyContext.HasDisabledMember = !string.IsNullOrWhiteSpace(attribute.DisableIf);
+                    _propertyContext.HasDisabledMember =
+                        !string.IsNullOrWhiteSpace(attribute.DisableIf);
                     if (_propertyContext.HasDisabledMember)
                     {
-                        _propertyContext.DisabledHelper = new IfAttributeHelper(Property, attribute.DisableIf);
+                        _propertyContext.DisabledHelper = new IfAttributeHelper(
+                            Property,
+                            attribute.DisableIf
+                        );
                     }
 
                     _propertyContext.HasColorMember = !string.IsNullOrWhiteSpace(attribute.Color);
                     if (_propertyContext.HasColorMember)
                     {
-                        _propertyContext.ColorHelper = ValueResolver.Get<Color>(Property, attribute.Color);
+                        _propertyContext.ColorHelper =
+                            ValueResolver.Get<Color>(Property, attribute.Color);
                     }
 
                     if (_propertyContext.ErrorMessage == null)
@@ -73,30 +80,40 @@ namespace Appalachia.Editing.Attributes.Drawers
                                             .IsMethod()
                                             .IsNamed(attribute.MemberMethod)
                                             .HasNoParameters()
-                                            .TryGetMember(out memberInfo, out _propertyContext.ErrorMessage))
+                                            .TryGetMember(
+                                                 out memberInfo,
+                                                 out _propertyContext.ErrorMessage
+                                             ))
                         {
                             if (memberInfo.IsStatic())
                             {
-                                _propertyContext.StaticMethodCaller = EmitUtilities.CreateStaticMethodCaller(memberInfo);
+                                _propertyContext.StaticMethodCaller =
+                                    EmitUtilities.CreateStaticMethodCaller(memberInfo);
                             }
                             else
                             {
-                                _propertyContext.InstanceMethodCaller = EmitUtilities.CreateWeakInstanceMethodCaller(memberInfo);
+                                _propertyContext.InstanceMethodCaller =
+                                    EmitUtilities.CreateWeakInstanceMethodCaller(memberInfo);
                             }
                         }
                         else if (AppaMemberFinder.Start(ValueEntry.ParentType)
                                                  .IsMethod()
                                                  .IsNamed(attribute.MemberMethod)
                                                  .HasParameters<T>()
-                                                 .TryGetMember(out memberInfo, out _propertyContext.ErrorMessage))
+                                                 .TryGetMember(
+                                                      out memberInfo,
+                                                      out _propertyContext.ErrorMessage
+                                                  ))
                         {
                             if (memberInfo.IsStatic())
                             {
-                                _propertyContext.ErrorMessage = "Static parameterized method is currently not supported.";
+                                _propertyContext.ErrorMessage =
+                                    "Static parameterized method is currently not supported.";
                             }
                             else
                             {
-                                _propertyContext.InstanceParameterMethodCaller = EmitUtilities.CreateWeakInstanceMethodCaller<T>(memberInfo);
+                                _propertyContext.InstanceParameterMethodCaller =
+                                    EmitUtilities.CreateWeakInstanceMethodCaller<T>(memberInfo);
                             }
                         }
                     }
@@ -106,7 +123,9 @@ namespace Appalachia.Editing.Attributes.Drawers
             }
         }
 
-        private void PrepareDisabledLayout(SmartInlineButtonContext<T> propertyContext, out bool? disabled)
+        private void PrepareDisabledLayout(
+            SmartInlineButtonContext<T> propertyContext,
+            out bool? disabled)
         {
             using (_PRF_PrepareDisabledLayout.Auto())
             {
@@ -116,7 +135,9 @@ namespace Appalachia.Editing.Attributes.Drawers
                 {
                     if (_propertyContext.DisabledHelper.ErrorMessage != null)
                     {
-                        SirenixEditorGUI.ErrorMessageBox(_propertyContext.DisabledHelper.ErrorMessage);
+                        SirenixEditorGUI.ErrorMessageBox(
+                            _propertyContext.DisabledHelper.ErrorMessage
+                        );
                     }
                     else
                     {
@@ -126,7 +147,9 @@ namespace Appalachia.Editing.Attributes.Drawers
             }
         }
 
-        private void PrepareColorLayout(SmartInlineButtonContext<T> propertyContext, out Color? color)
+        private void PrepareColorLayout(
+            SmartInlineButtonContext<T> propertyContext,
+            out Color? color)
         {
             using (_PRF_PrepareColorLayout.Auto())
             {
@@ -164,7 +187,8 @@ namespace Appalachia.Editing.Attributes.Drawers
 
                     CallNextDrawer(label);
                 }
-                else if (_propertyContext.HasColorMember && _propertyContext.ColorHelper?.ErrorMessage != null)
+                else if (_propertyContext.HasColorMember &&
+                         (_propertyContext.ColorHelper?.ErrorMessage != null))
                 {
                     using (_PRF_DrawLayout_ErrorMessageBox.Auto())
                     {
@@ -173,7 +197,8 @@ namespace Appalachia.Editing.Attributes.Drawers
 
                     CallNextDrawer(label);
                 }
-                else if (_propertyContext.HasColorMember && _propertyContext.DisabledHelper?.ErrorMessage != null)
+                else if (_propertyContext.HasColorMember &&
+                         (_propertyContext.DisabledHelper?.ErrorMessage != null))
                 {
                     using (_PRF_DrawLayout_ErrorMessageBox.Auto())
                     {
@@ -223,7 +248,10 @@ namespace Appalachia.Editing.Attributes.Drawers
             }
         }
 
-        private void PushInlineButton(SmartInlineButtonAttribute attribute, Color? color, bool? disabled)
+        private void PushInlineButton(
+            SmartInlineButtonAttribute attribute,
+            Color? color,
+            bool? disabled)
         {
             using (_PRF_PushInlineButton.Auto())
             {
@@ -236,6 +264,7 @@ namespace Appalachia.Editing.Attributes.Drawers
                 if (disabled.HasValue)
                 {
                     GUIHelper.PushGUIEnabled(!disabled.Value);
+
                     //GUIHelper.PushGUIEnabled(true);
                 }
 
@@ -292,7 +321,10 @@ namespace Appalachia.Editing.Attributes.Drawers
                 else if (propertyContext.InstanceParameterMethodCaller != null)
                 {
                     var valueEntry = ValueEntry;
-                    propertyContext.InstanceParameterMethodCaller(Property.ParentValues[0], valueEntry.SmartValue);
+                    propertyContext.InstanceParameterMethodCaller(
+                        Property.ParentValues[0],
+                        valueEntry.SmartValue
+                    );
                 }
                 else
                 {
@@ -306,7 +338,7 @@ namespace Appalachia.Editing.Attributes.Drawers
             using (_PRF_PopInlineButton.Auto())
             {
                 GUIHelper.PopIsBoldLabel();
-                
+
                 if (disabled.HasValue)
                 {
                     GUIHelper.PopGUIEnabled();
@@ -345,51 +377,63 @@ namespace Appalachia.Editing.Attributes.Drawers
         private const string logErrorString = "No method found.";
         private const string _PRF_PFX = nameof(SmartInlineButtonAttributeDrawer<T>) + ".";
 
-        private static readonly ProfilerMarker _PRF_Initialize = new ProfilerMarker(_PRF_PFX + nameof(Initialize));
+        private static readonly ProfilerMarker _PRF_Initialize = new(_PRF_PFX + nameof(Initialize));
 
-        private static readonly ProfilerMarker _PRF_DrawPropertyLayout = new ProfilerMarker(_PRF_PFX + nameof(DrawPropertyLayout));
+        private static readonly ProfilerMarker _PRF_DrawPropertyLayout =
+            new(_PRF_PFX + nameof(DrawPropertyLayout));
 
-        private static readonly ProfilerMarker _PRF_PreparePropertyContext = new ProfilerMarker(_PRF_PFX + nameof(PreparePropertyContext));
+        private static readonly ProfilerMarker _PRF_PreparePropertyContext =
+            new(_PRF_PFX + nameof(PreparePropertyContext));
 
-        private static readonly ProfilerMarker _PRF_PrepareDisabledLayout = new ProfilerMarker(_PRF_PFX + nameof(PrepareDisabledLayout));
+        private static readonly ProfilerMarker _PRF_PrepareDisabledLayout =
+            new(_PRF_PFX + nameof(PrepareDisabledLayout));
 
-        private static readonly ProfilerMarker _PRF_PrepareColorLayout = new ProfilerMarker(_PRF_PFX + nameof(PrepareColorLayout));
+        private static readonly ProfilerMarker _PRF_PrepareColorLayout =
+            new(_PRF_PFX + nameof(PrepareColorLayout));
 
-        private static readonly ProfilerMarker _PRF_DrawLayout = new ProfilerMarker(_PRF_PFX + nameof(DrawLayout));
+        private static readonly ProfilerMarker _PRF_DrawLayout = new(_PRF_PFX + nameof(DrawLayout));
 
         private static readonly ProfilerMarker _PRF_DrawLayout_ErrorMessageBox =
-            new ProfilerMarker(_PRF_PFX + nameof(DrawLayout) + ".ErrorMessageBox");
+            new(_PRF_PFX + nameof(DrawLayout) + ".ErrorMessageBox");
 
         private static readonly ProfilerMarker _PRF_DrawLayout_BeginHorizontal =
-            new ProfilerMarker(_PRF_PFX + nameof(DrawLayout) + ".BeginHorizontal");
+            new(_PRF_PFX + nameof(DrawLayout) + ".BeginHorizontal");
 
-        private static readonly ProfilerMarker _PRF_DrawLayout_EndHorizontal = new ProfilerMarker(_PRF_PFX + nameof(DrawLayout) + ".EndHorizontal");
+        private static readonly ProfilerMarker _PRF_DrawLayout_EndHorizontal =
+            new(_PRF_PFX + nameof(DrawLayout) + ".EndHorizontal");
 
-        private static readonly ProfilerMarker _PRF_DrawMainField = new ProfilerMarker(_PRF_PFX + nameof(DrawMainField));
+        private static readonly ProfilerMarker _PRF_DrawMainField =
+            new(_PRF_PFX + nameof(DrawMainField));
 
         private static readonly ProfilerMarker _PRF_DrawMainField_BeginVertical =
-            new ProfilerMarker(_PRF_PFX + nameof(DrawMainField) + ".BeginVertical");
+            new(_PRF_PFX + nameof(DrawMainField) + ".BeginVertical");
 
         private static readonly ProfilerMarker _PRF_DrawMainField_CallNextDrawer =
-            new ProfilerMarker(_PRF_PFX + nameof(DrawMainField) + ".CallNextDrawer");
+            new(_PRF_PFX + nameof(DrawMainField) + ".CallNextDrawer");
 
-        private static readonly ProfilerMarker _PRF_DrawMainField_EndVertical = new ProfilerMarker(_PRF_PFX + nameof(DrawMainField) + ".EndVertical");
+        private static readonly ProfilerMarker _PRF_DrawMainField_EndVertical =
+            new(_PRF_PFX + nameof(DrawMainField) + ".EndVertical");
 
-        private static readonly ProfilerMarker _PRF_HandleDrawingInlineButton = new ProfilerMarker(_PRF_PFX + nameof(HandleDrawingInlineButton));
+        private static readonly ProfilerMarker _PRF_HandleDrawingInlineButton =
+            new(_PRF_PFX + nameof(HandleDrawingInlineButton));
 
-        private static readonly ProfilerMarker _PRF_PushInlineButton = new ProfilerMarker(_PRF_PFX + nameof(PushInlineButton));
+        private static readonly ProfilerMarker _PRF_PushInlineButton =
+            new(_PRF_PFX + nameof(PushInlineButton));
 
         private static GUILayoutOptions.GUILayoutOptionsInstance _buttonOptions;
         private static GUIStyle _miniButtonStyle;
 
-        private static readonly ProfilerMarker _PRF_DrawInlineButton = new ProfilerMarker(_PRF_PFX + nameof(DrawInlineButton));
+        private static readonly ProfilerMarker _PRF_DrawInlineButton =
+            new(_PRF_PFX + nameof(DrawInlineButton));
 
         private static readonly ProfilerMarker _PRF_DrawInlineButton_DrawButton =
-            new ProfilerMarker(_PRF_PFX + nameof(DrawInlineButton) + ".DrawButton");
+            new(_PRF_PFX + nameof(DrawInlineButton) + ".DrawButton");
 
-        private static readonly ProfilerMarker _PRF_ExecuteInlineButton = new ProfilerMarker(_PRF_PFX + nameof(ExecuteInlineButton));
+        private static readonly ProfilerMarker _PRF_ExecuteInlineButton =
+            new(_PRF_PFX + nameof(ExecuteInlineButton));
 
-        private static readonly ProfilerMarker _PRF_PopInlineButton = new ProfilerMarker(_PRF_PFX + nameof(PopInlineButton));
+        private static readonly ProfilerMarker _PRF_PopInlineButton =
+            new(_PRF_PFX + nameof(PopInlineButton));
 
 #endregion
     }

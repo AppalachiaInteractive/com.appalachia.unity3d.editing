@@ -11,18 +11,23 @@ namespace Appalachia.Editing.Attributes.Drawers
     {
         private const string _PRF_PFX = nameof(SmartLabelAttributeHelper) + ".";
 
-        private static readonly ProfilerMarker _PRF_GetPropertyContext = new ProfilerMarker(_PRF_PFX + nameof(GetPropertyContext));
+        private static readonly ProfilerMarker _PRF_GetPropertyContext =
+            new(_PRF_PFX + nameof(GetPropertyContext));
 
-        private static readonly ProfilerMarker _PRF_UpdateLabel = new ProfilerMarker(_PRF_PFX + nameof(UpdateLabel));
+        private static readonly ProfilerMarker _PRF_UpdateLabel =
+            new(_PRF_PFX + nameof(UpdateLabel));
 
-        private static readonly ProfilerMarker _PRF_PushLabel = new ProfilerMarker(_PRF_PFX + nameof(PushLabel));
+        private static readonly ProfilerMarker _PRF_PushLabel = new(_PRF_PFX + nameof(PushLabel));
 
-        private static readonly ProfilerMarker _PRF_PopLabel = new ProfilerMarker(_PRF_PFX + nameof(PopLabel));
+        private static readonly ProfilerMarker _PRF_PopLabel = new(_PRF_PFX + nameof(PopLabel));
 
-        private static readonly ProfilerMarker _PRF_PushColor = new ProfilerMarker(_PRF_PFX + nameof(PushColor));
-        
+        private static readonly ProfilerMarker _PRF_PushColor = new(_PRF_PFX + nameof(PushColor));
+
         // ReSharper disable once UnusedParameter.Global
-        public static SmartLabelContext GetPropertyContext(OdinDrawer drawer, InspectorProperty property, SmartLabelAttribute attribute)
+        public static SmartLabelContext GetPropertyContext(
+            OdinDrawer drawer,
+            InspectorProperty property,
+            SmartLabelAttribute attribute)
         {
             using (_PRF_GetPropertyContext.Auto())
             {
@@ -30,11 +35,13 @@ namespace Appalachia.Editing.Attributes.Drawers
 
                 if (attribute.HasPropertyColor)
                 {
-                    propertyContext.ColorHelper = ValueResolver.Get<Color>(property, attribute.Color);
+                    propertyContext.ColorHelper =
+                        ValueResolver.Get<Color>(property, attribute.Color);
                 }
 
                 propertyContext.ColorError = false;
-                if (attribute.HasPropertyColor && (propertyContext.ColorHelper.ErrorMessage != null))
+                if (attribute.HasPropertyColor &&
+                    (propertyContext.ColorHelper.ErrorMessage != null))
                 {
                     propertyContext.ColorError = true;
                     SirenixEditorGUI.ErrorMessageBox(propertyContext.ColorHelper.ErrorMessage);
@@ -44,7 +51,10 @@ namespace Appalachia.Editing.Attributes.Drawers
             }
         }
 
-        public static void UpdateLabel(SmartLabelContext propertyContext, SmartLabelAttribute attribute, GUIContent label)
+        public static void UpdateLabel(
+            SmartLabelContext propertyContext,
+            SmartLabelAttribute attribute,
+            GUIContent label)
         {
             using (_PRF_UpdateLabel.Auto())
             {
@@ -73,7 +83,10 @@ namespace Appalachia.Editing.Attributes.Drawers
             }
         }
 
-        public static void PushLabel(SmartLabelContext propertyContext, SmartLabelAttribute attribute, out bool pushedColor)
+        public static void PushLabel(
+            SmartLabelContext propertyContext,
+            SmartLabelAttribute attribute,
+            out bool pushedColor)
         {
             using (_PRF_PushLabel.Auto())
             {
@@ -98,7 +111,7 @@ namespace Appalachia.Editing.Attributes.Drawers
                 }
             }
         }
-        
+
         public static void PopLabel(bool pushedColor)
         {
             using (_PRF_PopLabel.Auto())
@@ -114,7 +127,10 @@ namespace Appalachia.Editing.Attributes.Drawers
             }
         }
 
-        private static void ExecuteColorPush(SmartLabelContext propertyContext, SmartLabelAttribute attribute, out bool pushedColor)
+        private static void ExecuteColorPush(
+            SmartLabelContext propertyContext,
+            SmartLabelAttribute attribute,
+            out bool pushedColor)
         {
             pushedColor = true;
 
@@ -148,8 +164,11 @@ namespace Appalachia.Editing.Attributes.Drawers
                 pushedColor = false;
             }
         }
-        
-        public static void PushColor(SmartLabelContext propertyContext, SmartLabelAttribute attribute, out bool pushedColor)
+
+        public static void PushColor(
+            SmartLabelContext propertyContext,
+            SmartLabelAttribute attribute,
+            out bool pushedColor)
         {
             using (_PRF_PushColor.Auto())
             {

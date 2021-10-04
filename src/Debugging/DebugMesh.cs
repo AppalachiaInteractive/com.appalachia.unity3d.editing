@@ -9,7 +9,7 @@ namespace Appalachia.Editing.Debugging
         VertexColorG = 102,
         VertexColorB = 103,
         VertexColorA = 104,
-        
+
         UVCoordZeroX = 111,
         UVCoordZeroY = 112,
         UVCoordZeroZ = 113,
@@ -23,17 +23,17 @@ namespace Appalachia.Editing.Debugging
         UVCoordThreeX = 131,
         UVCoordThreeY = 132,
         UVCoordThreeZ = 133,
-        UVCoordThreeW = 134,        
+        UVCoordThreeW = 134,
 
         UVCoordFourX = 141,
         UVCoordFourY = 142,
         UVCoordFourZ = 143,
         UVCoordFourW = 144,
-        
+
         VertexPositionX = 151,
         VertexPositionY = 152,
         VertexPositionZ = 153,
-        
+
         VertexNormalX = 161,
         VertexNormalY = 162,
         VertexNormalZ = 163,

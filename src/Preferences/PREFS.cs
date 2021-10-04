@@ -19,67 +19,200 @@ namespace Appalachia.Editing.Preferences
         {
             var splits = label.Split('_');
             label = splits[splits.Length - 1];
-            var key = $"{grouping.ToLower().Replace(" ", string.Empty).Trim()}.{label.ToLower().Replace(" ", string.Empty).Trim()}";
+            var key =
+                $"{grouping.ToLower().Replace(" ", string.Empty).Trim()}.{label.ToLower().Replace(" ", string.Empty).Trim()}";
 
             PREF_STATES._keys.Add(key);
             PREF_STATES._groupings.Add(grouping);
 
-            if (InternalRegistration(key, grouping, label, dv, low, high, order, reset, PREF_STATES._bools, out var br))
+            if (InternalRegistration(
+                key,
+                grouping,
+                label,
+                dv,
+                low,
+                high,
+                order,
+                reset,
+                PREF_STATES._bools,
+                out var br
+            ))
             {
                 return br as PREF<TR>;
             }
 
-            if (InternalRegistration(key, grouping, label, dv, low, high, order, reset, PREF_STATES._ints, out var ir))
+            if (InternalRegistration(
+                key,
+                grouping,
+                label,
+                dv,
+                low,
+                high,
+                order,
+                reset,
+                PREF_STATES._ints,
+                out var ir
+            ))
             {
                 return ir as PREF<TR>;
             }
 
-            if (InternalRegistration(key, grouping, label, dv, low, high, order, reset, PREF_STATES._strings, out var sr))
+            if (InternalRegistration(
+                key,
+                grouping,
+                label,
+                dv,
+                low,
+                high,
+                order,
+                reset,
+                PREF_STATES._strings,
+                out var sr
+            ))
             {
                 return sr as PREF<TR>;
             }
 
-            if (InternalRegistration(key, grouping, label, dv, low, high, order, reset, PREF_STATES._bounds, out var bor))
+            if (InternalRegistration(
+                key,
+                grouping,
+                label,
+                dv,
+                low,
+                high,
+                order,
+                reset,
+                PREF_STATES._bounds,
+                out var bor
+            ))
             {
                 return bor as PREF<TR>;
             }
 
-            if (InternalRegistration(key, grouping, label, dv, low, high, order, reset, PREF_STATES._colors, out var cr))
+            if (InternalRegistration(
+                key,
+                grouping,
+                label,
+                dv,
+                low,
+                high,
+                order,
+                reset,
+                PREF_STATES._colors,
+                out var cr
+            ))
             {
                 return cr as PREF<TR>;
             }
 
-            if (InternalRegistration(key, grouping, label, dv, low, high, order, reset, PREF_STATES._gradients, out var gr))
+            if (InternalRegistration(
+                key,
+                grouping,
+                label,
+                dv,
+                low,
+                high,
+                order,
+                reset,
+                PREF_STATES._gradients,
+                out var gr
+            ))
             {
                 return gr as PREF<TR>;
             }
 
-            if (InternalRegistration(key, grouping, label, dv, low, high, order, reset, PREF_STATES._quaternions, out var qr))
+            if (InternalRegistration(
+                key,
+                grouping,
+                label,
+                dv,
+                low,
+                high,
+                order,
+                reset,
+                PREF_STATES._quaternions,
+                out var qr
+            ))
             {
                 return qr as PREF<TR>;
             }
 
-            if (InternalRegistration(key, grouping, label, dv, low, high, order, reset, PREF_STATES._doubles, out var fd))
+            if (InternalRegistration(
+                key,
+                grouping,
+                label,
+                dv,
+                low,
+                high,
+                order,
+                reset,
+                PREF_STATES._doubles,
+                out var fd
+            ))
             {
                 return fd as PREF<TR>;
             }
 
-            if (InternalRegistration(key, grouping, label, dv, low, high, order, reset, PREF_STATES._floats, out var fr))
+            if (InternalRegistration(
+                key,
+                grouping,
+                label,
+                dv,
+                low,
+                high,
+                order,
+                reset,
+                PREF_STATES._floats,
+                out var fr
+            ))
             {
                 return fr as PREF<TR>;
             }
 
-            if (InternalRegistration(key, grouping, label, dv, low, high, order, reset, PREF_STATES._float2s, out var fr2))
+            if (InternalRegistration(
+                key,
+                grouping,
+                label,
+                dv,
+                low,
+                high,
+                order,
+                reset,
+                PREF_STATES._float2s,
+                out var fr2
+            ))
             {
                 return fr2 as PREF<TR>;
             }
 
-            if (InternalRegistration(key, grouping, label, dv, low, high, order, reset, PREF_STATES._float3s, out var fr3))
+            if (InternalRegistration(
+                key,
+                grouping,
+                label,
+                dv,
+                low,
+                high,
+                order,
+                reset,
+                PREF_STATES._float3s,
+                out var fr3
+            ))
             {
                 return fr3 as PREF<TR>;
             }
 
-            if (InternalRegistration(key, grouping, label, dv, low, high, order, reset, PREF_STATES._float4s, out var fr4))
+            if (InternalRegistration(
+                key,
+                grouping,
+                label,
+                dv,
+                low,
+                high,
+                order,
+                reset,
+                PREF_STATES._float4s,
+                out var fr4
+            ))
             {
                 return fr4 as PREF<TR>;
             }
@@ -150,7 +283,16 @@ namespace Appalachia.Editing.Preferences
                     return true;
                 }
 
-                var instance = new PREF<TR>(key, grouping, label, dv, default, default, order, reset);
+                var instance = new PREF<TR>(
+                    key,
+                    grouping,
+                    label,
+                    dv,
+                    default,
+                    default,
+                    order,
+                    reset
+                );
 
                 if (PREF_STATES._safeToAwaken)
                 {

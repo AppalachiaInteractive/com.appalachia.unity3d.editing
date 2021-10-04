@@ -6,10 +6,10 @@ namespace Appalachia.Editing.Attributes.Drawers.Contexts
 {
     public class TitleContext
     {
-        public string ErrorMessage;
-        public ValueResolver<string> TitleHelper;
-        public ValueResolver<string> SubtitleHelper;
         public ValueResolver<Color> ColorHelper;
+        public string ErrorMessage;
         public IfAttributeHelper HideHelper;
+        public ValueResolver<string> SubtitleHelper;
+        public ValueResolver<string> TitleHelper;
     }
 }

@@ -10,7 +10,9 @@ namespace Appalachia.Editing.Debugging
         private static Camera _mainCamera;
         private static Camera _sceneViewCamera;
 
-        private static readonly ProfilerMarker _PRF_ShouldRenderGizmos = new ProfilerMarker(_PRF_PFX + nameof(ShouldRenderGizmos));
+        private static readonly ProfilerMarker _PRF_ShouldRenderGizmos =
+            new(_PRF_PFX + nameof(ShouldRenderGizmos));
+
         public static bool ShouldRenderGizmos()
         {
             using (_PRF_ShouldRenderGizmos.Auto())
@@ -22,13 +24,13 @@ namespace Appalachia.Editing.Debugging
 
                 if (_sceneViewCamera == null)
                 {
-                    Camera[] sceneviewCameras = SceneView.GetAllSceneCameras();
-                    _sceneViewCamera =  sceneviewCameras.Length > 0 ? sceneviewCameras[0] : null;
+                    var sceneviewCameras = SceneView.GetAllSceneCameras();
+                    _sceneViewCamera = sceneviewCameras.Length > 0 ? sceneviewCameras[0] : null;
                 }
-            
+
                 var current = Camera.current;
 
-                if (current != _mainCamera && current != _sceneViewCamera)
+                if ((current != _mainCamera) && (current != _sceneViewCamera))
                 {
                     return false;
                 }
@@ -36,7 +38,5 @@ namespace Appalachia.Editing.Debugging
                 return true;
             }
         }
-        
-        
     }
 }

@@ -12,9 +12,8 @@ namespace Appalachia.Editing.Preferences
 {
     public class PREF_STATE<T> : PREF_STATE_BASE
     {
-        private readonly Dictionary<string, PREF<T>> _values = new Dictionary<string, PREF<T>>();
-
-        private readonly List<PREF<T>> _sortedValues = new List<PREF<T>>();
+        private readonly List<PREF<T>> _sortedValues = new();
+        private readonly Dictionary<string, PREF<T>> _values = new();
 
         private bool _sorted;
 
@@ -89,7 +88,7 @@ namespace Appalachia.Editing.Preferences
 
         public IReadOnlyList<PREF<T>> SortedValues => _sortedValues;
 
-        public PrefComparer Comparer { get; } = new PrefComparer();
+        public PrefComparer Comparer { get; } = new();
 
         public IEditorPreferenceAPI<T> API { get; }
 

@@ -56,7 +56,9 @@ namespace Appalachia.Editing.Preferences.API
             var gradient = new Gradient();
 
             var modeKey = $"{key}.mode";
-            gradient.mode = EditorPrefs.GetBool(modeKey, true) ? GradientMode.Blend : GradientMode.Fixed;
+            gradient.mode = EditorPrefs.GetBool(modeKey, true)
+                ? GradientMode.Blend
+                : GradientMode.Fixed;
 
             var colorBaseKey = $"{key}.color";
             var alphaBaseKey = $"{key}.alpha";
@@ -72,7 +74,10 @@ namespace Appalachia.Editing.Preferences.API
                 var colorKey = $"{colorBaseKey}.{i}.value";
                 var timeKey = $"{colorBaseKey}.{i}.time";
 
-                var color = EditorPrefs.GetInt(colorKey, (int) ToHex(i == 0 ? Color.black : Color.white));
+                var color = EditorPrefs.GetInt(
+                    colorKey,
+                    (int) ToHex(i == 0 ? Color.black : Color.white)
+                );
                 var time = EditorPrefs.GetFloat(timeKey, i);
 
                 colorKeys[i] = new GradientColorKey(ToRGBA((uint) color), time);
@@ -96,16 +101,18 @@ namespace Appalachia.Editing.Preferences.API
 
         public static uint ToHex(Color c)
         {
-            return ((uint) (c.a * 255) << 24) | ((uint) (c.r * 255) << 16) | ((uint) (c.g * 255) << 8) | (uint) (c.b * 255);
+            return ((uint) (c.a * 255) << 24) |
+                   ((uint) (c.r * 255) << 16) |
+                   ((uint) (c.g * 255) << 8) |
+                   (uint) (c.b * 255);
         }
 
         public static Color ToRGBA(uint hex)
         {
-            return new Color(
-                ((hex >> 16) & 0xff) / 255f, // r
-                ((hex >> 8) & 0xff) / 255f,  // g
-                (hex & 0xff) / 255f,         // b
-                ((hex >> 24) & 0xff) / 255f  // a
+            return new(((hex >> 16) & 0xff) / 255f, // r
+                ((hex >> 8) & 0xff) / 255f,         // g
+                (hex & 0xff) / 255f,                // b
+                ((hex >> 24) & 0xff) / 255f         // a
             );
         }
     }

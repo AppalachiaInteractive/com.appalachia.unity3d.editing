@@ -28,11 +28,15 @@ namespace Appalachia.Editing.Attributes
                     guiStyle2 = SirenixGUIStyles.Subtitle;
                     break;
                 case TextAlignment.Center:
-                    guiStyle1 = boldLabel ? SirenixGUIStyles.BoldTitleCentered : SirenixGUIStyles.TitleCentered;
+                    guiStyle1 = boldLabel
+                        ? SirenixGUIStyles.BoldTitleCentered
+                        : SirenixGUIStyles.TitleCentered;
                     guiStyle2 = SirenixGUIStyles.SubtitleCentered;
                     break;
                 case TextAlignment.Right:
-                    guiStyle1 = boldLabel ? SirenixGUIStyles.BoldTitleRight : SirenixGUIStyles.TitleRight;
+                    guiStyle1 = boldLabel
+                        ? SirenixGUIStyles.BoldTitleRight
+                        : SirenixGUIStyles.TitleRight;
                     guiStyle2 = SirenixGUIStyles.SubtitleRight;
                     break;
                 default:
@@ -52,7 +56,12 @@ namespace Appalachia.Editing.Attributes
 
             if ((int) textAlignment > 2)
             {
-                var rect = GUILayoutUtility.GetRect(0.0f, 18f, style3, GUILayoutOptions.ExpandWidth());
+                var rect = GUILayoutUtility.GetRect(
+                    0.0f,
+                    18f,
+                    style3,
+                    GUILayoutOptions.ExpandWidth()
+                );
 
                 GUI.Label(rect, title, style3);
 
@@ -75,7 +84,9 @@ namespace Appalachia.Editing.Attributes
                 GUI.Label(rect, title, style3);
                 if ((subtitle != null) && !subtitle.IsNullOrWhitespace())
                 {
-                    rect = EditorGUI.IndentedRect(GUILayoutUtility.GetRect(GUIHelper.TempContent(subtitle), style4));
+                    rect = EditorGUI.IndentedRect(
+                        GUILayoutUtility.GetRect(GUIHelper.TempContent(subtitle), style4)
+                    );
                     GUI.Label(rect, subtitle, style4);
                 }
 
@@ -84,7 +95,10 @@ namespace Appalachia.Editing.Attributes
                     return;
                 }
 
-                SirenixEditorGUI.DrawSolidRect(rect.AlignBottom(1f), SirenixGUIStyles.LightBorderColor);
+                SirenixEditorGUI.DrawSolidRect(
+                    rect.AlignBottom(1f),
+                    SirenixGUIStyles.LightBorderColor
+                );
                 GUILayout.Space(1f);
             }
         }

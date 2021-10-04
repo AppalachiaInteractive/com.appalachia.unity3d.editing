@@ -16,24 +16,17 @@ namespace Appalachia.Editing.Debugging.Testing
             Local = 10,
             Terrain = 20
         }
-        
+
         [PropertyRange(.01f, 1f)]
         [SmartLabel]
         public float spinRate = .2f;
 
-        [SmartLabel] 
-        public AxisSource axisSource = AxisSource.World;
+        [SmartLabel] public AxisSource axisSource = AxisSource.World;
+
+        private RaycastHit[] _hits;
 
         private Transform _t;
 
-        public void OnEnable()
-        {
-            _t = transform;
-            _t.rotation = Quaternion.identity;
-        }
-
-        private RaycastHit[] _hits;
-        
         public void Update()
         {
             var position = _t.position;
@@ -55,7 +48,13 @@ namespace Appalachia.Editing.Debugging.Testing
                         _hits = new RaycastHit[3];
                     }
 
-                    var hitCount = Physics.RaycastNonAlloc(_t.position, Vector3.down, _hits, 100f, LAYERS.Terrain.Mask);
+                    var hitCount = Physics.RaycastNonAlloc(
+                        _t.position,
+                        Vector3.down,
+                        _hits,
+                        100f,
+                        LAYERS.Terrain.Mask
+                    );
 
                     if (hitCount > 0)
                     {
@@ -65,6 +64,7 @@ namespace Appalachia.Editing.Debugging.Testing
                     {
                         axis = Vector3.up;
                     }
+
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();
@@ -73,6 +73,12 @@ namespace Appalachia.Editing.Debugging.Testing
             var adjustment = Time.deltaTime * spinRate * 360f;
 
             _t.rotation *= Quaternion.AngleAxis(adjustment, axis);
+        }
+
+        public void OnEnable()
+        {
+            _t = transform;
+            _t.rotation = Quaternion.identity;
         }
     }
 }

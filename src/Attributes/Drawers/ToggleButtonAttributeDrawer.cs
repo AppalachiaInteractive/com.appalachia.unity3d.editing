@@ -1,6 +1,5 @@
 using System.Reflection;
 using Appalachia.Editing.Attributes.Drawers.Contexts;
-using Appalachia.Utility;
 using Appalachia.Utility.Colors;
 using Appalachia.Utility.Reflection;
 using Sirenix.OdinInspector.Editor;
@@ -16,11 +15,11 @@ namespace Appalachia.Editing.Attributes.Drawers
     ///     Draws properties marked with <see cref="T:Sirenix.OdinInspector.ToggleButtonAttribute" />
     /// </summary>
     [DrawerPriority(DrawerPriorityLevel.WrapperPriority)]
-    public sealed class ToggleButtonAttributeDrawer<T> : OdinAttributeDrawer<ToggleButtonAttribute, T>
+    public sealed class
+        ToggleButtonAttributeDrawer<T> : OdinAttributeDrawer<ToggleButtonAttribute, T>
     {
-
         private ButtonContext<T> _buttonContext;
-        
+
         /// <summary>Draws the property.</summary>
         protected override void DrawPropertyLayout(GUIContent label)
         {
@@ -41,33 +40,43 @@ namespace Appalachia.Editing.Attributes.Drawers
                 {
                     MethodInfo memberInfo;
                     if (AppaMemberFinder.Start(valueEntry.ParentType)
-                                    .IsMethod()
-                                    .IsNamed(attribute.MemberMethod)
-                                    .HasNoParameters()
-                                    .TryGetMember(out memberInfo, out _buttonContext.ErrorMessage))
+                                        .IsMethod()
+                                        .IsNamed(attribute.MemberMethod)
+                                        .HasNoParameters()
+                                        .TryGetMember(
+                                             out memberInfo,
+                                             out _buttonContext.ErrorMessage
+                                         ))
                     {
                         if (memberInfo.IsStatic())
                         {
-                            _buttonContext.StaticMethodCaller = EmitUtilities.CreateStaticMethodCaller(memberInfo);
+                            _buttonContext.StaticMethodCaller =
+                                EmitUtilities.CreateStaticMethodCaller(memberInfo);
                         }
                         else
                         {
-                            _buttonContext.InstanceMethodCaller = EmitUtilities.CreateWeakInstanceMethodCaller(memberInfo);
+                            _buttonContext.InstanceMethodCaller =
+                                EmitUtilities.CreateWeakInstanceMethodCaller(memberInfo);
                         }
                     }
                     else if (AppaMemberFinder.Start(valueEntry.ParentType)
-                                         .IsMethod()
-                                         .IsNamed(attribute.MemberMethod)
-                                         .HasParameters<T>()
-                                         .TryGetMember(out memberInfo, out _buttonContext.ErrorMessage))
+                                             .IsMethod()
+                                             .IsNamed(attribute.MemberMethod)
+                                             .HasParameters<T>()
+                                             .TryGetMember(
+                                                  out memberInfo,
+                                                  out _buttonContext.ErrorMessage
+                                              ))
                     {
                         if (memberInfo.IsStatic())
                         {
-                            _buttonContext.ErrorMessage = "Static parameterized method is currently not supported.";
+                            _buttonContext.ErrorMessage =
+                                "Static parameterized method is currently not supported.";
                         }
                         else
                         {
-                            _buttonContext.InstanceParameterMethodCaller = EmitUtilities.CreateWeakInstanceMethodCaller<T>(memberInfo);
+                            _buttonContext.InstanceParameterMethodCaller =
+                                EmitUtilities.CreateWeakInstanceMethodCaller<T>(memberInfo);
                         }
                     }
                 }
@@ -113,7 +122,10 @@ namespace Appalachia.Editing.Attributes.Drawers
                     }
                     else if (_buttonContext.InstanceParameterMethodCaller != null)
                     {
-                        _buttonContext.InstanceParameterMethodCaller(valueEntry.Property.ParentValues[0], valueEntry.SmartValue);
+                        _buttonContext.InstanceParameterMethodCaller(
+                            valueEntry.Property.ParentValues[0],
+                            valueEntry.SmartValue
+                        );
                     }
                     else
                     {

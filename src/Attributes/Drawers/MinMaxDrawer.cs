@@ -12,7 +12,8 @@ namespace Appalachia.Editing.Attributes.Drawers
     public class MinMaxDrawer : PropertyDrawer
     {
         private const string _PRF_PFX = nameof(MinMaxDrawer) + ".";
-        private static readonly ProfilerMarker _PRF_OnGUI = new ProfilerMarker(_PRF_PFX + nameof(OnGUI));
+        private static readonly ProfilerMarker _PRF_OnGUI = new(_PRF_PFX + nameof(OnGUI));
+
         public override void OnGUI(Rect pos, SerializedProperty prop, GUIContent label)
         {
             using (_PRF_OnGUI.Auto())
@@ -33,7 +34,14 @@ namespace Appalachia.Editing.Attributes.Drawers
 
                     var r = pos;
                     r.width = r.width - dx1;
-                    EditorGUI.MinMaxSlider(r, new GUIContent(ObjectNames.NicifyVariableName(prop.name)), ref mv, ref nv, mm.min, mm.max);
+                    EditorGUI.MinMaxSlider(
+                        r,
+                        new GUIContent(ObjectNames.NicifyVariableName(prop.name)),
+                        ref mv,
+                        ref nv,
+                        mm.min,
+                        mm.max
+                    );
 
                     EditorGUI.indentLevel = 0;
 

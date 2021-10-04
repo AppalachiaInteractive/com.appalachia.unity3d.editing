@@ -17,29 +17,51 @@ namespace Appalachia.Editing.Preferences
     public static class PREF_STATES
     {
         private const string _PRF_PFX = nameof(PREF_STATES) + ".";
-        
-        public static readonly HashSet<string> _keys = new HashSet<string>();
-        public static readonly List<string> _groupings = new List<string>(128);
-        public static readonly HashSet<string> _groupingsParts = new HashSet<string>();
-        private static readonly Group _group = new Group(string.Empty);
 
-        public static readonly PREF_STATE<bool> _bools = new PREF_STATE<bool>();
-        public static readonly PREF_STATE<Bounds> _bounds = new PREF_STATE<Bounds>();
-        public static readonly PREF_STATE<Color> _colors = new PREF_STATE<Color>();
-        public static readonly PREF_STATE<Gradient> _gradients = new PREF_STATE<Gradient>();
-        public static readonly PREF_STATE<double> _doubles = new PREF_STATE<double>();
-        public static readonly PREF_STATE<float> _floats = new PREF_STATE<float>();
-        public static readonly PREF_STATE<float2> _float2s = new PREF_STATE<float2>();
-        public static readonly PREF_STATE<float3> _float3s = new PREF_STATE<float3>();
-        public static readonly PREF_STATE<float4> _float4s = new PREF_STATE<float4>();
-        public static readonly PREF_STATE<int> _ints = new PREF_STATE<int>();
-        public static readonly PREF_STATE<quaternion> _quaternions = new PREF_STATE<quaternion>();
-        public static readonly PREF_STATE<string> _strings = new PREF_STATE<string>();
+        public static readonly HashSet<string> _keys = new();
+        public static readonly List<string> _groupings = new(128);
+        public static readonly HashSet<string> _groupingsParts = new();
+        private static readonly Group _group = new(string.Empty);
+
+        public static readonly PREF_STATE<bool> _bools = new();
+        public static readonly PREF_STATE<Bounds> _bounds = new();
+        public static readonly PREF_STATE<Color> _colors = new();
+        public static readonly PREF_STATE<Gradient> _gradients = new();
+        public static readonly PREF_STATE<double> _doubles = new();
+        public static readonly PREF_STATE<float> _floats = new();
+        public static readonly PREF_STATE<float2> _float2s = new();
+        public static readonly PREF_STATE<float3> _float3s = new();
+        public static readonly PREF_STATE<float4> _float4s = new();
+        public static readonly PREF_STATE<int> _ints = new();
+        public static readonly PREF_STATE<quaternion> _quaternions = new();
+        public static readonly PREF_STATE<string> _strings = new();
         public static bool _safeToAwaken;
 
-        public static readonly Dictionary<Type, object> _enums = new Dictionary<Type, object>();
+        public static readonly Dictionary<Type, object> _enums = new();
 
-        private static readonly ProfilerMarker _PRF_CustomUserPreferences = new ProfilerMarker(_PRF_PFX + nameof(CustomUserPreferences));
+        private static readonly ProfilerMarker _PRF_CustomUserPreferences =
+            new(_PRF_PFX + nameof(CustomUserPreferences));
+
+        private static readonly ProfilerMarker _PRF_GetSortedCount =
+            new(_PRF_PFX + nameof(GetSortedCount));
+
+        private static readonly ProfilerMarker _PRF_AddToGrouping =
+            new(_PRF_PFX + nameof(AddToGrouping));
+
+        private static readonly ProfilerMarker _PRF_DrawUIGroup =
+            new(_PRF_PFX + nameof(DrawUIGroup));
+
+        public static float indentSize = 25f;
+        public static float characterSize = 7f;
+        private static readonly ProfilerMarker _PRF_DrawUI = new(_PRF_PFX + nameof(DrawUI));
+
+        private static readonly ProfilerMarker _PRF_Awake = new(_PRF_PFX + nameof(Awake));
+
+        private static readonly ProfilerMarker _PRF_Get = new(_PRF_PFX + nameof(Get));
+
+        private static readonly ProfilerMarker _PRF_GetEnumState =
+            new(_PRF_PFX + nameof(GetEnumState));
+
         [SettingsProvider]
         public static SettingsProvider CustomUserPreferences()
         {
@@ -52,7 +74,6 @@ namespace Appalachia.Editing.Preferences
             }
         }
 
-        private static readonly ProfilerMarker _PRF_GetSortedCount = new ProfilerMarker(_PRF_PFX + nameof(GetSortedCount));
         private static int GetSortedCount<T>(PREF_STATE<T> prefState)
         {
             using (_PRF_GetSortedCount.Auto())
@@ -66,7 +87,6 @@ namespace Appalachia.Editing.Preferences
             }
         }
 
-        private static readonly ProfilerMarker _PRF_AddToGrouping = new ProfilerMarker(_PRF_PFX + nameof(AddToGrouping));
         private static void AddToGrouping<T>(PREF_STATE<T> prefState)
         {
             using (_PRF_AddToGrouping.Auto())
@@ -142,7 +162,6 @@ namespace Appalachia.Editing.Preferences
             }
         }
 
-        private static readonly ProfilerMarker _PRF_DrawUIGroup = new ProfilerMarker(_PRF_PFX + nameof(DrawUIGroup));
         private static void DrawUIGroup(Group group)
         {
             using (_PRF_DrawUIGroup.Auto())
@@ -182,9 +201,6 @@ namespace Appalachia.Editing.Preferences
             }
         }
 
-        public static float indentSize = 25f;
-        public static float characterSize = 7f;
-        private static readonly ProfilerMarker _PRF_DrawUI = new ProfilerMarker(_PRF_PFX + nameof(DrawUI));
         private static void DrawUI<TR>(string groupFullName, PREF_STATE<TR> prefs)
         {
             using (_PRF_DrawUI.Auto())
@@ -204,16 +220,26 @@ namespace Appalachia.Editing.Preferences
                         {
                             preference.NiceLabel = ObjectNames.NicifyVariableName(preference.Label);
                         }
-                        
+
                         var labelWidth = indent + (preference.NiceLabel.Length * characterSize);
                         var currentLabelWidth = EditorGUIUtility.labelWidth;
 
                         EditorGUIUtility.labelWidth = labelWidth;
-                        preference.Value = prefs.API.Draw(preference.NiceLabel, preference.Value, preference.Low, preference.High);
+                        preference.Value = prefs.API.Draw(
+                            preference.NiceLabel,
+                            preference.Value,
+                            preference.Low,
+                            preference.High
+                        );
 
                         if (EditorGUI.EndChangeCheck())
                         {
-                            prefs.API.Save(preference.Key, preference.Value, preference.Low, preference.High);
+                            prefs.API.Save(
+                                preference.Key,
+                                preference.Value,
+                                preference.Low,
+                                preference.High
+                            );
                         }
 
                         EditorGUIUtility.labelWidth = currentLabelWidth;
@@ -224,7 +250,6 @@ namespace Appalachia.Editing.Preferences
             }
         }
 
-        private static readonly ProfilerMarker _PRF_Awake = new ProfilerMarker(_PRF_PFX + nameof(Awake));
         [MenuItem("Tools/Preferences/Awaken", false, MENU_P.TOOLS.GENERAL.PRIORITY)]
         [ExecuteOnEnable]
         internal static void Awake()
@@ -256,7 +281,6 @@ namespace Appalachia.Editing.Preferences
             }
         }
 
-        private static readonly ProfilerMarker _PRF_Get = new ProfilerMarker(_PRF_PFX + nameof(Get));
         public static PREF_STATE<TR> Get<TR>()
         {
             using (_PRF_Get.Auto())
@@ -332,7 +356,6 @@ namespace Appalachia.Editing.Preferences
             }
         }
 
-        private static readonly ProfilerMarker _PRF_GetEnumState = new ProfilerMarker(_PRF_PFX + nameof(GetEnumState));
         public static PREF_STATE<TR> GetEnumState<TR>()
         {
             using (_PRF_GetEnumState.Auto())
@@ -356,12 +379,24 @@ namespace Appalachia.Editing.Preferences
         public class Group
         {
             private const string _PRF_PFX = nameof(PREF_STATES) + "." + nameof(Group) + ".";
-            
-            public string groupShortName;
+
+            private static readonly ProfilerMarker _PRF_NestedCount =
+                new(_PRF_PFX + nameof(NestedCount));
+
+            private static readonly ProfilerMarker _PRF_Add = new(_PRF_PFX + nameof(Add));
+
+            private static readonly ProfilerMarker _PRF_CollapseChildGroups =
+                new(_PRF_PFX + nameof(CollapseChildGroups));
+
+            private static readonly ProfilerMarker _PRF_CollapseCousinGroups =
+                new(_PRF_PFX + nameof(CollapseCousinGroups));
+
+            public bool foldout;
             public string groupFullName;
+
+            public string groupShortName;
             public Group parent;
             public List<Group> subgroups;
-            public bool foldout;
 
             public Group(string groupFullName, Group parent = null)
             {
@@ -373,7 +408,6 @@ namespace Appalachia.Editing.Preferences
                 foldout = parent == null;
             }
 
-            private static readonly ProfilerMarker _PRF_NestedCount = new ProfilerMarker(_PRF_PFX + nameof(NestedCount));
             public int NestedCount
             {
                 get
@@ -394,7 +428,6 @@ namespace Appalachia.Editing.Preferences
                 }
             }
 
-            private static readonly ProfilerMarker _PRF_Add = new ProfilerMarker(_PRF_PFX + nameof(Add));
             public void Add(string[] groupings)
             {
                 using (_PRF_Add.Auto())
@@ -414,7 +447,8 @@ namespace Appalachia.Editing.Preferences
                 {
                     var found = false;
 
-                    if ((other.Length > groupFullName.Length) && (other.StartsWith(groupFullName) || string.IsNullOrEmpty(groupFullName)))
+                    if ((other.Length > groupFullName.Length) &&
+                        (other.StartsWith(groupFullName) || string.IsNullOrEmpty(groupFullName)))
                     {
                         for (var i = 0; i < subgroups.Count; i++)
                         {
@@ -439,7 +473,6 @@ namespace Appalachia.Editing.Preferences
                 }
             }
 
-            private static readonly ProfilerMarker _PRF_CollapseChildGroups = new ProfilerMarker(_PRF_PFX + nameof(CollapseChildGroups));
             public void CollapseChildGroups()
             {
                 using (_PRF_CollapseChildGroups.Auto())
@@ -453,7 +486,6 @@ namespace Appalachia.Editing.Preferences
                 }
             }
 
-            private static readonly ProfilerMarker _PRF_CollapseCousinGroups = new ProfilerMarker(_PRF_PFX + nameof(CollapseCousinGroups));
             public void CollapseCousinGroups()
             {
                 using (_PRF_CollapseCousinGroups.Auto())

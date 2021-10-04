@@ -23,7 +23,7 @@ namespace Appalachia.Editing.Scene.Prefabs
             }
         }
 
-        private static readonly Finalizer finalizer = new Finalizer();
+        private static readonly Finalizer finalizer = new();
 
         private sealed class Finalizer
         {

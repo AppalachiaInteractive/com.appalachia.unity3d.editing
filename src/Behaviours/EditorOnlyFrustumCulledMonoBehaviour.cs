@@ -17,19 +17,14 @@ namespace Appalachia.Editing.Behaviours
     {
         private const string _PRF_PFX = nameof(EditorOnlyFrustumCulledMonoBehaviour) + ".";
 
-        protected bool visibilityEnabled;
-        
-        private static readonly ProfilerMarker _PRF_OnBecameVisible = new ProfilerMarker(_PRF_PFX + nameof(OnBecameVisible));
-        private void OnBecameVisible()
-        {
-            using (_PRF_OnBecameVisible.Auto())
-            {
-                visibilityEnabled = true;
-                enabled = true;
-            }
-        }
+        private static readonly ProfilerMarker _PRF_OnBecameVisible =
+            new(_PRF_PFX + nameof(OnBecameVisible));
 
-        private static readonly ProfilerMarker _PRF_OnBecameInvisible = new ProfilerMarker(_PRF_PFX + nameof(OnBecameInvisible));
+        private static readonly ProfilerMarker _PRF_OnBecameInvisible =
+            new(_PRF_PFX + nameof(OnBecameInvisible));
+
+        protected bool visibilityEnabled;
+
         private void OnBecameInvisible()
         {
             using (_PRF_OnBecameInvisible.Auto())
@@ -38,7 +33,16 @@ namespace Appalachia.Editing.Behaviours
                 enabled = false;
             }
         }
+
+        private void OnBecameVisible()
+        {
+            using (_PRF_OnBecameVisible.Auto())
+            {
+                visibilityEnabled = true;
+                enabled = true;
+            }
+        }
     }
-        
+
 #endif
 }

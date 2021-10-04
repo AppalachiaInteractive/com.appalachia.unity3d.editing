@@ -7,14 +7,14 @@ namespace Appalachia.Editing.Attributes.Drawers.Contexts
 {
     public class SmartInlineButtonContext<T>
     {
-        public string ErrorMessage;
-        public ValueResolver<string> LabelHelper;
-        public bool HasColorMember;
         public ValueResolver<Color> ColorHelper;
-        public bool HasDisabledMember;
         public IfAttributeHelper DisabledHelper;
-        public Action StaticMethodCaller;
+        public string ErrorMessage;
+        public bool HasColorMember;
+        public bool HasDisabledMember;
         public Action<object> InstanceMethodCaller;
         public Action<object, T> InstanceParameterMethodCaller;
+        public ValueResolver<string> LabelHelper;
+        public Action StaticMethodCaller;
     }
 }

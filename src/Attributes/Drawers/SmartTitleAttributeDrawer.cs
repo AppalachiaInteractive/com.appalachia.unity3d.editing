@@ -17,10 +17,11 @@ namespace Appalachia.Editing.Attributes.Drawers
     {
         private const string _PRF_PFX = nameof(SmartTitleAttributeDrawer) + ".";
 
-        private static readonly ProfilerMarker _PRF_DrawPropertyLayout = new ProfilerMarker(_PRF_PFX + nameof(DrawPropertyLayout));
+        private static readonly ProfilerMarker _PRF_DrawPropertyLayout =
+            new(_PRF_PFX + nameof(DrawPropertyLayout));
 
         private TitleContext _propertyContext;
-        
+
         protected override void DrawPropertyLayout(GUIContent label)
         {
             using (_PRF_DrawPropertyLayout.Auto())
@@ -31,19 +32,26 @@ namespace Appalachia.Editing.Attributes.Drawers
                 if (_propertyContext == null)
                 {
                     _propertyContext = new TitleContext();
-                    _propertyContext.TitleHelper = ValueResolver.Get<string>(property, attribute.Title, _propertyContext.ErrorMessage);
-                    _propertyContext.SubtitleHelper = ValueResolver.Get<string>(
+                    _propertyContext.TitleHelper = ValueResolver.Get(
                         property,
-                        attribute.Subtitle,
-                        
+                        attribute.Title,
                         _propertyContext.ErrorMessage
                     );
-                    _propertyContext.ColorHelper = ValueResolver.Get<Color>(property, attribute.Color);
+                    _propertyContext.SubtitleHelper = ValueResolver.Get(
+                        property,
+                        attribute.Subtitle,
+                        _propertyContext.ErrorMessage
+                    );
+                    _propertyContext.ColorHelper =
+                        ValueResolver.Get<Color>(property, attribute.Color);
 
                     var canHide = !string.IsNullOrWhiteSpace(Attribute.HideIfMemberName);
                     if (canHide)
                     {
-                        _propertyContext.HideHelper = new IfAttributeHelper(Property, Attribute.HideIfMemberName);
+                        _propertyContext.HideHelper = new IfAttributeHelper(
+                            Property,
+                            Attribute.HideIfMemberName
+                        );
                     }
                 }
 

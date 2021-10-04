@@ -10,12 +10,35 @@ namespace Appalachia.Editing.Assets
     [InitializeOnLoad]
     public static class AssetDatabaseSaveManager
     {
+        public static PREF<int> _SAVE_FRAME_DELAY;
+        public static PREF<bool> _SAVE_ON_ENABLE;
+
+        [NonSerialized] public static int LastSaveAt;
+
+        [NonSerialized] public static bool QueuedSoon;
+        [NonSerialized] public static bool QueuedNextFrame;
+        [NonSerialized] private static int _suspensionDepth;
+        [NonSerialized] private static int _deferralDepth;
+
+        private static bool _explicitlyStarted;
+
+        private static readonly PREF<bool> log = PREFS.REG(
+            "Asset Database",
+            "Log Deferrals",
+            false
+        );
+
+        private static Dictionary<string, Action> _postActions;
+
+        public static bool ImportDeferred => _deferralDepth > 0;
+        public static bool ImportSuspended => _suspensionDepth > 0;
+
         [ExecuteOnEnable]
         private static void OnEnable()
         {
             _SAVE_FRAME_DELAY = PREFS.REG("Assets", "Save Frame Delay",                 30);
             _SAVE_ON_ENABLE = PREFS.REG("Assets",   "Save On Enable (After Compiling)", true);
-        
+
             if (_SAVE_ON_ENABLE.v)
             {
                 AssetDatabase.SaveAssets();
@@ -38,7 +61,7 @@ namespace Appalachia.Editing.Assets
             }
 
             execution();*/
-            AssetDatabaseSaveManager.ExecuteSave();
+            ExecuteSave();
         }
 
         [MenuItem("Assets/Start Asset Editing")]
@@ -56,32 +79,15 @@ namespace Appalachia.Editing.Assets
             _explicitlyStarted = false;
             _suspensionDepth -= 1;
         }
-        
-        public static PREF<int> _SAVE_FRAME_DELAY;
-        public static PREF<bool> _SAVE_ON_ENABLE;
-        
-        [NonSerialized] public static int LastSaveAt;
-        
-        [NonSerialized] public static bool QueuedSoon;
-        [NonSerialized] public static bool QueuedNextFrame;
-        [NonSerialized] private static int _suspensionDepth;
-        [NonSerialized] private static int _deferralDepth;
-
-        private static bool _explicitlyStarted = false;
-        
-        public static bool ImportDeferred => _deferralDepth > 0;
-        public static bool ImportSuspended => _suspensionDepth > 0;
 
         public static bool RequestSuspendImport(out IDisposable scope)
         {
-            if (
-                EditorApplication.isPlaying ||
+            if (EditorApplication.isPlaying ||
                 EditorApplication.isCompiling ||
                 EditorApplication.isPaused ||
                 EditorApplication.isUpdating ||
                 Application.isBatchMode ||
-                Application.isPlaying
-                )
+                Application.isPlaying)
             {
                 scope = null;
                 return false;
@@ -90,52 +96,26 @@ namespace Appalachia.Editing.Assets
             scope = new DeferredAssetEditingScope();
             return true;
         }
-        
-        
-        private class DeferredAssetEditingScope : IDisposable
-        {
-            public DeferredAssetEditingScope()
-            {
-                if (!ImportSuspended)
-                {
-                    AssetDatabase.StartAssetEditing();
-                    _suspensionDepth += 1;
-                    _deferralDepth += 1;
-                    Log("Suspending import pause. ");
-                }
-                else
-                {
-                    _deferralDepth += 1;
-                    //Log("Additional import pause scope. ");    
-                }
-            }
 
-            void IDisposable.Dispose()
-            {
-                _deferralDepth -= 1;
-                //Log("Disposing import pause scope. ");
-            }
-        }
-
-        private static PREF<bool> log = PREFS.REG("Asset Database", "Log Deferrals", false);
         private static void Log(string prefix)
         {
             if (!log.v)
             {
                 return;
             }
-            
-            Debug.LogWarning($"{prefix}| Deferral depth: {_deferralDepth:000} | Suspension depth: {_suspensionDepth:000}");
+
+            Debug.LogWarning(
+                $"{prefix}| Deferral depth: {_deferralDepth:000} | Suspension depth: {_suspensionDepth:000}"
+            );
         }
 
-        
         private static void ExecuteSave()
         {
             if (_explicitlyStarted)
             {
                 return;
             }
-            
+
             if (!ImportDeferred && ImportSuspended)
             {
                 Log("Flushing import pauses.  ");
@@ -145,8 +125,9 @@ namespace Appalachia.Editing.Assets
                 {
                     AssetDatabase.StopAssetEditing();
                     _suspensionDepth -= 1;
-                    
+
                     iteration += 1;
+
                     //Log($"Flushing import pause. Iteration: {iteration} ");
                 }
 
@@ -159,7 +140,7 @@ namespace Appalachia.Editing.Assets
             }
 
             var waitThreshold = QueuedNextFrame ? 1 : _SAVE_FRAME_DELAY.v;
-            
+
             var frameTime = Time.frameCount;
             var timeSinceLastSave = frameTime - LastSaveAt;
 
@@ -176,11 +157,9 @@ namespace Appalachia.Editing.Assets
             QueuedSoon = true;
         }
 
-        private static Dictionary<string, Action> _postActions;
-        
         public static void SaveAssetsNextFrame(string key = null, Action post = null)
         {
-            if (key != null && post != null)
+            if ((key != null) && (post != null))
             {
                 if (_postActions == null)
                 {
@@ -218,6 +197,33 @@ namespace Appalachia.Editing.Assets
 
             QueuedSoon = false;
             QueuedNextFrame = false;
+        }
+
+        private class DeferredAssetEditingScope : IDisposable
+        {
+            public DeferredAssetEditingScope()
+            {
+                if (!ImportSuspended)
+                {
+                    AssetDatabase.StartAssetEditing();
+                    _suspensionDepth += 1;
+                    _deferralDepth += 1;
+                    Log("Suspending import pause. ");
+                }
+                else
+                {
+                    _deferralDepth += 1;
+
+                    //Log("Additional import pause scope. ");    
+                }
+            }
+
+            void IDisposable.Dispose()
+            {
+                _deferralDepth -= 1;
+
+                //Log("Disposing import pause scope. ");
+            }
         }
     }
 }

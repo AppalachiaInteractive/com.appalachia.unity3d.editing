@@ -6,7 +6,6 @@ using Appalachia.Core.Extensions;
 using Appalachia.Core.Layers;
 using Appalachia.Core.Types.Enums;
 using Appalachia.Simulation.Core;
-using Appalachia.Utility;
 using Appalachia.Utility.Colors;
 using Appalachia.Utility.Constants;
 using Sirenix.OdinInspector;
@@ -22,36 +21,54 @@ namespace Appalachia.Editing.Debugging.Testing
     [ExecuteAlways]
     public class Bazooka : SingletonMonoBehaviour<Bazooka>
     {
-
         private const string _PRF_PFX = nameof(Bazooka) + ".";
 
-        private static readonly ProfilerMarker _PRF_FindOrphanedMissiles = new ProfilerMarker(_PRF_PFX + nameof(FindOrphanedMissiles));
+        private static readonly ProfilerMarker _PRF_FindOrphanedMissiles =
+            new(_PRF_PFX + nameof(FindOrphanedMissiles));
 
-        private static readonly ProfilerMarker _PRF_CheckOutstandingMissiles = new ProfilerMarker(_PRF_PFX + nameof(CheckOutstandingMissiles));
+        private static readonly ProfilerMarker _PRF_CheckOutstandingMissiles =
+            new(_PRF_PFX + nameof(CheckOutstandingMissiles));
+
+        private static readonly ProfilerMarker _PRF_OnEnable = new(_PRF_PFX + nameof(OnEnable));
+
+        private static readonly ProfilerMarker _PRF_Fire = new(_PRF_PFX + nameof(Fire));
+
+        private static readonly ProfilerMarker _PRF_SoftFire = new(_PRF_PFX + nameof(SoftFire));
+
+        private static readonly ProfilerMarker _PRF_Drop = new(_PRF_PFX + nameof(Drop));
+
+        private static readonly ProfilerMarker _PRF_OnDrawGizmosSelected =
+            new(_PRF_PFX + nameof(OnDrawGizmosSelected));
+
+        private static readonly ProfilerMarker _PRF_Update = new(_PRF_PFX + nameof(Update));
+
+        private static readonly ProfilerMarker _PRF_FindMissileRoot =
+            new(_PRF_PFX + nameof(FindMissileRoot));
 
         [FoldoutGroup("Advanced")]
         public PrimitiveColliderType defaultPrimitive = PrimitiveColliderType.Sphere;
 
         [FoldoutGroup("Advanced")]
-        public Vector2 allowedScaleRange = new Vector2(.05f, 3f);
+        public Vector2 allowedScaleRange = new(.05f, 3f);
 
         [FoldoutGroup("Advanced")]
-        public Vector2 allowedMassRange = new Vector2(.1f, 10f);
+        public Vector2 allowedMassRange = new(.1f, 10f);
 
         [FoldoutGroup("Advanced")]
-        public Vector2 allowedForceRange = new Vector2(.5f, 25f);
+        public Vector2 allowedForceRange = new(.5f, 25f);
 
         [FoldoutGroup("Advanced")]
-        public Vector2Int allowedOutstanding = new Vector2Int(1, 100);
+        public Vector2Int allowedOutstanding = new(1, 100);
 
         [FoldoutGroup("Advanced")]
         [MinMaxSlider(-1, 1, true)]
-        public Vector2 allowedLeftToRightRange = new Vector2(-.5f, .5f);
+        public Vector2 allowedLeftToRightRange = new(-.5f, .5f);
 
         [FoldoutGroup("Advanced")]
-        public Vector2 allowedLifetimes = new Vector2(1.0f, 180f);
+        public Vector2 allowedLifetimes = new(1.0f, 180f);
 
-        [FoldoutGroup("General"), ToggleLeft]
+        [FoldoutGroup("General")]
+        [ToggleLeft]
         public bool exact;
 
         [FoldoutGroup("General")]
@@ -63,7 +80,8 @@ namespace Appalachia.Editing.Debugging.Testing
         [FoldoutGroup("Missile")]
         public GameObject missileRoot;
 
-        [FoldoutGroup("Missile"), ToggleLeft]
+        [FoldoutGroup("Missile")]
+        [ToggleLeft]
         public bool uniformScale;
 
         [FoldoutGroup("Missile")]
@@ -89,34 +107,37 @@ namespace Appalachia.Editing.Debugging.Testing
         [FoldoutGroup("Missile")]
         [ShowIf(nameof(_showScalingRangeUniform))]
         [MinMaxSlider(nameof(_scaleMin), nameof(_scaleMax), true)]
-        public Vector2 scalingRangeUniform = new Vector2(.8f, 1.2f);
+        public Vector2 scalingRangeUniform = new(.8f, 1.2f);
 
         [FoldoutGroup("Missile")]
         [ShowIf(nameof(_showScalingRange))]
         [MinMaxSlider(nameof(_scaleMin), nameof(_scaleMax), true)]
-        public Vector2 scalingRangeX = new Vector2(.8f, 1.2f);
+        public Vector2 scalingRangeX = new(.8f, 1.2f);
 
         [FoldoutGroup("Missile")]
         [ShowIf(nameof(_showScalingRange))]
         [MinMaxSlider(nameof(_scaleMin), nameof(_scaleMax), true)]
-        public Vector2 scalingRangeY = new Vector2(.8f, 1.2f);
+        public Vector2 scalingRangeY = new(.8f, 1.2f);
 
         [FoldoutGroup("Missile")]
         [ShowIf(nameof(_showScalingRange))]
         [MinMaxSlider(nameof(_scaleMin), nameof(_scaleMax), true)]
-        public Vector2 scalingRangeZ = new Vector2(.8f, 1.2f);
+        public Vector2 scalingRangeZ = new(.8f, 1.2f);
 
-        [FoldoutGroup("Missile"), ToggleLeft]
+        [FoldoutGroup("Missile")]
+        [ToggleLeft]
         public bool updateMaterial = true;
 
         [FoldoutGroup("Missile")]
         [ShowIf(nameof(updateMaterial))]
         public PhysicMaterial material;
 
-        [FoldoutGroup("Missile"), ToggleLeft]
+        [FoldoutGroup("Missile")]
+        [ToggleLeft]
         public bool updateMass = true;
 
-        [FoldoutGroup("Missile"), ToggleLeft]
+        [FoldoutGroup("Missile")]
+        [ToggleLeft]
         [ShowIf(nameof(_showMass))]
         public bool scaleMass = true;
 
@@ -128,15 +149,15 @@ namespace Appalachia.Editing.Debugging.Testing
         [FoldoutGroup("Missile")]
         [ShowIf(nameof(_showMassRange))]
         [MinMaxSlider(nameof(_massMin), nameof(_massMax), true)]
-        public Vector2 massRange = new Vector2(.8f, 1.2f);
+        public Vector2 massRange = new(.8f, 1.2f);
 
-        [FoldoutGroup("Force")] 
-        public ForceMode forceMode = ForceMode.VelocityChange;
+        [FoldoutGroup("Force")] public ForceMode forceMode = ForceMode.VelocityChange;
 
-        [FoldoutGroup("Force")] 
-        public CollisionDetectionMode collisionDetectionMode = CollisionDetectionMode.ContinuousDynamic;
+        [FoldoutGroup("Force")]
+        public CollisionDetectionMode collisionDetectionMode =
+            CollisionDetectionMode.ContinuousDynamic;
 
-        [FoldoutGroup("Force")] 
+        [FoldoutGroup("Force")]
         public RigidbodyInterpolation interpolation = RigidbodyInterpolation.Interpolate;
 
         [FoldoutGroup("Force")]
@@ -147,7 +168,7 @@ namespace Appalachia.Editing.Debugging.Testing
         [FoldoutGroup("Force")]
         [HideIf(nameof(exact))]
         [MinMaxSlider(nameof(_allowedForceRangeMin), nameof(_allowedForceRangeMax), true)]
-        public Vector2 forceRange = new Vector2(1f, 2f);
+        public Vector2 forceRange = new(1f, 2f);
 
         [FoldoutGroup("Force")]
         [PropertyRange(0.0f, 1f)]
@@ -161,7 +182,7 @@ namespace Appalachia.Editing.Debugging.Testing
         [FoldoutGroup("Force")]
         [HideIf(nameof(exact))]
         [MinMaxSlider(-1.0f, 1.0f, true)]
-        public Vector2 forceForwardToVerticalRatioRange = new Vector2(-.1f, .1f);
+        public Vector2 forceForwardToVerticalRatioRange = new(-.1f, .1f);
 
         [FoldoutGroup("Force")]
         [ShowIf(nameof(exact))]
@@ -170,8 +191,12 @@ namespace Appalachia.Editing.Debugging.Testing
 
         [FoldoutGroup("Force")]
         [HideIf(nameof(exact))]
-        [MinMaxSlider(nameof(_allowedLeftToRightRatioMin), nameof(_allowedLeftToRightRatioMax), true)]
-        public Vector2 forceLeftToRightRatioRange = new Vector2(-.25f, .25f);
+        [MinMaxSlider(
+            nameof(_allowedLeftToRightRatioMin),
+            nameof(_allowedLeftToRightRatioMax),
+            true
+        )]
+        public Vector2 forceLeftToRightRatioRange = new(-.25f, .25f);
 
         [FoldoutGroup("Limits")] public bool limited = true;
 
@@ -185,21 +210,24 @@ namespace Appalachia.Editing.Debugging.Testing
         [PropertyRange(nameof(_allowedLifetimesMin), nameof(_allowedLifetimesMax))]
         public float maxLife = 30;
 
-        private Transform _t;
-
-        private Queue<Missile> _missiles;
         private Queue<Missile> _backupMissiles;
-        private Vector3 _scalingVector;
-
-        private bool _generationQueued;
 
         private float _fireStrength = 1.0f;
 
-        private Vector3 missile_forceVector;
+        private bool _generationQueued;
+
+        private readonly RaycastHit[] _hits = new RaycastHit[4];
+
+        private Queue<Missile> _missiles;
+        private Vector3 _scalingVector;
+
+        private Transform _t;
+        private Collider c;
         private float missile_force;
+
+        private Vector3 missile_forceVector;
         private float missile_mass;
         private Rigidbody rb;
-        private Collider c;
 
         private float _allowedForceRangeMin => allowedForceRange.x;
         private float _allowedForceRangeMax => allowedForceRange.y;
@@ -227,69 +255,6 @@ namespace Appalachia.Editing.Debugging.Testing
         private Color _fire => Colors.CadmiumOrange;
         private Color _softFire => Colors.CadmiumYellow;
         private Color _drop => Colors.DeepSkyBlue1;
-
-        private static readonly ProfilerMarker _PRF_OnEnable = new ProfilerMarker(_PRF_PFX + nameof(OnEnable));
-        public void OnEnable()
-        {
-            using (_PRF_OnEnable.Auto())
-            {
-                _t = transform;
-
-                FindOrphanedMissiles();
-            }
-        }
-
-        public event OnPreFire OnPreFire;
-        public event OnPostFire OnPostFire;
-
-        private static readonly ProfilerMarker _PRF_Fire = new ProfilerMarker(_PRF_PFX + nameof(Fire));
-        [Button(ButtonSizes.Large), LabelText("Fire!!!"), GUIColor(nameof(_fire))]
-        public void Fire()
-        {
-            using (_PRF_Fire.Auto())
-            {
-                _generationQueued = true;
-                _fireStrength = 1.0f;
-            }
-        }
-
-        private static readonly ProfilerMarker _PRF_SoftFire = new ProfilerMarker(_PRF_PFX + nameof(SoftFire));
-        [Button(ButtonSizes.Large), LabelText("Fire"), GUIColor(nameof(_softFire))]
-        public void SoftFire()
-        {
-            using (_PRF_SoftFire.Auto())
-            {
-                _generationQueued = true;
-                _fireStrength = 0.25f;
-            }
-        }
-
-        private static readonly ProfilerMarker _PRF_Drop = new ProfilerMarker(_PRF_PFX + nameof(Drop));
-        [Button(ButtonSizes.Large), LabelText("Drop"), GUIColor(nameof(_drop))]
-        public void Drop()
-        {
-            using (_PRF_Drop.Auto())
-            {
-                _generationQueued = true;
-                _fireStrength = 0.05f;
-            }
-        }
-
-        private static readonly ProfilerMarker _PRF_OnDrawGizmosSelected = new ProfilerMarker(_PRF_PFX + nameof(OnDrawGizmosSelected));
-        private void OnDrawGizmosSelected()
-        {
-            using (_PRF_OnDrawGizmosSelected.Auto())
-            {
-                if (!GizmoCameraChecker.ShouldRenderGizmos())
-                {
-                    return;
-                }
-            
-                Gizmos.DrawRay(_t.position, missile_forceVector);
-            }
-        }
-
-        private static readonly ProfilerMarker _PRF_Update = new ProfilerMarker(_PRF_PFX + nameof(Update));
 #if UNITY_EDITOR
         private void Update()
 #else
@@ -338,7 +303,7 @@ namespace Appalachia.Editing.Debugging.Testing
                             ? prefab.AddComponent<CapsuleCollider>()
                             : defaultPrimitive == PrimitiveColliderType.Cube
                                 ? prefab.AddComponent<CapsuleCollider>()
-                                : (Collider) prefab.AddComponent<SphereCollider>();
+                                : prefab.AddComponent<SphereCollider>();
                     }
 
                     if (rb == null)
@@ -357,7 +322,8 @@ namespace Appalachia.Editing.Debugging.Testing
                 missile.name += $"_{Time.time}";
                 missile.layer = layer.layer;
 
-                c = missile.GetComponentsInChildren<Collider>().FirstOrDefault_NoAlloc(cl => !cl.isTrigger && cl.enabled);
+                c = missile.GetComponentsInChildren<Collider>()
+                           .FirstOrDefault_NoAlloc(cl => !cl.isTrigger && cl.enabled);
                 rb = missile.GetComponentsInChildren<Rigidbody>().FirstOrDefault_NoAlloc();
 
                 if ((c == null) || (rb == null))
@@ -391,7 +357,8 @@ namespace Appalachia.Editing.Debugging.Testing
 
                     var scaleNormalized = uniformScale
                         ? _scalingVector.x.normalize(scalingRangeUniform)
-                        : _scalingVector.normalize(scalingRangeX, scalingRangeY, scalingRangeZ).average();
+                        : _scalingVector.normalize(scalingRangeX, scalingRangeY, scalingRangeZ)
+                                        .average();
 
                     missile_force = force * scaleNormalized;
                     missile_mass = mass * scaleNormalized;
@@ -399,22 +366,38 @@ namespace Appalachia.Editing.Debugging.Testing
                     var verticalVector = Vector3.forward;
                     if (forceForwardToVerticalRatio > 0)
                     {
-                        verticalVector = Vector3.Lerp(verticalVector, Vector3.up, forceForwardToVerticalRatio);
+                        verticalVector = Vector3.Lerp(
+                            verticalVector,
+                            Vector3.up,
+                            forceForwardToVerticalRatio
+                        );
                     }
                     else if (forceForwardToVerticalRatio < 0)
                     {
-                        verticalVector = Vector3.Lerp(verticalVector, Vector3.down, -forceForwardToVerticalRatio);
+                        verticalVector = Vector3.Lerp(
+                            verticalVector,
+                            Vector3.down,
+                            -forceForwardToVerticalRatio
+                        );
                     }
 
                     var horizontalVector = Vector3.forward;
 
                     if (forceLeftToRightRatio > 0)
                     {
-                        horizontalVector = Vector3.Lerp(horizontalVector, Vector3.right, forceLeftToRightRatio);
+                        horizontalVector = Vector3.Lerp(
+                            horizontalVector,
+                            Vector3.right,
+                            forceLeftToRightRatio
+                        );
                     }
                     else if (forceLeftToRightRatio < 0)
                     {
-                        horizontalVector = Vector3.Lerp(horizontalVector, Vector3.left, -forceLeftToRightRatio);
+                        horizontalVector = Vector3.Lerp(
+                            horizontalVector,
+                            Vector3.left,
+                            -forceLeftToRightRatio
+                        );
                     }
 
                     missile_forceVector = verticalVector + horizontalVector;
@@ -424,17 +407,25 @@ namespace Appalachia.Editing.Debugging.Testing
                     _scalingVector.x = uniformScale
                         ? Random.Range(scalingRangeUniform.x, scalingRangeUniform.y)
                         : Random.Range(scalingRangeX.x,       scalingRangeX.y);
-                    _scalingVector.y = uniformScale ? _scalingVector.x : Random.Range(scalingRangeY.x, scalingRangeY.y);
-                    _scalingVector.z = uniformScale ? _scalingVector.x : Random.Range(scalingRangeZ.x, scalingRangeZ.y);
+                    _scalingVector.y = uniformScale
+                        ? _scalingVector.x
+                        : Random.Range(scalingRangeY.x, scalingRangeY.y);
+                    _scalingVector.z = uniformScale
+                        ? _scalingVector.x
+                        : Random.Range(scalingRangeZ.x, scalingRangeZ.y);
 
                     var scaleNormalized = uniformScale
                         ? _scalingVector.x.normalize(scalingRangeUniform)
-                        : _scalingVector.normalize(scalingRangeX, scalingRangeY, scalingRangeZ).average();
-                
+                        : _scalingVector.normalize(scalingRangeX, scalingRangeY, scalingRangeZ)
+                                        .average();
+
                     missile_force = scaleNormalized * Random.Range(forceRange.x, forceRange.y);
                     missile_mass = scaleNormalized * Random.Range(massRange.x,   massRange.y);
-                
-                    var verticalRatio = Random.Range(forceForwardToVerticalRatioRange.x, forceForwardToVerticalRatioRange.y);
+
+                    var verticalRatio = Random.Range(
+                        forceForwardToVerticalRatioRange.x,
+                        forceForwardToVerticalRatioRange.y
+                    );
                     var verticalVector = Vector3.forward;
                     if (verticalRatio > 0)
                     {
@@ -445,16 +436,27 @@ namespace Appalachia.Editing.Debugging.Testing
                         verticalVector = Vector3.Lerp(verticalVector, Vector3.down, -verticalRatio);
                     }
 
-                    var horizontalRatio = Random.Range(forceLeftToRightRatioRange.x, forceLeftToRightRatioRange.y);
+                    var horizontalRatio = Random.Range(
+                        forceLeftToRightRatioRange.x,
+                        forceLeftToRightRatioRange.y
+                    );
                     var horizontalVector = Vector3.forward;
 
                     if (horizontalRatio > 0)
                     {
-                        horizontalVector = Vector3.Lerp(horizontalVector, Vector3.right, horizontalRatio);
+                        horizontalVector = Vector3.Lerp(
+                            horizontalVector,
+                            Vector3.right,
+                            horizontalRatio
+                        );
                     }
                     else if (horizontalRatio < 0)
                     {
-                        horizontalVector = Vector3.Lerp(horizontalVector, Vector3.left, -horizontalRatio);
+                        horizontalVector = Vector3.Lerp(
+                            horizontalVector,
+                            Vector3.left,
+                            -horizontalRatio
+                        );
                     }
 
                     missile_forceVector = verticalVector + horizontalVector;
@@ -483,7 +485,6 @@ namespace Appalachia.Editing.Debugging.Testing
             rb.isKinematic = false;*/
                 rb.collisionDetectionMode = collisionDetectionMode;
 
-            
                 var missileVector = mt.TransformVector(missile_forceVector.normalized).normalized;
 
                 var hitCount = Physics.RaycastNonAlloc(_transform.position, missileVector, _hits);
@@ -494,16 +495,75 @@ namespace Appalachia.Editing.Debugging.Testing
 
                     missile_force += forceScalingPerMeter * hit.distance;
                 }
-            
+
                 missile_forceVector = missile_force * _fireStrength * missileVector;
 
                 CheckOutstandingMissiles();
             }
         }
 
-        private RaycastHit[] _hits = new RaycastHit[4];
+        public void OnEnable()
+        {
+            using (_PRF_OnEnable.Auto())
+            {
+                _t = transform;
 
-        private static readonly ProfilerMarker _PRF_FindMissileRoot = new ProfilerMarker(_PRF_PFX + nameof(FindMissileRoot));
+                FindOrphanedMissiles();
+            }
+        }
+
+        private void OnDrawGizmosSelected()
+        {
+            using (_PRF_OnDrawGizmosSelected.Auto())
+            {
+                if (!GizmoCameraChecker.ShouldRenderGizmos())
+                {
+                    return;
+                }
+
+                Gizmos.DrawRay(_t.position, missile_forceVector);
+            }
+        }
+
+        public event OnPreFire OnPreFire;
+        public event OnPostFire OnPostFire;
+
+        [Button(ButtonSizes.Large)]
+        [LabelText("Fire!!!")]
+        [GUIColor(nameof(_fire))]
+        public void Fire()
+        {
+            using (_PRF_Fire.Auto())
+            {
+                _generationQueued = true;
+                _fireStrength = 1.0f;
+            }
+        }
+
+        [Button(ButtonSizes.Large)]
+        [LabelText("Fire")]
+        [GUIColor(nameof(_softFire))]
+        public void SoftFire()
+        {
+            using (_PRF_SoftFire.Auto())
+            {
+                _generationQueued = true;
+                _fireStrength = 0.25f;
+            }
+        }
+
+        [Button(ButtonSizes.Large)]
+        [LabelText("Drop")]
+        [GUIColor(nameof(_drop))]
+        public void Drop()
+        {
+            using (_PRF_Drop.Auto())
+            {
+                _generationQueued = true;
+                _fireStrength = 0.05f;
+            }
+        }
+
         private void FindMissileRoot()
         {
             using (_PRF_FindMissileRoot.Auto())
@@ -550,10 +610,14 @@ namespace Appalachia.Editing.Debugging.Testing
 
                         if (missile == null)
                         {
-                            missile = childObject.AddComponent<Missile>();   
-                            missile.Initialize(childObject, child.GetComponent<Rigidbody>(), child.GetComponent<Collider>());
+                            missile = childObject.AddComponent<Missile>();
+                            missile.Initialize(
+                                childObject,
+                                child.GetComponent<Rigidbody>(),
+                                child.GetComponent<Collider>()
+                            );
                         }
-                        
+
                         _missiles.Enqueue(missile);
                     }
                 }
@@ -591,11 +655,13 @@ namespace Appalachia.Editing.Debugging.Testing
                         continue;
                     }
 
-                    if ((missile.age > maxLife) || ((_missiles.Count + _backupMissiles.Count) > outstandingFires))
+                    if ((missile.age > maxLife) ||
+                        ((_missiles.Count + _backupMissiles.Count) > outstandingFires))
                     {
                         missile.Destroy();
                     }
-                    else if ((missile.go.transform.position.y < -1000) || (missile.rb.velocity.magnitude > 250f))
+                    else if ((missile.go.transform.position.y < -1000) ||
+                             (missile.rb.velocity.magnitude > 250f))
                     {
                         missile.Destroy();
                     }
@@ -610,8 +676,6 @@ namespace Appalachia.Editing.Debugging.Testing
                 _backupMissiles = t;
             }
         }
-        
-        
 
         [ButtonGroup]
         private void DestroyAllMissiles()
@@ -628,7 +692,6 @@ namespace Appalachia.Editing.Debugging.Testing
                 }
             }
         }
-
 
 #if UNITY_EDITOR
         [MenuItem("Tools/Bazooka!/Fire!!!!" + SHC.CTRL_ALT_SHFT_F)]
@@ -657,12 +720,11 @@ namespace Appalachia.Editing.Debugging.Testing
         {
             instance.DestroyAllMissiles();
         }
-        
-        
+
         [MenuItem("Tools/Bazooka!/Load Missile!" + SHC.CTRL_ALT_SHFT_M)]
         private static void MenuSetMissile()
         {
-            if (Selection.gameObjects != null && Selection.gameObjects.Length == 1)
+            if ((Selection.gameObjects != null) && (Selection.gameObjects.Length == 1))
             {
                 instance.prefab = Selection.gameObjects[0];
             }

@@ -14,10 +14,20 @@ namespace Appalachia.Editing.Attributes
     [Conditional("UNITY_EDITOR")]
     public class SmartLabelAttribute : Attribute
     {
+        private bool _bold;
+        private int _hue;
+        private bool _postfix;
+
+        private string _propertyColor;
+        private int _saturation;
+        private bool _shallowColor;
+        private readonly string _text;
+        private int _value;
+
         public SmartLabelAttribute()
         {
-            
         }
+
         public SmartLabelAttribute(string text)
         {
             Text = text;
@@ -34,31 +44,20 @@ namespace Appalachia.Editing.Attributes
             _value = sla._value;
             AlignWith = sla.AlignWith;
             Padding = sla.Padding;
-
         }
 
         public SmartLabelAttribute(SmartLabelChildrenAttribute sla)
         {
-           _propertyColor = sla._propertyColor;
-           _bold = sla._bold;
-           _postfix = sla._suffix;
-           _hue = sla._hue;
-           _saturation = sla._saturation;
-           _value = sla._value;
-           AlignWith = sla.AlignWith;
-           Padding = sla.Padding;
-
+            _propertyColor = sla._propertyColor;
+            _bold = sla._bold;
+            _postfix = sla._suffix;
+            _hue = sla._hue;
+            _saturation = sla._saturation;
+            _value = sla._value;
+            AlignWith = sla.AlignWith;
+            Padding = sla.Padding;
         }
 
-        private string _propertyColor;
-        private string _text;
-        private bool _bold;
-        private bool _postfix;
-        private int _hue;
-        private int _saturation;
-        private int _value;
-        private bool _shallowColor;
-        
         public string AlignWith { get; set; }
 
         public string Text { get; set; }
@@ -69,19 +68,13 @@ namespace Appalachia.Editing.Attributes
         public bool Bold
         {
             get => _bold;
-            set
-            {
-                _bold = value;
-            }
+            set => _bold = value;
         }
-        
+
         public bool Postfix
         {
             get => _postfix;
-            set
-            {
-                _postfix = value;
-            }
+            set => _postfix = value;
         }
 
         public int Hue
@@ -127,10 +120,7 @@ namespace Appalachia.Editing.Attributes
         public bool ShallowColor
         {
             get => _shallowColor;
-            set
-            {
-                _shallowColor = value;
-            }
+            set => _shallowColor = value;
         }
 
         public bool HasPropertyColor { get; private set; }

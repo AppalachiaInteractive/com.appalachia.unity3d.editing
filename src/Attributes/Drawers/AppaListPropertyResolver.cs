@@ -16,14 +16,39 @@ namespace Appalachia.Editing.Attributes.Drawers
     public class AppaListPropertyResolver<TElement, TList> : BaseOrderedCollectionResolver<TList>
         where TList : AppaList<TElement>
     {
-        private const string _PRF_PFX = nameof(AppaListPropertyResolver<TElement,TList>) + ".";
-        private readonly Dictionary<int, InspectorPropertyInfo> childInfos = new Dictionary<int, InspectorPropertyInfo>();
+        private const string _PRF_PFX = nameof(AppaListPropertyResolver<TElement, TList>) + ".";
+
+        private static readonly ProfilerMarker _PRF_GetChildInfo =
+            new(_PRF_PFX + nameof(GetChildInfo));
+
+        private static readonly ProfilerMarker _PRF_ChildPropertyRequiresRefresh =
+            new(_PRF_PFX + nameof(ChildPropertyRequiresRefresh));
+
+        private static readonly ProfilerMarker _PRF_ChildNameToIndex =
+            new(_PRF_PFX + nameof(ChildNameToIndex));
+
+        private static readonly ProfilerMarker _PRF_GetChildCount =
+            new(_PRF_PFX + nameof(GetChildCount));
+
+        private static readonly ProfilerMarker _PRF_Add = new(_PRF_PFX + nameof(Add));
+
+        private static readonly ProfilerMarker _PRF_InsertAt = new(_PRF_PFX + nameof(InsertAt));
+
+        private static readonly ProfilerMarker _PRF_Remove = new(_PRF_PFX + nameof(Remove));
+
+        private static readonly ProfilerMarker _PRF_RemoveAt = new(_PRF_PFX + nameof(RemoveAt));
+
+        private static readonly ProfilerMarker _PRF_Clear = new(_PRF_PFX + nameof(Clear));
+
+        private static readonly ProfilerMarker _PRF_CollectionIsReadOnly =
+            new(_PRF_PFX + nameof(CollectionIsReadOnly));
+
+        private readonly Dictionary<int, InspectorPropertyInfo> childInfos = new();
 
         public override Type ElementType => typeof(TElement);
 
         public bool MaySupportPrefabModifications => true;
 
-        private static readonly ProfilerMarker _PRF_GetChildInfo = new ProfilerMarker(_PRF_PFX + nameof(GetChildInfo));
         public override InspectorPropertyInfo GetChildInfo(int childIndex)
         {
             using (_PRF_GetChildInfo.Auto())
@@ -44,7 +69,14 @@ namespace Appalachia.Editing.Attributes.Drawers
                             (ref TList list) => list[childIndex],
                             (ref TList list, TElement element) => list[childIndex] = element
                         ),
-                        Property.Attributes.Where(attr => !attr.GetType().IsDefined(typeof(DontApplyToListElementsAttribute), true)).ToArray()
+                        Property.Attributes.Where(
+                                     attr => !attr.GetType()
+                                                  .IsDefined(
+                                                       typeof(DontApplyToListElementsAttribute),
+                                                       true
+                                                   )
+                                 )
+                                .ToArray()
                     );
                     childInfos[childIndex] = inspectorPropertyInfo;
                 }
@@ -53,7 +85,6 @@ namespace Appalachia.Editing.Attributes.Drawers
             }
         }
 
-        private static readonly ProfilerMarker _PRF_ChildPropertyRequiresRefresh = new ProfilerMarker(_PRF_PFX + nameof(ChildPropertyRequiresRefresh));
         public override bool ChildPropertyRequiresRefresh(int index, InspectorPropertyInfo info)
         {
             using (_PRF_ChildPropertyRequiresRefresh.Auto())
@@ -62,7 +93,6 @@ namespace Appalachia.Editing.Attributes.Drawers
             }
         }
 
-        private static readonly ProfilerMarker _PRF_ChildNameToIndex = new ProfilerMarker(_PRF_PFX + nameof(ChildNameToIndex));
         public override int ChildNameToIndex(string name)
         {
             using (_PRF_ChildNameToIndex.Auto())
@@ -71,7 +101,6 @@ namespace Appalachia.Editing.Attributes.Drawers
             }
         }
 
-        private static readonly ProfilerMarker _PRF_GetChildCount = new ProfilerMarker(_PRF_PFX + nameof(GetChildCount));
         protected override int GetChildCount(TList value)
         {
             using (_PRF_GetChildCount.Auto())
@@ -80,7 +109,6 @@ namespace Appalachia.Editing.Attributes.Drawers
             }
         }
 
-        private static readonly ProfilerMarker _PRF_Add = new ProfilerMarker(_PRF_PFX + nameof(Add));
         protected override void Add(TList collection, object value)
         {
             using (_PRF_Add.Auto())
@@ -89,7 +117,6 @@ namespace Appalachia.Editing.Attributes.Drawers
             }
         }
 
-        private static readonly ProfilerMarker _PRF_InsertAt = new ProfilerMarker(_PRF_PFX + nameof(InsertAt));
         protected override void InsertAt(TList collection, int index, object value)
         {
             using (_PRF_InsertAt.Auto())
@@ -98,7 +125,6 @@ namespace Appalachia.Editing.Attributes.Drawers
             }
         }
 
-        private static readonly ProfilerMarker _PRF_Remove = new ProfilerMarker(_PRF_PFX + nameof(Remove));
         protected override void Remove(TList collection, object value)
         {
             using (_PRF_Remove.Auto())
@@ -107,7 +133,6 @@ namespace Appalachia.Editing.Attributes.Drawers
             }
         }
 
-        private static readonly ProfilerMarker _PRF_RemoveAt = new ProfilerMarker(_PRF_PFX + nameof(RemoveAt));
         protected override void RemoveAt(TList collection, int index)
         {
             using (_PRF_RemoveAt.Auto())
@@ -116,17 +141,14 @@ namespace Appalachia.Editing.Attributes.Drawers
             }
         }
 
-        private static readonly ProfilerMarker _PRF_Clear = new ProfilerMarker(_PRF_PFX + nameof(Clear));
         protected override void Clear(TList collection)
         {
             using (_PRF_Clear.Auto())
             {
-
                 collection.Clear();
             }
         }
 
-        private static readonly ProfilerMarker _PRF_CollectionIsReadOnly = new ProfilerMarker(_PRF_PFX + nameof(CollectionIsReadOnly));
         protected override bool CollectionIsReadOnly(TList collection)
         {
             using (_PRF_CollectionIsReadOnly.Auto())

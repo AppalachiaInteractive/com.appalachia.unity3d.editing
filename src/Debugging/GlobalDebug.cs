@@ -1,4 +1,3 @@
-
 #if UNITY_EDITOR
 
 using System;
@@ -13,21 +12,18 @@ namespace Appalachia.Editing.Debugging
     [Serializable]
     public class GlobalDebug : SelfSavingSingletonScriptableObject<GlobalDebug>
     {
-        private bool enableAny => debugMode != DebugMode.Off;
-        private bool enableDebugMotion => debugMode == DebugMode.DebugMotion;
-        private bool enableDebugMesh => debugMode == DebugMode.DebugMesh;
-
-        [TitleGroup("Debug")] 
+        [TitleGroup("Debug")]
         [OnValueChanged(nameof(Update))]
         public DebugMode debugMode = DebugMode.Off;
 
-        [BoxGroup("Debug/Motion"), HideLabel]
+        [BoxGroup("Debug/Motion")]
+        [HideLabel]
         [EnableIf(nameof(enableDebugMotion))]
         [OnValueChanged(nameof(Update))]
         public DebugMotion debugMotion = DebugMotion.PrimaryRoll;
 
-
-        [BoxGroup("Debug/Mesh"), HideLabel]
+        [BoxGroup("Debug/Mesh")]
+        [HideLabel]
         [EnableIf(nameof(enableDebugMesh))]
         [OnValueChanged(nameof(Update))]
         public DebugMesh debugMesh = DebugMesh.VertexColorR;
@@ -36,11 +32,15 @@ namespace Appalachia.Editing.Debugging
         [MinMaxSlider(0.0f, 1.0f)]
         [EnableIf(nameof(enableAny))]
         [OnValueChanged(nameof(Update))]
-        public Vector2 remap = new Vector2(0f, 1f);
+        public Vector2 remap = new(0f, 1f);
+
+        private bool _enabled;
+        private bool _initialized;
 
         private Shader debugShader;
-        private bool _initialized;
-        private bool _enabled;
+        private bool enableAny => debugMode != DebugMode.Off;
+        private bool enableDebugMotion => debugMode == DebugMode.DebugMotion;
+        private bool enableDebugMesh => debugMode == DebugMode.DebugMesh;
 
         [Button]
         public void SelectShader()
@@ -85,21 +85,21 @@ namespace Appalachia.Editing.Debugging
 
                     SceneView.lastActiveSceneView.SetSceneViewShaderReplace(debugShader, null);
 
-                    int mode = 0;
-                    
+                    var mode = 0;
+
                     if (debugMode == DebugMode.DebugMotion)
                     {
-                        mode =  (int) debugMotion;
+                        mode = (int) debugMotion;
                     }
                     else if (debugMode == DebugMode.DebugMesh)
                     {
                         mode = (int) debugMesh;
                     }
-                    
+
                     Shader.SetGlobalFloat(GSPL.Get(GSC.DEBUG._DEBUG_MODE), mode);
-                    Shader.SetGlobalFloat(GSPL.Get(GSC.DEBUG._DEBUG_MIN), remap.x);
-                    Shader.SetGlobalFloat(GSPL.Get(GSC.DEBUG._DEBUG_MAX), remap.y);
-                    
+                    Shader.SetGlobalFloat(GSPL.Get(GSC.DEBUG._DEBUG_MIN),  remap.x);
+                    Shader.SetGlobalFloat(GSPL.Get(GSC.DEBUG._DEBUG_MAX),  remap.y);
+
                     SceneView.lastActiveSceneView.Repaint();
                 }
             }

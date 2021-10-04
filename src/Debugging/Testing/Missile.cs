@@ -5,6 +5,14 @@ namespace Appalachia.Editing.Debugging.Testing
 {
     public class Missile : MonoBehaviour
     {
+        public bool keepAlive;
+        public double createdAt;
+        public GameObject go;
+        public Rigidbody rb;
+        public Collider c;
+
+        public double age => Time.time - createdAt;
+
         public void Initialize(GameObject go, Rigidbody rb, Collider c)
         {
             this.rb = rb;
@@ -35,21 +43,13 @@ namespace Appalachia.Editing.Debugging.Testing
             }
         }
 
-        public bool keepAlive;
-        public double createdAt;
-        public GameObject go;
-        public Rigidbody rb;
-        public Collider c;
-
-        public double age => Time.time - createdAt;
-
         public void Destroy()
         {
             if (keepAlive)
             {
                 return;
             }
-            
+
             go.DestroySafely();
             if (rb != null)
             {

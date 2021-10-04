@@ -9,8 +9,10 @@ namespace Appalachia.Editing.Behaviours
         where T : EditorOnlySingletonMonoBehaviour<T>
     {
         private const string _PRF_PFX = nameof(EditorOnlySingletonMonoBehaviour<T>) + ".";
-        
+
         private static T __instance;
+
+        private static readonly ProfilerMarker _PRF_Awake = new(_PRF_PFX + nameof(Awake));
 
         private static T _instance
         {
@@ -30,11 +32,11 @@ namespace Appalachia.Editing.Behaviours
                 return __instance;
             }
         }
+
         public static T I => _instance;
         public static T Instance => _instance;
         public static T instance => _instance;
 
-        private static readonly ProfilerMarker _PRF_Awake = new ProfilerMarker(_PRF_PFX + nameof(Awake));
         protected override void Internal_Awake()
         {
             using (_PRF_Awake.Auto())

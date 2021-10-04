@@ -16,11 +16,13 @@ namespace Appalachia.Editing.Attributes.Drawers
     {
         private const string _PRF_PFX = nameof(SmartTitleGroupAttributeDrawer) + ".";
 
-        private static readonly ProfilerMarker _PRF_DrawPropertyLayout = new ProfilerMarker(_PRF_PFX + nameof(DrawPropertyLayout));
-        
-        private TitleContext _propertyContext;
+        private static readonly ProfilerMarker _PRF_DrawPropertyLayout =
+            new(_PRF_PFX + nameof(DrawPropertyLayout));
+
         private ValueResolver<Color> _colorContext;
-        
+
+        private TitleContext _propertyContext;
+
         protected override void DrawPropertyLayout(GUIContent label)
         {
             using (_PRF_DrawPropertyLayout.Auto())
@@ -31,8 +33,16 @@ namespace Appalachia.Editing.Attributes.Drawers
                 if (_propertyContext == null)
                 {
                     _propertyContext = new TitleContext();
-                    _propertyContext.TitleHelper = ValueResolver.Get(property,    attribute.GroupName, _propertyContext.ErrorMessage);
-                    _propertyContext.SubtitleHelper = ValueResolver.Get(property, attribute.Subtitle,  _propertyContext.ErrorMessage);
+                    _propertyContext.TitleHelper = ValueResolver.Get(
+                        property,
+                        attribute.GroupName,
+                        _propertyContext.ErrorMessage
+                    );
+                    _propertyContext.SubtitleHelper = ValueResolver.Get(
+                        property,
+                        attribute.Subtitle,
+                        _propertyContext.ErrorMessage
+                    );
                 }
 
                 if (_colorContext == null)

@@ -15,22 +15,48 @@ namespace Appalachia.Editing.Behaviours
     [ExecuteAlways]
     public abstract class EditorOnlyMonoBehaviour : InternalMonoBehaviour
     {
-        [HideInInspector]
-        public abstract EditorOnlyExclusionStyle exclusionStyle { get; }
-        
         private const string _PRF_PFX = nameof(EditorOnlyMonoBehaviour) + ".";
-        private static readonly ProfilerMarker _PRF_Awake = new ProfilerMarker(_PRF_PFX + "Awake");
-        private static readonly ProfilerMarker _PRF_OnEnable = new ProfilerMarker(_PRF_PFX + "OnEnable");
-        private static readonly ProfilerMarker _PRF_Start = new ProfilerMarker(_PRF_PFX + nameof(Start));
-        private static readonly ProfilerMarker _PRF_Reset = new ProfilerMarker(_PRF_PFX + "Reset");
+        private static readonly ProfilerMarker _PRF_Awake = new(_PRF_PFX + "Awake");
+        private static readonly ProfilerMarker _PRF_OnEnable = new(_PRF_PFX + "OnEnable");
+        private static readonly ProfilerMarker _PRF_Start = new(_PRF_PFX + nameof(Start));
+        private static readonly ProfilerMarker _PRF_Reset = new(_PRF_PFX + "Reset");
+
+        protected static bool VSP_ENABLING;
+
+        private static readonly ProfilerMarker _PRF_Ensure_EditorTag =
+            new(_PRF_PFX + nameof(EnsureCorrectEditorTag));
+
+        [HideInInspector] public abstract EditorOnlyExclusionStyle exclusionStyle { get; }
+
+        protected void Awake()
+        {
+            using (_PRF_Awake.Auto())
+            {
+                VSP_ENABLING = false; //VegetationSystemPro.EXECUTING_ENABLE;
+                if (VSP_ENABLING)
+                {
+                    return;
+                }
+
+                if (!VSP_ENABLING && !Application.isPlaying)
+                {
+                    EnsureCorrectEditorTag();
+                }
+
+                Internal_Awake();
+            }
+        }
 
         protected void Reset()
         {
             using (_PRF_Reset.Auto())
             {
                 VSP_ENABLING = false; //VegetationSystemPro.EXECUTING_ENABLE;
-                if (VSP_ENABLING) return;
-                
+                if (VSP_ENABLING)
+                {
+                    return;
+                }
+
                 if (!Application.isPlaying)
                 {
                     EnsureCorrectEditorTag();
@@ -44,14 +70,17 @@ namespace Appalachia.Editing.Behaviours
         {
             using (_PRF_Start.Auto())
             {
-                VSP_ENABLING = false;//VegetationSystemPro.EXECUTING_ENABLE;
-                if (VSP_ENABLING) return;
-                
+                VSP_ENABLING = false; //VegetationSystemPro.EXECUTING_ENABLE;
+                if (VSP_ENABLING)
+                {
+                    return;
+                }
+
                 if (!Application.isPlaying)
                 {
                     EnsureCorrectEditorTag();
                 }
-                
+
                 Internal_Start();
             }
         }
@@ -61,48 +90,42 @@ namespace Appalachia.Editing.Behaviours
             using (_PRF_OnEnable.Auto())
             {
                 VSP_ENABLING = false; //VegetationSystemPro.EXECUTING_ENABLE;
-                if (VSP_ENABLING) return;
-                
+                if (VSP_ENABLING)
+                {
+                    return;
+                }
+
                 if (!Application.isPlaying)
                 {
                     EnsureCorrectEditorTag();
                 }
-                
+
                 Internal_OnEnable();
             }
         }
 
-        protected void Awake()
+        protected virtual void Internal_Reset()
         {
-            using (_PRF_Awake.Auto())
-            {
-                VSP_ENABLING = false; //VegetationSystemPro.EXECUTING_ENABLE;
-                if (VSP_ENABLING) return;
-                
-                if (!VSP_ENABLING && !Application.isPlaying)
-                {
-                    EnsureCorrectEditorTag();
-                }
-                
-                Internal_Awake();
-            }
         }
-        
-        protected virtual void Internal_Reset(){}
-        protected virtual void Internal_OnEnable(){}
-        protected virtual void Internal_Start(){}
-        
-        protected virtual void Internal_Awake(){}
 
-        protected static bool VSP_ENABLING = false;
+        protected virtual void Internal_OnEnable()
+        {
+        }
 
-        private static readonly ProfilerMarker _PRF_Ensure_EditorTag = new ProfilerMarker(_PRF_PFX + nameof(EnsureCorrectEditorTag));
+        protected virtual void Internal_Start()
+        {
+        }
+
+        protected virtual void Internal_Awake()
+        {
+        }
+
         public void EnsureCorrectEditorTag()
         {
             using (_PRF_Ensure_EditorTag.Auto())
             {
                 var isObjectExcluded = gameObject.CompareTag(TAGS.EditorOnly);
-                
+
                 switch (exclusionStyle)
                 {
                     case EditorOnlyExclusionStyle.Component:
@@ -110,6 +133,7 @@ namespace Appalachia.Editing.Behaviours
                         {
                             gameObject.tag = TAGS._untagged;
                         }
+
                         break;
                     case EditorOnlyExclusionStyle.ObjectIfNoConflict:
                     {
@@ -184,7 +208,6 @@ namespace Appalachia.Editing.Behaviours
                     default:
                         throw new ArgumentOutOfRangeException();
                 }
-                
             }
         }
     }

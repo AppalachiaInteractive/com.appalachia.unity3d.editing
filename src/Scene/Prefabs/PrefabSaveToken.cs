@@ -14,12 +14,15 @@ namespace Appalachia.Editing.Scene.Prefabs
 {
     public sealed class PrefabSaveToken : IDisposable
     {
+        private Action<PrefabDisposalToken> _onDispose;
+        private string _path;
         private GameObject _prefab;
         private UnityEngine.SceneManagement.Scene _scene;
-        private string _path;
-        private Action<PrefabDisposalToken> _onDispose;
 
-        public PrefabSaveToken(GameObject prefab, UnityEngine.SceneManagement.Scene scene, Action<PrefabDisposalToken> onDispose = null)
+        public PrefabSaveToken(
+            GameObject prefab,
+            UnityEngine.SceneManagement.Scene scene,
+            Action<PrefabDisposalToken> onDispose = null)
         {
             _prefab = prefab;
             _scene = scene;

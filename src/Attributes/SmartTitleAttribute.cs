@@ -13,21 +13,20 @@ namespace Appalachia.Editing.Attributes
     [Conditional("UNITY_EDITOR")]
     public class SmartTitleAttribute : Attribute
     {
-        public string Title;
+        public TitleAlignments Alignment;
 
-        public string Subtitle;
+        public bool Below;
 
         public bool Bold;
-
-        public bool HorizontalLine;
-
-        public TitleAlignments Alignment;
 
         public string Color;
 
         public string HideIfMemberName;
 
-        public bool Below;
+        public bool HorizontalLine;
+
+        public string Subtitle;
+        public string Title;
 
         public SmartTitleAttribute(
             string title,

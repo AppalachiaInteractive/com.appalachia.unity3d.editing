@@ -13,8 +13,6 @@ namespace Appalachia.Editing.Debugging
 
         public bool terrainOnly = true;
 
-        private RaycastHit[] hits = new RaycastHit[16];
-
         public Vector3 _lastPosition;
         public Quaternion _lastRotation;
 
@@ -26,9 +24,11 @@ namespace Appalachia.Editing.Debugging
 
         public bool freeze;
         public bool locked;
-        private RaycastHit[] _hits = new RaycastHit[12];
+        private readonly RaycastHit[] _hits = new RaycastHit[12];
 
-        void Update()
+        private RaycastHit[] hits = new RaycastHit[16];
+
+        private void Update()
         {
             try
             {
@@ -36,13 +36,14 @@ namespace Appalachia.Editing.Debugging
                 {
                     if (locked)
                     {
-                        transform.position =  _targetPosition;
+                        transform.position = _targetPosition;
                         transform.rotation = _targetRotation;
-                        
+
                         return;
                     }
-                    
-                    if (transform.position == _targetPosition && transform.rotation == _targetRotation)
+
+                    if ((transform.position == _targetPosition) &&
+                        (transform.rotation == _targetRotation))
                     {
                         locked = true;
                     }
@@ -50,19 +51,26 @@ namespace Appalachia.Editing.Debugging
                     {
                         locked = false;
                     }
-                    
+
                     if (locked)
                     {
-                        transform.position =  _targetPosition;
+                        transform.position = _targetPosition;
                         transform.rotation = _targetRotation;
-                        
+
                         return;
                     }
-                    
-                    transform.position = Vector3.Lerp(transform.position, _targetPosition, positionLerpSpeed);
-                    
-                    transform.rotation = Quaternion.Slerp(transform.rotation, _targetRotation, rotationLerpSpeed);
 
+                    transform.position = Vector3.Lerp(
+                        transform.position,
+                        _targetPosition,
+                        positionLerpSpeed
+                    );
+
+                    transform.rotation = Quaternion.Slerp(
+                        transform.rotation,
+                        _targetRotation,
+                        rotationLerpSpeed
+                    );
 
                     return;
                 }
@@ -87,29 +95,35 @@ namespace Appalachia.Editing.Debugging
                 var position = t.position;
                 var rotation = t.rotation;
 
-
-
                 var transformedOffset = reference.TransformPoint(offset);
 
                 var rayOrigin = transformedOffset;
 
-                Vector3 targetPosition = rayOrigin;
-                Vector3 targetNormal = Vector3.up;
-                
+                var targetPosition = rayOrigin;
+                var targetNormal = Vector3.up;
+
                 if (terrainOnly)
                 {
                     var terrain = Terrain.activeTerrain;
 
                     targetPosition.y = terrain.SampleHeight(rayOrigin);
 
-                    targetNormal = terrain.terrainData.GetInterpolatedNormal(targetPosition.x, targetPosition.z);
-
+                    targetNormal = terrain.terrainData.GetInterpolatedNormal(
+                        targetPosition.x,
+                        targetPosition.z
+                    );
                 }
                 else
                 {
                     var ray = new Ray(rayOrigin, Vector3.down);
 
-                    var hitCount = Physics.RaycastNonAlloc(ray, _hits, 128f, layers, QueryTriggerInteraction.Ignore);
+                    var hitCount = Physics.RaycastNonAlloc(
+                        ray,
+                        _hits,
+                        128f,
+                        layers,
+                        QueryTriggerInteraction.Ignore
+                    );
 
                     if (hitCount > 0)
                     {
@@ -121,17 +135,16 @@ namespace Appalachia.Editing.Debugging
                     }
                 }
 
-
                 _targetPosition = targetPosition;
-                
+
                 var targetUp = (targetNormal + Vector3.up + Vector3.up) / 3f;
                 var newForward = Vector3.Cross(reference.right, targetUp);
                 _targetRotation = Quaternion.LookRotation(newForward, targetUp);
 
-                if (position == _lastPosition &&
-                    rotation == _lastRotation &&
-                    _targetPosition == _lastPosition &&
-                    _targetRotation == _lastRotation)
+                if ((position == _lastPosition) &&
+                    (rotation == _lastRotation) &&
+                    (_targetPosition == _lastPosition) &&
+                    (_targetRotation == _lastRotation))
                 {
                     return;
                 }
@@ -146,7 +159,6 @@ namespace Appalachia.Editing.Debugging
             {
                 Debug.LogError(ex);
             }
-
         }
     }
 }

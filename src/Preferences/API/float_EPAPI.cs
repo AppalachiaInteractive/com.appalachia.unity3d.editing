@@ -22,7 +22,9 @@ namespace Appalachia.Editing.Preferences.API
 
         public float Draw(string label, float value, float low, float high)
         {
-            var val = low != high ? EditorGUILayout.Slider(label, value, low, high) : EditorGUILayout.FloatField(label, value);
+            var val = low != high
+                ? EditorGUILayout.Slider(label, value, low, high)
+                : EditorGUILayout.FloatField(label, value);
 
             return val;
         }

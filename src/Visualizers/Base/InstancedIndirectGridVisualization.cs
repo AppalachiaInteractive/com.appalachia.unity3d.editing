@@ -10,18 +10,22 @@ namespace Appalachia.Editing.Visualizers.Base
         [OnValueChanged(nameof(Regenerate))]
         [PropertyRange(.1f, 10f)]
         public float visualizationDensity = 1f;
-        
+
         [PropertyOrder(-100)]
         [OnValueChanged(nameof(Regenerate))]
         [PropertyRange(.05f, 1f)]
         public float visualizationSize = .25f;
 
-        protected override void GetPositionData(Bounds bounds, out Vector3[] positions, out Quaternion[] rotations, out Vector3[] scales)
+        protected override void GetPositionData(
+            Bounds bounds,
+            out Vector3[] positions,
+            out Quaternion[] rotations,
+            out Vector3[] scales)
         {
             var xCount = (int) (bounds.size.x * visualizationDensity);
             var zCount = (int) (bounds.size.z * visualizationDensity);
 
-            visualizationCount = (xCount * zCount);
+            visualizationCount = xCount * zCount;
 
             positions = new Vector3[visualizationCount];
             rotations = new Quaternion[visualizationCount];
@@ -47,7 +51,11 @@ namespace Appalachia.Editing.Visualizers.Base
             }
         }
 
-        protected abstract void GetGridPosition(Vector3 position, out float height, out Quaternion rotation, out Vector3 scale);
+        protected abstract void GetGridPosition(
+            Vector3 position,
+            out float height,
+            out Quaternion rotation,
+            out Vector3 scale);
     }
 }
 #endif

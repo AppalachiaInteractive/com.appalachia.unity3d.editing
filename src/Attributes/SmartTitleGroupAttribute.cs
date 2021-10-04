@@ -12,17 +12,16 @@ namespace Appalachia.Editing.Attributes
     [Conditional("UNITY_EDITOR")]
     public sealed class SmartTitleGroupAttribute : PropertyGroupAttribute
     {
-        public string Subtitle;
-
         public TitleAlignments Alignment;
-
-        public bool HorizontalLine;
 
         public bool Bold;
 
-        public bool Indent;
-
         public string Color;
+
+        public bool HorizontalLine;
+
+        public bool Indent;
+        public string Subtitle;
 
         public SmartTitleGroupAttribute(
             string title,

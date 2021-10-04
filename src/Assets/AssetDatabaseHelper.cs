@@ -18,10 +18,11 @@ namespace Appalachia.Editing.Assets
             var searchType = typeof(T);
             var searchTypeName = searchType.Name;
 
-            var guids = AssetDatabase.FindAssets($"t:{searchTypeName} {searchString ?? string.Empty}");
+            var guids =
+                AssetDatabase.FindAssets($"t:{searchTypeName} {searchString ?? string.Empty}");
 
             var hits = 0;
-            
+
             for (var i = 0; i < guids.Length; i++)
             {
                 var path = AssetDatabase.GUIDToAssetPath(guids[i]);
@@ -40,7 +41,7 @@ namespace Appalachia.Editing.Assets
                 for (var i = 0; i < guids.Length; i++)
                 {
                     var path = AssetDatabase.GUIDToAssetPath(guids[i]);
-                
+
                     results[i] = AssetDatabase.LoadAssetAtPath<T>(path);
                 }
 
@@ -53,7 +54,7 @@ namespace Appalachia.Editing.Assets
                 for (var i = 0; i < guids.Length; i++)
                 {
                     var path = AssetDatabase.GUIDToAssetPath(guids[i]);
-                
+
                     var j = AssetDatabase.LoadAssetAtPath<T>(path);
 
                     if (j != null)
@@ -65,7 +66,7 @@ namespace Appalachia.Editing.Assets
                 return results.ToArray();
             }
         }
-        
+
         public static List<T> FindAssetsList<T>(string searchString = null)
             where T : Object
         {
@@ -77,7 +78,7 @@ namespace Appalachia.Editing.Assets
             for (var i = 0; i < guids.Length; i++)
             {
                 var path = AssetDatabase.GUIDToAssetPath(guids[i]);
-                
+
                 var j = AssetDatabase.LoadAssetAtPath<T>(path);
 
                 if (j != null)
@@ -88,13 +89,13 @@ namespace Appalachia.Editing.Assets
 
             return results;
         }
-        
+
         public static List<Object> FindAssetsList(Type t, string searchString = null)
         {
             var typename = t.Name;
 
             var guids = AssetDatabase.FindAssets($"t:{typename} {searchString ?? string.Empty}");
-            var results = new List<UnityEngine.Object>(guids.Length);
+            var results = new List<Object>(guids.Length);
 
             for (var i = 0; i < guids.Length; i++)
             {

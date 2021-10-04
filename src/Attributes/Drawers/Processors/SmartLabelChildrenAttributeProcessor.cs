@@ -8,10 +8,16 @@ namespace Appalachia.Editing.Attributes.Drawers.Processors
 {
     public class SmartLabelChildrenAttributeProcessor : OdinAttributeProcessor
     {
-        public override void ProcessChildMemberAttributes(InspectorProperty parentProperty, MemberInfo member, List<Attribute> attributes)
+        public override void ProcessChildMemberAttributes(
+            InspectorProperty parentProperty,
+            MemberInfo member,
+            List<Attribute> attributes)
         {
-            if (attributes.Count == 0) return;
-            
+            if (attributes.Count == 0)
+            {
+                return;
+            }
+
             switch (member.MemberType)
             {
                 case MemberTypes.All:
@@ -24,18 +30,24 @@ namespace Appalachia.Editing.Attributes.Drawers.Processors
                     return;
             }
 
-            var slcAttribute = parentProperty.Attributes.FirstOrDefault_NoAlloc(a => a is SmartLabelChildrenAttribute) as SmartLabelChildrenAttribute;
+            var slcAttribute =
+                parentProperty.Attributes.FirstOrDefault_NoAlloc(
+                    a => a is SmartLabelChildrenAttribute
+                ) as SmartLabelChildrenAttribute;
 
             if (slcAttribute == null)
             {
-                slcAttribute = parentProperty.Parent?.Parent?.Attributes.FirstOrDefault_NoAlloc(a => a is SmartLabelChildrenAttribute) as SmartLabelChildrenAttribute;
+                slcAttribute =
+                    parentProperty.Parent?.Parent?.Attributes.FirstOrDefault_NoAlloc(
+                        a => a is SmartLabelChildrenAttribute
+                    ) as SmartLabelChildrenAttribute;
 
                 if (slcAttribute == null)
                 {
                     return;
                 }
             }
-            
+
             var attribute = new SmartLabelAttribute(slcAttribute);
 
             attributes.Add(attribute);

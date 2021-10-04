@@ -8,11 +8,11 @@ namespace Appalachia.Editing.Attributes
     [Conditional("UNITY_EDITOR")]
     public class SmartLabelChildrenAttribute : Attribute
     {
-        internal string _propertyColor;
         internal bool _bold;
-        internal bool _suffix;
         internal int _hue;
+        internal string _propertyColor;
         internal int _saturation;
+        internal bool _suffix;
         internal int _value;
         public string AlignWith { get; set; }
 
@@ -23,19 +23,13 @@ namespace Appalachia.Editing.Attributes
         public bool Bold
         {
             get => _bold;
-            set
-            {
-                _bold = value;
-            }
+            set => _bold = value;
         }
-        
+
         public bool Suffix
         {
             get => _suffix;
-            set
-            {
-                _suffix = value;
-            }
+            set => _suffix = value;
         }
 
         public int Hue

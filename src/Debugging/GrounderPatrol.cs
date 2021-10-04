@@ -10,7 +10,7 @@ namespace Appalachia.Editing.Debugging
     {
         public bool pointsAreRelative = true;
         public Vector3 origin;
-        public List<Vector3> points = new List<Vector3>();
+        public List<Vector3> points = new();
         [ReadOnly] public int targetIndex;
 
         public float positionSpeed = .1f;
@@ -27,13 +27,7 @@ namespace Appalachia.Editing.Debugging
 
         private RaycastHit[] hits = new RaycastHit[16];
 
-        [Button]
-        void ResetOrigin()
-        {
-            origin = transform.position;
-        }
-        
-        void Update()
+        private void Update()
         {
             try
             {
@@ -59,9 +53,8 @@ namespace Appalachia.Editing.Debugging
                 var position = t.position;
                 var forward = t.forward;
                 var up = t.up;
-                
-                if (position == targetPosition &&
-                    targetPosition == lastPosition)
+
+                if ((position == targetPosition) && (targetPosition == lastPosition))
                 {
                     targetIndex += 1;
 
@@ -70,7 +63,7 @@ namespace Appalachia.Editing.Debugging
                         targetIndex = 0;
                     }
                 }
-                
+
                 var newPoint = points[targetIndex];
 
                 if (pointsAreRelative)
@@ -87,25 +80,41 @@ namespace Appalachia.Editing.Debugging
                     hits = new RaycastHit[16];
                 }
 
-
                 var terrain = Terrain.activeTerrain;
-                
-                targetPosition.y = yOffset+terrain.SampleHeight(targetPosition);
-                
-                var newPosition = Vector3.MoveTowards(position, targetPosition, positionSpeed * Time.deltaTime);
-                
-                newPosition.y = yOffset+terrain.SampleHeight(newPosition);
-                t.position = newPosition;
-                
-                targetForward = (targetPosition - position).normalized;
-                
-                t.forward = Vector3.RotateTowards(forward, targetForward, rotationSpeed * Time.deltaTime, rotationSpeed * Time.deltaTime);
 
-                var normal = terrain.terrainData.GetInterpolatedNormal(targetPosition.x, targetPosition.z);
+                targetPosition.y = yOffset + terrain.SampleHeight(targetPosition);
+
+                var newPosition = Vector3.MoveTowards(
+                    position,
+                    targetPosition,
+                    positionSpeed * Time.deltaTime
+                );
+
+                newPosition.y = yOffset + terrain.SampleHeight(newPosition);
+                t.position = newPosition;
+
+                targetForward = (targetPosition - position).normalized;
+
+                t.forward = Vector3.RotateTowards(
+                    forward,
+                    targetForward,
+                    rotationSpeed * Time.deltaTime,
+                    rotationSpeed * Time.deltaTime
+                );
+
+                var normal = terrain.terrainData.GetInterpolatedNormal(
+                    targetPosition.x,
+                    targetPosition.z
+                );
 
                 targetUp = (normal + Vector3.up + Vector3.up) / 3f;
-                
-                t.up = Vector3.RotateTowards(up, targetUp, rotationSpeed * Time.deltaTime, rotationSpeed * Time.deltaTime);
+
+                t.up = Vector3.RotateTowards(
+                    up,
+                    targetUp,
+                    rotationSpeed * Time.deltaTime,
+                    rotationSpeed * Time.deltaTime
+                );
 
                 lastPosition = position;
             }
@@ -113,7 +122,12 @@ namespace Appalachia.Editing.Debugging
             {
                 Debug.LogError(ex);
             }
+        }
 
+        [Button]
+        private void ResetOrigin()
+        {
+            origin = transform.position;
         }
     }
 }

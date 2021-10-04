@@ -9,6 +9,7 @@ namespace Appalachia.Editing.Visualizers
         protected override bool ShouldRegenerate => false;
 
         protected override bool CanGenerate => texture != null;
+
         protected override void PrepareInitialGeneration()
         {
         }
@@ -17,7 +18,10 @@ namespace Appalachia.Editing.Visualizers
         {
         }
 
-        protected override void GetVisualizationInfo(Vector3 position, out Quaternion rotation, out Vector3 scale)
+        protected override void GetVisualizationInfo(
+            Vector3 position,
+            out Quaternion rotation,
+            out Vector3 scale)
         {
             rotation = Quaternion.identity;
             scale = Vector3.one * visualizationSize;

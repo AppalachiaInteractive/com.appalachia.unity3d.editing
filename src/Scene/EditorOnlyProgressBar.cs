@@ -14,20 +14,23 @@ namespace Appalachia.Editing.Scene
 {
     public class EditorOnlyProgressBar : IDisposable
     {
-        private bool _cancelled;
-        private float _increment;
-        private int _counter;
-
         private readonly bool _cancellable;
+
+        private readonly object _lock = new();
+        private readonly int _showEvery;
         private readonly string _title;
         private readonly float _total;
-        private readonly int _showEvery;
+        private bool _cancelled;
+        private int _counter;
 
         private bool _hasShownBar;
+        private float _increment;
 
-        private readonly object _lock = new object();
-
-        public EditorOnlyProgressBar(string title, float total, bool cancellable, int showEvery = 15)
+        public EditorOnlyProgressBar(
+            string title,
+            float total,
+            bool cancellable,
+            int showEvery = 15)
         {
 #if UNITY_EDITOR
             _title = title;
@@ -75,7 +78,7 @@ namespace Appalachia.Editing.Scene
             IncrementAndShowProgress(value, $"{_increment} / {_total}");
 #endif
         }
-        
+
         public void Increment1AndShowProgress(string info)
         {
 #if UNITY_EDITOR
@@ -123,7 +126,11 @@ namespace Appalachia.Editing.Scene
             {
                 if (_cancellable)
                 {
-                    _cancelled = EditorUtility.DisplayCancelableProgressBar(title, info, current / total);
+                    _cancelled = EditorUtility.DisplayCancelableProgressBar(
+                        title,
+                        info,
+                        current / total
+                    );
                     _hasShownBar = true;
                 }
                 else

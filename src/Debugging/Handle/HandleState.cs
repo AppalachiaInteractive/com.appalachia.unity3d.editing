@@ -1,6 +1,7 @@
 using System;
 using Appalachia.Pooling.Objects;
 using Unity.Profiling;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.Rendering;
 
@@ -11,12 +12,14 @@ namespace Appalachia.Editing.Debugging.Handle
         // ReSharper disable once MemberHidesStaticFromOuterClass
         private const string _PRF_PFX = nameof(HandleState) + ".";
 
-        private static readonly ProfilerMarker _PRF_HandleState = new ProfilerMarker(_PRF_PFX + nameof(HandleState));
-        private static readonly ProfilerMarker _PRF_Dispose = new ProfilerMarker(_PRF_PFX + nameof(Dispose));
-        private static readonly ProfilerMarker _PRF_New = new ProfilerMarker(_PRF_PFX + nameof(New));
-        private static readonly ProfilerMarker _PRF_Reset = new ProfilerMarker(_PRF_PFX + nameof(Reset));
-        private static readonly ProfilerMarker _PRF_Initialize = new ProfilerMarker(_PRF_PFX + nameof(Initialize));
-            
+        private static readonly ProfilerMarker _PRF_HandleState =
+            new(_PRF_PFX + nameof(HandleState));
+
+        private static readonly ProfilerMarker _PRF_Dispose = new(_PRF_PFX + nameof(Dispose));
+        private static readonly ProfilerMarker _PRF_New = new(_PRF_PFX + nameof(New));
+        private static readonly ProfilerMarker _PRF_Reset = new(_PRF_PFX + nameof(Reset));
+        private static readonly ProfilerMarker _PRF_Initialize = new(_PRF_PFX + nameof(Initialize));
+
         private Color _color;
         private bool _sRGB;
         private CompareFunction _zTest;
@@ -26,9 +29,9 @@ namespace Appalachia.Editing.Debugging.Handle
         {
             using (_PRF_HandleState.Auto())
             {
-                _color = UnityEditor.Handles.color;
+                _color = Handles.color;
                 _sRGB = GL.sRGBWrite;
-                _zTest = UnityEditor.Handles.zTest;
+                _zTest = Handles.zTest;
             }
         }
 
@@ -36,9 +39,9 @@ namespace Appalachia.Editing.Debugging.Handle
         {
             using (_PRF_Dispose.Auto())
             {
-                UnityEditor.Handles.color = _color;
+                Handles.color = _color;
                 GL.sRGBWrite = _sRGB;
-                UnityEditor.Handles.zTest = _zTest;
+                Handles.zTest = _zTest;
 
                 Return();
             }
@@ -68,7 +71,7 @@ namespace Appalachia.Editing.Debugging.Handle
             using (_PRF_New.Auto())
             {
                 var h = Get();
-                UnityEditor.Handles.color = color;
+                Handles.color = color;
                 return h;
             }
         }
@@ -78,7 +81,7 @@ namespace Appalachia.Editing.Debugging.Handle
             using (_PRF_New.Auto())
             {
                 var h = Get();
-                UnityEditor.Handles.color = color;
+                Handles.color = color;
                 GL.sRGBWrite = sRGB;
                 return h;
             }
@@ -89,9 +92,9 @@ namespace Appalachia.Editing.Debugging.Handle
             using (_PRF_New.Auto())
             {
                 var h = Get();
-                UnityEditor.Handles.color = color;
+                Handles.color = color;
                 GL.sRGBWrite = sRGB;
-                UnityEditor.Handles.zTest = zTest;
+                Handles.zTest = zTest;
                 return h;
             }
         }
@@ -101,7 +104,7 @@ namespace Appalachia.Editing.Debugging.Handle
             using (_PRF_New.Auto())
             {
                 var h = Get();
-                UnityEditor.Handles.zTest = zTest;
+                Handles.zTest = zTest;
                 return h;
             }
         }
@@ -110,9 +113,9 @@ namespace Appalachia.Editing.Debugging.Handle
         {
             using (_PRF_Reset.Auto())
             {
-                _color = UnityEditor.Handles.color;
+                _color = Handles.color;
                 _sRGB = GL.sRGBWrite;
-                _zTest = UnityEditor.Handles.zTest;
+                _zTest = Handles.zTest;
             }
         }
 
@@ -120,9 +123,9 @@ namespace Appalachia.Editing.Debugging.Handle
         {
             using (_PRF_Initialize.Auto())
             {
-                _color = UnityEditor.Handles.color;
+                _color = Handles.color;
                 _sRGB = GL.sRGBWrite;
-                _zTest = UnityEditor.Handles.zTest;
+                _zTest = Handles.zTest;
             }
         }
     }
