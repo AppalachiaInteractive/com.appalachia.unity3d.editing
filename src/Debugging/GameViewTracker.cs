@@ -1,8 +1,8 @@
-using Appalachia.Core.Editing.Preferences;
+using Appalachia.Editing.Preferences;
 using UnityEditor;
 using UnityEngine;
 
-namespace Appalachia.Core.Editing
+namespace Appalachia.Editing.Debugging
 {
     public static class GameViewTracker
     {

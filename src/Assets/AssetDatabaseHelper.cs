@@ -8,7 +8,7 @@ using Object = UnityEngine.Object;
 
 #endregion
 
-namespace Appalachia.Core.Editing.AssetDB
+namespace Appalachia.Editing.Assets
 {
     public static class AssetDatabaseHelper
     {

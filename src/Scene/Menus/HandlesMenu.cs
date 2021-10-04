@@ -3,13 +3,13 @@
 #region
 
 using Appalachia.Core.Attributes;
-using Appalachia.Core.Editing.Preferences;
+using Appalachia.Editing.Preferences;
 using UnityEditor;
 using UnityEngine.Rendering;
 
 #endregion
 
-namespace Appalachia.Core.Editing.Menus
+namespace Appalachia.Editing.Scene.Menus
 {
     [InitializeOnLoad]
     public static class HandlesMenu

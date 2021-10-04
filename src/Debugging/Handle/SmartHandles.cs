@@ -10,7 +10,7 @@ using UnityEngine.Rendering;
 
 #endregion
 
-namespace Appalachia.Core.Editing.Handle
+namespace Appalachia.Editing.Debugging.Handle
 {
     
     public static class SmartHandles

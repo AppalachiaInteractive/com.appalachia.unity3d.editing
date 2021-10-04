@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace Appalachia.Core.Editing.Attributes
+namespace Appalachia.Editing.Attributes
 {
     /// <summary>
     /// Usage:

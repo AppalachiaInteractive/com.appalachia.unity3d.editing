@@ -1,4 +1,4 @@
-namespace Appalachia.Core.Editing.Preferences.API
+namespace Appalachia.Editing.Preferences.API
 {
     public interface IEditorPreferenceAPI<T>
     {

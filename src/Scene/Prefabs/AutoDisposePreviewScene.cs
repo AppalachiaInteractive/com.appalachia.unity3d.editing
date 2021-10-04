@@ -1,17 +1,16 @@
 #region
 
 using UnityEditor.SceneManagement;
-using UnityEngine.SceneManagement;
 
 #endregion
 
-namespace Appalachia.Core.Editing.Prefabs
+namespace Appalachia.Editing.Scene.Prefabs
 {
     public struct AutoDisposePreviewScene
     {
-        private static Scene _previewScene;
+        private static UnityEngine.SceneManagement.Scene _previewScene;
 
-        public Scene previewScene
+        public UnityEngine.SceneManagement.Scene previewScene
         {
             get
             {

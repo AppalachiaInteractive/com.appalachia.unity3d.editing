@@ -5,7 +5,7 @@ using UnityEngine;
 
 #endregion
 
-namespace Appalachia.Core.Editing.Preferences.API
+namespace Appalachia.Editing.Preferences.API
 {
     public struct Bounds_EPAPI : IEditorPreferenceAPI<Bounds>
     {

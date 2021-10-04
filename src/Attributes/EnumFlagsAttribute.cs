@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace Appalachia.Core.Enums
+namespace Appalachia.Editing.Attributes
 {
     public class EnumFlagsAttribute : PropertyAttribute
     {

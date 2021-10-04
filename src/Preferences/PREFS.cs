@@ -4,7 +4,7 @@ using System;
 
 #endregion
 
-namespace Appalachia.Core.Editing.Preferences
+namespace Appalachia.Editing.Preferences
 {
     public static class PREFS
     {

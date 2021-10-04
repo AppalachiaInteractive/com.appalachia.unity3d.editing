@@ -9,7 +9,7 @@ using UnityEngine;
 
 #endregion
 
-namespace Appalachia.Core.Editing.Behaviours
+namespace Appalachia.Editing.Behaviours
 {
 #if UNITY_EDITOR
     [ExecuteAlways]

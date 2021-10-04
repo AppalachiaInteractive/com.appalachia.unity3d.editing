@@ -6,7 +6,7 @@ using UnityEngine;
 
 #endregion
 
-namespace Appalachia.Core.Editing.Attributes.Drawers
+namespace Appalachia.Editing.Attributes.Drawers
 {
     [CustomPropertyDrawer(typeof(MinMaxAttribute))]
     public class MinMaxDrawer : PropertyDrawer

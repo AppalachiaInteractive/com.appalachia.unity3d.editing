@@ -6,7 +6,7 @@ using Sirenix.OdinInspector;
 
 #endregion
 
-namespace Appalachia.Core.Editing.Attributes
+namespace Appalachia.Editing.Attributes
 {
     [AttributeUsage(AttributeTargets.All, AllowMultiple = true)]
     [Conditional("UNITY_EDITOR")]

@@ -2,13 +2,13 @@
 #if UNITY_EDITOR
 
 using System;
-using Appalachia.Core.Globals.Shading;
-using Appalachia.Core.Scriptables;
+using Appalachia.Base.Scriptables;
+using Appalachia.Globals.Shading;
 using Sirenix.OdinInspector;
 using UnityEditor;
 using UnityEngine;
 
-namespace Appalachia.Core.Debugging
+namespace Appalachia.Editing.Debugging
 {
     [Serializable]
     public class GlobalDebug : SelfSavingSingletonScriptableObject<GlobalDebug>

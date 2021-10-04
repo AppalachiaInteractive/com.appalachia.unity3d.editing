@@ -1,21 +1,20 @@
 #region
 
 using System.Collections.Generic;
-using Appalachia.Core.Behaviours;
-using Appalachia.Core.Collections.Extensions;
-using Appalachia.Core.Editing;
+using Appalachia.Base.Behaviours;
 using Appalachia.Core.Extensions;
+using Appalachia.Core.Layers;
+using Appalachia.Core.Types.Enums;
 using Appalachia.Simulation.Core;
-using Appalachia.Simulation.Physical;
+using Appalachia.Utility;
 using Appalachia.Utility.Colors;
 using Appalachia.Utility.Constants;
-using log4net.Appender;
 using Sirenix.OdinInspector;
 using Unity.Profiling;
 using UnityEditor;
 using UnityEngine;
 
-namespace Appalachia.Core.Testing
+namespace Appalachia.Editing.Debugging.Testing
 {
 
 #endregion

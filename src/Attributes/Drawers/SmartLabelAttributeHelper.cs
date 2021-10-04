@@ -1,11 +1,11 @@
-using Appalachia.Core.Editing.Attributes.Drawers.Contexts;
+using Appalachia.Editing.Attributes.Drawers.Contexts;
 using Sirenix.OdinInspector.Editor;
 using Sirenix.OdinInspector.Editor.ValueResolvers;
 using Sirenix.Utilities.Editor;
 using Unity.Profiling;
 using UnityEngine;
 
-namespace Appalachia.Core.Editing.Attributes.Drawers
+namespace Appalachia.Editing.Attributes.Drawers
 {
     public static class SmartLabelAttributeHelper
     {

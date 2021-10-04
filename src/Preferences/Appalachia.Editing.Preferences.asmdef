@@ -1,5 +1,5 @@
 {
-    "name": "Appalachia.Core.Editing.Preferences",
+    "name": "Appalachia.Editing.Preferences",
     "rootNamespace": "",
     "references": [
         "GUID:4a600fa6fa2ca854b8f233a23710b315",

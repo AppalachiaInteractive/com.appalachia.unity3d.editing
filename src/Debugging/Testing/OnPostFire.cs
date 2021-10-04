@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace Appalachia.Core.Testing
+namespace Appalachia.Editing.Debugging.Testing
 {
     public delegate void OnPostFire(Bazooka b, GameObject missile);
 }

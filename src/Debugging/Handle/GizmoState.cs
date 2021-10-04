@@ -1,9 +1,9 @@
 using System;
-using Appalachia.Core.Pooling.Objects;
+using Appalachia.Pooling.Objects;
 using Unity.Profiling;
 using UnityEngine;
 
-namespace Appalachia.Core.Editing.Handle
+namespace Appalachia.Editing.Debugging.Handle
 {
     internal class GizmoState : SelfPoolingObject<GizmoState>, IDisposable
     {

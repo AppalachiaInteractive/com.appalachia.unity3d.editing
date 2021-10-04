@@ -1,7 +1,7 @@
 #region
 
 using System.Reflection;
-using Appalachia.Core.Editing.Attributes.Drawers.Contexts;
+using Appalachia.Editing.Attributes.Drawers.Contexts;
 using Appalachia.Utility.Reflection;
 using Sirenix.OdinInspector.Editor;
 using Sirenix.OdinInspector.Editor.Drawers;
@@ -14,7 +14,7 @@ using UnityEngine;
 
 #endregion
 
-namespace Appalachia.Core.Editing.Attributes.Drawers
+namespace Appalachia.Editing.Attributes.Drawers
 {
     /// <summary>
     ///     Draws properties marked with <see cref="T:Sirenix.OdinInspector.SmartInlineButtonAttribute" />

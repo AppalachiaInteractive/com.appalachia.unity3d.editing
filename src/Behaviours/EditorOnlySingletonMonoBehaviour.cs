@@ -3,7 +3,7 @@ using Unity.Profiling;
 using UnityEditor;
 using UnityEngine;
 
-namespace Appalachia.Core.Editing.Behaviours
+namespace Appalachia.Editing.Behaviours
 {
     public abstract class EditorOnlySingletonMonoBehaviour<T> : EditorOnlyMonoBehaviour
         where T : EditorOnlySingletonMonoBehaviour<T>

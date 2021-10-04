@@ -10,7 +10,7 @@ using Unity.Profiling;
 
 #endregion
 
-namespace Appalachia.Core.Editing.Attributes.Drawers
+namespace Appalachia.Editing.Attributes.Drawers
 {
     [ResolverPriority(10.0)]
     public class AppaListPropertyResolver<TElement, TList> : BaseOrderedCollectionResolver<TList>

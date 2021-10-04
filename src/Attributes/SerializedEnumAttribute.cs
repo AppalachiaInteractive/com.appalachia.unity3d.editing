@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-namespace Appalachia.Core.Enums
+namespace Appalachia.Editing.Attributes
 {
     public class SerializedEnumAttribute : PropertyAttribute
     {

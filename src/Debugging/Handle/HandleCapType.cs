@@ -1,4 +1,4 @@
-namespace Appalachia.Core.Editing.Handle
+namespace Appalachia.Editing.Debugging.Handle
 {
     public enum HandleCapType
     {

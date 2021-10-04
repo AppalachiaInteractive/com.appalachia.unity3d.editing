@@ -1,8 +1,8 @@
 #if UNITY_EDITOR
-using Appalachia.Core.Visualizers.Base;
+using Appalachia.Editing.Visualizers.Base;
 using UnityEngine;
 
-namespace Appalachia.Core.Visualizers
+namespace Appalachia.Editing.Visualizers
 {
     public class HeightmapVisualizer : InstancedIndirectHeightmapMapVisualization
     {

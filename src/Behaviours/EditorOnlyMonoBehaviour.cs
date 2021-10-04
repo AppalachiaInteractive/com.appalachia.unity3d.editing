@@ -3,14 +3,14 @@
 #region
 
 using System;
-using Appalachia.Core.Behaviours;
-using Appalachia.Core.Labeling;
+using Appalachia.Base.Behaviours;
+using Appalachia.Core.Labels;
 using Unity.Profiling;
 using UnityEngine;
 
 #endregion
 
-namespace Appalachia.Core.Editing.Behaviours
+namespace Appalachia.Editing.Behaviours
 {
     [ExecuteAlways]
     public abstract class EditorOnlyMonoBehaviour : InternalMonoBehaviour

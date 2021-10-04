@@ -5,7 +5,7 @@ using Unity.Collections;
 using Unity.Mathematics;
 using UnityEngine;
 
-namespace Appalachia.Core.Visualizers.Base
+namespace Appalachia.Editing.Visualizers.Base
 {
     public abstract class InstancedIndirectSpatialMapVisualization : InstancedIndirectGridVisualization
     {

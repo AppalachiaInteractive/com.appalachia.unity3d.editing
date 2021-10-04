@@ -1,13 +1,12 @@
 #if UNITY_EDITOR
-using Appalachia.Core.Editing;
-using Appalachia.Core.Editing.Behaviours;
-using Appalachia.Core.Globals.Cameras;
+using Appalachia.Editing.Behaviours;
+using Appalachia.Globals.Cameras;
 using Sirenix.OdinInspector;
 using Unity.Collections.LowLevel.Unsafe;
 using UnityEngine;
 using UnityEngine.Rendering;
 
-namespace Appalachia.Core.Visualizers.Base
+namespace Appalachia.Editing.Visualizers.Base
 {
     public abstract class InstancedIndirectVisualization : EditorOnlyMonoBehaviour
     {

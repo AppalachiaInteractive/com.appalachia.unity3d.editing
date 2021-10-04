@@ -1,12 +1,12 @@
 #region
 
-using Appalachia.Core.Editing.Preferences;
+using Appalachia.Utility;
 using Appalachia.Utility.Colors;
 using UnityEngine;
 
 #endregion
 
-namespace Appalachia.Core.Editing.Coloring
+namespace Appalachia.Editing.Preferences.Globals
 {
     public sealed class ColorPrefs
     {

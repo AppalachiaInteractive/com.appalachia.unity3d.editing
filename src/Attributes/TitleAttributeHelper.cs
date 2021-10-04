@@ -7,7 +7,7 @@ using UnityEngine;
 
 #endregion
 
-namespace Appalachia.Core.Editing.Attributes
+namespace Appalachia.Editing.Attributes
 {
     public static class TitleAttributeHelper
     {

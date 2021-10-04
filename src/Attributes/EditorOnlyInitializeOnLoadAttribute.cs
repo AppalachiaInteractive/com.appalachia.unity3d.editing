@@ -4,7 +4,7 @@ using UnityEditor;
 
 #endregion
 
-namespace Appalachia.Core.Editing.Attributes
+namespace Appalachia.Editing.Attributes
 {
     public class EditorOnlyInitializeOnLoadAttribute
 #if UNITY_EDITOR

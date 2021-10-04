@@ -2,12 +2,13 @@
 
 using System;
 using System.Diagnostics;
+using Appalachia.Utility;
 using Appalachia.Utility.Colors;
 using Sirenix.OdinInspector;
 
 #endregion
 
-namespace Appalachia.Core.Editing.Attributes
+namespace Appalachia.Editing.Attributes
 {
     [DontApplyToListElements]
     [AttributeUsage(AttributeTargets.All, AllowMultiple = true)]

@@ -1,4 +1,4 @@
-namespace Appalachia.Core.Editing.Prefabs
+namespace Appalachia.Editing.Scene.Prefabs
 {
     public interface IPrefabPathSaveable
     {

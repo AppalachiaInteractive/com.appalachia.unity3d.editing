@@ -1,4 +1,4 @@
-namespace Appalachia.Core.Editing.Preferences
+namespace Appalachia.Editing.Preferences
 {
     public abstract class PREF_STATE_BASE
     {

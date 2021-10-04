@@ -7,20 +7,19 @@ using Appalachia.Core.Extensions;
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 #endregion
 
-namespace Appalachia.Core.Editing.Prefabs
+namespace Appalachia.Editing.Scene.Prefabs
 {
     public sealed class PrefabSaveToken : IDisposable
     {
         private GameObject _prefab;
-        private Scene _scene;
+        private UnityEngine.SceneManagement.Scene _scene;
         private string _path;
         private Action<PrefabDisposalToken> _onDispose;
 
-        public PrefabSaveToken(GameObject prefab, Scene scene, Action<PrefabDisposalToken> onDispose = null)
+        public PrefabSaveToken(GameObject prefab, UnityEngine.SceneManagement.Scene scene, Action<PrefabDisposalToken> onDispose = null)
         {
             _prefab = prefab;
             _scene = scene;

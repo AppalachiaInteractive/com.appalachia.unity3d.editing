@@ -3,7 +3,7 @@ using Sirenix.OdinInspector.Editor.Drawers;
 using Sirenix.OdinInspector.Editor.ValueResolvers;
 using UnityEngine;
 
-namespace Appalachia.Core.Editing.Attributes.Drawers.Contexts
+namespace Appalachia.Editing.Attributes.Drawers.Contexts
 {
     public class SmartInlineButtonContext<T>
     {

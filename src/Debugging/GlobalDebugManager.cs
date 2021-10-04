@@ -1,8 +1,7 @@
-using Appalachia.Core.Editing;
-using Appalachia.Core.Editing.Behaviours;
+using Appalachia.Editing.Behaviours;
 using Sirenix.OdinInspector;
 
-namespace Appalachia.Core.Debugging
+namespace Appalachia.Editing.Debugging
 {
     public class GlobalDebugManager : EditorOnlySingletonMonoBehaviour<GlobalDebugManager>
     {

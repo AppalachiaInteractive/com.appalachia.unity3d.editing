@@ -1,11 +1,11 @@
 #if UNITY_EDITOR
 using Appalachia.Core.Extensions;
-using Appalachia.Core.Visualizers.Base;
+using Appalachia.Editing.Visualizers.Base;
 using Sirenix.OdinInspector;
 using Unity.Mathematics;
 using UnityEngine;
 
-namespace Appalachia.Core.Visualizers
+namespace Appalachia.Editing.Visualizers
 {
     public class TerrainTestVisualizer : InstancedIndirectHeightmapMapVisualization
     {

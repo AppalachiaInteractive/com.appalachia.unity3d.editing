@@ -10,7 +10,7 @@ using UnityEditor;
 
 #endif
 
-namespace Appalachia.Core.Editing
+namespace Appalachia.Editing.Scene
 {
     public class EditorOnlyProgressBar : IDisposable
     {

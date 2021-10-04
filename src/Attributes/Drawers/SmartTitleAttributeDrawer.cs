@@ -1,6 +1,6 @@
 #region
 
-using Appalachia.Core.Editing.Attributes.Drawers.Contexts;
+using Appalachia.Editing.Attributes.Drawers.Contexts;
 using Sirenix.OdinInspector.Editor;
 using Sirenix.OdinInspector.Editor.Drawers;
 using Sirenix.OdinInspector.Editor.ValueResolvers;
@@ -10,7 +10,7 @@ using UnityEngine;
 
 #endregion
 
-namespace Appalachia.Core.Editing.Attributes.Drawers
+namespace Appalachia.Editing.Attributes.Drawers
 {
     [DrawerPriority(1.0)]
     public sealed class SmartTitleAttributeDrawer : OdinAttributeDrawer<SmartTitleAttribute>

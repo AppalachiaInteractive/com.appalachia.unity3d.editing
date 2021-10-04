@@ -1,7 +1,7 @@
 using Appalachia.Core.Extensions;
 using UnityEngine;
 
-namespace Appalachia.Core.Testing
+namespace Appalachia.Editing.Debugging.Testing
 {
     public class Missile : MonoBehaviour
     {

@@ -1,11 +1,11 @@
 using System;
-using Appalachia.Core.Behaviours;
-using Appalachia.Core.Editing.Attributes;
+using Appalachia.Base.Behaviours;
 using Appalachia.Core.Layers;
+using Appalachia.Editing.Attributes;
 using Sirenix.OdinInspector;
 using UnityEngine;
 
-namespace Appalachia.Core.Testing
+namespace Appalachia.Editing.Debugging.Testing
 {
     [ExecuteAlways]
     public class Spinner : InternalMonoBehaviour

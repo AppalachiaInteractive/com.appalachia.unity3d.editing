@@ -4,7 +4,7 @@ using UnityEditor;
 
 #endregion
 
-namespace Appalachia.Core.Editing.Preferences.API
+namespace Appalachia.Editing.Preferences.API
 {
     public struct string_EPAPI : IEditorPreferenceAPI<string>
     {

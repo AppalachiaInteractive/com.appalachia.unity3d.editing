@@ -1,8 +1,7 @@
 using System;
-using Sirenix.OdinInspector.Editor;
 using Sirenix.OdinInspector.Editor.ValueResolvers;
 
-namespace Appalachia.Core.Editing.Attributes.Drawers.Contexts
+namespace Appalachia.Editing.Attributes.Drawers.Contexts
 {
     internal class ButtonContext<T>
     {

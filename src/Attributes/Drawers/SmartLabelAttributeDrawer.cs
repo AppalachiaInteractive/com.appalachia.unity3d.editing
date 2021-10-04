@@ -1,6 +1,6 @@
 #region
 
-using Appalachia.Core.Editing.Attributes.Drawers.Contexts;
+using Appalachia.Editing.Attributes.Drawers.Contexts;
 using Sirenix.OdinInspector;
 using Sirenix.OdinInspector.Editor;
 using Sirenix.Utilities;
@@ -11,7 +11,7 @@ using UnityEngine;
 
 #endregion
 
-namespace Appalachia.Core.Editing.Attributes.Drawers
+namespace Appalachia.Editing.Attributes.Drawers
 {
     [DrawerPriority(DrawerPriorityLevel.WrapperPriority)]
     public sealed class SmartLabelAttributeDrawer : OdinAttributeDrawer<SmartLabelAttribute>

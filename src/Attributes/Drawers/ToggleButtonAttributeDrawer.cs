@@ -1,7 +1,8 @@
 using System.Reflection;
-using Appalachia.Core.Editing.Attributes.Drawers.Contexts;
-using Appalachia.Utility.Reflection;
+using Appalachia.Editing.Attributes.Drawers.Contexts;
+using Appalachia.Utility;
 using Appalachia.Utility.Colors;
+using Appalachia.Utility.Reflection;
 using Sirenix.OdinInspector.Editor;
 using Sirenix.OdinInspector.Editor.ValueResolvers;
 using Sirenix.Utilities;
@@ -9,7 +10,7 @@ using Sirenix.Utilities.Editor;
 using UnityEditor;
 using UnityEngine;
 
-namespace Appalachia.Core.Editing.Attributes.Drawers
+namespace Appalachia.Editing.Attributes.Drawers
 {
     /// <summary>
     ///     Draws properties marked with <see cref="T:Sirenix.OdinInspector.ToggleButtonAttribute" />

@@ -2,11 +2,10 @@
 
 using UnityEditor;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 #endregion
 
-namespace Appalachia.Core.Editing.Prefabs
+namespace Appalachia.Editing.Scene.Prefabs
 {
     public static class PrefabSaveTokenExtensions
     {
@@ -24,19 +23,19 @@ namespace Appalachia.Core.Editing.Prefabs
             return new PrefabSaveToken(prefab, _previewScene.previewScene);
         }
 
-        public static PrefabSaveToken ToMutable(this IPrefabSaveable saveable, Scene previewScene)
+        public static PrefabSaveToken ToMutable(this IPrefabSaveable saveable, UnityEngine.SceneManagement.Scene previewScene)
         {
             return new PrefabSaveToken(saveable.Prefab, previewScene, disp => { saveable.Prefab = disp.prefab; });
         }
 
-        public static PrefabSaveToken ToMutable(this IPrefabPathSaveable saveable, Scene previewScene)
+        public static PrefabSaveToken ToMutable(this IPrefabPathSaveable saveable, UnityEngine.SceneManagement.Scene previewScene)
         {
             var prefab = AssetDatabase.LoadAssetAtPath<GameObject>(saveable.PrefabPath);
 
             return new PrefabSaveToken(prefab, previewScene);
         }
 
-        public static PrefabSaveToken ToMutable(this GameObject prefab, Scene previewScene)
+        public static PrefabSaveToken ToMutable(this GameObject prefab, UnityEngine.SceneManagement.Scene previewScene)
         {
             if (!PrefabUtility.IsPartOfPrefabAsset(prefab))
             {

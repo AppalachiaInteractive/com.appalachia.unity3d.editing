@@ -5,7 +5,7 @@ using UnityEngine;
 
 #endregion
 
-namespace Appalachia.Core.Editing.Preferences
+namespace Appalachia.Editing.Preferences
 {
     [ShowInInspector, InlineProperty, HideReferenceObjectPicker]
     public sealed class PREF<T>

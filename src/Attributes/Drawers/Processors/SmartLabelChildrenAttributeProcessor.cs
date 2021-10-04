@@ -1,11 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.Reflection;
-using Appalachia.Core.Collections.Extensions;
-using Appalachia.Core.Editing.Attributes;
+using Appalachia.Core.Extensions;
 using Sirenix.OdinInspector.Editor;
 
-namespace Appalachia.Core.Editing.Processors
+namespace Appalachia.Editing.Attributes.Drawers.Processors
 {
     public class SmartLabelChildrenAttributeProcessor : OdinAttributeProcessor
     {

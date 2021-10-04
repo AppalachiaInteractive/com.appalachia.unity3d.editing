@@ -1,14 +1,13 @@
 #region
 
 using System;
-using Appalachia.Core.Enums;
 using Unity.Profiling;
 using UnityEditor;
 using UnityEngine;
 
 #endregion
 
-namespace Appalachia.Core.Editing.Attributes.Drawers
+namespace Appalachia.Editing.Attributes.Drawers
 {
     [CustomPropertyDrawer(typeof(SerializedEnumAttribute))]
     public class SerializedEnumDrawer : PropertyDrawer

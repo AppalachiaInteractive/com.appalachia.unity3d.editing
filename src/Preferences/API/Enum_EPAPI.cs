@@ -6,7 +6,7 @@ using UnityEditor;
 
 #endregion
 
-namespace Appalachia.Core.Editing.Preferences.API
+namespace Appalachia.Editing.Preferences.API
 {
     public struct Enum_EPAPI<T> : IEditorPreferenceAPI<T>
     {

@@ -1,4 +1,4 @@
-namespace Appalachia.Core.Editing
+namespace Appalachia.Editing.Behaviours
 {
     public enum EditorOnlyExclusionStyle
     {

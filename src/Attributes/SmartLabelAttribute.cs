@@ -7,7 +7,7 @@ using Unity.Mathematics;
 
 #endregion
 
-namespace Appalachia.Core.Editing.Attributes
+namespace Appalachia.Editing.Attributes
 {
     [DontApplyToListElements]
     [AttributeUsage(AttributeTargets.All)]

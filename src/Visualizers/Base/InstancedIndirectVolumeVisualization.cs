@@ -2,7 +2,7 @@
 using Sirenix.OdinInspector;
 using UnityEngine;
 
-namespace Appalachia.Core.Visualizers.Base
+namespace Appalachia.Editing.Visualizers.Base
 {
     public abstract class InstancedIndirectVolumeVisualization : InstancedIndirectVisualization
     {

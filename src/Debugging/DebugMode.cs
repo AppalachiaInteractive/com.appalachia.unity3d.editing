@@ -1,4 +1,4 @@
-namespace Appalachia.Core.Debugging
+namespace Appalachia.Editing.Debugging
 {
     public enum DebugMode
     {

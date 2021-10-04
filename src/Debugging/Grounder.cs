@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-namespace Appalachia.Core.Editing
+namespace Appalachia.Editing.Debugging
 {
     [ExecuteAlways]
     public class Grounder : MonoBehaviour

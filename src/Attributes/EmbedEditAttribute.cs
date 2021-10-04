@@ -5,7 +5,7 @@ using Sirenix.OdinInspector;
 
 #endregion
 
-namespace Appalachia.Core.Editing.Attributes
+namespace Appalachia.Editing.Attributes
 {
     [IncludeMyAttributes]
     [InlineEditor(Expanded = true)]

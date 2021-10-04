@@ -5,7 +5,7 @@ using UnityEditor;
 
 #endregion
 
-namespace Appalachia.Core.Editing.AssetDB
+namespace Appalachia.Editing.Assets
 {
     public class AssetEditingScope : IDisposable
     {

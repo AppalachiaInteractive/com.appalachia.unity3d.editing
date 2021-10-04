@@ -2,13 +2,13 @@
 
 using System;
 using System.Collections.Generic;
-using Appalachia.Core.Editing.Preferences.API;
+using Appalachia.Editing.Preferences.API;
 using Unity.Mathematics;
 using UnityEngine;
 
 #endregion
 
-namespace Appalachia.Core.Editing.Preferences
+namespace Appalachia.Editing.Preferences
 {
     public class PREF_STATE<T> : PREF_STATE_BASE
     {

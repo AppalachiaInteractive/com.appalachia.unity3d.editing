@@ -4,7 +4,7 @@ using UnityEngine;
 
 #endregion
 
-namespace Appalachia.Core.Editing.Prefabs
+namespace Appalachia.Editing.Scene.Prefabs
 {
     public interface IPrefabSaveable
     {

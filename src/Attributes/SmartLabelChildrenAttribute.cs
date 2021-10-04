@@ -2,7 +2,7 @@ using System;
 using System.Diagnostics;
 using Unity.Mathematics;
 
-namespace Appalachia.Core.Editing.Attributes
+namespace Appalachia.Editing.Attributes
 {
     [AttributeUsage(AttributeTargets.All)]
     [Conditional("UNITY_EDITOR")]
