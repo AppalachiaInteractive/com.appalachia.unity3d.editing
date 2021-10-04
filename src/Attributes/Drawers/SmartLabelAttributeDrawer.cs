@@ -14,7 +14,8 @@ using UnityEngine;
 namespace Appalachia.Editing.Attributes.Drawers
 {
     [DrawerPriority(DrawerPriorityLevel.WrapperPriority)]
-    public sealed class SmartLabelAttributeDrawer : OdinAttributeDrawer<SmartLabelAttribute>
+    public sealed class
+        SmartLabelAttributeDrawer : ContextualPropertyDrawer<SmartLabelAttribute, SmartLabelContext>
     {
         private const string _PRF_PFX = nameof(SmartLabelAttributeDrawer) + ".";
 
@@ -33,7 +34,14 @@ namespace Appalachia.Editing.Attributes.Drawers
         private static readonly ProfilerMarker _PRF_DrawTogglePropertyLayout =
             new(_PRF_PFX + nameof(DrawTogglePropertyLayout));
 
-        private SmartLabelContext _propertyContext;
+        private static readonly ProfilerMarker _PRF_UpdateLabel =
+            new(_PRF_PFX + nameof(UpdateLabel));
+
+        private static readonly ProfilerMarker _PRF_PushLabel = new(_PRF_PFX + nameof(PushLabel));
+
+        private static readonly ProfilerMarker _PRF_PopLabel = new(_PRF_PFX + nameof(PopLabel));
+
+        private static readonly ProfilerMarker _PRF_PushColor = new(_PRF_PFX + nameof(PushColor));
 
         private IPropertyValueEntry<bool> boolValueEntry;
 
@@ -105,15 +113,10 @@ namespace Appalachia.Editing.Attributes.Drawers
             using (_PRF_DrawInlineEditorPropertyLayout.Auto())
             {
                 var attribute = Attribute;
-                if (_propertyContext == null)
-                {
-                    _propertyContext =
-                        SmartLabelAttributeHelper.GetPropertyContext(this, Property, attribute);
-                }
 
-                SmartLabelAttributeHelper.UpdateLabel(_propertyContext, attribute, label);
+                UpdateLabel(label);
 
-                var labelText = _propertyContext.OutputLabelText;
+                var labelText = context.OutputLabelText;
 
                 TitleAttributeHelper.Title(
                     labelText,
@@ -121,10 +124,8 @@ namespace Appalachia.Editing.Attributes.Drawers
                     TextAlignment.Left,
                     false,
                     attribute.Bold,
-                    attribute.HasPropertyColor &&
-                    !_propertyContext.ColorError &&
-                    (attribute.Color != null)
-                        ? _propertyContext.ColorHelper.GetValue()
+                    attribute.HasPropertyColor && !context.ColorError && (attribute.Color != null)
+                        ? context.ColorHelper.GetValue()
                         : default
                 );
 
@@ -132,11 +133,7 @@ namespace Appalachia.Editing.Attributes.Drawers
 
                 if (!attribute.ShallowColor)
                 {
-                    SmartLabelAttributeHelper.PushColor(
-                        _propertyContext,
-                        attribute,
-                        out pushedColorDeep
-                    );
+                    PushColor(out pushedColorDeep);
                 }
 
                 using (_PRF_DrawPropertyLayout_CallNextDrawer.Auto())
@@ -156,35 +153,25 @@ namespace Appalachia.Editing.Attributes.Drawers
             using (_PRF_DrawGeneralPropertyLayout.Auto())
             {
                 var attribute = Attribute;
-                var propertyContext =
-                    SmartLabelAttributeHelper.GetPropertyContext(this, Property, attribute);
 
-                SmartLabelAttributeHelper.UpdateLabel(propertyContext, attribute, label);
+                UpdateLabel(label);
 
                 GUILayout.BeginHorizontal();
 
-                var labelText = propertyContext.OutputLabelText;
+                var labelText = context.OutputLabelText;
 
                 if (!attribute.Postfix)
                 {
-                    SmartLabelAttributeHelper.PushLabel(
-                        propertyContext,
-                        attribute,
-                        out var pushedColor
-                    );
+                    PushLabel(out var pushedColor);
                     GUILayout.Label(labelText, GUILayoutOptions.ExpandWidth(false));
-                    SmartLabelAttributeHelper.PopLabel(pushedColor);
+                    PopLabel(pushedColor);
                 }
 
                 var pushedColorDeep = false;
 
                 if (!attribute.ShallowColor)
                 {
-                    SmartLabelAttributeHelper.PushColor(
-                        propertyContext,
-                        attribute,
-                        out pushedColorDeep
-                    );
+                    PushColor(out pushedColorDeep);
                 }
 
                 using (_PRF_DrawPropertyLayout_CallNextDrawer.Auto())
@@ -201,13 +188,9 @@ namespace Appalachia.Editing.Attributes.Drawers
 
                 if (attribute.Postfix)
                 {
-                    SmartLabelAttributeHelper.PushLabel(
-                        propertyContext,
-                        attribute,
-                        out var pushedColor
-                    );
+                    PushLabel(out var pushedColor);
                     GUILayout.Label(labelText, GUILayoutOptions.ExpandWidth(false));
-                    SmartLabelAttributeHelper.PopLabel(pushedColor);
+                    PopLabel(pushedColor);
                 }
 
                 GUILayout.EndHorizontal();
@@ -219,13 +202,10 @@ namespace Appalachia.Editing.Attributes.Drawers
             using (_PRF_DrawTogglePropertyLayout.Auto())
             {
                 var attribute = Attribute;
-                var propertyContext =
-                    SmartLabelAttributeHelper.GetPropertyContext(this, Property, attribute);
                 var valueEntry = BoolValueEntry;
 
-                SmartLabelAttributeHelper.UpdateLabel(propertyContext, attribute, label);
-
-                if (string.IsNullOrWhiteSpace(_propertyContext.OutputLabelText))
+                UpdateLabel(label);
+                if (string.IsNullOrWhiteSpace(context.OutputLabelText))
                 {
                     valueEntry.SmartValue = EditorGUILayout.ToggleLeft(
                         GUIContent.none,
@@ -236,7 +216,7 @@ namespace Appalachia.Editing.Attributes.Drawers
 
                 GUILayout.BeginHorizontal();
 
-                var labelText = _propertyContext.OutputLabelText;
+                var labelText = context.OutputLabelText;
 
                 var pushedColor = false;
 
@@ -246,11 +226,7 @@ namespace Appalachia.Editing.Attributes.Drawers
                 }
                 else
                 {
-                    SmartLabelAttributeHelper.PushLabel(
-                        propertyContext,
-                        attribute,
-                        out pushedColor
-                    );
+                    PushLabel(out pushedColor);
                     GUILayout.Label(labelText, GUILayoutOptions.ExpandWidth(false));
                 }
 
@@ -267,17 +243,126 @@ namespace Appalachia.Editing.Attributes.Drawers
 
                 if (attribute.Postfix)
                 {
-                    SmartLabelAttributeHelper.PushLabel(
-                        propertyContext,
-                        attribute,
-                        out pushedColor
-                    );
+                    PushLabel(out pushedColor);
                     GUILayout.Label(labelText, GUILayoutOptions.ExpandWidth(false));
                 }
 
-                SmartLabelAttributeHelper.PopLabel(pushedColor);
+                PopLabel(pushedColor);
 
                 GUILayout.EndHorizontal();
+            }
+        }
+
+        public void UpdateLabel(GUIContent label)
+        {
+            using (_PRF_UpdateLabel.Auto())
+            {
+                if (label.text != context.InputLabelText)
+                {
+                    context.InputLabelText = label.text;
+
+                    if (Attribute.Text != null)
+                    {
+                        label.text = Attribute.Text;
+                    }
+
+                    var widthText = Attribute.AlignWith ?? label.text;
+
+                    var chars = widthText.Length;
+                    var size = Attribute.PixelsPerCharacter * chars;
+                    size += Attribute.Padding;
+
+                    context.Size = size;
+                    context.OutputLabelText = label.text;
+                }
+                else
+                {
+                    label.text = context.OutputLabelText;
+                }
+            }
+        }
+
+        public void PushLabel(out bool pushedColor)
+        {
+            using (_PRF_PushLabel.Auto())
+            {
+                if (context.Size < 0.0)
+                {
+                    GUIHelper.PushLabelWidth(GUIHelper.BetterLabelWidth + context.Size);
+                }
+                else
+                {
+                    GUIHelper.PushLabelWidth(context.Size);
+                }
+
+                GUIHelper.PushIsBoldLabel(Attribute.Bold);
+
+                if (Attribute.ShallowColor)
+                {
+                    ExecuteColorPush(out pushedColor);
+                }
+                else
+                {
+                    pushedColor = false;
+                }
+            }
+        }
+
+        public static void PopLabel(bool pushedColor)
+        {
+            using (_PRF_PopLabel.Auto())
+            {
+                if (pushedColor)
+                {
+                    GUIHelper.PopLabelColor();
+                }
+
+                GUIHelper.PopIsBoldLabel();
+
+                GUIHelper.PopLabelWidth();
+            }
+        }
+
+        private void ExecuteColorPush(out bool pushedColor)
+        {
+            pushedColor = true;
+
+            if (Attribute.HasPropertyColor && !context.ColorError)
+            {
+                var color = context.ColorHelper.GetValue();
+                GUIHelper.PushLabelColor(color);
+            }
+            else if (Attribute.HasHue || Attribute.HasValue || Attribute.HasSaturation)
+            {
+                if (!context.HSVColor.HasValue)
+                {
+                    context.HSVColor = Color.HSVToRGB(
+                        Attribute.HasHue ? Attribute.Hue / 255f : 0f,
+                        Attribute.HasSaturation
+                            ? Attribute.Saturation / 255f
+                            : Attribute.HasHue
+                                ? 1f
+                                : Attribute.HasValue
+                                    ? 0f
+                                    : 1f,
+                        Attribute.HasValue ? Attribute.Value / 255f : 1f
+                    );
+                }
+
+                var color = context.HSVColor.Value;
+                GUIHelper.PushLabelColor(color);
+            }
+            else
+            {
+                pushedColor = false;
+            }
+        }
+
+        public void PushColor(out bool pushedColor)
+        {
+            using (_PRF_PushColor.Auto())
+            {
+                ExecuteColorPush(out pushedColor);
             }
         }
     }

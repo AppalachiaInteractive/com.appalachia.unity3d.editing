@@ -7,7 +7,7 @@ using UnityEngine;
 
 #endregion
 
-namespace Appalachia.Editing.Attributes.Drawers
+namespace Appalachia.Editing.Attributes.Drawers.Simple
 {
     [CustomPropertyDrawer(typeof(SerializedEnumAttribute))]
     public class SerializedEnumDrawer : PropertyDrawer

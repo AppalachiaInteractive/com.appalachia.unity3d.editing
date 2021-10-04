@@ -14,6 +14,7 @@ namespace Appalachia.Editing.Attributes
     [Conditional("UNITY_EDITOR")]
     public class SmartLabelAttribute : Attribute
     {
+        private readonly string _text;
         private bool _bold;
         private int _hue;
         private bool _postfix;
@@ -21,7 +22,6 @@ namespace Appalachia.Editing.Attributes
         private string _propertyColor;
         private int _saturation;
         private bool _shallowColor;
-        private readonly string _text;
         private int _value;
 
         public SmartLabelAttribute()

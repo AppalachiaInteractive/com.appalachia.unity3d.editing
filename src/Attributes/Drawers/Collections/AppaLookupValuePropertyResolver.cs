@@ -10,13 +10,18 @@ using Unity.Profiling;
 
 #endregion
 
-namespace Appalachia.Editing.Attributes.Drawers
+namespace Appalachia.Editing.Attributes.Drawers.Collections
 {
-    [ResolverPriority(10.0)]
-    public class AppaListPropertyResolver<TElement, TList> : BaseOrderedCollectionResolver<TList>
-        where TList : AppaList<TElement>
+    [ResolverPriority(500.0)]
+    public class
+        AppaLookupValuePropertyResolver<T, TKey, TValue, TKList, TVList> :
+            BaseOrderedCollectionResolver<T>
+        where T : AppaLookup<TKey, TValue, TKList, TVList>
+        where TKList : AppaList<TKey>, new()
+        where TVList : AppaList<TValue>, new()
     {
-        private const string _PRF_PFX = nameof(AppaListPropertyResolver<TElement, TList>) + ".";
+        private const string _PRF_PFX =
+            nameof(AppaLookupValuePropertyResolver<T, TKey, TValue, TKList, TVList>) + ".";
 
         private static readonly ProfilerMarker _PRF_GetChildInfo =
             new(_PRF_PFX + nameof(GetChildInfo));
@@ -45,9 +50,10 @@ namespace Appalachia.Editing.Attributes.Drawers
 
         private readonly Dictionary<int, InspectorPropertyInfo> childInfos = new();
 
-        public override Type ElementType => typeof(TElement);
-
         public bool MaySupportPrefabModifications => true;
+
+        public override Type ElementType =>
+            typeof(AppaLookup<TKey, TValue, TKList, TVList>.KVPDisplayWrapper);
 
         public override InspectorPropertyInfo GetChildInfo(int childIndex)
         {
@@ -58,16 +64,19 @@ namespace Appalachia.Editing.Attributes.Drawers
                     throw new IndexOutOfRangeException();
                 }
 
-                InspectorPropertyInfo inspectorPropertyInfo;
-                if (!childInfos.TryGetValue(childIndex, out inspectorPropertyInfo))
+                if (!childInfos.TryGetValue(childIndex, out var inspectorPropertyInfo))
                 {
                     inspectorPropertyInfo = InspectorPropertyInfo.CreateValue(
                         CollectionResolverUtilities.DefaultIndexToChildName(childIndex),
                         childIndex,
                         Property.BaseValueEntry.SerializationBackend,
-                        new GetterSetter<TList, TElement>(
-                            (ref TList list) => list[childIndex],
-                            (ref TList list, TElement element) => list[childIndex] = element
+                        new GetterSetter<T,
+                            AppaLookup<TKey, TValue, TKList, TVList>.KVPDisplayWrapper>(
+                            (ref T list) => list.GetKeyValuePair(childIndex),
+                            (
+                                ref T list,
+                                AppaLookup<TKey, TValue, TKList, TVList>.KVPDisplayWrapper
+                                    element) => list[element.Key] = element.Value
                         ),
                         Property.Attributes.Where(
                                      attr => !attr.GetType()
@@ -101,7 +110,7 @@ namespace Appalachia.Editing.Attributes.Drawers
             }
         }
 
-        protected override int GetChildCount(TList value)
+        protected override int GetChildCount(T value)
         {
             using (_PRF_GetChildCount.Auto())
             {
@@ -109,31 +118,37 @@ namespace Appalachia.Editing.Attributes.Drawers
             }
         }
 
-        protected override void Add(TList collection, object value)
+        protected override void Add(T collection, object value)
         {
             using (_PRF_Add.Auto())
             {
-                collection.Add((TElement) value);
+                var cast = (AppaLookup<TKey, TValue, TKList, TVList>.KVPDisplayWrapper) value;
+
+                collection.Add(cast.Key, cast.Value);
             }
         }
 
-        protected override void InsertAt(TList collection, int index, object value)
+        protected override void InsertAt(T collection, int index, object value)
         {
             using (_PRF_InsertAt.Auto())
             {
-                collection.Insert(index, (TElement) value);
+                var cast = (AppaLookup<TKey, TValue, TKList, TVList>.KVPDisplayWrapper) value;
+
+                collection.Insert(index, cast.Key, cast.Value);
             }
         }
 
-        protected override void Remove(TList collection, object value)
+        protected override void Remove(T collection, object value)
         {
             using (_PRF_Remove.Auto())
             {
-                collection.Remove((TElement) value);
+                var cast = (AppaLookup<TKey, TValue, TKList, TVList>.KVPDisplayWrapper) value;
+
+                collection.Remove(cast.Key);
             }
         }
 
-        protected override void RemoveAt(TList collection, int index)
+        protected override void RemoveAt(T collection, int index)
         {
             using (_PRF_RemoveAt.Auto())
             {
@@ -141,7 +156,7 @@ namespace Appalachia.Editing.Attributes.Drawers
             }
         }
 
-        protected override void Clear(TList collection)
+        protected override void Clear(T collection)
         {
             using (_PRF_Clear.Auto())
             {
@@ -149,11 +164,11 @@ namespace Appalachia.Editing.Attributes.Drawers
             }
         }
 
-        protected override bool CollectionIsReadOnly(TList collection)
+        protected override bool CollectionIsReadOnly(T collection)
         {
             using (_PRF_CollectionIsReadOnly.Auto())
             {
-                return false;
+                return collection.IsReadOnly;
             }
         }
     }

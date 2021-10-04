@@ -1,8 +1,6 @@
 #region
 
 using Appalachia.Editing.Attributes.Drawers.Contexts;
-using Sirenix.OdinInspector.Editor;
-using Sirenix.OdinInspector.Editor.ValueResolvers;
 using Sirenix.Utilities.Editor;
 using Unity.Profiling;
 using UnityEditor;
@@ -12,72 +10,43 @@ using UnityEngine;
 
 namespace Appalachia.Editing.Attributes.Drawers
 {
-    public sealed class SmartTitleGroupAttributeDrawer : OdinGroupDrawer<SmartTitleGroupAttribute>
+    public sealed class
+        SmartTitleGroupAttributeDrawer : ContextualGroupDrawer<SmartTitleGroupAttribute,
+            SmartTitleGroupContext>
     {
         private const string _PRF_PFX = nameof(SmartTitleGroupAttributeDrawer) + ".";
 
         private static readonly ProfilerMarker _PRF_DrawPropertyLayout =
             new(_PRF_PFX + nameof(DrawPropertyLayout));
 
-        private ValueResolver<Color> _colorContext;
-
-        private TitleContext _propertyContext;
-
         protected override void DrawPropertyLayout(GUIContent label)
         {
             using (_PRF_DrawPropertyLayout.Auto())
             {
-                var property = Property;
-                var attribute = Attribute;
-
-                if (_propertyContext == null)
+                if (context.hasError)
                 {
-                    _propertyContext = new TitleContext();
-                    _propertyContext.TitleHelper = ValueResolver.Get(
-                        property,
-                        attribute.GroupName,
-                        _propertyContext.ErrorMessage
-                    );
-                    _propertyContext.SubtitleHelper = ValueResolver.Get(
-                        property,
-                        attribute.Subtitle,
-                        _propertyContext.ErrorMessage
-                    );
-                }
-
-                if (_colorContext == null)
-                {
-                    _colorContext = ValueResolver.Get<Color>(property, attribute.Color);
-                }
-
-                if (_propertyContext.ErrorMessage != null)
-                {
-                    SirenixEditorGUI.ErrorMessageBox(_propertyContext.ErrorMessage);
-                }
-                else if (_colorContext.ErrorMessage != null)
-                {
-                    SirenixEditorGUI.ErrorMessageBox(_colorContext.ErrorMessage);
+                    context.DrawErrors();
                 }
                 else
                 {
-                    var title = _propertyContext.TitleHelper.GetValue();
-                    var subtitle = _propertyContext.SubtitleHelper.GetValue();
+                    var title = context.TitleHelper.GetValue();
+                    var subtitle = context.SubtitleHelper.GetValue();
 
                     TitleAttributeHelper.Title(
                         title,
                         subtitle,
-                        (TextAlignment) attribute.Alignment,
-                        attribute.HorizontalLine,
-                        attribute.Bold,
-                        attribute.Color != null ? _colorContext.GetValue() : default
+                        (TextAlignment) Attribute.Alignment,
+                        Attribute.HorizontalLine,
+                        Attribute.Bold,
+                        Attribute.Color != null ? context.ColorHelper.GetValue() : default
                     );
                 }
 
-                GUIHelper.PushIndentLevel(EditorGUI.indentLevel + (attribute.Indent ? 1 : 0));
+                GUIHelper.PushIndentLevel(EditorGUI.indentLevel + (Attribute.Indent ? 1 : 0));
 
-                for (var index = 0; index < property.Children.Count; ++index)
+                for (var index = 0; index < Property.Children.Count; ++index)
                 {
-                    var child = property.Children[index];
+                    var child = Property.Children[index];
                     child.Draw(child.Label);
                 }
 

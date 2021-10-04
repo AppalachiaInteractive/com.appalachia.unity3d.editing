@@ -1,9 +1,6 @@
-using System.Reflection;
 using Appalachia.Editing.Attributes.Drawers.Contexts;
 using Appalachia.Utility.Colors;
-using Appalachia.Utility.Reflection;
 using Sirenix.OdinInspector.Editor;
-using Sirenix.OdinInspector.Editor.ValueResolvers;
 using Sirenix.Utilities;
 using Sirenix.Utilities.Editor;
 using UnityEditor;
@@ -15,81 +12,20 @@ namespace Appalachia.Editing.Attributes.Drawers
     ///     Draws properties marked with <see cref="T:Sirenix.OdinInspector.ToggleButtonAttribute" />
     /// </summary>
     [DrawerPriority(DrawerPriorityLevel.WrapperPriority)]
-    public sealed class
-        ToggleButtonAttributeDrawer<T> : OdinAttributeDrawer<ToggleButtonAttribute, T>
+    public sealed class ToggleButtonAttributeDrawer<T> : ContextualPropertyDrawer<
+        ToggleButtonAttribute, ToggleButtonContext<T>, T>
     {
-        private ButtonContext<T> _buttonContext;
-
-        /// <summary>Draws the property.</summary>
+        /// <summary>Draws the Property.</summary>
         protected override void DrawPropertyLayout(GUIContent label)
         {
-            var valueEntry = ValueEntry;
-            var attribute = Attribute;
-            var property = Property;
+            var value = Property.ValueEntry.WeakSmartValue as bool? ?? false;
+            var color = Colors.FromEnum(value ? Attribute.True : Attribute.False);
 
-            if (_buttonContext == null)
+            if (context.hasError)
             {
-                _buttonContext = new ButtonContext<T>();
-                _buttonContext.LabelHelper = ValueResolver.Get(
-                    Property,
-                    attribute.Label ?? attribute.MemberMethod.SplitPascalCase(),
-                    _buttonContext.ErrorMessage
-                );
-
-                if (_buttonContext.ErrorMessage == null)
-                {
-                    MethodInfo memberInfo;
-                    if (AppaMemberFinder.Start(valueEntry.ParentType)
-                                        .IsMethod()
-                                        .IsNamed(attribute.MemberMethod)
-                                        .HasNoParameters()
-                                        .TryGetMember(
-                                             out memberInfo,
-                                             out _buttonContext.ErrorMessage
-                                         ))
-                    {
-                        if (memberInfo.IsStatic())
-                        {
-                            _buttonContext.StaticMethodCaller =
-                                EmitUtilities.CreateStaticMethodCaller(memberInfo);
-                        }
-                        else
-                        {
-                            _buttonContext.InstanceMethodCaller =
-                                EmitUtilities.CreateWeakInstanceMethodCaller(memberInfo);
-                        }
-                    }
-                    else if (AppaMemberFinder.Start(valueEntry.ParentType)
-                                             .IsMethod()
-                                             .IsNamed(attribute.MemberMethod)
-                                             .HasParameters<T>()
-                                             .TryGetMember(
-                                                  out memberInfo,
-                                                  out _buttonContext.ErrorMessage
-                                              ))
-                    {
-                        if (memberInfo.IsStatic())
-                        {
-                            _buttonContext.ErrorMessage =
-                                "Static parameterized method is currently not supported.";
-                        }
-                        else
-                        {
-                            _buttonContext.InstanceParameterMethodCaller =
-                                EmitUtilities.CreateWeakInstanceMethodCaller<T>(memberInfo);
-                        }
-                    }
-                }
-            }
-
-            var value = property.ValueEntry.WeakSmartValue as bool? ?? false;
-            var color = Colors.FromEnum(value ? attribute.True : attribute.False);
-
-            if (_buttonContext.ErrorMessage != null)
-            {
-                SirenixEditorGUI.ErrorMessageBox(_buttonContext.ErrorMessage);
+                context.DrawErrors();
                 GUIHelper.PushLabelColor(color);
-                GUIHelper.PushIsBoldLabel(attribute.Bold);
+                GUIHelper.PushIsBoldLabel(Attribute.Bold);
                 CallNextDrawer(label);
                 GUIHelper.PopLabelColor();
             }
@@ -98,7 +34,7 @@ namespace Appalachia.Editing.Attributes.Drawers
                 EditorGUILayout.BeginHorizontal();
                 EditorGUILayout.BeginVertical();
                 GUIHelper.PushLabelColor(color);
-                GUIHelper.PushIsBoldLabel(attribute.Bold);
+                GUIHelper.PushIsBoldLabel(Attribute.Bold);
                 CallNextDrawer(label);
                 GUIHelper.PopIsBoldLabel();
                 GUIHelper.PopLabelColor();
@@ -107,24 +43,24 @@ namespace Appalachia.Editing.Attributes.Drawers
                 GUIHelper.PushColor(color);
 
                 if (GUILayout.Button(
-                    _buttonContext.LabelHelper.GetValue(),
+                    context.LabelHelper.GetValue(),
                     EditorStyles.miniButton,
                     GUILayoutOptions.ExpandWidth(false).MinWidth(20f)
                 ))
                 {
-                    if (_buttonContext.StaticMethodCaller != null)
+                    if (context.StaticMethodCaller != null)
                     {
-                        _buttonContext.StaticMethodCaller();
+                        context.StaticMethodCaller();
                     }
-                    else if (_buttonContext.InstanceMethodCaller != null)
+                    else if (context.InstanceMethodCaller != null)
                     {
-                        _buttonContext.InstanceMethodCaller(valueEntry.Property.ParentValues[0]);
+                        context.InstanceMethodCaller(ValueEntry.Property.ParentValues[0]);
                     }
-                    else if (_buttonContext.InstanceParameterMethodCaller != null)
+                    else if (context.InstanceParameterMethodCaller != null)
                     {
-                        _buttonContext.InstanceParameterMethodCaller(
-                            valueEntry.Property.ParentValues[0],
-                            valueEntry.SmartValue
+                        context.InstanceParameterMethodCaller(
+                            ValueEntry.Property.ParentValues[0],
+                            ValueEntry.SmartValue
                         );
                     }
                     else

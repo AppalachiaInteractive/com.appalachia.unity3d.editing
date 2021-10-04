@@ -2,7 +2,7 @@ using System.Reflection;
 using UnityEditor;
 using UnityEngine;
 
-namespace Appalachia.Editing.Attributes.Drawers
+namespace Appalachia.Editing.Attributes.Drawers.Simple
 {
 #if UNITY_EDITOR
 

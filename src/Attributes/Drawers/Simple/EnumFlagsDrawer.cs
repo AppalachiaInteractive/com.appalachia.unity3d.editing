@@ -6,7 +6,7 @@ using UnityEngine;
 
 #endregion
 
-namespace Appalachia.Editing.Attributes.Drawers
+namespace Appalachia.Editing.Attributes.Drawers.Simple
 {
     [CustomPropertyDrawer(typeof(EnumFlagsAttribute))]
     public class EnumFlagsDrawer : PropertyDrawer
