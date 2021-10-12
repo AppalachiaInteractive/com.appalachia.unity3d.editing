@@ -1,0 +1,43 @@
+using System;
+using Appalachia.Editing.Core.State;
+using UnityEditor;
+using UnityEngine;
+
+namespace Appalachia.Editing.Core.Fields
+{
+    [Serializable]
+    public class ToggleFieldMetadata : LabelledFieldMetadataBase<ToggleFieldMetadata>
+    {
+        protected override GUIStyle DefaultStyle => GUI.skin.toggle;
+
+        public bool Toggle(bool value)
+        {
+            //using (new GUILayout.HorizontalScope())
+            {
+                UIStateStacks.labelWidth.Push(_prefixLabelWidth);
+
+                var result = EditorGUILayout.Toggle(content, value, style, layout);
+
+                UIStateStacks.labelWidth.Pop();
+
+                return result;
+            }
+        }
+
+        public bool Toggle(bool value, Color contentColor)
+        {
+            if (contentColor != Color.clear)
+            {
+                UIStateStacks.contentColor.Push(contentColor);
+            }
+
+            var result = Toggle(value);
+            if (contentColor != Color.clear)
+            {
+                UIStateStacks.contentColor.Pop();
+            }
+
+            return result;
+        }
+    }
+}

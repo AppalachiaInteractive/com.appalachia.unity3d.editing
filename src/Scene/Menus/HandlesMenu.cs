@@ -3,7 +3,7 @@
 #region
 
 using Appalachia.Core.Attributes;
-using Appalachia.Editing.Preferences;
+using Appalachia.Core.Preferences;
 using UnityEditor;
 using UnityEngine.Rendering;
 
@@ -15,7 +15,7 @@ namespace Appalachia.Editing.Scene.Menus
     public static class HandlesMenu
     {
         private const string MENU_BASE_ = "Tools/" + G_ + "/";
-        private const string G_ = "Handles";
+        private const string G_ = "Appalachia/Handles";
 
         static HandlesMenu()
         {

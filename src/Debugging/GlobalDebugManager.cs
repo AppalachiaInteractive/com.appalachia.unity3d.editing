@@ -1,4 +1,4 @@
-using Appalachia.Editing.Behaviours;
+using Appalachia.Editing.Core.Behaviours;
 using Sirenix.OdinInspector;
 
 namespace Appalachia.Editing.Debugging

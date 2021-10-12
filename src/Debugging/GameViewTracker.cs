@@ -1,4 +1,4 @@
-using Appalachia.Editing.Preferences;
+using Appalachia.Core.Preferences;
 using UnityEditor;
 using UnityEngine;
 
@@ -11,7 +11,7 @@ namespace Appalachia.Editing.Debugging
         private static Camera _mainCamera;
 
         // Custom labels can be defined.
-        private static readonly PREF<bool> s_Enabled = PREFS.REG("Tracking", "GameView", true);
+        private static readonly PREF<bool> s_Enabled = PREFS.REG("Appalachia/Tracking", "GameView", true);
 
         [InitializeOnLoadMethod]
         private static void InitializeOnLoadMethod()

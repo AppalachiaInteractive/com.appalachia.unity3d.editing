@@ -1,7 +1,7 @@
 #region
 
 using System.Collections.Generic;
-using Appalachia.Base.Behaviours;
+using Appalachia.Core.Behaviours;
 using Appalachia.Core.Extensions;
 using Appalachia.Core.Layers;
 using Appalachia.Core.Types.Enums;

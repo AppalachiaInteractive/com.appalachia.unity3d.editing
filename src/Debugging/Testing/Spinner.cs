@@ -1,14 +1,14 @@
 using System;
-using Appalachia.Base.Behaviours;
+using Appalachia.Core.Attributes.Editing;
+using Appalachia.Core.Behaviours;
 using Appalachia.Core.Layers;
-using Appalachia.Editing.Attributes;
 using Sirenix.OdinInspector;
 using UnityEngine;
 
 namespace Appalachia.Editing.Debugging.Testing
 {
     [ExecuteAlways]
-    public class Spinner : InternalMonoBehaviour
+    public class Spinner : AppalachiaMonoBehaviour
     {
         public enum AxisSource
         {

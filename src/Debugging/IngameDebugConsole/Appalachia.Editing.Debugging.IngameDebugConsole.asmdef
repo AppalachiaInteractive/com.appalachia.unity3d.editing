@@ -1,0 +1,17 @@
+{
+    "name": "Appalachia.Editing.Debugging.IngameDebugConsole",
+    "rootNamespace": "",
+    "references": [
+        "GUID:56ca8901b63fd204692a4a27f67b605e",
+        "GUID:75469ad4d38634e559750d17036d5f7c"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

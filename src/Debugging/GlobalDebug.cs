@@ -1,8 +1,9 @@
 #if UNITY_EDITOR
 
 using System;
-using Appalachia.Base.Scriptables;
-using Appalachia.Globals.Shading;
+using Appalachia.Core.Attributes.Editing;
+using Appalachia.Core.Scriptables;
+using Appalachia.Core.Shading;
 using Sirenix.OdinInspector;
 using UnityEditor;
 using UnityEngine;
@@ -37,7 +38,9 @@ namespace Appalachia.Editing.Debugging
         private bool _enabled;
         private bool _initialized;
 
-        private Shader debugShader;
+        [SmartLabel]
+        [BoxGroup("Debug/Shader")]
+        public Shader debugShader;
         private bool enableAny => debugMode != DebugMode.Off;
         private bool enableDebugMotion => debugMode == DebugMode.DebugMotion;
         private bool enableDebugMesh => debugMode == DebugMode.DebugMesh;
@@ -54,7 +57,7 @@ namespace Appalachia.Editing.Debugging
             {
                 _initialized = true;
                 _enabled = false;
-                debugShader = GSR.instance.debugShader;
+                //debugShader = GSR.instance.debugShader;
                 GSPL.Include(debugShader);
                 remap = new Vector2(0f, 1f);
 

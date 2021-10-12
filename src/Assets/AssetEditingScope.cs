@@ -9,14 +9,25 @@ namespace Appalachia.Editing.Assets
 {
     public class AssetEditingScope : IDisposable
     {
-        public AssetEditingScope()
+        private bool _doEdit;
+        
+        public AssetEditingScope(bool doEdit = true)
         {
-            AssetDatabase.StartAssetEditing();
+            _doEdit = doEdit;
+            
+            if (_doEdit)
+            {
+                AssetDatabase.StartAssetEditing();                
+            }
+            
         }
 
         void IDisposable.Dispose()
         {
-            AssetDatabase.StopAssetEditing();
+            if (_doEdit)
+            {
+                AssetDatabase.StopAssetEditing();                
+            }            
         }
     }
 }

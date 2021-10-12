@@ -1,5 +1,5 @@
 using System;
-using Appalachia.Pooling.Objects;
+using Appalachia.Core.ObjectPooling;
 using Unity.Profiling;
 using UnityEngine;
 
