@@ -12,8 +12,9 @@ namespace Appalachia.Editing.Debugging.IngameDebugConsole
             arr = new T[capacity];
         }
 
-        public int Count { get; private set; }
         public T this[int index] => arr[(startIndex + index) % arr.Length];
+
+        public int Count { get; private set; }
 
         // Old elements are overwritten when capacity is reached
         public void Add(T value)

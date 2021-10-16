@@ -17,10 +17,12 @@ namespace Appalachia.Editing.Labels
     [HideReferenceObjectPicker]
     public class LabelData
     {
-        [ReadOnly]
-        [SmartLabel]
-        [SuffixLabel("$" + nameof(suffixLabel))]
-        public string label;
+        [HorizontalGroup("B", .25f)]
+        [LabelText("Apply")]
+        [SmartLabel(Postfix = true)]
+        [OnValueChanged(nameof(OnApplyChanged))]
+        [DisableIf(nameof(_disableApply))]
+        public bool applyLabel;
 
         [HideInInspector] public int count;
 
@@ -31,12 +33,10 @@ namespace Appalachia.Editing.Labels
         [DisableIf(nameof(_disableDelete))]
         public bool deleteLabel;
 
-        [HorizontalGroup("B", .25f)]
-        [LabelText("Apply")]
-        [SmartLabel(Postfix = true)]
-        [OnValueChanged(nameof(OnApplyChanged))]
-        [DisableIf(nameof(_disableApply))]
-        public bool applyLabel;
+        [ReadOnly]
+        [SmartLabel]
+        [SuffixLabel("$" + nameof(suffixLabel))]
+        public string label;
 
         [HorizontalGroup("B", .5f)]
         [LabelText("Swap")]
@@ -45,28 +45,28 @@ namespace Appalachia.Editing.Labels
         [DisableIf(nameof(_disableSwitchTo))]
         public string switchTo;
 
-        private string suffixLabel => $"  {count} items";
+        private bool _disableApply => deleteLabel || (switchTo != null);
 
         private bool _disableDelete => applyLabel || (switchTo != null);
 
-        private bool _disableApply => deleteLabel || (switchTo != null);
-
         private bool _disableSwitchTo => deleteLabel || applyLabel;
 
-        private void OnDeleteChanged()
-        {
-            if (deleteLabel)
-            {
-                applyLabel = false;
-                switchTo = null;
-            }
-        }
+        private string suffixLabel => $"  {count} items";
 
         private void OnApplyChanged()
         {
             if (applyLabel)
             {
                 deleteLabel = false;
+                switchTo = null;
+            }
+        }
+
+        private void OnDeleteChanged()
+        {
+            if (deleteLabel)
+            {
+                applyLabel = false;
                 switchTo = null;
             }
         }

@@ -15,20 +15,11 @@ using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 
-namespace Appalachia.Editing.Debugging.Graphy.Editor
+namespace Appalachia.Editing.Debugging.Graphy
 {
     [CustomEditor(typeof(GraphyDebugger))]
-    internal class GraphyDebuggerEditor : UnityEditor.Editor
+    internal class GraphyDebuggerEditor : Editor
     {
-#region Methods -> Unity Callbacks
-
-        private void OnEnable()
-        {
-            m_target = (GraphyDebugger) target;
-        }
-
-#endregion
-
 #region Methods -> Public Override
 
         public override void OnInspectorGUI()
@@ -79,9 +70,7 @@ namespace Appalachia.Editing.Debugging.Graphy.Editor
             //Update our list
             serObj.Update();
 
-            EditorGUILayout.LabelField(
-                "Current [Debug Packets] list size: " + debugPacketList.arraySize
-            );
+            EditorGUILayout.LabelField("Current [Debug Packets] list size: " + debugPacketList.arraySize);
 
             EditorGUIUtility.fieldWidth = 32;
             EditorGUILayout.BeginHorizontal();
@@ -119,9 +108,7 @@ namespace Appalachia.Editing.Debugging.Graphy.Editor
 
                         while (m_newDebugPacketListSize < debugPacketList.arraySize)
                         {
-                            debugPacketList.DeleteArrayElementAtIndex(
-                                debugPacketList.arraySize - 1
-                            );
+                            debugPacketList.DeleteArrayElementAtIndex(debugPacketList.arraySize - 1);
                         }
                     }
                 }
@@ -159,9 +146,7 @@ namespace Appalachia.Editing.Debugging.Graphy.Editor
                 var listItem = debugPacketList.GetArrayElementAtIndex(i);
 
                 // NOTE: If the Popup detects two equal strings, it just paints 1, that's why I always add the "i"
-                var checkMark = listItem.FindPropertyRelative("Active").boolValue
-                    ? '\u2714'
-                    : '\u2718';
+                var checkMark = listItem.FindPropertyRelative("Active").boolValue ? '\u2714' : '\u2718';
                 debugPacketNames.Add(
                     i +
                     1 +
@@ -249,11 +234,7 @@ namespace Appalachia.Editing.Debugging.Graphy.Editor
 #endregion
 
             EditorGUILayout.LabelField(
-                "[ PACKET ] - ID: " +
-                Id.intValue +
-                " (Conditions: " +
-                DebugConditions.arraySize +
-                ")",
+                "[ PACKET ] - ID: " + Id.intValue + " (Conditions: " + DebugConditions.arraySize + ")",
                 GraphyEditorStyle.HeaderStyle2
             );
 
@@ -266,10 +247,7 @@ namespace Appalachia.Editing.Debugging.Graphy.Editor
             );
 
             Id.intValue = EditorGUILayout.IntField(
-                new GUIContent(
-                    "ID",
-                    "Optional Id. It's used to get or remove DebugPackets in runtime"
-                ),
+                new GUIContent("ID", "Optional Id. It's used to get or remove DebugPackets in runtime"),
                 Id.intValue
             );
 
@@ -308,10 +286,7 @@ namespace Appalachia.Editing.Debugging.Graphy.Editor
                 GraphyEditorStyle.HeaderStyle2
             );
 
-            EditorGUILayout.PropertyField(
-                ConditionEvaluation,
-                new GUIContent("Condition evaluation")
-            );
+            EditorGUILayout.PropertyField(ConditionEvaluation, new GUIContent("Condition evaluation"));
 
             EditorGUILayout.Space();
 
@@ -332,14 +307,12 @@ namespace Appalachia.Editing.Debugging.Graphy.Editor
 
                 var conditionName = i + 1 + " - ";
                 conditionName += GetComparerStringFromDebugVariable(
-                                     (GraphyDebugger.DebugVariable) listItem
-                                        .FindPropertyRelative("Variable")
+                                     (GraphyDebugger.DebugVariable) listItem.FindPropertyRelative("Variable")
                                         .intValue
                                  ) +
                                  " ";
                 conditionName += GetComparerStringFromDebugComparer(
-                                     (GraphyDebugger.DebugComparer) listItem
-                                        .FindPropertyRelative("Comparer")
+                                     (GraphyDebugger.DebugComparer) listItem.FindPropertyRelative("Comparer")
                                         .intValue
                                  ) +
                                  " ";
@@ -445,6 +418,15 @@ namespace Appalachia.Editing.Debugging.Graphy.Editor
 
 #endregion
 
+#region Methods -> Unity Callbacks
+
+        private void OnEnable()
+        {
+            m_target = (GraphyDebugger) target;
+        }
+
+#endregion
+
         /* ----- TODO: ----------------------------
          * Add summaries to the variables.
          * Add summaries to the functions.
@@ -472,34 +454,28 @@ namespace Appalachia.Editing.Debugging.Graphy.Editor
         {
             var debugPacket = new GraphyDebugger.DebugPacket();
 
-            debugPacketSerializedProperty
-               .GetArrayElementAtIndex(debugPacketSerializedProperty.arraySize - 1)
-               .FindPropertyRelative("Active")
-               .boolValue = debugPacket.Active;
+            debugPacketSerializedProperty.GetArrayElementAtIndex(debugPacketSerializedProperty.arraySize - 1)
+                                         .FindPropertyRelative("Active")
+                                         .boolValue = debugPacket.Active;
 
-            debugPacketSerializedProperty
-               .GetArrayElementAtIndex(debugPacketSerializedProperty.arraySize - 1)
-               .FindPropertyRelative("Id")
-               .intValue = debugPacketSerializedProperty.arraySize;
+            debugPacketSerializedProperty.GetArrayElementAtIndex(debugPacketSerializedProperty.arraySize - 1)
+                                         .FindPropertyRelative("Id")
+                                         .intValue = debugPacketSerializedProperty.arraySize;
 
-            debugPacketSerializedProperty
-               .GetArrayElementAtIndex(debugPacketSerializedProperty.arraySize - 1)
-               .FindPropertyRelative("ExecuteOnce")
-               .boolValue = debugPacket.ExecuteOnce;
+            debugPacketSerializedProperty.GetArrayElementAtIndex(debugPacketSerializedProperty.arraySize - 1)
+                                         .FindPropertyRelative("ExecuteOnce")
+                                         .boolValue = debugPacket.ExecuteOnce;
 
-            debugPacketSerializedProperty
-               .GetArrayElementAtIndex(debugPacketSerializedProperty.arraySize - 1)
-               .FindPropertyRelative("InitSleepTime")
-               .floatValue = debugPacket.InitSleepTime;
+            debugPacketSerializedProperty.GetArrayElementAtIndex(debugPacketSerializedProperty.arraySize - 1)
+                                         .FindPropertyRelative("InitSleepTime")
+                                         .floatValue = debugPacket.InitSleepTime;
 
-            debugPacketSerializedProperty
-               .GetArrayElementAtIndex(debugPacketSerializedProperty.arraySize - 1)
-               .FindPropertyRelative("ExecuteSleepTime")
-               .floatValue = debugPacket.ExecuteSleepTime;
+            debugPacketSerializedProperty.GetArrayElementAtIndex(debugPacketSerializedProperty.arraySize - 1)
+                                         .FindPropertyRelative("ExecuteSleepTime")
+                                         .floatValue = debugPacket.ExecuteSleepTime;
         }
 
-        private string GetComparerStringFromDebugVariable(
-            GraphyDebugger.DebugVariable debugVariable)
+        private string GetComparerStringFromDebugVariable(GraphyDebugger.DebugVariable debugVariable)
         {
             switch (debugVariable)
             {
@@ -527,8 +503,7 @@ namespace Appalachia.Editing.Debugging.Graphy.Editor
             }
         }
 
-        private string GetComparerStringFromDebugComparer(
-            GraphyDebugger.DebugComparer debugComparer)
+        private string GetComparerStringFromDebugComparer(GraphyDebugger.DebugComparer debugComparer)
         {
             switch (debugComparer)
             {

@@ -32,6 +32,7 @@ namespace Appalachia.Editing.Core.Fields
         public T Draw<T>(T obj, bool allowSceneObjects = false)
             where T : Object
         {
+            hasBeenDrawn = true;
             UIStateStacks.labelWidth.Push(_prefixLabelWidth);
 
             var result = EditorGUILayout.ObjectField(content, obj, typeof(T), allowSceneObjects);

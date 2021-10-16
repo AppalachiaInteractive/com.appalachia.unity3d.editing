@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -36,116 +37,6 @@ namespace Appalachia.Editing.Debugging.IngameDebugConsole
         public float ItemHeight => logItemHeight;
         public float SelectedItemHeight => heightOfSelectedLogEntry;
 
-        private void Awake()
-        {
-            scrollView = viewportTransform.GetComponentInParent<ScrollRect>();
-            scrollView.onValueChanged.AddListener(pos => UpdateItemsInTheList(false));
-
-            viewportHeight = viewportTransform.rect.height;
-        }
-
-        public void Initialize(
-            DebugLogManager manager,
-            List<DebugLogEntry> collapsedLogEntries,
-            DebugLogIndexList indicesOfEntriesToShow,
-            float logItemHeight)
-        {
-            this.manager = manager;
-            this.collapsedLogEntries = collapsedLogEntries;
-            this.indicesOfEntriesToShow = indicesOfEntriesToShow;
-            this.logItemHeight = logItemHeight;
-            _1OverLogItemHeight = 1f / logItemHeight;
-        }
-
-        public void SetCollapseMode(bool collapse)
-        {
-            isCollapseOn = collapse;
-        }
-
-        // A log item is clicked, highlight it
-        public void OnLogItemClicked(DebugLogItem item)
-        {
-            OnLogItemClickedInternal(item.Index, item);
-        }
-
-        // Force expand the log item at specified index
-        public void SelectAndFocusOnLogItemAtIndex(int itemIndex)
-        {
-            if (indexOfSelectedLogEntry !=
-                itemIndex) // Make sure that we aren't deselecting the target log item
-            {
-                OnLogItemClickedInternal(itemIndex);
-            }
-
-            var transformComponentCenterYAtTop = viewportHeight * 0.5f;
-            var transformComponentCenterYAtBottom =
-                transformComponent.sizeDelta.y - (viewportHeight * 0.5f);
-            var transformComponentTargetCenterY =
-                (itemIndex * logItemHeight) + (viewportHeight * 0.5f);
-            if (transformComponentCenterYAtTop == transformComponentCenterYAtBottom)
-            {
-                scrollView.verticalNormalizedPosition = 0.5f;
-            }
-            else
-            {
-                scrollView.verticalNormalizedPosition = Mathf.Clamp01(
-                    Mathf.InverseLerp(
-                        transformComponentCenterYAtBottom,
-                        transformComponentCenterYAtTop,
-                        transformComponentTargetCenterY
-                    )
-                );
-            }
-
-            manager.SetSnapToBottom(false);
-        }
-
-        private void OnLogItemClickedInternal(int itemIndex, DebugLogItem referenceItem = null)
-        {
-            if (indexOfSelectedLogEntry != itemIndex)
-            {
-                DeselectSelectedLogItem();
-
-                if (!referenceItem)
-                {
-                    if (currentTopIndex == -1)
-                    {
-                        UpdateItemsInTheList(
-                            false
-                        ); // Try to generate some DebugLogItems, we need one DebugLogItem to calculate the text height
-                    }
-
-                    referenceItem = logItemsAtIndices[currentTopIndex];
-                }
-
-                indexOfSelectedLogEntry = itemIndex;
-                positionOfSelectedLogEntry = itemIndex * logItemHeight;
-                heightOfSelectedLogEntry = referenceItem.CalculateExpandedHeight(
-                    collapsedLogEntries[indicesOfEntriesToShow[itemIndex]].ToString()
-                );
-                deltaHeightOfSelectedLogEntry = heightOfSelectedLogEntry - logItemHeight;
-
-                manager.SetSnapToBottom(false);
-            }
-            else
-            {
-                DeselectSelectedLogItem();
-            }
-
-            if ((indexOfSelectedLogEntry >= currentTopIndex) &&
-                (indexOfSelectedLogEntry <= currentBottomIndex))
-            {
-                ColorLogItem(logItemsAtIndices[indexOfSelectedLogEntry], indexOfSelectedLogEntry);
-            }
-
-            CalculateContentHeight();
-
-            HardResetItems();
-            UpdateItemsInTheList(true);
-
-            manager.ValidateScrollPosition();
-        }
-
         // Deselect the currently selected log item
         public void DeselectSelectedLogItem()
         {
@@ -165,6 +56,29 @@ namespace Appalachia.Editing.Debugging.IngameDebugConsole
             }
         }
 
+        public void Initialize(
+            DebugLogManager manager,
+            List<DebugLogEntry> collapsedLogEntries,
+            DebugLogIndexList indicesOfEntriesToShow,
+            float logItemHeight)
+        {
+            this.manager = manager;
+            this.collapsedLogEntries = collapsedLogEntries;
+            this.indicesOfEntriesToShow = indicesOfEntriesToShow;
+            this.logItemHeight = logItemHeight;
+            _1OverLogItemHeight = 1f / logItemHeight;
+        }
+
+        // A single collapsed log entry at specified index is updated, refresh its item if visible
+        public void OnCollapsedLogEntryAtIndexUpdated(int index)
+        {
+            DebugLogItem logItem;
+            if (logItemsAtIndices.TryGetValue(index, out logItem))
+            {
+                logItem.ShowCount();
+            }
+        }
+
         // Number of debug entries may be changed, update the list
         public void OnLogEntriesUpdated(bool updateAllVisibleItemContents)
         {
@@ -179,14 +93,17 @@ namespace Appalachia.Editing.Debugging.IngameDebugConsole
             UpdateItemsInTheList(updateAllVisibleItemContents);
         }
 
-        // A single collapsed log entry at specified index is updated, refresh its item if visible
-        public void OnCollapsedLogEntryAtIndexUpdated(int index)
+        // A log item is clicked, highlight it
+        public void OnLogItemClicked(DebugLogItem item)
         {
-            DebugLogItem logItem;
-            if (logItemsAtIndices.TryGetValue(index, out logItem))
-            {
-                logItem.ShowCount();
-            }
+            OnLogItemClickedInternal(item.Index, item);
+        }
+
+        // Log window's height has changed, update the list
+        public void OnViewportHeightChanged()
+        {
+            viewportHeight = viewportTransform.rect.height;
+            UpdateItemsInTheList(false);
         }
 
         // Log window's width has changed, update the expanded (currently selected) log's height
@@ -223,29 +140,39 @@ namespace Appalachia.Editing.Debugging.IngameDebugConsole
             manager.ValidateScrollPosition();
         }
 
-        // Log window's height has changed, update the list
-        public void OnViewportHeightChanged()
+        // Force expand the log item at specified index
+        public void SelectAndFocusOnLogItemAtIndex(int itemIndex)
         {
-            viewportHeight = viewportTransform.rect.height;
-            UpdateItemsInTheList(false);
-        }
-
-        private void HardResetItems()
-        {
-            if (currentTopIndex != -1)
+            if (indexOfSelectedLogEntry !=
+                itemIndex) // Make sure that we aren't deselecting the target log item
             {
-                DestroyLogItemsBetweenIndices(currentTopIndex, currentBottomIndex);
-                currentTopIndex = -1;
+                OnLogItemClickedInternal(itemIndex);
             }
+
+            var transformComponentCenterYAtTop = viewportHeight * 0.5f;
+            var transformComponentCenterYAtBottom = transformComponent.sizeDelta.y - (viewportHeight * 0.5f);
+            var transformComponentTargetCenterY = (itemIndex * logItemHeight) + (viewportHeight * 0.5f);
+            if (Math.Abs(transformComponentCenterYAtTop - transformComponentCenterYAtBottom) < float.Epsilon)
+            {
+                scrollView.verticalNormalizedPosition = 0.5f;
+            }
+            else
+            {
+                scrollView.verticalNormalizedPosition = Mathf.Clamp01(
+                    Mathf.InverseLerp(
+                        transformComponentCenterYAtBottom,
+                        transformComponentCenterYAtTop,
+                        transformComponentTargetCenterY
+                    )
+                );
+            }
+
+            manager.SetSnapToBottom(false);
         }
 
-        private void CalculateContentHeight()
+        public void SetCollapseMode(bool collapse)
         {
-            var newHeight = Mathf.Max(
-                1f,
-                (indicesOfEntriesToShow.Count * logItemHeight) + deltaHeightOfSelectedLogEntry
-            );
-            transformComponent.sizeDelta = new Vector2(0f, newHeight);
+            isCollapseOn = collapse;
         }
 
         // Calculate the indices of log entries to show
@@ -347,10 +274,7 @@ namespace Appalachia.Editing.Debugging.IngameDebugConsole
                             // wait for the major update
                             if (!updateAllVisibleItemContents)
                             {
-                                UpdateLogItemContentsBetweenIndices(
-                                    newTopIndex,
-                                    currentTopIndex - 1
-                                );
+                                UpdateLogItemContentsBetweenIndices(newTopIndex, currentTopIndex - 1);
                             }
                         }
 
@@ -363,10 +287,7 @@ namespace Appalachia.Editing.Debugging.IngameDebugConsole
                             // wait for the major update
                             if (!updateAllVisibleItemContents)
                             {
-                                UpdateLogItemContentsBetweenIndices(
-                                    currentBottomIndex + 1,
-                                    newBottomIndex
-                                );
+                                UpdateLogItemContentsBetweenIndices(currentBottomIndex + 1, newBottomIndex);
                             }
                         }
                     }
@@ -387,11 +308,37 @@ namespace Appalachia.Editing.Debugging.IngameDebugConsole
             }
         }
 
-        private void CreateLogItemsBetweenIndices(int topIndex, int bottomIndex)
+        private void Awake()
         {
-            for (var i = topIndex; i <= bottomIndex; i++)
+            scrollView = viewportTransform.GetComponentInParent<ScrollRect>();
+            scrollView.onValueChanged.AddListener(pos => UpdateItemsInTheList(false));
+
+            viewportHeight = viewportTransform.rect.height;
+        }
+
+        private void CalculateContentHeight()
+        {
+            var newHeight = Mathf.Max(
+                1f,
+                (indicesOfEntriesToShow.Count * logItemHeight) + deltaHeightOfSelectedLogEntry
+            );
+            transformComponent.sizeDelta = new Vector2(0f, newHeight);
+        }
+
+        // Color a log item using its index
+        private void ColorLogItem(DebugLogItem logItem, int index)
+        {
+            if (index == indexOfSelectedLogEntry)
             {
-                CreateLogItemAtIndex(i);
+                logItem.Image.color = logItemSelectedColor;
+            }
+            else if ((index % 2) == 0)
+            {
+                logItem.Image.color = logItemNormalColor1;
+            }
+            else
+            {
+                logItem.Image.color = logItemNormalColor2;
             }
         }
 
@@ -416,12 +363,75 @@ namespace Appalachia.Editing.Debugging.IngameDebugConsole
             logItemsAtIndices[index] = logItem;
         }
 
+        private void CreateLogItemsBetweenIndices(int topIndex, int bottomIndex)
+        {
+            for (var i = topIndex; i <= bottomIndex; i++)
+            {
+                CreateLogItemAtIndex(i);
+            }
+        }
+
         private void DestroyLogItemsBetweenIndices(int topIndex, int bottomIndex)
         {
             for (var i = topIndex; i <= bottomIndex; i++)
             {
                 debugManager.PoolLogItem(logItemsAtIndices[i]);
             }
+        }
+
+        private void HardResetItems()
+        {
+            if (currentTopIndex != -1)
+            {
+                DestroyLogItemsBetweenIndices(currentTopIndex, currentBottomIndex);
+                currentTopIndex = -1;
+            }
+        }
+
+        private void OnLogItemClickedInternal(int itemIndex, DebugLogItem referenceItem = null)
+        {
+            if (indexOfSelectedLogEntry != itemIndex)
+            {
+                DeselectSelectedLogItem();
+
+                if (!referenceItem)
+                {
+                    if (currentTopIndex == -1)
+                    {
+                        UpdateItemsInTheList(
+                            false
+                        ); // Try to generate some DebugLogItems, we need one DebugLogItem to calculate the text height
+                    }
+
+                    referenceItem = logItemsAtIndices[currentTopIndex];
+                }
+
+                indexOfSelectedLogEntry = itemIndex;
+                positionOfSelectedLogEntry = itemIndex * logItemHeight;
+                heightOfSelectedLogEntry = referenceItem.CalculateExpandedHeight(
+                    collapsedLogEntries[indicesOfEntriesToShow[itemIndex]].ToString()
+                );
+                deltaHeightOfSelectedLogEntry = heightOfSelectedLogEntry - logItemHeight;
+
+                manager.SetSnapToBottom(false);
+            }
+            else
+            {
+                DeselectSelectedLogItem();
+            }
+
+            if ((indexOfSelectedLogEntry >= currentTopIndex) &&
+                (indexOfSelectedLogEntry <= currentBottomIndex))
+            {
+                ColorLogItem(logItemsAtIndices[indexOfSelectedLogEntry], indexOfSelectedLogEntry);
+            }
+
+            CalculateContentHeight();
+
+            HardResetItems();
+            UpdateItemsInTheList(true);
+
+            manager.ValidateScrollPosition();
         }
 
         private void UpdateLogItemContentsBetweenIndices(int topIndex, int bottomIndex)
@@ -444,23 +454,6 @@ namespace Appalachia.Editing.Debugging.IngameDebugConsole
                 {
                     logItem.HideCount();
                 }
-            }
-        }
-
-        // Color a log item using its index
-        private void ColorLogItem(DebugLogItem logItem, int index)
-        {
-            if (index == indexOfSelectedLogEntry)
-            {
-                logItem.Image.color = logItemSelectedColor;
-            }
-            else if ((index % 2) == 0)
-            {
-                logItem.Image.color = logItemNormalColor1;
-            }
-            else
-            {
-                logItem.Image.color = logItemNormalColor2;
             }
         }
 #pragma warning disable 0649

@@ -12,6 +12,7 @@ namespace Appalachia.Editing.Core.Fields
 
         public bool Toggle(bool value)
         {
+            hasBeenDrawn = true;
             //using (new GUILayout.HorizontalScope())
             {
                 UIStateStacks.labelWidth.Push(_prefixLabelWidth);
@@ -26,6 +27,7 @@ namespace Appalachia.Editing.Core.Fields
 
         public bool Toggle(bool value, Color contentColor)
         {
+            hasBeenDrawn = true;
             if (contentColor != Color.clear)
             {
                 UIStateStacks.contentColor.Push(contentColor);

@@ -14,8 +14,7 @@ namespace Appalachia.Editing.Drawers.Collections
 {
     [ResolverPriority(500.0)]
     public class
-        AppaLookupValuePropertyResolver<T, TKey, TValue, TKList, TVList> :
-            BaseOrderedCollectionResolver<T>
+        AppaLookupValuePropertyResolver<T, TKey, TValue, TKList, TVList> : BaseOrderedCollectionResolver<T>
         where T : AppaLookup<TKey, TValue, TKList, TVList>
         where TKList : AppaList<TKey>, new()
         where TVList : AppaList<TValue>, new()
@@ -23,8 +22,7 @@ namespace Appalachia.Editing.Drawers.Collections
         private const string _PRF_PFX =
             nameof(AppaLookupValuePropertyResolver<T, TKey, TValue, TKList, TVList>) + ".";
 
-        private static readonly ProfilerMarker _PRF_GetChildInfo =
-            new(_PRF_PFX + nameof(GetChildInfo));
+        private static readonly ProfilerMarker _PRF_GetChildInfo = new(_PRF_PFX + nameof(GetChildInfo));
 
         private static readonly ProfilerMarker _PRF_ChildPropertyRequiresRefresh =
             new(_PRF_PFX + nameof(ChildPropertyRequiresRefresh));
@@ -32,17 +30,13 @@ namespace Appalachia.Editing.Drawers.Collections
         private static readonly ProfilerMarker _PRF_ChildNameToIndex =
             new(_PRF_PFX + nameof(ChildNameToIndex));
 
-        private static readonly ProfilerMarker _PRF_GetChildCount =
-            new(_PRF_PFX + nameof(GetChildCount));
+        private static readonly ProfilerMarker _PRF_GetChildCount = new(_PRF_PFX + nameof(GetChildCount));
 
         private static readonly ProfilerMarker _PRF_Add = new(_PRF_PFX + nameof(Add));
 
         private static readonly ProfilerMarker _PRF_InsertAt = new(_PRF_PFX + nameof(InsertAt));
-
         private static readonly ProfilerMarker _PRF_Remove = new(_PRF_PFX + nameof(Remove));
-
         private static readonly ProfilerMarker _PRF_RemoveAt = new(_PRF_PFX + nameof(RemoveAt));
-
         private static readonly ProfilerMarker _PRF_Clear = new(_PRF_PFX + nameof(Clear));
 
         private static readonly ProfilerMarker _PRF_CollectionIsReadOnly =
@@ -50,10 +44,26 @@ namespace Appalachia.Editing.Drawers.Collections
 
         private readonly Dictionary<int, InspectorPropertyInfo> childInfos = new();
 
-        public bool MaySupportPrefabModifications => true;
-
         public override Type ElementType =>
             typeof(AppaLookup<TKey, TValue, TKList, TVList>.KVPDisplayWrapper);
+
+        public bool MaySupportPrefabModifications => true;
+
+        public override int ChildNameToIndex(string name)
+        {
+            using (_PRF_ChildNameToIndex.Auto())
+            {
+                return CollectionResolverUtilities.DefaultChildNameToIndex(name);
+            }
+        }
+
+        public override bool ChildPropertyRequiresRefresh(int index, InspectorPropertyInfo info)
+        {
+            using (_PRF_ChildPropertyRequiresRefresh.Auto())
+            {
+                return false;
+            }
+        }
 
         public override InspectorPropertyInfo GetChildInfo(int childIndex)
         {
@@ -70,20 +80,16 @@ namespace Appalachia.Editing.Drawers.Collections
                         CollectionResolverUtilities.DefaultIndexToChildName(childIndex),
                         childIndex,
                         Property.BaseValueEntry.SerializationBackend,
-                        new GetterSetter<T,
-                            AppaLookup<TKey, TValue, TKList, TVList>.KVPDisplayWrapper>(
+                        new GetterSetter<T, AppaLookup<TKey, TValue, TKList, TVList>.KVPDisplayWrapper>(
                             (ref T list) => list.GetKeyValuePair(childIndex),
                             (
-                                ref T list,
-                                AppaLookup<TKey, TValue, TKList, TVList>.KVPDisplayWrapper
-                                    element) => list[element.Key] = element.Value
+                                    ref T list,
+                                    AppaLookup<TKey, TValue, TKList, TVList>.KVPDisplayWrapper element) =>
+                                list[element.Key] = element.Value
                         ),
                         Property.Attributes.Where(
                                      attr => !attr.GetType()
-                                                  .IsDefined(
-                                                       typeof(DontApplyToListElementsAttribute),
-                                                       true
-                                                   )
+                                                  .IsDefined(typeof(DontApplyToListElementsAttribute), true)
                                  )
                                 .ToArray()
                     );
@@ -94,19 +100,29 @@ namespace Appalachia.Editing.Drawers.Collections
             }
         }
 
-        public override bool ChildPropertyRequiresRefresh(int index, InspectorPropertyInfo info)
+        protected override void Add(T collection, object value)
         {
-            using (_PRF_ChildPropertyRequiresRefresh.Auto())
+            using (_PRF_Add.Auto())
             {
-                return false;
+                var cast = (AppaLookup<TKey, TValue, TKList, TVList>.KVPDisplayWrapper) value;
+
+                collection.Add(cast.Key, cast.Value);
             }
         }
 
-        public override int ChildNameToIndex(string name)
+        protected override void Clear(T collection)
         {
-            using (_PRF_ChildNameToIndex.Auto())
+            using (_PRF_Clear.Auto())
             {
-                return CollectionResolverUtilities.DefaultChildNameToIndex(name);
+                collection.Clear();
+            }
+        }
+
+        protected override bool CollectionIsReadOnly(T collection)
+        {
+            using (_PRF_CollectionIsReadOnly.Auto())
+            {
+                return collection.IsReadOnly;
             }
         }
 
@@ -115,16 +131,6 @@ namespace Appalachia.Editing.Drawers.Collections
             using (_PRF_GetChildCount.Auto())
             {
                 return value.Count;
-            }
-        }
-
-        protected override void Add(T collection, object value)
-        {
-            using (_PRF_Add.Auto())
-            {
-                var cast = (AppaLookup<TKey, TValue, TKList, TVList>.KVPDisplayWrapper) value;
-
-                collection.Add(cast.Key, cast.Value);
             }
         }
 
@@ -153,22 +159,6 @@ namespace Appalachia.Editing.Drawers.Collections
             using (_PRF_RemoveAt.Auto())
             {
                 collection.RemoveAt(index);
-            }
-        }
-
-        protected override void Clear(T collection)
-        {
-            using (_PRF_Clear.Auto())
-            {
-                collection.Clear();
-            }
-        }
-
-        protected override bool CollectionIsReadOnly(T collection)
-        {
-            using (_PRF_CollectionIsReadOnly.Auto())
-            {
-                return collection.IsReadOnly;
             }
         }
     }

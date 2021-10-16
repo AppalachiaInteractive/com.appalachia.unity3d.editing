@@ -9,10 +9,9 @@ namespace Appalachia.Editing.Assets.Extensions
     public static class RepositorySubdirectoryExtensions
     {
         private const string _PRF_PFX = nameof(RepositorySubdirectoryExtensions) + ".";
-        private static readonly ProfilerMarker _PRF_Draw = new ProfilerMarker(_PRF_PFX + nameof(Draw));
-        public static void Draw(
-            this RepositorySubdirectory metadata,
-            UIFieldMetadataManager fieldManager)
+        private static readonly ProfilerMarker _PRF_Draw = new(_PRF_PFX + nameof(Draw));
+
+        public static void Draw(this RepositorySubdirectory metadata, UIFieldMetadataManager fieldManager)
         {
             using (_PRF_Draw.Auto())
             {
@@ -23,10 +22,7 @@ namespace Appalachia.Editing.Assets.Extensions
 
                 if (!metadata.isConventional)
                 {
-                    field_path.Draw(
-                        metadata.relativePath,
-                        ColorPalettes.Editing.error
-                    );
+                    field_path.Draw(metadata.relativePath, ColorPalettes.Editing.error);
                 }
                 else
                 {

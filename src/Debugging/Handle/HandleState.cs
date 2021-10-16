@@ -12,10 +12,10 @@ namespace Appalachia.Editing.Debugging.Handle
         // ReSharper disable once MemberHidesStaticFromOuterClass
         private const string _PRF_PFX = nameof(HandleState) + ".";
 
-        private static readonly ProfilerMarker _PRF_HandleState =
-            new(_PRF_PFX + nameof(HandleState));
+        private static readonly ProfilerMarker _PRF_HandleState = new(_PRF_PFX + nameof(HandleState));
 
         private static readonly ProfilerMarker _PRF_Dispose = new(_PRF_PFX + nameof(Dispose));
+
         private static readonly ProfilerMarker _PRF_New = new(_PRF_PFX + nameof(New));
         private static readonly ProfilerMarker _PRF_Reset = new(_PRF_PFX + nameof(Reset));
         private static readonly ProfilerMarker _PRF_Initialize = new(_PRF_PFX + nameof(Initialize));
@@ -28,6 +28,26 @@ namespace Appalachia.Editing.Debugging.Handle
 #pragma warning restore 612
         {
             using (_PRF_HandleState.Auto())
+            {
+                _color = Handles.color;
+                _sRGB = GL.sRGBWrite;
+                _zTest = Handles.zTest;
+            }
+        }
+
+        public override void Initialize()
+        {
+            using (_PRF_Initialize.Auto())
+            {
+                _color = Handles.color;
+                _sRGB = GL.sRGBWrite;
+                _zTest = Handles.zTest;
+            }
+        }
+
+        public override void Reset()
+        {
+            using (_PRF_Reset.Auto())
             {
                 _color = Handles.color;
                 _sRGB = GL.sRGBWrite;
@@ -106,26 +126,6 @@ namespace Appalachia.Editing.Debugging.Handle
                 var h = Get();
                 Handles.zTest = zTest;
                 return h;
-            }
-        }
-
-        public override void Reset()
-        {
-            using (_PRF_Reset.Auto())
-            {
-                _color = Handles.color;
-                _sRGB = GL.sRGBWrite;
-                _zTest = Handles.zTest;
-            }
-        }
-
-        public override void Initialize()
-        {
-            using (_PRF_Initialize.Auto())
-            {
-                _color = Handles.color;
-                _sRGB = GL.sRGBWrite;
-                _zTest = Handles.zTest;
             }
         }
     }

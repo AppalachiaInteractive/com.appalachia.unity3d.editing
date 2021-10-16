@@ -10,7 +10,7 @@ namespace Appalachia.Editing.Core.Fields
         protected override GUIStyle DefaultStyle => EditorStyles.miniButton;
 
         public override GUILayoutOption[] InitializeLayout()
-        {            
+        {
             return new[] {GUILayout.ExpandWidth(false)};
         }
     }

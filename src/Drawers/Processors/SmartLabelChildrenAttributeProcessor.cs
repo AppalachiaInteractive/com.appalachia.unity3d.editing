@@ -32,9 +32,8 @@ namespace Appalachia.Editing.Drawers.Processors
             }
 
             var slcAttribute =
-                parentProperty.Attributes.FirstOrDefault_NoAlloc(
-                    a => a is SmartLabelChildrenAttribute
-                ) as SmartLabelChildrenAttribute;
+                parentProperty.Attributes.FirstOrDefault_NoAlloc(a => a is SmartLabelChildrenAttribute) as
+                    SmartLabelChildrenAttribute;
 
             if (slcAttribute == null)
             {

@@ -9,11 +9,9 @@ namespace Appalachia.Editing.Drawers.Contexts
     public abstract class BaseDrawerContextCollection<TAttribute>
         where TAttribute : Attribute
     {
-        [SerializeField] protected TAttribute _attribute;
         [SerializeField] public bool hasError;
+        [SerializeField] protected TAttribute _attribute;
         [SerializeField] protected InspectorProperty _property;
-
-        protected abstract ValueResolver[] GetValueResolvers();
 
         public void DrawErrors()
         {
@@ -42,5 +40,7 @@ namespace Appalachia.Editing.Drawers.Contexts
 
             return false;
         }
+
+        protected abstract ValueResolver[] GetValueResolvers();
     }
 }

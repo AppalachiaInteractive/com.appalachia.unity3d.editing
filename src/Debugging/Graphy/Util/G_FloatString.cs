@@ -43,29 +43,17 @@ namespace Appalachia.Editing.Debugging.Graphy.Util
 
 #region Properties -> Public
 
-        /// <summary>
-        ///     The lowest float value of the existing number buffer.
-        /// </summary>
+        
+        
+        
         public static float MinValue => -(m_negativeBuffer.Length - 1).FromIndex();
 
-        /// <summary>
-        ///     The highest float value of the existing number buffer.
-        /// </summary>
         public static float MaxValue => (m_positiveBuffer.Length - 1).FromIndex();
 
 #endregion
 
 #region Methods -> Public
 
-        /// <summary>
-        ///     Initialize the buffers.
-        /// </summary>
-        /// <param name="minNegativeValue">
-        ///     Lowest negative value allowed.
-        /// </param>
-        /// <param name="maxPositiveValue">
-        ///     Highest positive value allowed.
-        /// </param>
         public static void Init(float minNegativeValue, float maxPositiveValue)
         {
             var negativeLength = minNegativeValue.ToIndex();
@@ -96,15 +84,6 @@ namespace Appalachia.Editing.Debugging.Graphy.Util
             m_positiveBuffer = new string[0];
         }
 
-        /// <summary>
-        ///     Returns this float as a cached string.
-        /// </summary>
-        /// <param name="value">
-        ///     The required float.
-        /// </param>
-        /// <returns>
-        ///     A cached number string.
-        /// </returns>
         public static string ToStringNonAlloc(this float value)
         {
             var valIndex = value.ToIndex();
@@ -122,16 +101,6 @@ namespace Appalachia.Editing.Debugging.Graphy.Util
             return value.ToString();
         }
 
-        //TODO: Convert this to use m_floatFormat instead, but investigate which functions require and dont require one first.
-        /// <summary>
-        ///     Returns this float as a cached string.
-        /// </summary>
-        /// <param name="value">
-        ///     The required float.
-        /// </param>
-        /// <returns>
-        ///     A cached number string.
-        /// </returns>
         public static string ToStringNonAlloc(this float value, string format)
         {
             var valIndex = value.ToIndex();
@@ -149,29 +118,11 @@ namespace Appalachia.Editing.Debugging.Graphy.Util
             return value.ToString(format);
         }
 
-        /// <summary>
-        ///     Returns a float as a casted int.
-        /// </summary>
-        /// <param name="f">
-        ///     The given float.
-        /// </param>
-        /// <returns>
-        ///     The given float as an int.
-        /// </returns>
         public static int ToInt(this float f)
         {
             return (int) f;
         }
 
-        /// <summary>
-        ///     Returns an int as a casted float.
-        /// </summary>
-        /// <param name="f">
-        ///     The given int.
-        /// </param>
-        /// <returns>
-        ///     The given int as a float.
-        /// </returns>
         public static float ToFloat(this int i)
         {
             return i;

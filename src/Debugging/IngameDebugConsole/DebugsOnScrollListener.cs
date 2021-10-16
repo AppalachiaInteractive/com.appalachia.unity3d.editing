@@ -9,13 +9,27 @@ using UnityEngine.UI;
 // snap to bottom shall be true, otherwise it shall be false
 namespace Appalachia.Editing.Debugging.IngameDebugConsole
 {
-    public class DebugsOnScrollListener : MonoBehaviour,
-                                          IScrollHandler,
-                                          IBeginDragHandler,
-                                          IEndDragHandler
+    public class DebugsOnScrollListener : MonoBehaviour, IScrollHandler, IBeginDragHandler, IEndDragHandler
     {
-        public ScrollRect debugsScrollRect;
         public DebugLogManager debugLogManager;
+        public ScrollRect debugsScrollRect;
+
+        public void OnScrollbarDragEnd(BaseEventData data)
+        {
+            if (IsScrollbarAtBottom())
+            {
+                debugLogManager.SetSnapToBottom(true);
+            }
+            else
+            {
+                debugLogManager.SetSnapToBottom(false);
+            }
+        }
+
+        public void OnScrollbarDragStart(BaseEventData data)
+        {
+            debugLogManager.SetSnapToBottom(false);
+        }
 
         public void OnBeginDrag(PointerEventData data)
         {
@@ -35,23 +49,6 @@ namespace Appalachia.Editing.Debugging.IngameDebugConsole
         }
 
         public void OnScroll(PointerEventData data)
-        {
-            if (IsScrollbarAtBottom())
-            {
-                debugLogManager.SetSnapToBottom(true);
-            }
-            else
-            {
-                debugLogManager.SetSnapToBottom(false);
-            }
-        }
-
-        public void OnScrollbarDragStart(BaseEventData data)
-        {
-            debugLogManager.SetSnapToBottom(false);
-        }
-
-        public void OnScrollbarDragEnd(BaseEventData data)
         {
             if (IsScrollbarAtBottom())
             {

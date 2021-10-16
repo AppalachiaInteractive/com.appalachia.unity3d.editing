@@ -1,7 +1,8 @@
 using System;
 using System.Collections.Generic;
+using Appalachia.CI.Integration.Assets;
 using Appalachia.Editing.Core.Windows.ProjectWindow.Details;
-using Appalachia.Utility.Reflection.Extensions;
+using Unity.Profiling;
 using UnityEditor;
 using UnityEngine;
 using Object = UnityEngine.Object;
@@ -14,20 +15,18 @@ namespace Appalachia.Editing.Core.Windows.ProjectWindow
     [InitializeOnLoad]
     public static class ProjectWindowDetails
     {
-        private const int SpaceBetweenColumns = 10;
+        private const string _PRF_PFX = nameof(ProjectWindowDetails) + ".";
         private const int MenuIconWidth = 20;
-        private static readonly List<ProjectWindowDetailBase> _details = new();
+        private const int SpaceBetweenColumns = 10;
+
+        private static List<ProjectWindowDetailBase> _details = new();
         private static GUIStyle _rightAlignedStyle;
+        private static readonly ProfilerMarker _PRF_RegisterDetail = new(_PRF_PFX + nameof(RegisterDetail));
 
-        static ProjectWindowDetails()
-        {
-            EditorApplication.projectWindowItemOnGUI += DrawAssetDetails;
+        private static readonly ProfilerMarker _PRF_DrawAssetDetails =
+            new(_PRF_PFX + nameof(DrawAssetDetails));
 
-            foreach (var type in GetAllDetailTypes())
-            {
-                _details.Add((ProjectWindowDetailBase) Activator.CreateInstance(type));
-            }
-        }
+        private static readonly ProfilerMarker _PRF_DrawMenuIcon = new(_PRF_PFX + nameof(DrawMenuIcon));
 
         private static GUIStyle RightAlignedStyle
         {
@@ -43,117 +42,117 @@ namespace Appalachia.Editing.Core.Windows.ProjectWindow
             }
         }
 
-        public static IEnumerable<Type> GetAllDetailTypes()
-        {
-            // Get all classes that inherit from ProjectViewDetailBase:
-            var types = ReflectionExtensions.GetAllTypes();
-            foreach (var type in types)
-            {
-                if (type.BaseType == typeof(ProjectWindowDetailBase))
-                {
-                    yield return type;
-                }
-            }
-        }
-
-        [MenuItem("Assets/Details...")]
+        [MenuItem("Appalachia/Tools/Appalachia.Editing.Core/Project Window Details")]
         public static void Menu()
         {
             //Event.current.Use();
             ShowContextMenu();
         }
 
-        private static void DrawAssetDetails(string guid, Rect rect)
+        public static void RegisterDetail<T>(T instance)
+            where T : ProjectWindowDetailBase
         {
-            if (Application.isPlaying)
+            using (_PRF_RegisterDetail.Auto())
             {
-                return;
-            }
-
-            if (!IsMainListAsset(rect))
-            {
-                return;
-            }
-
-            if ((Event.current.type == EventType.MouseDown) &&
-                (Event.current.button == 0) &&
-                (Event.current.mousePosition.x > (rect.xMax - MenuIconWidth)))
-            {
-                Event.current.Use();
-                ShowContextMenu();
-            }
-
-            if (Event.current.type != EventType.Repaint)
-            {
-                return;
-            }
-
-            var isSelected = Array.IndexOf(Selection.assetGUIDs, guid) >= 0;
-
-            // Right align label and leave some space for the menu icon:
-            rect.x += rect.width;
-            rect.x -= MenuIconWidth;
-            rect.width = MenuIconWidth;
-
-            if (isSelected)
-            {
-                DrawMenuIcon(rect);
-            }
-
-            var assetPath = AssetDatabase.GUIDToAssetPath(guid);
-            if (AssetDatabase.IsValidFolder(assetPath))
-            {
-                return;
-            }
-
-            var asset = AssetDatabase.LoadAssetAtPath<Object>(assetPath);
-            if (asset == null)
-            {
-                // this entry could be Favourites or Packages. Ignore it.
-                return;
-            }
-
-            for (var i = _details.Count - 1; i >= 0; i--)
-            {
-                var detail = _details[i];
-                if (!detail.Visible)
+                if (_details == null)
                 {
-                    continue;
+                    _details = new List<ProjectWindowDetailBase>();
                 }
 
-                rect.width = detail.ColumnWidth;
-                rect.x -= detail.ColumnWidth + SpaceBetweenColumns;
-                GUI.Label(
-                    rect,
-                    new GUIContent(detail.GetLabel(guid, assetPath, asset), detail.Name),
-                    GetStyle(detail.Alignment)
-                );
+                _details.Add(instance);
+            }
+        }
+
+        public static void ToggleMenu(object data)
+        {
+            var detail = (ProjectWindowDetailBase) data;
+            detail.Visible = !detail.Visible;
+        }
+
+        private static void DrawAssetDetails(string guid, Rect rect)
+        {
+            using (_PRF_DrawAssetDetails.Auto())
+            {
+                if (Application.isPlaying)
+                {
+                    return;
+                }
+
+                if (!IsMainListAsset(rect))
+                {
+                    return;
+                }
+
+                if ((Event.current.type == EventType.MouseDown) &&
+                    (Event.current.button == 0) &&
+                    (Event.current.mousePosition.x > (rect.xMax - MenuIconWidth)))
+                {
+                    Event.current.Use();
+                    ShowContextMenu();
+                }
+
+                if (Event.current.type != EventType.Repaint)
+                {
+                    return;
+                }
+
+                var isSelected = Array.IndexOf(Selection.assetGUIDs, guid) >= 0;
+
+                // Right align label and leave some space for the menu icon:
+                rect.x += rect.width;
+                rect.x -= MenuIconWidth;
+                rect.width = MenuIconWidth;
+
+                if (isSelected)
+                {
+                    DrawMenuIcon(rect);
+                }
+
+                var assetPath = AssetDatabaseManager.GUIDToAssetPath(guid);
+                if (AssetDatabaseManager.IsValidFolder(assetPath))
+                {
+                    return;
+                }
+
+                var asset = AssetDatabaseManager.LoadAssetAtPath<Object>(assetPath);
+                if (asset == null)
+                {
+                    // this entry could be Favourites or Packages. Ignore it.
+                    return;
+                }
+
+                for (var i = _details.Count - 1; i >= 0; i--)
+                {
+                    var detail = _details[i];
+                    if (!detail.Visible)
+                    {
+                        continue;
+                    }
+
+                    rect.width = detail.ColumnWidth;
+                    rect.x -= detail.ColumnWidth + SpaceBetweenColumns;
+                    GUI.Label(
+                        rect,
+                        new GUIContent(detail.GetLabel(guid, assetPath, asset), detail.Name),
+                        GetStyle(detail.Alignment)
+                    );
+                }
             }
         }
 
         private static void DrawMenuIcon(Rect rect)
         {
-            rect.y += 4;
-            var icon = EditorGUIUtility.IconContent("_menu");
-            EditorGUI.LabelField(rect, icon);
+            using (_PRF_DrawMenuIcon.Auto())
+            {
+                rect.y += 4;
+                var icon = EditorGUIUtility.IconContent("_menu");
+                EditorGUI.LabelField(rect, icon);
+            }
         }
 
         private static GUIStyle GetStyle(TextAlignment alignment)
         {
             return alignment == TextAlignment.Left ? EditorStyles.label : RightAlignedStyle;
-        }
-
-        private static void ShowContextMenu()
-        {
-            var menu = new GenericMenu();
-            foreach (var detail in _details)
-            {
-                menu.AddItem(new GUIContent(detail.Name), detail.Visible, ToggleMenu, detail);
-            }
-
-            menu.AddSeparator("");
-            menu.AddItem(new GUIContent("None"), false, HideAllDetails);
-            menu.DropDown(new Rect(Vector2.zero, Vector2.zero));
         }
 
         private static void HideAllDetails()
@@ -162,12 +161,6 @@ namespace Appalachia.Editing.Core.Windows.ProjectWindow
             {
                 detail.Visible = false;
             }
-        }
-
-        public static void ToggleMenu(object data)
-        {
-            var detail = (ProjectWindowDetailBase) data;
-            detail.Visible = !detail.Visible;
         }
 
         private static bool IsMainListAsset(Rect rect)
@@ -185,6 +178,19 @@ namespace Appalachia.Editing.Core.Windows.ProjectWindow
             }
 
             return true;
+        }
+
+        private static void ShowContextMenu()
+        {
+            var menu = new GenericMenu();
+            foreach (var detail in _details)
+            {
+                menu.AddItem(new GUIContent(detail.Name), detail.Visible, ToggleMenu, detail);
+            }
+
+            menu.AddSeparator("");
+            menu.AddItem(new GUIContent("None"), false, HideAllDetails);
+            menu.DropDown(new Rect(Vector2.zero, Vector2.zero));
         }
     }
 }

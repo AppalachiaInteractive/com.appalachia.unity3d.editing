@@ -13,9 +13,12 @@ namespace Appalachia.Editing.Core.Fields
         public string iconName;
         public string text;
         public string tooltip;
+
+        private static readonly ProfilerMarker _PRF_InitializeContent =
+            new(_PRF_PFX + nameof(InitializeContent));
+
         protected int _prefixLabelWidth;
 
-        private static readonly ProfilerMarker _PRF_InitializeContent = new ProfilerMarker(_PRF_PFX + nameof(InitializeContent));
         public override GUIContent InitializeContent()
         {
             using (_PRF_InitializeContent.Auto())

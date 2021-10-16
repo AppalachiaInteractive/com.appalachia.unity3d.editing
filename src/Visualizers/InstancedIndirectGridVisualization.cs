@@ -16,6 +16,12 @@ namespace Appalachia.Editing.Visualizers
         [PropertyRange(.05f, 1f)]
         public float visualizationSize = .25f;
 
+        protected abstract void GetGridPosition(
+            Vector3 position,
+            out float height,
+            out Quaternion rotation,
+            out Vector3 scale);
+
         protected override void GetPositionData(
             Bounds bounds,
             out Vector3[] positions,
@@ -50,12 +56,6 @@ namespace Appalachia.Editing.Visualizers
                 scales[index] = scale;
             }
         }
-
-        protected abstract void GetGridPosition(
-            Vector3 position,
-            out float height,
-            out Quaternion rotation,
-            out Vector3 scale);
     }
 }
 #endif

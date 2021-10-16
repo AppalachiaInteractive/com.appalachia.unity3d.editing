@@ -14,110 +14,11 @@
 using UnityEditor;
 using UnityEngine;
 
-namespace Appalachia.Editing.Debugging.Graphy.Editor
+namespace Appalachia.Editing.Debugging.Graphy
 {
     [CustomEditor(typeof(GraphyManager))]
-    internal class GraphyManagerEditor : UnityEditor.Editor
+    internal class GraphyManagerEditor : Editor
     {
-#region Methods -> Unity Callbacks
-
-        private void OnEnable()
-        {
-            m_target = (GraphyManager) target;
-
-            var serObj = serializedObject;
-
-#region Section -> Settings
-
-            m_graphyMode = serObj.FindProperty("m_graphyMode");
-
-            m_enableOnStartup = serObj.FindProperty("m_enableOnStartup");
-
-            m_keepAlive = serObj.FindProperty("m_keepAlive");
-
-            m_background = serObj.FindProperty("m_background");
-            m_backgroundColor = serObj.FindProperty("m_backgroundColor");
-
-            m_enableHotkeys = serObj.FindProperty("m_enableHotkeys");
-
-            m_toggleModeKeyCode = serObj.FindProperty("m_toggleModeKeyCode");
-
-            m_toggleModeCtrl = serObj.FindProperty("m_toggleModeCtrl");
-            m_toggleModeAlt = serObj.FindProperty("m_toggleModeAlt");
-
-            m_toggleActiveKeyCode = serObj.FindProperty("m_toggleActiveKeyCode");
-
-            m_toggleActiveCtrl = serObj.FindProperty("m_toggleActiveCtrl");
-            m_toggleActiveAlt = serObj.FindProperty("m_toggleActiveAlt");
-
-            m_graphModulePosition = serObj.FindProperty("m_graphModulePosition");
-
-#endregion
-
-#region Section -> FPS
-
-            m_fpsModuleState = serObj.FindProperty("m_fpsModuleState");
-
-            m_goodFpsColor = serObj.FindProperty("m_goodFpsColor");
-            m_goodFpsThreshold = serObj.FindProperty("m_goodFpsThreshold");
-
-            m_cautionFpsColor = serObj.FindProperty("m_cautionFpsColor");
-            m_cautionFpsThreshold = serObj.FindProperty("m_cautionFpsThreshold");
-
-            m_criticalFpsColor = serObj.FindProperty("m_criticalFpsColor");
-
-            m_fpsGraphResolution = serObj.FindProperty("m_fpsGraphResolution");
-
-            m_fpsTextUpdateRate = serObj.FindProperty("m_fpsTextUpdateRate");
-
-#endregion
-
-#region Section -> RAM
-
-            m_ramModuleState = serObj.FindProperty("m_ramModuleState");
-
-            m_allocatedRamColor = serObj.FindProperty("m_allocatedRamColor");
-            m_reservedRamColor = serObj.FindProperty("m_reservedRamColor");
-            m_monoRamColor = serObj.FindProperty("m_monoRamColor");
-
-            m_ramGraphResolution = serObj.FindProperty("m_ramGraphResolution");
-
-            m_ramTextUpdateRate = serObj.FindProperty("m_ramTextUpdateRate");
-
-#endregion
-
-#region Section -> Audio
-
-            m_findAudioListenerInCameraIfNull =
-                serObj.FindProperty("m_findAudioListenerInCameraIfNull");
-
-            m_audioListener = serObj.FindProperty("m_audioListener");
-
-            m_audioModuleState = serObj.FindProperty("m_audioModuleState");
-
-            m_audioGraphColor = serObj.FindProperty("m_audioGraphColor");
-
-            m_audioGraphResolution = serObj.FindProperty("m_audioGraphResolution");
-
-            m_audioTextUpdateRate = serObj.FindProperty("m_audioTextUpdateRate");
-
-            m_FFTWindow = serObj.FindProperty("m_FFTWindow");
-
-            m_spectrumSize = serObj.FindProperty("m_spectrumSize");
-
-#endregion
-
-#region Section -> Advanced Settings
-
-            m_advancedModulePosition = serObj.FindProperty("m_advancedModulePosition");
-
-            m_advancedModuleState = serObj.FindProperty("m_advancedModuleState");
-
-#endregion
-        }
-
-#endregion
-
 #region Methods -> Public Override
 
         public override void OnInspectorGUI()
@@ -335,10 +236,7 @@ namespace Appalachia.Editing.Debugging.Graphy.Editor
                 EditorGUILayout.BeginHorizontal();
 
                 m_goodFpsThreshold.intValue = EditorGUILayout.IntField(
-                    new GUIContent(
-                        "- Good",
-                        "When FPS rise above this value, this color will be used."
-                    ),
+                    new GUIContent("- Good", "When FPS rise above this value, this color will be used."),
                     m_goodFpsThreshold.intValue
                 );
 
@@ -366,8 +264,7 @@ namespace Appalachia.Editing.Debugging.Graphy.Editor
                     m_cautionFpsThreshold.intValue
                 );
 
-                m_cautionFpsColor.colorValue =
-                    EditorGUILayout.ColorField(m_cautionFpsColor.colorValue);
+                m_cautionFpsColor.colorValue = EditorGUILayout.ColorField(m_cautionFpsColor.colorValue);
 
                 EditorGUILayout.EndHorizontal();
 
@@ -390,8 +287,7 @@ namespace Appalachia.Editing.Debugging.Graphy.Editor
                     0
                 );
 
-                m_criticalFpsColor.colorValue =
-                    EditorGUILayout.ColorField(m_criticalFpsColor.colorValue);
+                m_criticalFpsColor.colorValue = EditorGUILayout.ColorField(m_criticalFpsColor.colorValue);
 
                 EditorGUILayout.EndHorizontal();
 
@@ -400,10 +296,7 @@ namespace Appalachia.Editing.Debugging.Graphy.Editor
                 if (m_fpsModuleState.intValue == 0)
                 {
                     m_fpsGraphResolution.intValue = EditorGUILayout.IntSlider(
-                        new GUIContent(
-                            "Graph resolution",
-                            "Defines the amount of points in the graph"
-                        ),
+                        new GUIContent("Graph resolution", "Defines the amount of points in the graph"),
                         m_fpsGraphResolution.intValue,
                         20,
                         m_graphyMode.intValue == 0 ? 300 : 128
@@ -461,20 +354,14 @@ namespace Appalachia.Editing.Debugging.Graphy.Editor
                     m_reservedRamColor.colorValue
                 );
 
-                m_monoRamColor.colorValue = EditorGUILayout.ColorField(
-                    "- Mono",
-                    m_monoRamColor.colorValue
-                );
+                m_monoRamColor.colorValue = EditorGUILayout.ColorField("- Mono", m_monoRamColor.colorValue);
 
                 EditorGUI.indentLevel--;
 
                 if (m_ramModuleState.intValue == 0)
                 {
                     m_ramGraphResolution.intValue = EditorGUILayout.IntSlider(
-                        new GUIContent(
-                            "Graph resolution",
-                            "Defines the amount of points are in the graph"
-                        ),
+                        new GUIContent("Graph resolution", "Defines the amount of points are in the graph"),
                         m_ramGraphResolution.intValue,
                         20,
                         m_graphyMode.intValue == 0 ? 300 : 128
@@ -555,8 +442,7 @@ namespace Appalachia.Editing.Debugging.Graphy.Editor
                     if (((m_audioGraphResolution.intValue % 3) != 0) &&
                         (m_audioGraphResolution.intValue < 300))
                     {
-                        m_audioGraphResolution.intValue +=
-                            3 - (m_audioGraphResolution.intValue % 3);
+                        m_audioGraphResolution.intValue += 3 - (m_audioGraphResolution.intValue % 3);
                     }
 
                     //TODO: Figure out why a static version of the ForceMultipleOf3 isnt used.
@@ -637,6 +523,104 @@ namespace Appalachia.Editing.Debugging.Graphy.Editor
             EditorGUIUtility.fieldWidth = defaultFieldWidth;
 
             serializedObject.ApplyModifiedProperties();
+        }
+
+#endregion
+
+#region Methods -> Unity Callbacks
+
+        private void OnEnable()
+        {
+            m_target = (GraphyManager) target;
+
+            var serObj = serializedObject;
+
+#region Section -> Settings
+
+            m_graphyMode = serObj.FindProperty("m_graphyMode");
+
+            m_enableOnStartup = serObj.FindProperty("m_enableOnStartup");
+
+            m_keepAlive = serObj.FindProperty("m_keepAlive");
+
+            m_background = serObj.FindProperty("m_background");
+            m_backgroundColor = serObj.FindProperty("m_backgroundColor");
+
+            m_enableHotkeys = serObj.FindProperty("m_enableHotkeys");
+
+            m_toggleModeKeyCode = serObj.FindProperty("m_toggleModeKeyCode");
+
+            m_toggleModeCtrl = serObj.FindProperty("m_toggleModeCtrl");
+            m_toggleModeAlt = serObj.FindProperty("m_toggleModeAlt");
+
+            m_toggleActiveKeyCode = serObj.FindProperty("m_toggleActiveKeyCode");
+
+            m_toggleActiveCtrl = serObj.FindProperty("m_toggleActiveCtrl");
+            m_toggleActiveAlt = serObj.FindProperty("m_toggleActiveAlt");
+
+            m_graphModulePosition = serObj.FindProperty("m_graphModulePosition");
+
+#endregion
+
+#region Section -> FPS
+
+            m_fpsModuleState = serObj.FindProperty("m_fpsModuleState");
+
+            m_goodFpsColor = serObj.FindProperty("m_goodFpsColor");
+            m_goodFpsThreshold = serObj.FindProperty("m_goodFpsThreshold");
+
+            m_cautionFpsColor = serObj.FindProperty("m_cautionFpsColor");
+            m_cautionFpsThreshold = serObj.FindProperty("m_cautionFpsThreshold");
+
+            m_criticalFpsColor = serObj.FindProperty("m_criticalFpsColor");
+
+            m_fpsGraphResolution = serObj.FindProperty("m_fpsGraphResolution");
+
+            m_fpsTextUpdateRate = serObj.FindProperty("m_fpsTextUpdateRate");
+
+#endregion
+
+#region Section -> RAM
+
+            m_ramModuleState = serObj.FindProperty("m_ramModuleState");
+
+            m_allocatedRamColor = serObj.FindProperty("m_allocatedRamColor");
+            m_reservedRamColor = serObj.FindProperty("m_reservedRamColor");
+            m_monoRamColor = serObj.FindProperty("m_monoRamColor");
+
+            m_ramGraphResolution = serObj.FindProperty("m_ramGraphResolution");
+
+            m_ramTextUpdateRate = serObj.FindProperty("m_ramTextUpdateRate");
+
+#endregion
+
+#region Section -> Audio
+
+            m_findAudioListenerInCameraIfNull = serObj.FindProperty("m_findAudioListenerInCameraIfNull");
+
+            m_audioListener = serObj.FindProperty("m_audioListener");
+
+            m_audioModuleState = serObj.FindProperty("m_audioModuleState");
+
+            m_audioGraphColor = serObj.FindProperty("m_audioGraphColor");
+
+            m_audioGraphResolution = serObj.FindProperty("m_audioGraphResolution");
+
+            m_audioTextUpdateRate = serObj.FindProperty("m_audioTextUpdateRate");
+
+            m_FFTWindow = serObj.FindProperty("m_FFTWindow");
+
+            m_spectrumSize = serObj.FindProperty("m_spectrumSize");
+
+#endregion
+
+#region Section -> Advanced Settings
+
+            m_advancedModulePosition = serObj.FindProperty("m_advancedModulePosition");
+
+            m_advancedModuleState = serObj.FindProperty("m_advancedModuleState");
+
+#endregion
         }
 
 #endregion

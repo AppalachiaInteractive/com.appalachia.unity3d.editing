@@ -76,8 +76,7 @@ namespace Appalachia.Editing.Debugging.Graphy.Audio
                 {
                     m_deltaTimeOffset = 0f;
 
-                    m_DBText.text = Mathf.Clamp((int) m_audioMonitor.MaxDB, -80, 0)
-                                         .ToStringNonAlloc();
+                    m_DBText.text = Mathf.Clamp((int) m_audioMonitor.MaxDB, -80, 0).ToStringNonAlloc();
                 }
                 else
                 {

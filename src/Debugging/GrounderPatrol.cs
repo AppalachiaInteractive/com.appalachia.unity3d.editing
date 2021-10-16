@@ -8,24 +8,29 @@ namespace Appalachia.Editing.Debugging
     [ExecuteAlways]
     public class GrounderPatrol : MonoBehaviour
     {
-        public bool pointsAreRelative = true;
+        public bool freeze;
+
+        [ReadOnly] public Vector3 lastPosition;
         public Vector3 origin;
         public List<Vector3> points = new();
-        [ReadOnly] public int targetIndex;
+        public bool pointsAreRelative = true;
 
         public float positionSpeed = .1f;
         public float rotationSpeed = .1f;
-        public float yOffset = .5f;
-
-        public bool freeze;
+        [ReadOnly] public Vector3 targetForward;
+        [ReadOnly] public int targetIndex;
 
         [ReadOnly] public Vector3 targetPosition;
-        [ReadOnly] public Vector3 targetForward;
         [ReadOnly] public Vector3 targetUp;
-
-        [ReadOnly] public Vector3 lastPosition;
+        public float yOffset = .5f;
 
         private RaycastHit[] hits = new RaycastHit[16];
+
+        [Button]
+        private void ResetOrigin()
+        {
+            origin = transform.position;
+        }
 
         private void Update()
         {
@@ -102,10 +107,7 @@ namespace Appalachia.Editing.Debugging
                     rotationSpeed * Time.deltaTime
                 );
 
-                var normal = terrain.terrainData.GetInterpolatedNormal(
-                    targetPosition.x,
-                    targetPosition.z
-                );
+                var normal = terrain.terrainData.GetInterpolatedNormal(targetPosition.x, targetPosition.z);
 
                 targetUp = (normal + Vector3.up + Vector3.up) / 3f;
 
@@ -122,12 +124,6 @@ namespace Appalachia.Editing.Debugging
             {
                 Debug.LogError(ex);
             }
-        }
-
-        [Button]
-        private void ResetOrigin()
-        {
-            origin = transform.position;
         }
     }
 }

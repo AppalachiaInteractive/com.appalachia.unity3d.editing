@@ -17,11 +17,6 @@ namespace Appalachia.Editing.Drawers.Contexts
         public float Size;
         public ValueResolver<Color> ColorHelper;
 
-        protected override ValueResolver[] GetValueResolvers()
-        {
-            return new ValueResolver[] {ColorHelper};
-        }
-
         public override void Initialize(
             InspectorProperty property,
             SmartLabelAttribute attribute,
@@ -38,6 +33,11 @@ namespace Appalachia.Editing.Drawers.Contexts
                 ColorError = true;
                 SirenixEditorGUI.ErrorMessageBox(ColorHelper.ErrorMessage);
             }
+        }
+
+        protected override ValueResolver[] GetValueResolvers()
+        {
+            return new ValueResolver[] {ColorHelper};
         }
     }
 }

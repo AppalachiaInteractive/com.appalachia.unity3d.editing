@@ -11,6 +11,7 @@ namespace Appalachia.Editing.Core.Fields
 
         public bool Foldout(ref bool isOpen)
         {
+            hasBeenDrawn = true;
             isOpen = EditorGUILayout.Foldout(isOpen, content, style);
 
             return isOpen;

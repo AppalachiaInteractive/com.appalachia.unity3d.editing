@@ -50,14 +50,14 @@ namespace Appalachia.Editing.Debugging.Graphy
         [Serializable]
         public struct DebugCondition
         {
-            [Tooltip("Variable to compare against")]
-            public DebugVariable Variable;
-
             [Tooltip("Comparer operator to use")]
             public DebugComparer Comparer;
 
             [Tooltip("Value to compare against the chosen variable")]
             public float Value;
+
+            [Tooltip("Variable to compare against")]
+            public DebugVariable Variable;
         }
 
 #endregion
@@ -70,39 +70,38 @@ namespace Appalachia.Editing.Debugging.Graphy
             [Tooltip("If false, it won't be checked")]
             public bool Active = true;
 
-            [Tooltip("Optional Id. It's used to get or remove DebugPackets in runtime")]
-            public int Id;
+            public ConditionEvaluation ConditionEvaluation = ConditionEvaluation.All_conditions_must_be_met;
+
+            [Tooltip("If true, it pauses the editor")]
+            public bool DebugBreak;
+
+            [Tooltip("List of conditions that will be checked each frame")]
+            public List<DebugCondition> DebugConditions = new();
 
             [Tooltip("If true, once the actions are executed, this DebugPacket will delete itself")]
             public bool ExecuteOnce = true;
-
-            [Tooltip(
-                "Time to wait before checking if conditions are met (use this to avoid low fps drops triggering the conditions when loading the game)"
-            )]
-            public float InitSleepTime = 2;
 
             [Tooltip(
                 "Time to wait before checking if conditions are met again (once they have already been met and if ExecuteOnce is false)"
             )]
             public float ExecuteSleepTime = 2;
 
-            public ConditionEvaluation ConditionEvaluation =
-                ConditionEvaluation.All_conditions_must_be_met;
+            [Tooltip("Optional Id. It's used to get or remove DebugPackets in runtime")]
+            public int Id;
 
-            [Tooltip("List of conditions that will be checked each frame")]
-            public List<DebugCondition> DebugConditions = new();
+            [Tooltip(
+                "Time to wait before checking if conditions are met (use this to avoid low fps drops triggering the conditions when loading the game)"
+            )]
+            public float InitSleepTime = 2;
+
+            [Multiline] public string Message = string.Empty;
 
             // Actions on conditions met
 
             public MessageType MessageType;
-
-            [Multiline] public string Message = string.Empty;
-
-            public bool TakeScreenshot;
             public string ScreenshotFileName = "Graphy_Screenshot";
 
-            [Tooltip("If true, it pauses the editor")]
-            public bool DebugBreak;
+            public bool TakeScreenshot;
 
             public UnityEvent UnityEvents;
             public List<Action> Callbacks = new();
@@ -113,6 +112,12 @@ namespace Appalachia.Editing.Debugging.Graphy
             private float timePassed;
 
             public bool Check => canBeChecked;
+
+            public void Executed()
+            {
+                canBeChecked = false;
+                executed = true;
+            }
 
             public void Update()
             {
@@ -128,12 +133,6 @@ namespace Appalachia.Editing.Debugging.Graphy
                         timePassed = 0;
                     }
                 }
-            }
-
-            public void Executed()
-            {
-                canBeChecked = false;
-                executed = true;
             }
         }
 
@@ -465,8 +464,7 @@ namespace Appalachia.Editing.Debugging.Graphy
             switch (debugCondition.Comparer)
             {
                 case DebugComparer.Less_than:
-                    return GetRequestedValueFromDebugVariable(debugCondition.Variable) <
-                           debugCondition.Value;
+                    return GetRequestedValueFromDebugVariable(debugCondition.Variable) < debugCondition.Value;
                 case DebugComparer.Equals_or_less_than:
                     return GetRequestedValueFromDebugVariable(debugCondition.Variable) <=
                            debugCondition.Value;
@@ -479,8 +477,7 @@ namespace Appalachia.Editing.Debugging.Graphy
                     return GetRequestedValueFromDebugVariable(debugCondition.Variable) >=
                            debugCondition.Value;
                 case DebugComparer.Greater_than:
-                    return GetRequestedValueFromDebugVariable(debugCondition.Variable) >
-                           debugCondition.Value;
+                    return GetRequestedValueFromDebugVariable(debugCondition.Variable) > debugCondition.Value;
 
                 default:
                     return false;

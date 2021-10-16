@@ -22,13 +22,9 @@ namespace Appalachia.Editing.Core.Fields
             }
         }
 
-        public virtual bool ShouldHandleScrollWheel()
-        {
-            return true;
-        }
-
         public EditorGUILayout.ScrollViewScope GetScope()
         {
+            hasBeenDrawn = true;
             var scope = new EditorGUILayout.ScrollViewScope(scrollPosition, style, layout)
             {
                 handleScrollWheel = ShouldHandleScrollWheel()
@@ -37,6 +33,11 @@ namespace Appalachia.Editing.Core.Fields
             scrollPosition = scope.scrollPosition;
 
             return scope;
+        }
+
+        public virtual bool ShouldHandleScrollWheel()
+        {
+            return true;
         }
     }
 }

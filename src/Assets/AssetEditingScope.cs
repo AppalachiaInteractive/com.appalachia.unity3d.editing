@@ -1,7 +1,7 @@
 #region
 
 using System;
-using UnityEditor;
+using Appalachia.CI.Integration.Assets;
 
 #endregion
 
@@ -9,25 +9,24 @@ namespace Appalachia.Editing.Assets
 {
     public class AssetEditingScope : IDisposable
     {
-        private bool _doEdit;
-        
+        private readonly bool _doEdit;
+
         public AssetEditingScope(bool doEdit = true)
         {
             _doEdit = doEdit;
-            
+
             if (_doEdit)
             {
-                AssetDatabase.StartAssetEditing();                
+                AssetDatabaseManager.StartAssetEditing();
             }
-            
         }
 
         void IDisposable.Dispose()
         {
             if (_doEdit)
             {
-                AssetDatabase.StopAssetEditing();                
-            }            
+                AssetDatabaseManager.StopAssetEditing();
+            }
         }
     }
 }

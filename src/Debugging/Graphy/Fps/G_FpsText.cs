@@ -92,8 +92,7 @@ namespace Appalachia.Editing.Debugging.Graphy.Fps
                 SetFpsRelatedTextColor(m_onePercentFpsText, m_fpsMonitor.OnePercentFPS);
 
                 // Update 0.1% fps
-                m_zero1PercentFpsText.text =
-                    ((int) m_fpsMonitor.Zero1PercentFps).ToStringNonAlloc();
+                m_zero1PercentFpsText.text = ((int) m_fpsMonitor.Zero1PercentFps).ToStringNonAlloc();
                 SetFpsRelatedTextColor(m_zero1PercentFpsText, m_fpsMonitor.Zero1PercentFps);
 
                 // Update avg fps

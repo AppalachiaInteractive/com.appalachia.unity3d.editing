@@ -10,10 +10,9 @@ namespace Appalachia.Editing.Assets.Extensions
     public static class AssetPathMetadataExtensions
     {
         private const string _PRF_PFX = nameof(AssetPathMetadataExtensions) + ".";
-        private static readonly ProfilerMarker _PRF_Draw = new ProfilerMarker(_PRF_PFX + nameof(Draw));
-        public static void Draw(
-            this AssetPathMetadata metadata,
-            UIFieldMetadataManager fieldManager)
+        private static readonly ProfilerMarker _PRF_Draw = new(_PRF_PFX + nameof(Draw));
+
+        public static void Draw(this AssetPathMetadata metadata, UIFieldMetadataManager fieldManager)
         {
             using (_PRF_Draw.Auto())
             {
@@ -67,17 +66,11 @@ namespace Appalachia.Editing.Assets.Extensions
                         field_name.Draw(metadata.name);
 
                         //GUILayout.FlexibleSpace();
-                        field_type.Draw(
-                            metadata.pathType.ToString(),
-                            ColorPalettes.Editing.notable
-                        );
+                        field_type.Draw(metadata.pathType.ToString(), ColorPalettes.Editing.notable);
                         EditorGUILayout.Space(6f, false);
                     }
 
-                    field_rel.Draw(
-                        metadata.relativePath,
-                        ColorPalettes.Editing.good
-                    );
+                    field_rel.Draw(metadata.relativePath, ColorPalettes.Editing.good);
 
                     //field_abs.Draw(absolutePath);
 
@@ -92,9 +85,7 @@ namespace Appalachia.Editing.Assets.Extensions
                         field_isdir.Toggle(metadata.isDirectory);
                         field_exist.Toggle(
                             metadata.doesExist,
-                            metadata.doesExist
-                                ? Color.clear
-                                : ColorPalettes.Editing.error
+                            metadata.doesExist ? Color.clear : ColorPalettes.Editing.error
                         );
 
                         EditorGUILayout.Space(6f, false);

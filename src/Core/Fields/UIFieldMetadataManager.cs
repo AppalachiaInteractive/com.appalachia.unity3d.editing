@@ -7,22 +7,15 @@ namespace Appalachia.Editing.Core.Fields
     public sealed class UIFieldMetadataManager
     {
         private const string _PRF_PFX = nameof(UIFieldMetadataManager) + ".";
+
+        private static readonly ProfilerMarker _PRF_CheckInitialization =
+            new(_PRF_PFX + nameof(CheckInitialization));
+
+        private static readonly ProfilerMarker _PRF_Add = new(_PRF_PFX + nameof(Add));
+
+        private static readonly ProfilerMarker _PRF_Get = new(_PRF_PFX + nameof(Get));
         private Dictionary<Type, Dictionary<string, EditorUIFieldMetadata>> _lookup = new();
 
-        private static readonly ProfilerMarker _PRF_CheckInitialization = new ProfilerMarker(_PRF_PFX + nameof(CheckInitialization));
-        private void CheckInitialization()
-        {
-            using (_PRF_CheckInitialization.Auto())
-            {
-                if ((_lookup == null) || (_lookup.Count == 0))
-                {
-                    _lookup = new Dictionary<Type, Dictionary<string, EditorUIFieldMetadata>>();
-                }
-            }
-        }
-
-
-        private static readonly ProfilerMarker _PRF_Add = new ProfilerMarker(_PRF_PFX + nameof(Add));
         public T Add<T>(
             string identifier = null,
             T instance = null,
@@ -73,7 +66,6 @@ namespace Appalachia.Editing.Core.Fields
             }
         }
 
-        private static readonly ProfilerMarker _PRF_Get = new ProfilerMarker(_PRF_PFX + nameof(Get));
         public T Get<T>()
             where T : EditorUIFieldMetadata<T>, new()
         {
@@ -96,9 +88,9 @@ namespace Appalachia.Editing.Core.Fields
                 if (!_lookup.ContainsKey(searchType))
                 {
                     instance = Add<T>(identifier);
-                
+
                     onCreate?.Invoke(instance);
-                
+
                     return instance;
                 }
 
@@ -127,6 +119,17 @@ namespace Appalachia.Editing.Core.Fields
                 onCreate?.Invoke(instance);
 
                 return instance;
+            }
+        }
+
+        private void CheckInitialization()
+        {
+            using (_PRF_CheckInitialization.Auto())
+            {
+                if ((_lookup == null) || (_lookup.Count == 0))
+                {
+                    _lookup = new Dictionary<Type, Dictionary<string, EditorUIFieldMetadata>>();
+                }
             }
         }
     }

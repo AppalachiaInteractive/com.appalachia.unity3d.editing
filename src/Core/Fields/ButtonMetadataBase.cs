@@ -12,10 +12,13 @@ namespace Appalachia.Editing.Core.Fields
     {
         public bool Button(bool enabled = true, Color contentColor = default, Color backgroundColor = default)
         {
+            hasBeenDrawn = true;
+            
             if (contentColor != Color.clear)
             {
                 UIStateStacks.contentColor.Push(contentColor.ScaleA(enabled ? 1f : .5f));
             }
+
             if (backgroundColor != Color.clear)
             {
                 UIStateStacks.backgroundColor.Push(backgroundColor.ScaleA(enabled ? 1f : .25f));
@@ -29,11 +32,12 @@ namespace Appalachia.Editing.Core.Fields
             {
                 UIStateStacks.contentColor.Pop();
             }
+
             if (backgroundColor != Color.clear)
             {
                 UIStateStacks.backgroundColor.Pop();
             }
-            
+
             return result;
         }
     }

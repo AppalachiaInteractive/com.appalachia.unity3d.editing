@@ -10030,11 +10030,12 @@ namespace Appalachia.Editing.Core
                     EditorGUILayout.LabelField(searchLabel, searchLabelLayout);
                     _searchFilter = EditorGUILayout.TextField(_searchFilter);
 
-                    var regexStatusLabel = _regexState == RegexState.Valid
-                        ? regexValidLabel
-                        : _regexState == RegexState.Invalid
-                            ? regexInvalidLabel
-                            : regexMissingLabel;
+                    var regexStatusLabel = _regexState switch
+                    {
+                        RegexState.Valid   => regexValidLabel,
+                        RegexState.Invalid => regexInvalidLabel,
+                        _                  => regexMissingLabel
+                    };
 
                     EditorGUILayout.LabelField(regexStatusLabel, regexIconStyle, regexIconLayout);
 

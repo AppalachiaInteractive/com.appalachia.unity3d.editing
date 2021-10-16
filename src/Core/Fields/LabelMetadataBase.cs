@@ -9,25 +9,33 @@ namespace Appalachia.Editing.Core.Fields
         where T : EditorUIFieldMetadata<T>
     {
         private const string _PRF_PFX = nameof(LabelMetadataBase<T>) + ".";
+
+        private static readonly ProfilerMarker _PRF_Draw = new(_PRF_PFX + nameof(Draw));
+
+        private static readonly ProfilerMarker _PRF_Draw_LabelField =
+            new(_PRF_PFX + nameof(Draw) + ".LabelField");
+
+        private static readonly ProfilerMarker _PRF_Draw_Label = new(_PRF_PFX + nameof(Draw) + ".Label");
+
+        private static readonly ProfilerMarker _PRF_Draw_Label_LabelField =
+            new(_PRF_PFX + nameof(Draw) + ".Label.LabelField");
+
+        private static readonly ProfilerMarker _PRF_Draw_Label_NewContent =
+            new(_PRF_PFX + nameof(Draw) + ".Label.NewContent");
+
+        private static readonly ProfilerMarker _PRF_Draw_LabelColor =
+            new(_PRF_PFX + nameof(Draw) + ".LabelColor");
+
+        private static readonly ProfilerMarker _PRF_Draw_Color = new(_PRF_PFX + nameof(Draw) + ".Color");
+
         private GUIContent _cachedContent;
         private string _cachedLabelValue;
 
-        protected virtual void OnBeforeDraw()
-        {
-        }
-
-        protected virtual void OnAfterDraw()
-        {
-        }
-
-        private static readonly ProfilerMarker _PRF_Draw = new ProfilerMarker(_PRF_PFX + nameof(Draw));
-
-        private static readonly ProfilerMarker _PRF_Draw_LabelField =
-            new ProfilerMarker(_PRF_PFX + nameof(Draw) + ".LabelField");
         public void Draw()
         {
             using (_PRF_Draw.Auto())
             {
+                hasBeenDrawn = true;
                 UIStateStacks.labelWidth.Push(_prefixLabelWidth);
 
                 OnBeforeDraw();
@@ -43,18 +51,11 @@ namespace Appalachia.Editing.Core.Fields
             }
         }
 
-        private static readonly ProfilerMarker _PRF_Draw_Label =
-            new ProfilerMarker(_PRF_PFX + nameof(Draw) + ".Label");
-
-        private static readonly ProfilerMarker _PRF_Draw_Label_LabelField =
-            new ProfilerMarker(_PRF_PFX + nameof(Draw) + ".Label.LabelField");
-
-        private static readonly ProfilerMarker _PRF_Draw_Label_NewContent =
-            new ProfilerMarker(_PRF_PFX + nameof(Draw) + ".Label.NewContent");
         public void Draw(string labelValue)
         {
             using (_PRF_Draw_Label.Auto())
             {
+                hasBeenDrawn = true;
                 if (labelValue == null)
                 {
                     Draw();
@@ -85,8 +86,6 @@ namespace Appalachia.Editing.Core.Fields
             }
         }
 
-        private static readonly ProfilerMarker _PRF_Draw_LabelColor =
-            new ProfilerMarker(_PRF_PFX + nameof(Draw) + ".LabelColor");
         public void Draw(string labelValue, Color contentColor)
         {
             using (_PRF_Draw_LabelColor.Auto())
@@ -105,14 +104,20 @@ namespace Appalachia.Editing.Core.Fields
             }
         }
 
-        private static readonly ProfilerMarker _PRF_Draw_Color =
-            new ProfilerMarker(_PRF_PFX + nameof(Draw) + ".Color");
         public void Draw(Color contentColor)
         {
             using (_PRF_Draw_Color.Auto())
             {
                 Draw(null, contentColor);
             }
+        }
+
+        protected virtual void OnAfterDraw()
+        {
+        }
+
+        protected virtual void OnBeforeDraw()
+        {
         }
     }
 }

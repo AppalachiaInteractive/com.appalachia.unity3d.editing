@@ -1,5 +1,8 @@
+using System;
+
 namespace Appalachia.Editing.Debugging.IngameDebugConsole
 {
+    [Flags]
     public enum DebugLogFilter
     {
         None = 0,

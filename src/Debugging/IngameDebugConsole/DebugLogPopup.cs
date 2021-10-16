@@ -33,83 +33,14 @@ namespace Appalachia.Editing.Debugging.IngameDebugConsole
         private Vector2 normalizedPosition;
         private RectTransform popupTransform;
 
-        private void Awake()
+        // Hide the popup
+        public void Hide()
         {
-            popupTransform = (RectTransform) transform;
-            backgroundImage = GetComponent<Image>();
-            canvasGroup = GetComponent<CanvasGroup>();
+            canvasGroup.interactable = false;
+            canvasGroup.blocksRaycasts = false;
+            canvasGroup.alpha = 0f;
 
-            normalColor = backgroundImage.color;
-
-            halfSize = popupTransform.sizeDelta * 0.5f;
-
-            var pos = popupTransform.anchoredPosition;
-            if ((pos.x != 0f) || (pos.y != 0f))
-            {
-                normalizedPosition =
-                    pos.normalized; // Respect the initial popup position set in the prefab
-            }
-            else
-            {
-                normalizedPosition = new Vector2(0.5f, 0f); // Right edge by default
-            }
-        }
-
-        private void Reset()
-        {
-            newInfoCount = 0;
-            newWarningCount = 0;
-            newErrorCount = 0;
-
-            newInfoCountText.text = "0";
-            newWarningCountText.text = "0";
-            newErrorCountText.text = "0";
-
-            backgroundImage.color = normalColor;
-        }
-
-        public void OnBeginDrag(PointerEventData data)
-        {
-            isPopupBeingDragged = true;
-
-            // If a smooth movement animation is in progress, cancel it
-            if (moveToPosCoroutine != null)
-            {
-                StopCoroutine(moveToPosCoroutine);
-                moveToPosCoroutine = null;
-            }
-        }
-
-        // Reposition the popup
-        public void OnDrag(PointerEventData data)
-        {
-            Vector2 localPoint;
-            if (RectTransformUtility.ScreenPointToLocalPointInRectangle(
-                debugManager.canvasTR,
-                data.position,
-                data.pressEventCamera,
-                out localPoint
-            ))
-            {
-                popupTransform.anchoredPosition = localPoint;
-            }
-        }
-
-        // Smoothly translate the popup to the nearest edge
-        public void OnEndDrag(PointerEventData data)
-        {
             isPopupBeingDragged = false;
-            UpdatePosition(false);
-        }
-
-        // Popup is clicked
-        public void OnPointerClick(PointerEventData data)
-        {
-            // Hide the popup and show the log window
-            if (!isPopupBeingDragged)
-            {
-                debugManager.ShowLogWindow();
-            }
         }
 
         public void NewLogsArrived(int newInfo, int newWarning, int newError)
@@ -146,21 +77,6 @@ namespace Appalachia.Editing.Debugging.IngameDebugConsole
             }
         }
 
-        // A simple smooth movement animation
-        private IEnumerator MoveToPosAnimation(Vector2 targetPos)
-        {
-            var modifier = 0f;
-            var initialPos = popupTransform.anchoredPosition;
-
-            while (modifier < 1f)
-            {
-                modifier += 4f * Time.unscaledDeltaTime;
-                popupTransform.anchoredPosition = Vector2.Lerp(initialPos, targetPos, modifier);
-
-                yield return null;
-            }
-        }
-
         // Hides the log window and shows the popup
         public void Show()
         {
@@ -175,16 +91,6 @@ namespace Appalachia.Editing.Debugging.IngameDebugConsole
             UpdatePosition(true);
         }
 
-        // Hide the popup
-        public void Hide()
-        {
-            canvasGroup.interactable = false;
-            canvasGroup.blocksRaycasts = false;
-            canvasGroup.alpha = 0f;
-
-            isPopupBeingDragged = false;
-        }
-
         public void UpdatePosition(bool immediately)
         {
             var canvasSize = debugManager.canvasTR.rect.size;
@@ -196,10 +102,7 @@ namespace Appalachia.Editing.Debugging.IngameDebugConsole
             // the popup is at the right edge and we switch from portrait screen orientation to landscape screen orientation.
             // Without normalizedPosition, popup could jump to bottom or top edges instead of staying at the right edge
             var pos = immediately
-                ? new Vector2(
-                    normalizedPosition.x * canvasWidth,
-                    normalizedPosition.y * canvasHeight
-                )
+                ? new Vector2(normalizedPosition.x * canvasWidth, normalizedPosition.y * canvasHeight)
                 : popupTransform.anchoredPosition;
 
             // Find distances to all four edges
@@ -267,6 +170,99 @@ namespace Appalachia.Editing.Debugging.IngameDebugConsole
                 moveToPosCoroutine = MoveToPosAnimation(pos);
                 StartCoroutine(moveToPosCoroutine);
             }
+        }
+
+        public void OnBeginDrag(PointerEventData data)
+        {
+            isPopupBeingDragged = true;
+
+            // If a smooth movement animation is in progress, cancel it
+            if (moveToPosCoroutine != null)
+            {
+                StopCoroutine(moveToPosCoroutine);
+                moveToPosCoroutine = null;
+            }
+        }
+
+        // Reposition the popup
+        public void OnDrag(PointerEventData data)
+        {
+            Vector2 localPoint;
+            if (RectTransformUtility.ScreenPointToLocalPointInRectangle(
+                debugManager.canvasTR,
+                data.position,
+                data.pressEventCamera,
+                out localPoint
+            ))
+            {
+                popupTransform.anchoredPosition = localPoint;
+            }
+        }
+
+        // Smoothly translate the popup to the nearest edge
+        public void OnEndDrag(PointerEventData data)
+        {
+            isPopupBeingDragged = false;
+            UpdatePosition(false);
+        }
+
+        // Popup is clicked
+        public void OnPointerClick(PointerEventData data)
+        {
+            // Hide the popup and show the log window
+            if (!isPopupBeingDragged)
+            {
+                debugManager.ShowLogWindow();
+            }
+        }
+
+        private void Awake()
+        {
+            popupTransform = (RectTransform) transform;
+            backgroundImage = GetComponent<Image>();
+            canvasGroup = GetComponent<CanvasGroup>();
+
+            normalColor = backgroundImage.color;
+
+            halfSize = popupTransform.sizeDelta * 0.5f;
+
+            var pos = popupTransform.anchoredPosition;
+            if ((pos.x != 0f) || (pos.y != 0f))
+            {
+                normalizedPosition = pos.normalized; // Respect the initial popup position set in the prefab
+            }
+            else
+            {
+                normalizedPosition = new Vector2(0.5f, 0f); // Right edge by default
+            }
+        }
+
+        // A simple smooth movement animation
+        private IEnumerator MoveToPosAnimation(Vector2 targetPos)
+        {
+            var modifier = 0f;
+            var initialPos = popupTransform.anchoredPosition;
+
+            while (modifier < 1f)
+            {
+                modifier += 4f * Time.unscaledDeltaTime;
+                popupTransform.anchoredPosition = Vector2.Lerp(initialPos, targetPos, modifier);
+
+                yield return null;
+            }
+        }
+
+        private void Reset()
+        {
+            newInfoCount = 0;
+            newWarningCount = 0;
+            newErrorCount = 0;
+
+            newInfoCountText.text = "0";
+            newWarningCountText.text = "0";
+            newErrorCountText.text = "0";
+
+            backgroundImage.color = normalColor;
         }
 
 #pragma warning disable 0649

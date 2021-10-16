@@ -1,3 +1,4 @@
+using UnityEditor;
 using UnityEngine;
 
 namespace Appalachia.Editing.Core.Windows.ProjectWindow.Details
@@ -16,6 +17,12 @@ namespace Appalachia.Editing.Core.Windows.ProjectWindow.Details
         public override string GetLabel(string guid, string assetPath, Object asset)
         {
             return guid;
+        }
+
+        [InitializeOnLoadMethod]
+        private static void Initiailze()
+        {
+            ProjectWindowDetails.RegisterDetail(new GuidDetail());
         }
     }
 }

@@ -7,6 +7,7 @@ namespace Appalachia.Editing.Debugging
     public static class GizmoCameraChecker
     {
         private const string _PRF_PFX = nameof(GizmoCameraChecker) + ".";
+
         private static Camera _mainCamera;
         private static Camera _sceneViewCamera;
 

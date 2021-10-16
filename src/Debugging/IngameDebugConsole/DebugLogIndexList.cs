@@ -13,8 +13,9 @@ namespace Appalachia.Editing.Debugging.IngameDebugConsole
             size = 0;
         }
 
-        public int Count => size;
         public int this[int index] => indices[index];
+
+        public int Count => size;
 
         public void Add(int index)
         {

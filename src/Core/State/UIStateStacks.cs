@@ -2,23 +2,12 @@ namespace Appalachia.Editing.Core.State
 {
     public static class UIStateStacks
     {
-        private static LabelWidthStack _labelWidthStack;
         private static BackgroundColorStack _backgroundColorStack;
         private static ContentColorStack _contentColorStack;
         private static ForegroundColorStack _foregroundColorStack;
-
-        public static LabelWidthStack labelWidth
-        {
-            get
-            {
-                if (_labelWidthStack == null)
-                {
-                    _labelWidthStack = new LabelWidthStack();
-                }
-
-                return _labelWidthStack;
-            }
-        }
+        private static GUIEnabledStack _guiEnabledStack;
+        private static IndentLevelStack _indentLevelStack;
+        private static LabelWidthStack _labelWidthStack;
 
         public static BackgroundColorStack backgroundColor
         {
@@ -30,6 +19,19 @@ namespace Appalachia.Editing.Core.State
                 }
 
                 return _backgroundColorStack;
+            }
+        }
+
+        public static ContentColorStack contentColor
+        {
+            get
+            {
+                if (_contentColorStack == null)
+                {
+                    _contentColorStack = new ContentColorStack();
+                }
+
+                return _contentColorStack;
             }
         }
 
@@ -46,16 +48,42 @@ namespace Appalachia.Editing.Core.State
             }
         }
 
-        public static ContentColorStack contentColor
+        public static GUIEnabledStack guiEnabled
         {
             get
             {
-                if (_contentColorStack == null)
+                if (_guiEnabledStack == null)
                 {
-                    _contentColorStack = new ContentColorStack();
+                    _guiEnabledStack = new GUIEnabledStack();
                 }
 
-                return _contentColorStack;
+                return _guiEnabledStack;
+            }
+        }
+
+        public static IndentLevelStack indentLevel
+        {
+            get
+            {
+                if (_indentLevelStack == null)
+                {
+                    _indentLevelStack = new IndentLevelStack();
+                }
+
+                return _indentLevelStack;
+            }
+        }
+
+        public static LabelWidthStack labelWidth
+        {
+            get
+            {
+                if (_labelWidthStack == null)
+                {
+                    _labelWidthStack = new LabelWidthStack();
+                }
+
+                return _labelWidthStack;
             }
         }
     }

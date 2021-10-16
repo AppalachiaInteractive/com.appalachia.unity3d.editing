@@ -5,23 +5,18 @@ namespace Appalachia.Editing.Debugging.IngameDebugConsole.Commands
 {
     public class PlayerPrefsCommands
     {
-        [ConsoleMethod("prefs.int", "Returns the value of an Integer PlayerPrefs field")]
+        [ConsoleMethod("prefs.clear", "Deletes all PlayerPrefs fields")]
         [Preserve]
-        public static string PlayerPrefsGetInt(string key)
+        public static void PlayerPrefsClear()
         {
-            if (!PlayerPrefs.HasKey(key))
-            {
-                return "Key Not Found";
-            }
-
-            return PlayerPrefs.GetInt(key).ToString();
+            PlayerPrefs.DeleteAll();
         }
 
-        [ConsoleMethod("prefs.int", "Sets the value of an Integer PlayerPrefs field")]
+        [ConsoleMethod("prefs.delete", "Deletes a PlayerPrefs field")]
         [Preserve]
-        public static void PlayerPrefsSetInt(string key, int value)
+        public static void PlayerPrefsDelete(string key)
         {
-            PlayerPrefs.SetInt(key, value);
+            PlayerPrefs.DeleteKey(key);
         }
 
         [ConsoleMethod("prefs.float", "Returns the value of a Float PlayerPrefs field")]
@@ -36,11 +31,16 @@ namespace Appalachia.Editing.Debugging.IngameDebugConsole.Commands
             return PlayerPrefs.GetFloat(key).ToString();
         }
 
-        [ConsoleMethod("prefs.float", "Sets the value of a Float PlayerPrefs field")]
+        [ConsoleMethod("prefs.int", "Returns the value of an Integer PlayerPrefs field")]
         [Preserve]
-        public static void PlayerPrefsSetFloat(string key, float value)
+        public static string PlayerPrefsGetInt(string key)
         {
-            PlayerPrefs.SetFloat(key, value);
+            if (!PlayerPrefs.HasKey(key))
+            {
+                return "Key Not Found";
+            }
+
+            return PlayerPrefs.GetInt(key).ToString();
         }
 
         [ConsoleMethod("prefs.string", "Returns the value of a String PlayerPrefs field")]
@@ -55,25 +55,25 @@ namespace Appalachia.Editing.Debugging.IngameDebugConsole.Commands
             return PlayerPrefs.GetString(key);
         }
 
+        [ConsoleMethod("prefs.float", "Sets the value of a Float PlayerPrefs field")]
+        [Preserve]
+        public static void PlayerPrefsSetFloat(string key, float value)
+        {
+            PlayerPrefs.SetFloat(key, value);
+        }
+
+        [ConsoleMethod("prefs.int", "Sets the value of an Integer PlayerPrefs field")]
+        [Preserve]
+        public static void PlayerPrefsSetInt(string key, int value)
+        {
+            PlayerPrefs.SetInt(key, value);
+        }
+
         [ConsoleMethod("prefs.string", "Sets the value of a String PlayerPrefs field")]
         [Preserve]
         public static void PlayerPrefsSetString(string key, string value)
         {
             PlayerPrefs.SetString(key, value);
-        }
-
-        [ConsoleMethod("prefs.delete", "Deletes a PlayerPrefs field")]
-        [Preserve]
-        public static void PlayerPrefsDelete(string key)
-        {
-            PlayerPrefs.DeleteKey(key);
-        }
-
-        [ConsoleMethod("prefs.clear", "Deletes all PlayerPrefs fields")]
-        [Preserve]
-        public static void PlayerPrefsClear()
-        {
-            PlayerPrefs.DeleteAll();
         }
     }
 }

@@ -43,6 +43,7 @@ namespace Appalachia.Editing.Drawers.Simple
                 }
                 catch
                 {
+                    // ignored
                 }
             }
         }

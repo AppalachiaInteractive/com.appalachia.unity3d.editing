@@ -14,8 +14,8 @@ namespace Appalachia.Editing.Scene.Menus
     [InitializeOnLoad]
     public static class HandlesMenu
     {
-        private const string MENU_BASE_ = "Tools/" + G_ + "/";
         private const string G_ = "Appalachia/Handles";
+        private const string MENU_BASE_ = "Tools/" + G_ + "/";
 
         static HandlesMenu()
         {

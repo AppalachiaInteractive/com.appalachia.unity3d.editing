@@ -9,10 +9,7 @@ namespace Appalachia.Editing.Debugging.IngameDebugConsole
         private readonly string m_description;
         private readonly string[] m_parameterNames;
 
-        public ConsoleMethodAttribute(
-            string command,
-            string description,
-            params string[] parameterNames)
+        public ConsoleMethodAttribute(string command, string description, params string[] parameterNames)
         {
             m_command = command;
             m_description = description;

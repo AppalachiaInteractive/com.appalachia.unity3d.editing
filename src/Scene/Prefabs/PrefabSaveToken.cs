@@ -3,6 +3,7 @@
 #region
 
 using System;
+using Appalachia.CI.Integration.Assets;
 using Appalachia.Core.Extensions;
 using UnityEditor;
 using UnityEditor.SceneManagement;
@@ -26,7 +27,7 @@ namespace Appalachia.Editing.Scene.Prefabs
         {
             _prefab = prefab;
             _scene = scene;
-            _path = AssetDatabase.GetAssetPath(prefab);
+            _path = AssetDatabaseManager.GetAssetPath(prefab);
 
             if (EditorSceneManager.IsPreviewScene(_scene))
             {
@@ -51,7 +52,7 @@ namespace Appalachia.Editing.Scene.Prefabs
             if (PrefabUtility.HasPrefabInstanceAnyOverrides(Mutable, false))
             {
                 PrefabUtility.SaveAsPrefabAsset(Mutable, _path);
-                _prefab = AssetDatabase.LoadAssetAtPath<GameObject>(_path);
+                _prefab = AssetDatabaseManager.LoadAssetAtPath<GameObject>(_path);
             }
 
             _onDispose?.Invoke(new PrefabDisposalToken(_prefab, _path));

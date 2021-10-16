@@ -3,8 +3,8 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.IO;
 using System.Text;
+using Appalachia.CI.Integration.FileSystem;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -89,8 +89,8 @@ namespace Appalachia.Editing.Debugging.IngameDebugConsole
         [SerializeField]
         [HideInInspector]
         public InputAction toggleBinding =
-            new("Toggle Binding", InputActionType.Button, "<Keyboard>/backquote",
-                expectedControlType: "Button");
+            new("Toggle Binding", InputActionType.Button, "<Keyboard>/backquote", expectedControlType:
+                "Button");
 #else
 		[SerializeField]
 		[HideInInspector]
@@ -383,9 +383,7 @@ namespace Appalachia.Editing.Debugging.IngameDebugConsole
             filterWarningButton.color = filterButtonsSelectedColor;
             filterErrorButton.color = filterButtonsSelectedColor;
 
-            resizeButton.sprite = enableHorizontalResizing
-                ? resizeIconAllDirections
-                : resizeIconVerticalOnly;
+            resizeButton.sprite = enableHorizontalResizing ? resizeIconAllDirections : resizeIconVerticalOnly;
 
             collapsedLogEntries = new List<DebugLogEntry>(128);
             collapsedLogEntriesMap = new Dictionary<DebugLogEntry, int>(128);
@@ -447,11 +445,9 @@ namespace Appalachia.Editing.Debugging.IngameDebugConsole
             clearButton.onClick.AddListener(ClearLogs);
             collapseButton.GetComponent<Button>().onClick.AddListener(CollapseButtonPressed);
             filterInfoButton.GetComponent<Button>().onClick.AddListener(FilterLogButtonPressed);
-            filterWarningButton.GetComponent<Button>()
-                               .onClick.AddListener(FilterWarningButtonPressed);
+            filterWarningButton.GetComponent<Button>().onClick.AddListener(FilterWarningButtonPressed);
             filterErrorButton.GetComponent<Button>().onClick.AddListener(FilterErrorButtonPressed);
-            snapToBottomButton.GetComponent<Button>()
-                              .onClick.AddListener(() => SetSnapToBottom(true));
+            snapToBottomButton.GetComponent<Button>().onClick.AddListener(() => SetSnapToBottom(true));
 
             nullPointerEventData = new PointerEventData(null);
 
@@ -497,11 +493,7 @@ namespace Appalachia.Editing.Debugging.IngameDebugConsole
 #endif
             }
 
-            DebugLogConsole.AddCommand(
-                "logs.save",
-                "Saves logs to persistentDataPath",
-                SaveLogsToFile
-            );
+            DebugLogConsole.AddCommand("logs.save", "Saves logs to persistentDataPath", SaveLogsToFile);
             DebugLogConsole.AddCommand<string>(
                 "logs.save",
                 "Saves logs to the specified file",
@@ -652,11 +644,7 @@ namespace Appalachia.Editing.Debugging.IngameDebugConsole
                 // If debug popup is visible, notify it of the new debug entries
                 if (!isLogWindowVisible)
                 {
-                    popupManager.NewLogsArrived(
-                        newInfoEntryCount,
-                        newWarningEntryCount,
-                        newErrorEntryCount
-                    );
+                    popupManager.NewLogsArrived(newInfoEntryCount, newWarningEntryCount, newErrorEntryCount);
                 }
 
                 newInfoEntryCount = 0;
@@ -676,9 +664,7 @@ namespace Appalachia.Editing.Debugging.IngameDebugConsole
             {
                 if (indexOfLogEntryToSelectAndFocus < indicesOfListEntriesToShow.Count)
                 {
-                    recycledListView.SelectAndFocusOnLogItemAtIndex(
-                        indexOfLogEntryToSelectAndFocus
-                    );
+                    recycledListView.SelectAndFocusOnLogItemAtIndex(indexOfLogEntryToSelectAndFocus);
                 }
 
                 indexOfLogEntryToSelectAndFocus = -1;
@@ -738,10 +724,7 @@ namespace Appalachia.Editing.Debugging.IngameDebugConsole
                             searchbarSlotTop.gameObject.SetActive(false);
 
                             var searchbarHeight = searchbarSlotBottom.sizeDelta.y;
-                            logItemsScrollRectTR.anchoredPosition = new Vector2(
-                                0f,
-                                searchbarHeight * -0.5f
-                            );
+                            logItemsScrollRectTR.anchoredPosition = new Vector2(0f, searchbarHeight * -0.5f);
                             logItemsScrollRectTR.sizeDelta = logItemsScrollRectOriginalSize -
                                                              new Vector2(0f, searchbarHeight);
                         }
@@ -907,8 +890,7 @@ namespace Appalachia.Editing.Debugging.IngameDebugConsole
 
                 if (text.Length > 0)
                 {
-                    if ((commandHistory.Count == 0) ||
-                        (commandHistory[commandHistory.Count - 1] != text))
+                    if ((commandHistory.Count == 0) || (commandHistory[commandHistory.Count - 1] != text))
                     {
                         commandHistory.Add(text);
                     }
@@ -960,20 +942,15 @@ namespace Appalachia.Editing.Debugging.IngameDebugConsole
                         if (stackTrace.Length >= halfMaxLogLength)
                         {
                             // Truncate both logString and stackTrace
-                            logString = logString.Substring(0, halfMaxLogLength - 11) +
-                                        "<truncated>";
+                            logString = logString.Substring(0, halfMaxLogLength - 11) + "<truncated>";
 
                             // If stackTrace doesn't end with a blank line, its last line won't be visible in the console for some reason
-                            stackTrace = stackTrace.Substring(0, halfMaxLogLength - 12) +
-                                         "<truncated>\n";
+                            stackTrace = stackTrace.Substring(0, halfMaxLogLength - 12) + "<truncated>\n";
                         }
                         else
                         {
                             // Truncate logString
-                            logString = logString.Substring(
-                                            0,
-                                            maxLogLength - stackTrace.Length - 11
-                                        ) +
+                            logString = logString.Substring(0, maxLogLength - stackTrace.Length - 11) +
                                         "<truncated>";
                         }
                     }
@@ -1013,8 +990,7 @@ namespace Appalachia.Editing.Debugging.IngameDebugConsole
 
             // Check if this entry is a duplicate (i.e. has been received before)
             int logEntryIndex;
-            var isEntryInCollapsedEntryList =
-                collapsedLogEntriesMap.TryGetValue(logEntry, out logEntryIndex);
+            var isEntryInCollapsedEntryList = collapsedLogEntriesMap.TryGetValue(logEntry, out logEntryIndex);
             if (!isEntryInCollapsedEntryList)
             {
                 // It is not a duplicate,
@@ -1053,13 +1029,10 @@ namespace Appalachia.Editing.Debugging.IngameDebugConsole
                     }
                     else
                     {
-                        logEntryIndexInEntriesToShow =
-                            indicesOfListEntriesToShow.IndexOf(logEntryIndex);
+                        logEntryIndexInEntriesToShow = indicesOfListEntriesToShow.IndexOf(logEntryIndex);
                     }
 
-                    recycledListView.OnCollapsedLogEntryAtIndexUpdated(
-                        logEntryIndexInEntriesToShow
-                    );
+                    recycledListView.OnCollapsedLogEntryAtIndexUpdated(logEntryIndexInEntriesToShow);
                 }
             }
             else if ((!isInSearchMode || queuedLogEntry.MatchesSearchTerm(searchTerm)) &&
@@ -1161,8 +1134,7 @@ namespace Appalachia.Editing.Debugging.IngameDebugConsole
             isCollapseOn = !isCollapseOn;
 
             snapToBottom = true;
-            collapseButton.color =
-                isCollapseOn ? collapseButtonSelectedColor : collapseButtonNormalColor;
+            collapseButton.color = isCollapseOn ? collapseButtonSelectedColor : collapseButtonNormalColor;
             recycledListView.SetCollapseMode(isCollapseOn);
 
             // Determine the new list of debug entries to show
@@ -1229,10 +1201,10 @@ namespace Appalachia.Editing.Debugging.IngameDebugConsole
             }
 
             this.searchTerm = searchTerm;
-            var isInSearchMode = !string.IsNullOrEmpty(searchTerm);
-            if (isInSearchMode || this.isInSearchMode)
+            var inSearchMode = !string.IsNullOrEmpty(searchTerm);
+            if (inSearchMode || this.isInSearchMode)
             {
-                this.isInSearchMode = isInSearchMode;
+                this.isInSearchMode = inSearchMode;
                 FilterLogs();
             }
         }
@@ -1277,8 +1249,7 @@ namespace Appalachia.Editing.Debugging.IngameDebugConsole
             var caretArgumentIndex = 0;
             var caretPos = commandInputField.caretPosition;
             for (var i = 0;
-                (i < commandCaretIndexIncrements.Count) &&
-                (caretPos > commandCaretIndexIncrements[i]);
+                (i < commandCaretIndexIncrements.Count) && (caretPos > commandCaretIndexIncrements[i]);
                 i++)
             {
                 caretArgumentIndex++;
@@ -1318,11 +1289,7 @@ namespace Appalachia.Editing.Debugging.IngameDebugConsole
                         if (i >= suggestionInstancesCount)
                         {
                             commandSuggestionInstances.Add(
-                                Instantiate(
-                                    commandSuggestionPrefab,
-                                    commandSuggestionsContainer,
-                                    false
-                                )
+                                Instantiate(commandSuggestionPrefab, commandSuggestionsContainer, false)
                             );
                         }
                         else
@@ -1342,9 +1309,7 @@ namespace Appalachia.Editing.Debugging.IngameDebugConsole
                     else
                     {
                         commandSuggestionsStringBuilder.Append(commandSuggestionHighlightStart)
-                                                       .Append(
-                                                            matchingCommandSuggestions[i].command
-                                                        )
+                                                       .Append(matchingCommandSuggestions[i].command)
                                                        .Append(commandSuggestionHighlightEnd);
                     }
 
@@ -1363,16 +1328,13 @@ namespace Appalachia.Editing.Debugging.IngameDebugConsole
                         {
                             if (caretParameterIndex != j)
                             {
-                                commandSuggestionsStringBuilder.Append(
-                                    suggestedCommand.parameters[j]
-                                );
+                                commandSuggestionsStringBuilder.Append(suggestedCommand.parameters[j]);
                             }
                             else
                             {
-                                commandSuggestionsStringBuilder
-                                   .Append(commandSuggestionHighlightStart)
-                                   .Append(suggestedCommand.parameters[j])
-                                   .Append(commandSuggestionHighlightEnd);
+                                commandSuggestionsStringBuilder.Append(commandSuggestionHighlightStart)
+                                                               .Append(suggestedCommand.parameters[j])
+                                                               .Append(commandSuggestionHighlightEnd);
                             }
                         }
                     }
@@ -1505,18 +1467,14 @@ namespace Appalachia.Editing.Debugging.IngameDebugConsole
                     {
                         if (!isInSearchMode)
                         {
-                            for (int i = 0, count = uncollapsedLogEntriesIndices.Count;
-                                i < count;
-                                i++)
+                            for (int i = 0, count = uncollapsedLogEntriesIndices.Count; i < count; i++)
                             {
                                 indicesOfListEntriesToShow.Add(uncollapsedLogEntriesIndices[i]);
                             }
                         }
                         else
                         {
-                            for (int i = 0, count = uncollapsedLogEntriesIndices.Count;
-                                i < count;
-                                i++)
+                            for (int i = 0, count = uncollapsedLogEntriesIndices.Count; i < count; i++)
                             {
                                 if (collapsedLogEntries[uncollapsedLogEntriesIndices[i]]
                                    .MatchesSearchTerm(searchTerm))
@@ -1531,8 +1489,7 @@ namespace Appalachia.Editing.Debugging.IngameDebugConsole
                 {
                     // Show only the debug entries that match the current filter
                     var isInfoEnabled = (logFilter & DebugLogFilter.Info) == DebugLogFilter.Info;
-                    var isWarningEnabled =
-                        (logFilter & DebugLogFilter.Warning) == DebugLogFilter.Warning;
+                    var isWarningEnabled = (logFilter & DebugLogFilter.Warning) == DebugLogFilter.Warning;
                     var isErrorEnabled = (logFilter & DebugLogFilter.Error) == DebugLogFilter.Error;
 
                     if (isCollapseOn)
@@ -1633,7 +1590,7 @@ namespace Appalachia.Editing.Debugging.IngameDebugConsole
         private void SaveLogsToFile()
         {
             SaveLogsToFile(
-                Path.Combine(
+                AppaPath.Combine(
                     Application.persistentDataPath,
                     DateTime.Now.ToString("dd-MM-yyyy--HH-mm-ss") + ".txt"
                 )
@@ -1642,7 +1599,7 @@ namespace Appalachia.Editing.Debugging.IngameDebugConsole
 
         private void SaveLogsToFile(string filePath)
         {
-            File.WriteAllText(filePath, GetAllLogs());
+            AppaFile.WriteAllText(filePath, GetAllLogs());
             Debug.Log("Logs saved to: " + filePath);
         }
 

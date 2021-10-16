@@ -131,9 +131,7 @@ namespace Appalachia.Editing.Debugging.Graphy.Fps
 
             var sampleToStartIn = (short) (m_fpsSamplesCapacity - m_fpsSamplesCount);
 
-            for (var i = sampleToStartIn;
-                i < (sampleToStartIn + samplesToIterateThroughForOnePercent);
-                i++)
+            for (var i = sampleToStartIn; i < (sampleToStartIn + samplesToIterateThroughForOnePercent); i++)
             {
                 totalAddedFps += (ushort) m_fpsSamplesSorted[i];
 

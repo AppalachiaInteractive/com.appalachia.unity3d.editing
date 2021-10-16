@@ -5,15 +5,13 @@ using UnityEditor;
 
 namespace Appalachia.Editing.Assets.Extensions
 {
-
     public static class ScriptableObjectMetadataExtensions
     {
         private const string _PRF_PFX = nameof(ScriptableObjectMetadataExtensions) + ".";
 
-        private static readonly ProfilerMarker _PRF_Draw = new ProfilerMarker(_PRF_PFX + nameof(Draw));
-        public static void Draw(
-            this AssetTypeMetadata metadata,
-            UIFieldMetadataManager fieldManager)
+        private static readonly ProfilerMarker _PRF_Draw = new(_PRF_PFX + nameof(Draw));
+
+        public static void Draw(this AssetSaveLocationMetadata metadata, UIFieldMetadataManager fieldManager)
         {
             using (_PRF_Draw.Auto())
             {

@@ -4,9 +4,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Appalachia.CI.Integration.Assets;
 using Appalachia.Core.Attributes.Editing;
 using Sirenix.OdinInspector;
-using UnityEditor;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
@@ -17,6 +17,19 @@ namespace Appalachia.Editing.Labels
     [Serializable]
     public class LabelSearchSet
     {
+        [BoxGroup("B", ShowLabel = false)]
+        [ListDrawerSettings(Expanded = true)]
+        [SerializeField]
+        [OnValueChanged(nameof(ResetDisplayName))]
+        public List<LabelSearchTerm> exclusions;
+
+        [BoxGroup("B", ShowLabel = false)]
+        [SmartLabel]
+        [SerializeField]
+        [InlineButton(nameof(RefreshLabels))]
+        [OnValueChanged(nameof(ResetDisplayName))]
+        public ExclusionStyle exclusionStyle;
+
         [BoxGroup("A", ShowLabel = false)]
         [SmartLabel]
         [SerializeField]
@@ -30,19 +43,6 @@ namespace Appalachia.Editing.Labels
         [OnValueChanged(nameof(ResetDisplayName))]
         public List<LabelSearchTerm> terms;
 
-        [BoxGroup("B", ShowLabel = false)]
-        [SmartLabel]
-        [SerializeField]
-        [InlineButton(nameof(RefreshLabels))]
-        [OnValueChanged(nameof(ResetDisplayName))]
-        public ExclusionStyle exclusionStyle;
-
-        [BoxGroup("B", ShowLabel = false)]
-        [ListDrawerSettings(Expanded = true)]
-        [SerializeField]
-        [OnValueChanged(nameof(ResetDisplayName))]
-        public List<LabelSearchTerm> exclusions;
-
         [NonSerialized] private StringBuilder _builder;
 
         [NonSerialized] private string _displayName;
@@ -55,6 +55,8 @@ namespace Appalachia.Editing.Labels
             terms = new List<LabelSearchTerm> {new()};
             exclusions = new List<LabelSearchTerm>();
         }
+
+        public bool CanSearch => (terms != null) && (terms.Count > 0) && terms.Any(t => t.enabled);
 
         public string DisplayName
         {
@@ -151,20 +153,45 @@ namespace Appalachia.Editing.Labels
             }
         }
 
-        public int TermCount => terms.Count(t => t.enabled);
-
         public int ExclusionCount => exclusions.Count(t => t.enabled);
 
-        public bool CanSearch => (terms != null) && (terms.Count > 0) && terms.Any(t => t.enabled);
+        public int TermCount => terms.Count(t => t.enabled);
 
-        private void ResetDisplayName()
+        public void AddNewLabel()
         {
-            _displayName = null;
+            terms.Add(new LabelSearchTerm());
         }
 
-        public void RefreshLabels()
+        public List<GameObject> GetAssetsMatchingAll()
         {
-            LabelManager.InitializeLabels();
+            return GetAssetsMatching(true);
+        }
+
+        public List<GameObject> GetAssetsMatchingAny()
+        {
+            return GetAssetsMatching(false);
+        }
+
+        public string GetSearchTerm()
+        {
+            if (_builder == null)
+            {
+                _builder = new StringBuilder();
+            }
+
+            _builder.Clear();
+
+            _builder.Append("t: Prefab ");
+
+            for (var i = 0; i < terms.Count; i++)
+            {
+                if (terms[i].enabled)
+                {
+                    _builder.Append($"l: {terms[i].label} ");
+                }
+            }
+
+            return _builder.ToString();
         }
 
         public bool Matches(Object obj)
@@ -174,7 +201,7 @@ namespace Appalachia.Editing.Labels
                 return false;
             }
 
-            var labels = AssetDatabase.GetLabels(obj);
+            var labels = AssetDatabaseManager.GetLabels(obj);
 
             return Matches(labels);
         }
@@ -331,6 +358,56 @@ namespace Appalachia.Editing.Labels
             return !excluded;
         }
 
+        public void RefreshLabels()
+        {
+            LabelManager.InitializeLabels();
+        }
+
+        public void RemoveLabel(int i)
+        {
+            if ((terms.Count > i) && (i >= 0))
+            {
+                terms.RemoveAt(i);
+            }
+        }
+
+        private List<GameObject> GetAssetsMatching(bool all)
+        {
+            var results = new List<GameObject>();
+            var searchTerm = GetSearchTerm();
+
+            var assetGuids = AssetDatabaseManager.FindAssets(searchTerm);
+
+            if (all)
+            {
+                matchStyle = LabelMatchStyle.All;
+            }
+            else
+            {
+                matchStyle = LabelMatchStyle.Any;
+            }
+
+            for (var i = 0; i < assetGuids.Length; i++)
+            {
+                var assetGuid = assetGuids[i];
+                var assetPath = AssetDatabaseManager.GUIDToAssetPath(assetGuid);
+
+                var prefab = AssetDatabaseManager.LoadAssetAtPath<GameObject>(assetPath);
+
+                if (Matches(prefab))
+                {
+                    results.Add(prefab);
+                }
+            }
+
+            return results;
+        }
+
+        private void ResetDisplayName()
+        {
+            _displayName = null;
+        }
+
         private static bool HasAll(
             IEnumerable<string> labels,
             List<LabelSearchTerm> searchTerms,
@@ -457,83 +534,6 @@ namespace Appalachia.Editing.Labels
                     }
                 }
             }
-        }
-
-        public void AddNewLabel()
-        {
-            terms.Add(new LabelSearchTerm());
-        }
-
-        public void RemoveLabel(int i)
-        {
-            if ((terms.Count > i) && (i >= 0))
-            {
-                terms.RemoveAt(i);
-            }
-        }
-
-        public string GetSearchTerm()
-        {
-            if (_builder == null)
-            {
-                _builder = new StringBuilder();
-            }
-
-            _builder.Clear();
-
-            _builder.Append("t: Prefab ");
-
-            for (var i = 0; i < terms.Count; i++)
-            {
-                if (terms[i].enabled)
-                {
-                    _builder.Append($"l: {terms[i].label} ");
-                }
-            }
-
-            return _builder.ToString();
-        }
-
-        public List<GameObject> GetAssetsMatchingAll()
-        {
-            return GetAssetsMatching(true);
-        }
-
-        public List<GameObject> GetAssetsMatchingAny()
-        {
-            return GetAssetsMatching(false);
-        }
-
-        private List<GameObject> GetAssetsMatching(bool all)
-        {
-            var results = new List<GameObject>();
-            var searchTerm = GetSearchTerm();
-
-            var assetGuids = AssetDatabase.FindAssets(searchTerm);
-
-            if (all)
-            {
-                matchStyle = LabelMatchStyle.All;
-            }
-            else
-            {
-                matchStyle = LabelMatchStyle.Any;
-            }
-
-            for (var i = 0; i < assetGuids.Length; i++)
-            {
-                var assetGuid = assetGuids[i];
-                var assetPath = AssetDatabase.GUIDToAssetPath(assetGuid);
-
-                var prefab = AssetDatabase.LoadAssetAtPath<GameObject>(assetPath);
-
-                if (Matches(prefab))
-                {
-                    results.Add(prefab);
-                }
-            }
-
-            return results;
         }
     }
 }

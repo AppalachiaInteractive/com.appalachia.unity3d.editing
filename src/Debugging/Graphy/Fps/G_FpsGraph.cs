@@ -20,15 +20,6 @@ namespace Appalachia.Editing.Debugging.Graphy.Fps
 {
     public class G_FpsGraph : G_Graph
     {
-#region Methods -> Unity Callbacks
-
-        private void Update()
-        {
-            UpdateGraph();
-        }
-
-#endregion
-
 #region Methods -> Public
 
         public void UpdateParameters()
@@ -75,6 +66,15 @@ namespace Appalachia.Editing.Debugging.Graphy.Fps
             UpdateParameters();
 
             m_isInitialized = true;
+        }
+
+#endregion
+
+#region Methods -> Unity Callbacks
+
+        private void Update()
+        {
+            UpdateGraph();
         }
 
 #endregion
@@ -162,12 +162,15 @@ namespace Appalachia.Editing.Debugging.Graphy.Fps
 
             m_shaderGraph.UpdatePoints();
 
-            m_shaderGraph.Average = m_fpsMonitor.AverageFPS / m_highestFps;
+            if (m_fpsMonitor is not null)
+            {
+                m_shaderGraph.Average = m_fpsMonitor.AverageFPS / (float)m_highestFps;
+            }
+
             m_shaderGraph.UpdateAverage();
 
             m_shaderGraph.GoodThreshold = (float) m_graphyManager.GoodFPSThreshold / m_highestFps;
-            m_shaderGraph.CautionThreshold =
-                (float) m_graphyManager.CautionFPSThreshold / m_highestFps;
+            m_shaderGraph.CautionThreshold = (float) m_graphyManager.CautionFPSThreshold / m_highestFps;
             m_shaderGraph.UpdateThresholds();
         }
 

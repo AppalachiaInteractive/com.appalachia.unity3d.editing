@@ -24,15 +24,6 @@ namespace Appalachia.Editing.Debugging.Graphy.Ram
 {
     public class G_RamGraph : G_Graph
     {
-#region Methods -> Unity Callbacks
-
-        private void Update()
-        {
-            UpdateGraph();
-        }
-
-#endregion
-
 #region Methods -> Public
 
         public void UpdateParameters()
@@ -107,6 +98,15 @@ namespace Appalachia.Editing.Debugging.Graphy.Ram
             UpdateParameters();
 
             m_isInitialized = true;
+        }
+
+#endregion
+
+#region Methods -> Unity Callbacks
+
+        private void Update()
+        {
+            UpdateGraph();
         }
 
 #endregion

@@ -1,6 +1,7 @@
 #region
 
 using Appalachia.Core.Attributes.Editing;
+using Appalachia.Editing.Core.State;
 using Appalachia.Editing.Drawers.Contexts;
 using Sirenix.OdinInspector;
 using Sirenix.OdinInspector.Editor;
@@ -35,11 +36,9 @@ namespace Appalachia.Editing.Drawers
         private static readonly ProfilerMarker _PRF_DrawTogglePropertyLayout =
             new(_PRF_PFX + nameof(DrawTogglePropertyLayout));
 
-        private static readonly ProfilerMarker _PRF_UpdateLabel =
-            new(_PRF_PFX + nameof(UpdateLabel));
+        private static readonly ProfilerMarker _PRF_UpdateLabel = new(_PRF_PFX + nameof(UpdateLabel));
 
         private static readonly ProfilerMarker _PRF_PushLabel = new(_PRF_PFX + nameof(PushLabel));
-
         private static readonly ProfilerMarker _PRF_PopLabel = new(_PRF_PFX + nameof(PopLabel));
 
         private static readonly ProfilerMarker _PRF_PushColor = new(_PRF_PFX + nameof(PushColor));
@@ -64,6 +63,69 @@ namespace Appalachia.Editing.Drawers
                 }
 
                 return boolValueEntry;
+            }
+        }
+
+        public void PushColor(out bool pushedColor)
+        {
+            using (_PRF_PushColor.Auto())
+            {
+                ExecuteColorPush(out pushedColor);
+            }
+        }
+
+        public void PushLabel(out bool pushedColor)
+        {
+            using (_PRF_PushLabel.Auto())
+            {
+                if (context.Size < 0.0)
+                {
+                    UIStateStacks.labelWidth.Push(GUIHelper.BetterLabelWidth + context.Size);
+                }
+                else
+                {
+                    UIStateStacks.labelWidth.Push(context.Size);
+                }
+
+                GUIHelper.PushIsBoldLabel(Attribute.Bold);
+
+                if (Attribute.ShallowColor)
+                {
+                    ExecuteColorPush(out pushedColor);
+                }
+                else
+                {
+                    pushedColor = false;
+                }
+            }
+        }
+
+        public void UpdateLabel(GUIContent label)
+        {
+            using (_PRF_UpdateLabel.Auto())
+            {
+                if (label.text != context.InputLabelText)
+                {
+                    context.InputLabelText = label.text;
+
+                    if (Attribute.Text != null)
+                    {
+                        label.text = Attribute.Text;
+                    }
+
+                    var widthText = Attribute.AlignWith ?? label.text;
+
+                    var chars = widthText.Length;
+                    var size = Attribute.PixelsPerCharacter * chars;
+                    size += Attribute.Padding;
+
+                    context.Size = size;
+                    context.OutputLabelText = label.text;
+                }
+                else
+                {
+                    label.text = context.OutputLabelText;
+                }
             }
         }
 
@@ -105,46 +167,6 @@ namespace Appalachia.Editing.Drawers
                 else
                 {
                     DrawGeneralPropertyLayout(label);
-                }
-            }
-        }
-
-        private void DrawInlineEditorPropertyLayout(GUIContent label)
-        {
-            using (_PRF_DrawInlineEditorPropertyLayout.Auto())
-            {
-                var attribute = Attribute;
-
-                UpdateLabel(label);
-
-                var labelText = context.OutputLabelText;
-
-                TitleAttributeHelper.Title(
-                    labelText,
-                    null,
-                    TextAlignment.Left,
-                    false,
-                    attribute.Bold,
-                    attribute.HasPropertyColor && !context.ColorError && (attribute.Color != null)
-                        ? context.ColorHelper.GetValue()
-                        : default
-                );
-
-                var pushedColorDeep = false;
-
-                if (!attribute.ShallowColor)
-                {
-                    PushColor(out pushedColorDeep);
-                }
-
-                using (_PRF_DrawPropertyLayout_CallNextDrawer.Auto())
-                {
-                    CallNextDrawer(null);
-                }
-
-                if (pushedColorDeep)
-                {
-                    GUIHelper.PopLabelColor();
                 }
             }
         }
@@ -195,6 +217,46 @@ namespace Appalachia.Editing.Drawers
                 }
 
                 GUILayout.EndHorizontal();
+            }
+        }
+
+        private void DrawInlineEditorPropertyLayout(GUIContent label)
+        {
+            using (_PRF_DrawInlineEditorPropertyLayout.Auto())
+            {
+                var attribute = Attribute;
+
+                UpdateLabel(label);
+
+                var labelText = context.OutputLabelText;
+
+                TitleAttributeHelper.Title(
+                    labelText,
+                    null,
+                    TextAlignment.Left,
+                    false,
+                    attribute.Bold,
+                    attribute.HasPropertyColor && !context.ColorError && (attribute.Color != null)
+                        ? context.ColorHelper.GetValue()
+                        : default
+                );
+
+                var pushedColorDeep = false;
+
+                if (!attribute.ShallowColor)
+                {
+                    PushColor(out pushedColorDeep);
+                }
+
+                using (_PRF_DrawPropertyLayout_CallNextDrawer.Auto())
+                {
+                    CallNextDrawer(null);
+                }
+
+                if (pushedColorDeep)
+                {
+                    GUIHelper.PopLabelColor();
+                }
             }
         }
 
@@ -254,76 +316,6 @@ namespace Appalachia.Editing.Drawers
             }
         }
 
-        public void UpdateLabel(GUIContent label)
-        {
-            using (_PRF_UpdateLabel.Auto())
-            {
-                if (label.text != context.InputLabelText)
-                {
-                    context.InputLabelText = label.text;
-
-                    if (Attribute.Text != null)
-                    {
-                        label.text = Attribute.Text;
-                    }
-
-                    var widthText = Attribute.AlignWith ?? label.text;
-
-                    var chars = widthText.Length;
-                    var size = Attribute.PixelsPerCharacter * chars;
-                    size += Attribute.Padding;
-
-                    context.Size = size;
-                    context.OutputLabelText = label.text;
-                }
-                else
-                {
-                    label.text = context.OutputLabelText;
-                }
-            }
-        }
-
-        public void PushLabel(out bool pushedColor)
-        {
-            using (_PRF_PushLabel.Auto())
-            {
-                if (context.Size < 0.0)
-                {
-                    GUIHelper.PushLabelWidth(GUIHelper.BetterLabelWidth + context.Size);
-                }
-                else
-                {
-                    GUIHelper.PushLabelWidth(context.Size);
-                }
-
-                GUIHelper.PushIsBoldLabel(Attribute.Bold);
-
-                if (Attribute.ShallowColor)
-                {
-                    ExecuteColorPush(out pushedColor);
-                }
-                else
-                {
-                    pushedColor = false;
-                }
-            }
-        }
-
-        public static void PopLabel(bool pushedColor)
-        {
-            using (_PRF_PopLabel.Auto())
-            {
-                if (pushedColor)
-                {
-                    GUIHelper.PopLabelColor();
-                }
-
-                GUIHelper.PopIsBoldLabel();
-
-                GUIHelper.PopLabelWidth();
-            }
-        }
-
         private void ExecuteColorPush(out bool pushedColor)
         {
             pushedColor = true;
@@ -359,11 +351,18 @@ namespace Appalachia.Editing.Drawers
             }
         }
 
-        public void PushColor(out bool pushedColor)
+        public static void PopLabel(bool pushedColor)
         {
-            using (_PRF_PushColor.Auto())
+            using (_PRF_PopLabel.Auto())
             {
-                ExecuteColorPush(out pushedColor);
+                if (pushedColor)
+                {
+                    GUIHelper.PopLabelColor();
+                }
+
+                GUIHelper.PopIsBoldLabel();
+
+                UIStateStacks.labelWidth.Pop();
             }
         }
     }

@@ -1,24 +1,26 @@
 {
-    "name": "Appalachia.Editing.Debugging.Graphy.Editor",
-    "rootNamespace": "",
-    "references": [
-        "GUID:18e5109d897e1b244ab2dfeaf5482c7b"
-    ],
-    "includePlatforms": [
-        "Editor"
-    ],
-    "excludePlatforms": [],
-    "allowUnsafeCode": false,
-    "overrideReferences": false,
-    "precompiledReferences": [],
-    "autoReferenced": true,
-    "defineConstraints": [],
-    "versionDefines": [
-        {
-            "name": "com.unity.inputsystem",
-            "expression": "",
-            "define": "GRAPHY_NEW_INPUT"
-        }
-    ],
-    "noEngineReferences": false
+  "name": "Appalachia.Editing.Debugging.Graphy.Editor",
+  "rootNamespace": "",
+  "references": [
+    "GUID:56ca8901b63fd204692a4a27f67b605e",
+    "GUID:18e5109d897e1b244ab2dfeaf5482c7b"
+  ],
+  "includePlatforms": [
+    "Editor"
+  ],
+  "excludePlatforms": [],
+  "allowUnsafeCode": false,
+  "overrideReferences": false,
+  "precompiledReferences": [],
+  "autoReferenced": true,
+  "defineConstraints": [],
+  "versionDefines": [
+    {
+      "name": "com.unity.inputsystem",
+      "expression": "",
+      "define": "GRAPHY_NEW_INPUT"
+    }
+  ],
+  "noEngineReferences": false,
+  "optionalUnityReferences": []
 }

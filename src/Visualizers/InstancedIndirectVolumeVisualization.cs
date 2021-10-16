@@ -7,10 +7,10 @@ namespace Appalachia.Editing.Visualizers
     public abstract class InstancedIndirectVolumeVisualization : InstancedIndirectVisualization
     {
         [OnValueChanged(nameof(Regenerate))]
-        public float visualizationSize = .25f;
+        public Vector3 visualizationDensity = Vector3.one;
 
         [OnValueChanged(nameof(Regenerate))]
-        public Vector3 visualizationDensity = Vector3.one;
+        public float visualizationSize = .25f;
 
         protected override void GetPositionData(
             Bounds bounds,

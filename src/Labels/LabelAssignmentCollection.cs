@@ -6,6 +6,11 @@ namespace Appalachia.Editing.Labels
     [Serializable]
     public struct LabelAssignmentCollection : IEquatable<LabelAssignmentCollection>
     {
+        public readonly string baseTerm;
+        public readonly Vector3 multiplier;
+
+        public readonly LabelAssignmentTerm[] terms;
+
         public LabelAssignmentCollection(
             string baseTerm,
             Vector3 multiplier,
@@ -14,16 +19,6 @@ namespace Appalachia.Editing.Labels
             this.baseTerm = baseTerm;
             this.terms = terms;
             this.multiplier = multiplier;
-        }
-
-        public readonly string baseTerm;
-        public readonly Vector3 multiplier;
-
-        public readonly LabelAssignmentTerm[] terms;
-
-        public bool Equals(LabelAssignmentCollection other)
-        {
-            return baseTerm == other.baseTerm && multiplier.Equals(other.multiplier) && Equals(terms, other.terms);
         }
 
         public override bool Equals(object obj)
@@ -35,11 +30,18 @@ namespace Appalachia.Editing.Labels
         {
             unchecked
             {
-                var hashCode = (baseTerm != null ? baseTerm.GetHashCode() : 0);
+                var hashCode = baseTerm != null ? baseTerm.GetHashCode() : 0;
                 hashCode = (hashCode * 397) ^ multiplier.GetHashCode();
                 hashCode = (hashCode * 397) ^ (terms != null ? terms.GetHashCode() : 0);
                 return hashCode;
             }
+        }
+
+        public bool Equals(LabelAssignmentCollection other)
+        {
+            return (baseTerm == other.baseTerm) &&
+                   multiplier.Equals(other.multiplier) &&
+                   Equals(terms, other.terms);
         }
 
         public static bool operator ==(LabelAssignmentCollection left, LabelAssignmentCollection right)

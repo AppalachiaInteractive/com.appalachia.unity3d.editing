@@ -6,10 +6,10 @@ namespace Appalachia.Editing.Labels
 {
     public class LabelSets : SelfSavingSingletonScriptableObject<LabelSets>
     {
-        public LabelAssignmentCollection vegetations;
-        public LabelAssignmentCollection trees;
-        public LabelAssignmentCollection objects;
         public LabelAssignmentCollection assemblies;
+        public LabelAssignmentCollection objects;
+        public LabelAssignmentCollection trees;
+        public LabelAssignmentCollection vegetations;
 
         private void Awake()
         {

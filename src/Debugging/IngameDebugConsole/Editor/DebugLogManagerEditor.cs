@@ -1,9 +1,9 @@
 ﻿using UnityEditor;
 
-namespace Appalachia.Editing.Debugging.IngameDebugConsole.Editor
+namespace Appalachia.Editing.Debugging.IngameDebugConsole
 {
     [CustomEditor(typeof(DebugLogManager))]
-    public class DebugLogManagerEditor : UnityEditor.Editor
+    public class DebugLogManagerEditor : Editor
     {
         private SerializedProperty clearCommandAfterExecution;
         private SerializedProperty commandHistorySize;
@@ -22,33 +22,6 @@ namespace Appalachia.Editing.Debugging.IngameDebugConsole.Editor
         private SerializedProperty toggleKey;
         private SerializedProperty toggleWithKey;
         private SerializedProperty topSearchbarMinWidth;
-
-        private void OnEnable()
-        {
-            singleton = serializedObject.FindProperty("singleton");
-            minimumHeight = serializedObject.FindProperty("minimumHeight");
-            enableHorizontalResizing = serializedObject.FindProperty("enableHorizontalResizing");
-            resizeFromRight = serializedObject.FindProperty("resizeFromRight");
-            minimumWidth = serializedObject.FindProperty("minimumWidth");
-            enablePopup = serializedObject.FindProperty("enablePopup");
-            startInPopupMode = serializedObject.FindProperty("startInPopupMode");
-            startMinimized = serializedObject.FindProperty("startMinimized");
-            toggleWithKey = serializedObject.FindProperty("toggleWithKey");
-#if ENABLE_INPUT_SYSTEM && !ENABLE_LEGACY_INPUT_MANAGER
-            toggleKey = serializedObject.FindProperty("toggleBinding");
-#else
-			toggleKey = serializedObject.FindProperty( "toggleKey" );
-#endif
-            enableSearchbar = serializedObject.FindProperty("enableSearchbar");
-            topSearchbarMinWidth = serializedObject.FindProperty("topSearchbarMinWidth");
-            clearCommandAfterExecution =
-                serializedObject.FindProperty("clearCommandAfterExecution");
-            commandHistorySize = serializedObject.FindProperty("commandHistorySize");
-            showCommandSuggestions = serializedObject.FindProperty("showCommandSuggestions");
-            receiveLogcatLogsInAndroid =
-                serializedObject.FindProperty("receiveLogcatLogsInAndroid");
-            logcatArguments = serializedObject.FindProperty("logcatArguments");
-        }
 
         public override void OnInspectorGUI()
         {
@@ -105,6 +78,31 @@ namespace Appalachia.Editing.Debugging.IngameDebugConsole.Editor
             EditorGUI.indentLevel++;
             EditorGUILayout.PropertyField(property);
             EditorGUI.indentLevel--;
+        }
+
+        private void OnEnable()
+        {
+            singleton = serializedObject.FindProperty("singleton");
+            minimumHeight = serializedObject.FindProperty("minimumHeight");
+            enableHorizontalResizing = serializedObject.FindProperty("enableHorizontalResizing");
+            resizeFromRight = serializedObject.FindProperty("resizeFromRight");
+            minimumWidth = serializedObject.FindProperty("minimumWidth");
+            enablePopup = serializedObject.FindProperty("enablePopup");
+            startInPopupMode = serializedObject.FindProperty("startInPopupMode");
+            startMinimized = serializedObject.FindProperty("startMinimized");
+            toggleWithKey = serializedObject.FindProperty("toggleWithKey");
+#if ENABLE_INPUT_SYSTEM && !ENABLE_LEGACY_INPUT_MANAGER
+            toggleKey = serializedObject.FindProperty("toggleBinding");
+#else
+			toggleKey = serializedObject.FindProperty( "toggleKey" );
+#endif
+            enableSearchbar = serializedObject.FindProperty("enableSearchbar");
+            topSearchbarMinWidth = serializedObject.FindProperty("topSearchbarMinWidth");
+            clearCommandAfterExecution = serializedObject.FindProperty("clearCommandAfterExecution");
+            commandHistorySize = serializedObject.FindProperty("commandHistorySize");
+            showCommandSuggestions = serializedObject.FindProperty("showCommandSuggestions");
+            receiveLogcatLogsInAndroid = serializedObject.FindProperty("receiveLogcatLogsInAndroid");
+            logcatArguments = serializedObject.FindProperty("logcatArguments");
         }
     }
 }

@@ -1,10 +1,12 @@
+using Appalachia.CI.Integration.Assets;
 using Appalachia.Core.Constants;
+using Appalachia.Editing.Core.Windows;
 using UnityEditor;
 using UnityEngine;
 
 namespace Appalachia.Editing.Assets.Windows
 {
-    public class ComponentErrorFinder : EditorWindow
+    public class ComponentErrorFinder : AppalachiaEditorWindow
     {
         private static int _goCount, _componentsCount, _missingCount;
 
@@ -39,11 +41,19 @@ namespace Appalachia.Editing.Assets.Windows
             EditorGUILayout.BeginHorizontal();
             {
                 EditorGUILayout.LabelField("Possible Missing Scripts:");
-                EditorGUILayout.LabelField(
-                    "" + (_missingCount == -1 ? "---" : _missingCount.ToString())
-                );
+                EditorGUILayout.LabelField("" + (_missingCount == -1 ? "---" : _missingCount.ToString()));
             }
             EditorGUILayout.EndHorizontal();
+        }
+
+        public static Object[] LoadAllAssetsAtPath(string assetPath)
+        {
+            return typeof(SceneAsset).Equals(AssetDatabaseManager.GetMainAssetTypeAtPath(assetPath))
+                ?
+
+                // prevent error "Do not use readobjectthreaded on scene objects!"
+                new[] {AssetDatabaseManager.LoadMainAssetAtPath(assetPath)}
+                : AssetDatabaseManager.LoadAllAssetsAtPath(assetPath);
         }
 
         [MenuItem(
@@ -62,7 +72,7 @@ namespace Appalachia.Editing.Assets.Windows
             _goCount = 0;
             _missingCount = 0;
 
-            var assetsPaths = AssetDatabase.GetAllAssetPaths();
+            var assetsPaths = AssetDatabaseManager.GetAllAssetPaths();
 
             foreach (var assetPath in assetsPaths)
             {
@@ -77,32 +87,6 @@ namespace Appalachia.Editing.Assets.Windows
                         }
                     }
                 }
-            }
-
-            Debug.Log(
-                $"Searched {_goCount} GameObjects, {_componentsCount} components, found {_missingCount} missing"
-            );
-        }
-
-        public static Object[] LoadAllAssetsAtPath(string assetPath)
-        {
-            return typeof(SceneAsset).Equals(AssetDatabase.GetMainAssetTypeAtPath(assetPath))
-                ?
-
-                // prevent error "Do not use readobjectthreaded on scene objects!"
-                new[] {AssetDatabase.LoadMainAssetAtPath(assetPath)}
-                : AssetDatabase.LoadAllAssetsAtPath(assetPath);
-        }
-
-        private static void FindInSelected()
-        {
-            var go = Selection.gameObjects;
-            _goCount = 0;
-            _componentsCount = 0;
-            _missingCount = 0;
-            foreach (var g in go)
-            {
-                FindInGO(g);
             }
 
             Debug.Log(
@@ -139,6 +123,22 @@ namespace Appalachia.Editing.Assets.Windows
                 //Debug.Log("Searching " + childT.name  + " " );
                 FindInGO(childT.gameObject);
             }
+        }
+
+        private static void FindInSelected()
+        {
+            var go = Selection.gameObjects;
+            _goCount = 0;
+            _componentsCount = 0;
+            _missingCount = 0;
+            foreach (var g in go)
+            {
+                FindInGO(g);
+            }
+
+            Debug.Log(
+                $"Searched {_goCount} GameObjects, {_componentsCount} components, found {_missingCount} missing"
+            );
         }
     }
 }

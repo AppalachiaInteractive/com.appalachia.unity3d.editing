@@ -34,6 +34,20 @@ namespace Appalachia.Editing.Debugging.IngameDebugConsole.Commands
             LoadSceneInternal(sceneName, true, mode);
         }
 
+        [ConsoleMethod("scene.restart", "Restarts the active scene")]
+        [Preserve]
+        public static void RestartScene()
+        {
+            SceneManager.LoadScene(SceneManager.GetActiveScene().name, LoadSceneMode.Single);
+        }
+
+        [ConsoleMethod("scene.unload", "Unloads a scene")]
+        [Preserve]
+        public static void UnloadScene(string sceneName)
+        {
+            SceneManager.UnloadSceneAsync(sceneName);
+        }
+
         private static void LoadSceneInternal(string sceneName, bool isAsync, LoadSceneMode mode)
         {
             if (SceneManager.GetSceneByName(sceneName).IsValid())
@@ -50,20 +64,6 @@ namespace Appalachia.Editing.Debugging.IngameDebugConsole.Commands
             {
                 SceneManager.LoadScene(sceneName, mode);
             }
-        }
-
-        [ConsoleMethod("scene.unload", "Unloads a scene")]
-        [Preserve]
-        public static void UnloadScene(string sceneName)
-        {
-            SceneManager.UnloadSceneAsync(sceneName);
-        }
-
-        [ConsoleMethod("scene.restart", "Restarts the active scene")]
-        [Preserve]
-        public static void RestartScene()
-        {
-            SceneManager.LoadScene(SceneManager.GetActiveScene().name, LoadSceneMode.Single);
         }
     }
 }

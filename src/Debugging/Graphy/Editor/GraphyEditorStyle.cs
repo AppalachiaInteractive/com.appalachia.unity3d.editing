@@ -11,10 +11,11 @@
  * Attribution is not required, but it is always welcomed!
  * -------------------------------------*/
 
+using Appalachia.CI.Integration.Assets;
 using UnityEditor;
 using UnityEngine;
 
-namespace Appalachia.Editing.Debugging.Graphy.Editor
+namespace Appalachia.Editing.Debugging.Graphy
 {
     internal static class GraphyEditorStyle
     {
@@ -22,26 +23,26 @@ namespace Appalachia.Editing.Debugging.Graphy.Editor
 
         static GraphyEditorStyle()
         {
-            var managerLogoGuid = AssetDatabase.FindAssets(
+            var managerLogoGuid = AssetDatabaseManager.FindAssets(
                 $"Manager_Logo_{(EditorGUIUtility.isProSkin ? "White" : "Dark")}"
             )[0];
-            var debuggerLogoGuid = AssetDatabase.FindAssets(
+            var debuggerLogoGuid = AssetDatabaseManager.FindAssets(
                 $"Debugger_Logo_{(EditorGUIUtility.isProSkin ? "White" : "Dark")}"
             )[0];
-            var guiSkinGuid = AssetDatabase.FindAssets("GraphyGUISkin")[0];
+            var guiSkinGuid = AssetDatabaseManager.FindAssets("GraphyGUISkin")[0];
 
             _managerLogoTexture =
-                AssetDatabase.LoadAssetAtPath<Texture2D>(
-                    AssetDatabase.GUIDToAssetPath(managerLogoGuid)
+                AssetDatabaseManager.LoadAssetAtPath<Texture2D>(
+                    AssetDatabaseManager.GUIDToAssetPath(managerLogoGuid)
                 );
 
             _debuggerLogoTexture =
-                AssetDatabase.LoadAssetAtPath<Texture2D>(
-                    AssetDatabase.GUIDToAssetPath(debuggerLogoGuid)
+                AssetDatabaseManager.LoadAssetAtPath<Texture2D>(
+                    AssetDatabaseManager.GUIDToAssetPath(debuggerLogoGuid)
                 );
 
-            m_skin = AssetDatabase.LoadAssetAtPath<GUISkin>(
-                AssetDatabase.GUIDToAssetPath(guiSkinGuid)
+            m_skin = AssetDatabaseManager.LoadAssetAtPath<GUISkin>(
+                AssetDatabaseManager.GUIDToAssetPath(guiSkinGuid)
             );
 
             if (m_skin != null)
@@ -49,10 +50,7 @@ namespace Appalachia.Editing.Debugging.Graphy.Editor
                 m_headerStyle1 = m_skin.GetStyle("Header1");
                 m_headerStyle2 = m_skin.GetStyle("Header2");
 
-                SetGuiStyleFontColor(
-                    m_headerStyle2,
-                    EditorGUIUtility.isProSkin ? Color.white : Color.black
-                );
+                SetGuiStyleFontColor(m_headerStyle2, EditorGUIUtility.isProSkin ? Color.white : Color.black);
             }
             else
             {
@@ -67,10 +65,7 @@ namespace Appalachia.Editing.Debugging.Graphy.Editor
                 contentOffset = Vector2.down * 3f
             };
 
-            SetGuiStyleFontColor(
-                m_foldoutStyle,
-                EditorGUIUtility.isProSkin ? Color.white : Color.black
-            );
+            SetGuiStyleFontColor(m_foldoutStyle, EditorGUIUtility.isProSkin ? Color.white : Color.black);
         }
 
 #endregion

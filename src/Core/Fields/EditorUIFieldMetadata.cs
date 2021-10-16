@@ -10,9 +10,20 @@ namespace Appalachia.Editing.Core.Fields
         where T : EditorUIFieldMetadata<T>
     {
         private const string _PRF_PFX = nameof(EditorUIFieldMetadata<T>) + ".";
+
+        private static readonly ProfilerMarker _PRF_GetInitializationAction =
+            new(_PRF_PFX + nameof(GetInitializationAction));
+
+        private static readonly ProfilerMarker _PRF_SetInitializationAction =
+            new(_PRF_PFX + nameof(SetInitializationAction));
+
         protected Action<EditorUIFieldMetadata<T>> _initializeAction;
 
-        private static readonly ProfilerMarker _PRF_GetInitializationAction = new ProfilerMarker(_PRF_PFX + nameof(GetInitializationAction));
+        public void SetInitializationAction(Action<EditorUIFieldMetadata<T>> action)
+        {
+            _initializeAction = action;
+        }
+
         protected override Action GetInitializationAction()
         {
             using (_PRF_GetInitializationAction.Auto())
@@ -25,25 +36,32 @@ namespace Appalachia.Editing.Core.Fields
                 return () => _initializeAction(this);
             }
         }
-
-        private static readonly ProfilerMarker _PRF_SetInitializationAction = new ProfilerMarker(_PRF_PFX + nameof(SetInitializationAction));
-        public void SetInitializationAction(Action<EditorUIFieldMetadata<T>> action)
-        {
-            _initializeAction = action;
-        }
     }
 
     [Serializable]
     public abstract class EditorUIFieldMetadata
     {
         private const string _PRF_PFX = nameof(EditorUIFieldMetadata) + ".";
-        
+
         public string identifier;
+        public bool hasBeenDrawn;
+
+        private static readonly ProfilerMarker _PRF_Initialize = new(_PRF_PFX + nameof(Initialize));
+        private static readonly ProfilerMarker _PRF_Refresh = new(_PRF_PFX + nameof(Refresh));
+        private static readonly ProfilerMarker _PRF_CloneStyle = new(_PRF_PFX + nameof(CloneStyle));
+        private static readonly ProfilerMarker _PRF_CloneContent = new(_PRF_PFX + nameof(CloneContent));
+        private static readonly ProfilerMarker _PRF_CloneLayout = new(_PRF_PFX + nameof(CloneLayout));
+        private static readonly ProfilerMarker _PRF_AddLayoutOption = new(_PRF_PFX + nameof(AddLayoutOption));
+
+        private static readonly ProfilerMarker _PRF_AlterContent = new(_PRF_PFX + nameof(AlterContent));
+
+        private static readonly ProfilerMarker _PRF_AlterStyle = new(_PRF_PFX + nameof(AlterStyle));
+
+        protected GUIStyle _defaultStyle;
         private int __clonedContentHashcode;
         private int __clonedLayoutHashcode;
         private int __clonedStyleHashcode;
         private GUIContent _content;
-        protected GUIStyle _defaultStyle;
 
         private GUILayoutOption[] _layout;
         private GUIStyle _style;
@@ -66,19 +84,6 @@ namespace Appalachia.Editing.Core.Fields
             }
         }
 
-        public GUIStyle style
-        {
-            get
-            {
-                if (_style == null)
-                {
-                    _style = InitializeStyle();
-                }
-
-                return _style;
-            }
-        }
-
         public GUILayoutOption[] layout
         {
             get
@@ -92,83 +97,45 @@ namespace Appalachia.Editing.Core.Fields
             }
         }
 
+        public GUIStyle style
+        {
+            get
+            {
+                if (_style == null)
+                {
+                    _style = InitializeStyle();
+                }
+
+                return _style;
+            }
+        }
+
         protected abstract GUIStyle DefaultStyle { get; }
 
-        public virtual GUIContent InitializeContent()
+        public void AddLayoutOption(GUILayoutOption newOption)
         {
-            return GUIContent.none;
-        }
-
-        public virtual GUIStyle InitializeStyle()
-        {
-            return new(DefaultStyle);
-        }
-
-        public virtual GUILayoutOption[] InitializeLayout()
-        {
-            return new GUILayoutOption[0];
-        }
-
-        private static readonly ProfilerMarker _PRF_Initialize = new ProfilerMarker(_PRF_PFX + nameof(Initialize));
-        public void Initialize()
-        {
-            using (_PRF_Initialize.Auto())
+            using (_PRF_AddLayoutOption.Auto())
             {
-                OnInitialize();
-
-                var action = GetInitializationAction();
-
-                if (action == null)
-                {
-                    return;
-                }
-
-                action();
+                AddLayoutOption(newOption, ref _layout);
             }
         }
 
-        protected virtual void OnInitialize()
+        public void AlterContent(Action<GUIContent> updater)
         {
-        }
-
-        private static readonly ProfilerMarker _PRF_Refresh = new ProfilerMarker(_PRF_PFX + nameof(Refresh));
-        public void Refresh(bool doInitialize = true)
-        {
-            using (_PRF_Refresh.Auto())
+            using (_PRF_AlterContent.Auto())
             {
-                _content = null;
-                _style = null;
-                _layout = null;
-
-                if (doInitialize)
-                {
-                    Initialize();
-                }
+                updater(content);
             }
         }
 
-        private static readonly ProfilerMarker _PRF_CloneStyle = new ProfilerMarker(_PRF_PFX + nameof(CloneStyle));
-        public void CloneStyle(GUIStyle i)
+        public void AlterStyle(Action<GUIStyle> updater)
         {
-            using (_PRF_CloneStyle.Auto())
+            using (_PRF_AlterStyle.Auto())
             {
-                if (i == null)
-                {
-                    return;
-                }
-
-                var hash = i.GetHashCode();
-                if (hash == __clonedStyleHashcode)
-                {
-                    return;
-                }
-
-                __clonedStyleHashcode = hash;
-                _style = new GUIStyle(i);
+                updater(style);
             }
         }
 
-        private static readonly ProfilerMarker _PRF_CloneContent = new ProfilerMarker(_PRF_PFX + nameof(CloneContent));
         public void CloneContent(GUIContent i)
         {
             using (_PRF_CloneContent.Auto())
@@ -189,7 +156,6 @@ namespace Appalachia.Editing.Core.Fields
             }
         }
 
-        private static readonly ProfilerMarker _PRF_CloneLayout = new ProfilerMarker(_PRF_PFX + nameof(CloneLayout));
         public void CloneLayout(GUILayoutOption[] i)
         {
             using (_PRF_CloneLayout.Auto())
@@ -211,10 +177,80 @@ namespace Appalachia.Editing.Core.Fields
             }
         }
 
-        private static readonly ProfilerMarker _PRF_AddLayoutOption = new ProfilerMarker(_PRF_PFX + nameof(AddLayoutOption));
-        protected static void AddLayoutOption(
-            GUILayoutOption newOption,
-            ref GUILayoutOption[] options)
+        public void CloneStyle(GUIStyle i)
+        {
+            using (_PRF_CloneStyle.Auto())
+            {
+                if (i == null)
+                {
+                    return;
+                }
+
+                var hash = i.GetHashCode();
+                if (hash == __clonedStyleHashcode)
+                {
+                    return;
+                }
+
+                __clonedStyleHashcode = hash;
+                _style = new GUIStyle(i);
+            }
+        }
+
+        public void Initialize()
+        {
+            using (_PRF_Initialize.Auto())
+            {
+                OnInitialize();
+
+                var action = GetInitializationAction();
+
+                if (action == null)
+                {
+                    return;
+                }
+
+                action();
+            }
+        }
+
+        public virtual GUIContent InitializeContent()
+        {
+            return GUIContent.none;
+        }
+
+        public virtual GUILayoutOption[] InitializeLayout()
+        {
+            return new GUILayoutOption[0];
+        }
+
+        public virtual GUIStyle InitializeStyle()
+        {
+            return new(DefaultStyle);
+        }
+
+        public void Refresh(bool doInitialize = true)
+        {
+            using (_PRF_Refresh.Auto())
+            {
+                _content = null;
+                _style = null;
+                _layout = null;
+
+                if (doInitialize)
+                {
+                    Initialize();
+                }
+            }
+        }
+
+        protected abstract Action GetInitializationAction();
+
+        protected virtual void OnInitialize()
+        {
+        }
+
+        protected static void AddLayoutOption(GUILayoutOption newOption, ref GUILayoutOption[] options)
         {
             using (_PRF_AddLayoutOption.Auto())
             {
@@ -251,34 +287,5 @@ namespace Appalachia.Editing.Core.Fields
                 options = newArray;
             }
         }
-
-        public void AddLayoutOption(GUILayoutOption newOption)
-        {
-            using (_PRF_AddLayoutOption.Auto())
-            {
-
-                AddLayoutOption(newOption, ref _layout);
-            }
-        }
-
-        private static readonly ProfilerMarker _PRF_AlterContent = new ProfilerMarker(_PRF_PFX + nameof(AlterContent));
-        public void AlterContent(Action<GUIContent> updater)
-        {
-            using (_PRF_AlterContent.Auto())
-            {
-                updater(content);
-            }
-        }
-
-        private static readonly ProfilerMarker _PRF_AlterStyle = new ProfilerMarker(_PRF_PFX + nameof(AlterStyle));
-        public void AlterStyle(Action<GUIStyle> updater)
-        {
-            using (_PRF_AlterStyle.Auto())
-            {
-                updater(style);
-            }
-        }
-
-        protected abstract Action GetInitializationAction();
     }
 }

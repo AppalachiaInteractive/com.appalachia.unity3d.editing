@@ -111,8 +111,7 @@ namespace Appalachia.Editing.Debugging.Graphy.Audio
                     else
                     {
                         SpectrumHighestValues[i] = Mathf.Clamp(
-                            SpectrumHighestValues[i] -
-                            (SpectrumHighestValues[i] * Time.deltaTime * 2),
+                            SpectrumHighestValues[i] - (SpectrumHighestValues[i] * Time.deltaTime * 2),
                             0,
                             1
                         );
@@ -120,8 +119,7 @@ namespace Appalachia.Editing.Debugging.Graphy.Audio
                 }
             }
             else if ((m_audioListener == null) &&
-                     (m_findAudioListenerInCameraIfNull ==
-                      GraphyManager.LookForAudioListener.ALWAYS))
+                     (m_findAudioListenerInCameraIfNull == GraphyManager.LookForAudioListener.ALWAYS))
             {
                 m_audioListener = FindAudioListener();
             }
@@ -195,8 +193,7 @@ namespace Appalachia.Editing.Debugging.Graphy.Audio
 
         private void OnSceneLoaded(Scene scene, LoadSceneMode loadSceneMode)
         {
-            if (m_findAudioListenerInCameraIfNull ==
-                GraphyManager.LookForAudioListener.ON_SCENE_LOAD)
+            if (m_findAudioListenerInCameraIfNull == GraphyManager.LookForAudioListener.ON_SCENE_LOAD)
             {
                 m_audioListener = FindAudioListener();
             }

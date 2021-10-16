@@ -34,9 +34,7 @@ namespace Appalachia.Editing.Labels
         public bool found;
 
         private Color _labelColor =>
-            enabled
-                ? ColorPrefs.Instance.EnabledSubdued.v
-                : ColorPrefs.Instance.DisabledImportantSubdued.v;
+            enabled ? ColorPrefs.Instance.EnabledSubdued.v : ColorPrefs.Instance.DisabledImportantSubdued.v;
 
         private ValueDropdownList<string> labelList => LabelManager.labelDropdownList;
 

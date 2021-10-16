@@ -1,6 +1,7 @@
 #region
 
 using Appalachia.Core.Attributes.Editing;
+using Appalachia.Editing.Core.State;
 using Appalachia.Editing.Drawers.Contexts;
 using Sirenix.OdinInspector.Editor;
 using Sirenix.Utilities;
@@ -24,6 +25,11 @@ namespace Appalachia.Editing.Drawers
         {
             using (_PRF_DrawPropertyLayout.Auto())
             {
+                if (!Initialized)
+                {
+                    return;
+                }
+
                 PrepareDisabledLayout(out var disabled);
 
                 PrepareColorLayout(out var color);
@@ -32,42 +38,36 @@ namespace Appalachia.Editing.Drawers
             }
         }
 
-        private void PrepareDisabledLayout(out bool? disabled)
+        private void DrawInlineButton()
         {
-            using (_PRF_PrepareDisabledLayout.Auto())
+            using (_PRF_DrawInlineButton.Auto())
             {
-                disabled = null;
+                bool buttonResult;
 
-                if (context.HasDisabledMember)
+                if (_buttonOptions == null)
                 {
-                    if (context.DisabledHelper.ErrorMessage != null)
-                    {
-                        SirenixEditorGUI.ErrorMessageBox(context.DisabledHelper.ErrorMessage);
-                    }
-                    else
-                    {
-                        disabled = context.DisabledHelper.GetValue(false);
-                    }
+                    _buttonOptions = GUILayoutOptions.ExpandWidth(false).MinWidth(20f);
                 }
-            }
-        }
 
-        private void PrepareColorLayout(out Color? color)
-        {
-            using (_PRF_PrepareColorLayout.Auto())
-            {
-                color = null;
-
-                if (context.HasColorMember)
+                if (_miniButtonStyle == null)
                 {
-                    if (context.ColorHelper.ErrorMessage != null)
-                    {
-                        SirenixEditorGUI.ErrorMessageBox(context.ColorHelper.ErrorMessage);
-                    }
-                    else
-                    {
-                        color = context.ColorHelper.GetValue();
-                    }
+                    _miniButtonStyle = EditorStyles.miniButton;
+                }
+
+                using (_PRF_DrawInlineButton_DrawButton.Auto())
+                {
+                    var labelText = context.LabelHelper.GetValue();
+
+                    var labelWidth = labelText.Length * 8.0f;
+
+                    UIStateStacks.labelWidth.Push(labelWidth);
+                    buttonResult = GUILayout.Button(labelText, _miniButtonStyle, _buttonOptions);
+                    UIStateStacks.labelWidth.Pop();
+                }
+
+                if (buttonResult)
+                {
+                    ExecuteInlineButton();
                 }
             }
         }
@@ -112,57 +112,23 @@ namespace Appalachia.Editing.Drawers
             }
         }
 
-        private void HandleDrawingInlineButton(Color? color, bool? disabled)
+        private void DrawMainField(GUIContent label)
         {
-            using (_PRF_HandleDrawingInlineButton.Auto())
+            using (_PRF_DrawMainField.Auto())
             {
-                if (color.HasValue)
+                using (_PRF_DrawMainField_BeginVertical.Auto())
                 {
-                    //GUIHelper.PushColor(Color.white);
-                    GUIHelper.PushColor(color.Value);
+                    EditorGUILayout.BeginVertical();
                 }
 
-                if (disabled.HasValue)
+                using (_PRF_DrawMainField_CallNextDrawer.Auto())
                 {
-                    GUIHelper.PushGUIEnabled(!disabled.Value);
-
-                    //GUIHelper.PushGUIEnabled(true);
+                    CallNextDrawer(label);
                 }
 
-                GUIHelper.PushIsBoldLabel(Attribute.Bold);
-            }
-        }
-
-        private void DrawInlineButton()
-        {
-            using (_PRF_DrawInlineButton.Auto())
-            {
-                bool buttonResult;
-
-                if (_buttonOptions == null)
+                using (_PRF_DrawMainField_EndVertical.Auto())
                 {
-                    _buttonOptions = GUILayoutOptions.ExpandWidth(false).MinWidth(20f);
-                }
-
-                if (_miniButtonStyle == null)
-                {
-                    _miniButtonStyle = EditorStyles.miniButton;
-                }
-
-                using (_PRF_DrawInlineButton_DrawButton.Auto())
-                {
-                    var labelText = context.LabelHelper.GetValue();
-
-                    var labelWidth = labelText.Length * 8.0f;
-
-                    GUIHelper.PushLabelWidth(labelWidth);
-                    buttonResult = GUILayout.Button(labelText, _miniButtonStyle, _buttonOptions);
-                    GUIHelper.PopLabelWidth();
-                }
-
-                if (buttonResult)
-                {
-                    ExecuteInlineButton();
+                    EditorGUILayout.EndVertical();
                 }
             }
         }
@@ -181,15 +147,33 @@ namespace Appalachia.Editing.Drawers
                 }
                 else if (context.InstanceParameterMethodCaller != null)
                 {
-                    context.InstanceParameterMethodCaller(
-                        Property.ParentValues[0],
-                        ValueEntry.SmartValue
-                    );
+                    context.InstanceParameterMethodCaller(Property.ParentValues[0], ValueEntry.SmartValue);
                 }
                 else
                 {
                     Debug.LogError(logErrorString);
                 }
+            }
+        }
+
+        private void HandleDrawingInlineButton(Color? color, bool? disabled)
+        {
+            using (_PRF_HandleDrawingInlineButton.Auto())
+            {
+                if (color.HasValue)
+                {
+                    //UIStateStacks.foregroundColor.Push(Color.white);
+                    UIStateStacks.foregroundColor.Push(color.Value);
+                }
+
+                if (disabled.HasValue)
+                {
+                    UIStateStacks.guiEnabled.Push(!disabled.Value);
+
+                    //UIStateStacks.guiEnabled.Push(true);
+                }
+
+                GUIHelper.PushIsBoldLabel(Attribute.Bold);
             }
         }
 
@@ -201,33 +185,52 @@ namespace Appalachia.Editing.Drawers
 
                 if (disabled.HasValue)
                 {
-                    GUIHelper.PopGUIEnabled();
+                    UIStateStacks.guiEnabled.Pop();
                 }
 
                 if (color.HasValue)
                 {
-                    GUIHelper.PopColor();
+                    UIStateStacks.foregroundColor.Pop();
                 }
             }
         }
 
-        private void DrawMainField(GUIContent label)
+        private void PrepareColorLayout(out Color? color)
         {
-            using (_PRF_DrawMainField.Auto())
+            using (_PRF_PrepareColorLayout.Auto())
             {
-                using (_PRF_DrawMainField_BeginVertical.Auto())
-                {
-                    EditorGUILayout.BeginVertical();
-                }
+                color = null;
 
-                using (_PRF_DrawMainField_CallNextDrawer.Auto())
+                if (context.HasColorMember)
                 {
-                    CallNextDrawer(label);
+                    if (context.ColorHelper.ErrorMessage != null)
+                    {
+                        SirenixEditorGUI.ErrorMessageBox(context.ColorHelper.ErrorMessage);
+                    }
+                    else
+                    {
+                        color = context.ColorHelper.GetValue();
+                    }
                 }
+            }
+        }
 
-                using (_PRF_DrawMainField_EndVertical.Auto())
+        private void PrepareDisabledLayout(out bool? disabled)
+        {
+            using (_PRF_PrepareDisabledLayout.Auto())
+            {
+                disabled = null;
+
+                if (context.HasDisabledMember)
                 {
-                    EditorGUILayout.EndVertical();
+                    if (context.DisabledHelper.ErrorMessage != null)
+                    {
+                        SirenixEditorGUI.ErrorMessageBox(context.DisabledHelper.ErrorMessage);
+                    }
+                    else
+                    {
+                        disabled = context.DisabledHelper.GetValue(false);
+                    }
                 }
             }
         }
@@ -257,8 +260,7 @@ namespace Appalachia.Editing.Drawers
         private static readonly ProfilerMarker _PRF_DrawLayout_EndHorizontal =
             new(_PRF_PFX + nameof(DrawLayout) + ".EndHorizontal");
 
-        private static readonly ProfilerMarker _PRF_DrawMainField =
-            new(_PRF_PFX + nameof(DrawMainField));
+        private static readonly ProfilerMarker _PRF_DrawMainField = new(_PRF_PFX + nameof(DrawMainField));
 
         private static readonly ProfilerMarker _PRF_DrawMainField_BeginVertical =
             new(_PRF_PFX + nameof(DrawMainField) + ".BeginVertical");
@@ -284,8 +286,7 @@ namespace Appalachia.Editing.Drawers
         private static readonly ProfilerMarker _PRF_ExecuteInlineButton =
             new(_PRF_PFX + nameof(ExecuteInlineButton));
 
-        private static readonly ProfilerMarker _PRF_PopInlineButton =
-            new(_PRF_PFX + nameof(PopInlineButton));
+        private static readonly ProfilerMarker _PRF_PopInlineButton = new(_PRF_PFX + nameof(PopInlineButton));
 
 #endregion
     }

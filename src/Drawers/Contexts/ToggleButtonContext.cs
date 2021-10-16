@@ -18,11 +18,6 @@ namespace Appalachia.Editing.Drawers.Contexts
         public ValueResolver<string> LabelHelper;
         public Action StaticMethodCaller;
 
-        protected override ValueResolver[] GetValueResolvers()
-        {
-            return new ValueResolver[] {LabelHelper};
-        }
-
         public override void Initialize(
             InspectorProperty property,
             ToggleButtonAttribute attribute,
@@ -49,8 +44,7 @@ namespace Appalachia.Editing.Drawers.Contexts
                     }
                     else
                     {
-                        InstanceMethodCaller =
-                            EmitUtilities.CreateWeakInstanceMethodCaller(memberInfo);
+                        InstanceMethodCaller = EmitUtilities.CreateWeakInstanceMethodCaller(memberInfo);
                     }
                 }
                 else if (AppaMemberFinder.Start(valueEntry.ParentType)
@@ -70,6 +64,11 @@ namespace Appalachia.Editing.Drawers.Contexts
                     }
                 }
             }
+        }
+
+        protected override ValueResolver[] GetValueResolvers()
+        {
+            return new ValueResolver[] {LabelHelper};
         }
     }
 }

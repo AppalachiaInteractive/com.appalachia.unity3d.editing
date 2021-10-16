@@ -13,6 +13,12 @@ namespace Appalachia.Editing.Debugging
     [Serializable]
     public class GlobalDebug : SelfSavingSingletonScriptableObject<GlobalDebug>
     {
+        [BoxGroup("Debug/Mesh")]
+        [HideLabel]
+        [EnableIf(nameof(enableDebugMesh))]
+        [OnValueChanged(nameof(Update))]
+        public DebugMesh debugMesh = DebugMesh.VertexColorR;
+
         [TitleGroup("Debug")]
         [OnValueChanged(nameof(Update))]
         public DebugMode debugMode = DebugMode.Off;
@@ -23,11 +29,9 @@ namespace Appalachia.Editing.Debugging
         [OnValueChanged(nameof(Update))]
         public DebugMotion debugMotion = DebugMotion.PrimaryRoll;
 
-        [BoxGroup("Debug/Mesh")]
-        [HideLabel]
-        [EnableIf(nameof(enableDebugMesh))]
-        [OnValueChanged(nameof(Update))]
-        public DebugMesh debugMesh = DebugMesh.VertexColorR;
+        [SmartLabel]
+        [BoxGroup("Debug/Shader")]
+        public Shader debugShader;
 
         [BoxGroup("Debug/ Value Remapping")]
         [MinMaxSlider(0.0f, 1.0f)]
@@ -37,33 +41,14 @@ namespace Appalachia.Editing.Debugging
 
         private bool _enabled;
         private bool _initialized;
-
-        [SmartLabel]
-        [BoxGroup("Debug/Shader")]
-        public Shader debugShader;
         private bool enableAny => debugMode != DebugMode.Off;
-        private bool enableDebugMotion => debugMode == DebugMode.DebugMotion;
         private bool enableDebugMesh => debugMode == DebugMode.DebugMesh;
+        private bool enableDebugMotion => debugMode == DebugMode.DebugMotion;
 
         [Button]
         public void SelectShader()
         {
             Selection.activeObject = debugShader;
-        }
-
-        private void Initialize()
-        {
-            if (!_initialized)
-            {
-                _initialized = true;
-                _enabled = false;
-                //debugShader = GSR.instance.debugShader;
-                GSPL.Include(debugShader);
-                remap = new Vector2(0f, 1f);
-
-                SceneView.lastActiveSceneView.SetSceneViewShaderReplace(null, null);
-                SceneView.lastActiveSceneView.Repaint();
-            }
         }
 
         public void Update()
@@ -105,6 +90,22 @@ namespace Appalachia.Editing.Debugging
 
                     SceneView.lastActiveSceneView.Repaint();
                 }
+            }
+        }
+
+        private void Initialize()
+        {
+            if (!_initialized)
+            {
+                _initialized = true;
+                _enabled = false;
+
+                //debugShader = GSR.instance.debugShader;
+                GSPL.Include(debugShader);
+                remap = new Vector2(0f, 1f);
+
+                SceneView.lastActiveSceneView.SetSceneViewShaderReplace(null, null);
+                SceneView.lastActiveSceneView.Repaint();
             }
         }
     }

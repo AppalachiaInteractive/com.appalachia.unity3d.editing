@@ -1,3 +1,4 @@
+using Appalachia.CI.Integration.Assets;
 using UnityEditor;
 using UnityEngine;
 
@@ -17,7 +18,7 @@ namespace Appalachia.Editing.Core.Windows.ProjectWindow.Details
 
         public override string GetLabel(string guid, string assetPath, Object asset)
         {
-            var clip = AssetDatabase.LoadAssetAtPath<AnimationClip>(assetPath);
+            var clip = AssetDatabaseManager.LoadAssetAtPath<AnimationClip>(assetPath);
             if (clip != null)
             {
                 var bindings = AnimationUtility.GetCurveBindings(clip);
@@ -32,6 +33,12 @@ namespace Appalachia.Editing.Core.Windows.ProjectWindow.Details
             }
 
             return string.Empty;
+        }
+
+        [InitializeOnLoadMethod]
+        private static void Initiailze()
+        {
+            ProjectWindowDetails.RegisterDetail(new AnimationKeyCountDetail());
         }
     }
 }

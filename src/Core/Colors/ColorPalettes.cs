@@ -8,9 +8,8 @@ namespace Appalachia.Editing.Core.Colors
     [Serializable]
     public static class ColorPalettes
     {
-        private static ColorPalette _scratchPalette;
-
         private static ColorPalette _editing;
+        private static ColorPalette _scratchPalette;
 
         public static ColorPalette Editing
         {

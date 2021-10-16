@@ -12,13 +12,13 @@ namespace Appalachia.Editing.Debugging.IngameDebugConsole
             arr = new T[initialCapacity];
         }
 
-        public int Count { get; private set; }
-
         public T this[int index]
         {
             get => arr[(startIndex + index) % arr.Length];
             set => arr[(startIndex + index) % arr.Length] = value;
         }
+
+        public int Count { get; private set; }
 
         public void Add(T value)
         {

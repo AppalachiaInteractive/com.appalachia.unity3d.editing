@@ -14,10 +14,12 @@ namespace Appalachia.Editing.Drawers.Simple
         private MethodButtonAttribute attr;
         private int buttonCount;
 
-        public override void OnGUI(
-            Rect position,
-            SerializedProperty editorFoldout,
-            GUIContent label)
+        public override float GetPropertyHeight(SerializedProperty property, GUIContent label)
+        {
+            return EditorGUI.GetPropertyHeight(property, label, true) + (buttonHeight * buttonCount);
+        }
+
+        public override void OnGUI(Rect position, SerializedProperty editorFoldout, GUIContent label)
         {
             if (editorFoldout.name.Equals("editorFoldout") == false)
             {
@@ -60,32 +62,19 @@ namespace Appalachia.Editing.Drawers.Simple
             }
         }
 
-        public override float GetPropertyHeight(SerializedProperty property, GUIContent label)
-        {
-            return EditorGUI.GetPropertyHeight(property, label, true) +
-                   (buttonHeight * buttonCount);
-        }
-
         private void InvokeMethod(SerializedProperty property, string name)
         {
             var target = property.serializedObject.targetObject;
             target.GetType()
-                  .GetMethod(
-                       name,
-                       ReflectionExtensions.NonInheritedAllInstance
-                   )
+                  .GetMethod(name, ReflectionExtensions.NonInheritedAllInstance)
                   .Invoke(target, null);
         }
 
         private void LogErrorMessage(SerializedProperty editorFoldout)
         {
-            Debug.LogError(
-                "<color=red><b>Possible improper usage of method button attribute!</b></color>"
-            );
+            Debug.LogError("<color=red><b>Possible improper usage of method button attribute!</b></color>");
 #if NET_4_6
-            Debug.LogError(
-                $"Got field name: <b>{editorFoldout.name}</b>, Expected: <b>editorFoldout</b>"
-            );
+            Debug.LogError($"Got field name: <b>{editorFoldout.name}</b>, Expected: <b>editorFoldout</b>");
             Debug.LogError(
                 $"Please see <b>{"Usage"}</b> at <b><i><color=blue>{"https://github.com/GlassToeStudio/UnityMethodButtonAttribute/blob/master/README.md"}</color></i></b>"
             );

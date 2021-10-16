@@ -9,9 +9,9 @@ namespace Appalachia.Editing.Debugging.Handle
     {
         // ReSharper disable once MemberHidesStaticFromOuterClass
         private const string _PRF_PFX = nameof(GizmoState) + ".";
-
         private static readonly ProfilerMarker _PRF_GizmoState = new(_PRF_PFX + nameof(GizmoState));
         private static readonly ProfilerMarker _PRF_Dispose = new(_PRF_PFX + nameof(Dispose));
+
         private static readonly ProfilerMarker _PRF_New = new(_PRF_PFX + nameof(New));
         private static readonly ProfilerMarker _PRF_Reset = new(_PRF_PFX + nameof(Reset));
         private static readonly ProfilerMarker _PRF_Initialize = new(_PRF_PFX + nameof(Initialize));
@@ -23,6 +23,24 @@ namespace Appalachia.Editing.Debugging.Handle
 #pragma warning restore 612
         {
             using (_PRF_GizmoState.Auto())
+            {
+                _color = Gizmos.color;
+                _sRGB = GL.sRGBWrite;
+            }
+        }
+
+        public override void Initialize()
+        {
+            using (_PRF_Initialize.Auto())
+            {
+                _color = Gizmos.color;
+                _sRGB = GL.sRGBWrite;
+            }
+        }
+
+        public override void Reset()
+        {
+            using (_PRF_Reset.Auto())
             {
                 _color = Gizmos.color;
                 _sRGB = GL.sRGBWrite;
@@ -77,24 +95,6 @@ namespace Appalachia.Editing.Debugging.Handle
                 Gizmos.color = color;
                 GL.sRGBWrite = sRGB;
                 return h;
-            }
-        }
-
-        public override void Reset()
-        {
-            using (_PRF_Reset.Auto())
-            {
-                _color = Gizmos.color;
-                _sRGB = GL.sRGBWrite;
-            }
-        }
-
-        public override void Initialize()
-        {
-            using (_PRF_Initialize.Auto())
-            {
-                _color = Gizmos.color;
-                _sRGB = GL.sRGBWrite;
             }
         }
     }

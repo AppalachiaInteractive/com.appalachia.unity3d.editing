@@ -7,6 +7,21 @@ namespace Appalachia.Editing.Core.Utilities
     {
         private static Dictionary<Color, Texture2D> _backgrounds;
 
+        public static Texture2D GetBackground(Color color)
+        {
+            if (_backgrounds == null)
+            {
+                _backgrounds = new Dictionary<Color, Texture2D>();
+            }
+
+            if (_backgrounds.ContainsKey(color))
+            {
+                return _backgrounds[color];
+            }
+
+            return MakeTex(1, 1, color);
+        }
+
         public static Texture2D MakeTex(int width, int height, Color col)
         {
             var result = new Texture2D(width, height);
@@ -32,21 +47,6 @@ namespace Appalachia.Editing.Core.Utilities
             texture.Apply();
 
             return texture;
-        }
-
-        public static Texture2D GetBackground(Color color)
-        {
-            if (_backgrounds == null)
-            {
-                _backgrounds = new Dictionary<Color, Texture2D>();
-            }
-
-            if (_backgrounds.ContainsKey(color))
-            {
-                return _backgrounds[color];
-            }
-
-            return MakeTex(1, 1, color);
         }
     }
 }

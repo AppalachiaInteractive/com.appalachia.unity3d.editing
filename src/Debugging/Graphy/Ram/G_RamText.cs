@@ -83,10 +83,8 @@ namespace Appalachia.Editing.Debugging.Graphy.Ram
             if (m_deltaTime > (1f / m_updateRate))
             {
                 // Update allocated, mono and reserved memory
-                m_allocatedSystemMemorySizeText.text =
-                    ((int) m_ramMonitor.AllocatedRam).ToStringNonAlloc();
-                m_reservedSystemMemorySizeText.text =
-                    ((int) m_ramMonitor.ReservedRam).ToStringNonAlloc();
+                m_allocatedSystemMemorySizeText.text = ((int) m_ramMonitor.AllocatedRam).ToStringNonAlloc();
+                m_reservedSystemMemorySizeText.text = ((int) m_ramMonitor.ReservedRam).ToStringNonAlloc();
                 m_monoSystemMemorySizeText.text = ((int) m_ramMonitor.MonoRam).ToStringNonAlloc();
 
                 m_deltaTime = 0f;

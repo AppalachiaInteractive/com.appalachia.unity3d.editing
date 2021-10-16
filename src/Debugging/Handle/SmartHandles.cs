@@ -14,16 +14,19 @@ namespace Appalachia.Editing.Debugging.Handle
 {
     public static class SmartHandles
     {
-        private static readonly ProfilerMarker _PRF_DrawHandleLine =
-            new(_PRF_PFX + nameof(DrawHandleLine));
+#region ProfileMarkers
+
+        private const string _PRF_PFX = nameof(SmartHandles) + ".";
+
+#endregion
+
+        private static readonly ProfilerMarker _PRF_DrawHandleLine = new(_PRF_PFX + nameof(DrawHandleLine));
 
         private static readonly ProfilerMarker _PRF_DrawLine = new(_PRF_PFX + nameof(DrawLine));
 
-        private static readonly ProfilerMarker _PRF_DrawLineMasked =
-            new(_PRF_PFX + nameof(DrawLineMasked));
+        private static readonly ProfilerMarker _PRF_DrawLineMasked = new(_PRF_PFX + nameof(DrawLineMasked));
 
-        private static readonly ProfilerMarker _PRF_DrawSolidDisc =
-            new(_PRF_PFX + nameof(DrawSolidDisc));
+        private static readonly ProfilerMarker _PRF_DrawSolidDisc = new(_PRF_PFX + nameof(DrawSolidDisc));
 
         private static readonly ProfilerMarker _PRF_DrawSolidDiscMasked =
             new(_PRF_PFX + nameof(DrawSolidDiscMasked));
@@ -63,20 +66,16 @@ namespace Appalachia.Editing.Debugging.Handle
         private static readonly ProfilerMarker _PRF_DrawWireCube_InternalDraw =
             new(_PRF_PFX + nameof(DrawWireCube_Internal) + ".InternalDraw");
 
-        private static readonly ProfilerMarker _PRF_DrawWireDisc =
-            new(_PRF_PFX + nameof(DrawWireDisc));
+        private static readonly ProfilerMarker _PRF_DrawWireDisc = new(_PRF_PFX + nameof(DrawWireDisc));
 
         private static readonly ProfilerMarker _PRF_DrawWireDiscMasked =
             new(_PRF_PFX + nameof(DrawWireDiscMasked));
 
-        private static readonly ProfilerMarker _PRF_DrawWireMatrix =
-            new(_PRF_PFX + nameof(DrawWireMatrix));
+        private static readonly ProfilerMarker _PRF_DrawWireMatrix = new(_PRF_PFX + nameof(DrawWireMatrix));
 
-        private static readonly ProfilerMarker _PRF_DrawWireMesh =
-            new(_PRF_PFX + nameof(DrawWireMesh));
+        private static readonly ProfilerMarker _PRF_DrawWireMesh = new(_PRF_PFX + nameof(DrawWireMesh));
 
-        private static readonly ProfilerMarker _PRF_DrawWireSphere =
-            new(_PRF_PFX + nameof(DrawWireSphere));
+        private static readonly ProfilerMarker _PRF_DrawWireSphere = new(_PRF_PFX + nameof(DrawWireSphere));
 
         private static readonly ProfilerMarker _PRF_DrawWireSphereMasked =
             new(_PRF_PFX + nameof(DrawWireSphereMasked));
@@ -85,26 +84,26 @@ namespace Appalachia.Editing.Debugging.Handle
 
         private static Vector3[] _drawWireCubeArray;
         private static Vector3[] _drawWireCubeLines;
-
-        private static Mesh s_CubeMesh;
-        private static Mesh s_SphereMesh;
         private static Mesh s_ConeMesh;
+        private static Mesh s_CubeMesh;
         private static Mesh s_CylinderMesh;
-        private static Mesh s_QuadMesh;
         private static Vector3 s_InitialScale;
+        private static Mesh s_QuadMesh;
+        private static Mesh s_SphereMesh;
 
         private static readonly ProfilerMarker _PRF_DrawWireCube_Internal =
             new(_PRF_PFX + nameof(DrawWireCube_Internal));
 
-        private static readonly GUIContent s_Text = new();
+        private static readonly int HandleColor = Shader.PropertyToID("_HandleColor");
+        private static readonly int HandleSize = Shader.PropertyToID("_HandleSize");
+        private static readonly int HandleZTest = Shader.PropertyToID("_HandleZTest");
+        private static readonly int ObjectToWorld = Shader.PropertyToID("_ObjectToWorld");
         private static readonly GUIContent s_Image = new();
+
+        private static readonly GUIContent s_Text = new();
         private static readonly GUIContent s_TextImage = new();
 
         private static GUIStyle _baseLabelStyle;
-        private static readonly int HandleColor = Shader.PropertyToID("_HandleColor");
-        private static readonly int HandleSize = Shader.PropertyToID("_HandleSize");
-        private static readonly int ObjectToWorld = Shader.PropertyToID("_ObjectToWorld");
-        private static readonly int HandleZTest = Shader.PropertyToID("_HandleZTest");
 
         public static GUIStyle BaseLabelStyle
         {
@@ -119,6 +118,91 @@ namespace Appalachia.Editing.Debugging.Handle
                 }
 
                 return _baseLabelStyle;
+            }
+        }
+
+        public static void DrawCube(Vector3 center, float radius)
+        {
+            using (_PRF_DrawSphere.Auto())
+            {
+                Graphics.DrawMeshNow(cubeMesh, StartDraw(center, Quaternion.identity, radius));
+            }
+        }
+
+        public static void DrawCube(Vector3 center, float radius, Color color)
+        {
+            using (_PRF_DrawSphere.Auto())
+            {
+                using (HandleState.New(color, false))
+                {
+                    Graphics.DrawMeshNow(cubeMesh, StartDraw(center, Quaternion.identity, radius));
+                }
+            }
+        }
+
+        public static void DrawHandleLine(
+            Vector3 start,
+            Vector3 end,
+            HandleCapType capType,
+            Vector3 up,
+            Vector3 forward,
+            float capSize,
+            Color color)
+        {
+            using (_PRF_DrawHandleLine.Auto())
+            {
+                var capID = GUIUtility.GetControlID(FocusType.Passive);
+                var handleSize = HandleUtility.GetHandleSize(end) * capSize;
+                var handleRotation = Quaternion.LookRotation(forward, up);
+
+                var originalColor = Handles.color;
+
+                Handles.color = color;
+
+                DrawLine(start, end, color);
+
+                switch (capType)
+                {
+                    case HandleCapType.Arrow:
+                        Handles.ArrowHandleCap(capID, end, handleRotation, handleSize, EventType.Repaint);
+                        break;
+                    case HandleCapType.Circle:
+                        Handles.CircleHandleCap(capID, end, handleRotation, handleSize, EventType.Repaint);
+                        break;
+                    case HandleCapType.Cone:
+                        Handles.ConeHandleCap(capID, end, handleRotation, handleSize, EventType.Repaint);
+                        break;
+                    case HandleCapType.Cube:
+                        Handles.CubeHandleCap(capID, end, handleRotation, handleSize, EventType.Repaint);
+                        break;
+                    case HandleCapType.Cylinder:
+                        Handles.CylinderHandleCap(capID, end, handleRotation, handleSize, EventType.Repaint);
+                        break;
+                    case HandleCapType.Dot:
+                        Handles.DotHandleCap(capID, end, handleRotation, handleSize, EventType.Repaint);
+                        break;
+                    case HandleCapType.Rectangle:
+                        Handles.RectangleHandleCap(capID, end, handleRotation, handleSize, EventType.Repaint);
+                        break;
+                    case HandleCapType.Sphere:
+                        Handles.SphereHandleCap(capID, end, handleRotation, handleSize, EventType.Repaint);
+                        break;
+                    default:
+                        throw new ArgumentOutOfRangeException(nameof(capType), capType, null);
+                }
+
+                Handles.color = originalColor;
+            }
+        }
+
+        public static void DrawLine(Vector3 pos1, Vector3 pos2, Color color)
+        {
+            using (_PRF_DrawLine.Auto())
+            {
+                using (HandleState.New(color, false))
+                {
+                    Gizmos.DrawLine(pos1, pos2);
+                }
             }
         }
 
@@ -137,17 +221,6 @@ namespace Appalachia.Editing.Debugging.Handle
             }
         }
 
-        public static void DrawLine(Vector3 pos1, Vector3 pos2, Color color)
-        {
-            using (_PRF_DrawLine.Auto())
-            {
-                using (HandleState.New(color, false))
-                {
-                    Gizmos.DrawLine(pos1, pos2);
-                }
-            }
-        }
-
         public static void DrawRay(Ray ray, Color color)
         {
             using (_PRF_DrawLine.Auto())
@@ -159,61 +232,22 @@ namespace Appalachia.Editing.Debugging.Handle
             }
         }
 
-        public static void DrawWireDiscMasked(
-            Vector3 center,
-            Vector3 normal,
-            float radius,
-            Color color,
-            bool ignoreZFail = true)
+        public static void DrawSolidDisc(Vector3 center, Vector3 normal, float radius, Color color)
         {
-            using (_PRF_DrawWireDiscMasked.Auto())
-            {
-                using (HandleState.New(color, false, CompareFunction.LessEqual))
-                {
-                    Handles.DrawWireDisc(center, normal, radius);
-                    if (ignoreZFail)
-                    {
-                        Handles.zTest = CompareFunction.Greater;
-                        Handles.color = color * zFailAmount;
-                        Handles.DrawWireDisc(center, normal, radius);
-                    }
-                }
-            }
-        }
-
-        public static void DrawWireDiscMasked(
-            Vector3 position,
-            Quaternion rotation,
-            float radius,
-            Color color,
-            bool ignoreZFail = true)
-        {
-            using (_PRF_DrawWireDiscMasked.Auto())
-            {
-                DrawWireDiscMasked(position, rotation.eulerAngles, radius, color, ignoreZFail);
-            }
-        }
-
-        public static void DrawWireDisc(Vector3 center, Vector3 normal, float radius, Color color)
-        {
-            using (_PRF_DrawWireDisc.Auto())
+            using (_PRF_DrawSolidDisc.Auto())
             {
                 using (HandleState.New(color, false))
                 {
-                    Handles.DrawWireDisc(center, normal, radius);
+                    Handles.DrawSolidDisc(center, normal, radius);
                 }
             }
         }
 
-        public static void DrawWireDisc(
-            Vector3 position,
-            Quaternion rotation,
-            float radius,
-            Color color)
+        public static void DrawSolidDisc(Vector3 position, Quaternion rotation, float radius, Color color)
         {
-            using (_PRF_DrawWireDisc.Auto())
+            using (_PRF_DrawSolidDisc.Auto())
             {
-                DrawWireDisc(position, rotation.eulerAngles, radius, color);
+                DrawSolidDisc(position, rotation.eulerAngles, radius, color);
             }
         }
 
@@ -253,26 +287,36 @@ namespace Appalachia.Editing.Debugging.Handle
             }
         }
 
-        public static void DrawSolidDisc(Vector3 center, Vector3 normal, float radius, Color color)
+        public static void DrawSphere(Vector3 center, float radius, Color color)
         {
-            using (_PRF_DrawSolidDisc.Auto())
+            using (_PRF_DrawSphere.Auto())
             {
                 using (HandleState.New(color, false))
                 {
-                    Handles.DrawSolidDisc(center, normal, radius);
+                    Graphics.DrawMeshNow(sphereMesh, StartDraw(center, Quaternion.identity, radius));
                 }
             }
         }
 
-        public static void DrawSolidDisc(
-            Vector3 position,
-            Quaternion rotation,
-            float radius,
-            Color color)
+        public static void DrawSphere(Vector3 center, float radius)
         {
-            using (_PRF_DrawSolidDisc.Auto())
+            using (_PRF_DrawSphere.Auto())
             {
-                DrawSolidDisc(position, rotation.eulerAngles, radius, color);
+                Graphics.DrawMeshNow(sphereMesh, StartDraw(center, Quaternion.identity, radius));
+            }
+        }
+
+        public static void DrawSphereMasked(Vector3 center, float radius, Color color)
+        {
+            using (_PRF_DrawSphereMasked.Auto())
+            {
+                using (HandleState.New(color, false, CompareFunction.LessEqual))
+                {
+                    Handles.SphereHandleCap(0, center, Quaternion.identity, radius, EventType.Layout);
+                    Handles.zTest = CompareFunction.Greater;
+                    Handles.color = color * zFailAmount;
+                    Handles.SphereHandleCap(0, center, Quaternion.identity, radius, EventType.Layout);
+                }
             }
         }
 
@@ -292,59 +336,6 @@ namespace Appalachia.Editing.Debugging.Handle
                     Handles.zTest = CompareFunction.Greater;
                     Handles.color = color * zFailAmount;
                     Handles.DrawWireArc(center, normal, from, angle, radius);
-                }
-            }
-        }
-
-        public static void DrawWireCubeMasked(Bounds bounds, Color color)
-        {
-            using (_PRF_DrawWireCube.Auto())
-            {
-                Vector3 center;
-                Vector3 size;
-
-                using (_PRF_DrawWireCubeMasked_Vector3s.Auto())
-                {
-                    center = bounds.center;
-                    size = bounds.size;
-                }
-
-                DrawWireCubeMasked(center, size, color);
-            }
-        }
-
-        public static void DrawWireCubeMasked(Vector3 center, Vector3 size, Color color)
-        {
-            using (_PRF_DrawWireCubeMasked.Auto())
-            {
-                HandleState handleState;
-
-                using (_PRF_DrawWireCubeMasked_HandleState.Auto())
-                {
-                    handleState = HandleState.New(color, false, CompareFunction.LessEqual);
-                }
-
-                using (handleState)
-                {
-                    using (_PRF_DrawWireCubeMasked_InternalDraw.Auto())
-                    {
-                        DrawWireCube_Internal(center, size);
-                    }
-
-                    using (_PRF_DrawWireCubeMasked_ZTest.Auto())
-                    {
-                        Handles.zTest = CompareFunction.Greater;
-                    }
-
-                    using (_PRF_DrawWireCubeMasked_Color.Auto())
-                    {
-                        Handles.color = color * zFailAmount;
-                    }
-
-                    using (_PRF_DrawWireCubeMasked_InternalDraw.Auto())
-                    {
-                        DrawWireCube_Internal(center, size);
-                    }
                 }
             }
         }
@@ -408,21 +399,171 @@ namespace Appalachia.Editing.Debugging.Handle
             }
         }
 
-        public static void DrawCube(Vector3 center, float radius)
+        public static void DrawWireCubeMasked(Bounds bounds, Color color)
         {
-            using (_PRF_DrawSphere.Auto())
+            using (_PRF_DrawWireCube.Auto())
             {
-                Graphics.DrawMeshNow(cubeMesh, StartDraw(center, Quaternion.identity, radius));
+                Vector3 center;
+                Vector3 size;
+
+                using (_PRF_DrawWireCubeMasked_Vector3s.Auto())
+                {
+                    center = bounds.center;
+                    size = bounds.size;
+                }
+
+                DrawWireCubeMasked(center, size, color);
             }
         }
 
-        public static void DrawCube(Vector3 center, float radius, Color color)
+        public static void DrawWireCubeMasked(Vector3 center, Vector3 size, Color color)
         {
-            using (_PRF_DrawSphere.Auto())
+            using (_PRF_DrawWireCubeMasked.Auto())
+            {
+                HandleState handleState;
+
+                using (_PRF_DrawWireCubeMasked_HandleState.Auto())
+                {
+                    handleState = HandleState.New(color, false, CompareFunction.LessEqual);
+                }
+
+                using (handleState)
+                {
+                    using (_PRF_DrawWireCubeMasked_InternalDraw.Auto())
+                    {
+                        DrawWireCube_Internal(center, size);
+                    }
+
+                    using (_PRF_DrawWireCubeMasked_ZTest.Auto())
+                    {
+                        Handles.zTest = CompareFunction.Greater;
+                    }
+
+                    using (_PRF_DrawWireCubeMasked_Color.Auto())
+                    {
+                        Handles.color = color * zFailAmount;
+                    }
+
+                    using (_PRF_DrawWireCubeMasked_InternalDraw.Auto())
+                    {
+                        DrawWireCube_Internal(center, size);
+                    }
+                }
+            }
+        }
+
+        public static void DrawWireDisc(Vector3 center, Vector3 normal, float radius, Color color)
+        {
+            using (_PRF_DrawWireDisc.Auto())
             {
                 using (HandleState.New(color, false))
                 {
-                    Graphics.DrawMeshNow(cubeMesh, StartDraw(center, Quaternion.identity, radius));
+                    Handles.DrawWireDisc(center, normal, radius);
+                }
+            }
+        }
+
+        public static void DrawWireDisc(Vector3 position, Quaternion rotation, float radius, Color color)
+        {
+            using (_PRF_DrawWireDisc.Auto())
+            {
+                DrawWireDisc(position, rotation.eulerAngles, radius, color);
+            }
+        }
+
+        public static void DrawWireDiscMasked(
+            Vector3 center,
+            Vector3 normal,
+            float radius,
+            Color color,
+            bool ignoreZFail = true)
+        {
+            using (_PRF_DrawWireDiscMasked.Auto())
+            {
+                using (HandleState.New(color, false, CompareFunction.LessEqual))
+                {
+                    Handles.DrawWireDisc(center, normal, radius);
+                    if (ignoreZFail)
+                    {
+                        Handles.zTest = CompareFunction.Greater;
+                        Handles.color = color * zFailAmount;
+                        Handles.DrawWireDisc(center, normal, radius);
+                    }
+                }
+            }
+        }
+
+        public static void DrawWireDiscMasked(
+            Vector3 position,
+            Quaternion rotation,
+            float radius,
+            Color color,
+            bool ignoreZFail = true)
+        {
+            using (_PRF_DrawWireDiscMasked.Auto())
+            {
+                DrawWireDiscMasked(position, rotation.eulerAngles, radius, color, ignoreZFail);
+            }
+        }
+
+        public static void DrawWireMatrix(
+            Vector3 position,
+            Matrix4x4 matrix,
+            float scale = 1f,
+            float sphereScale = .5f,
+            float alpha = 1f,
+            float worldAlpha = .35f,
+            int steps = 10,
+            float distanceStep = .5f)
+        {
+            using (_PRF_DrawWireMatrix.Auto())
+            {
+                var sphere = Color.white;
+                sphere.a = alpha;
+                DrawWireSphere(position + matrix.MultiplyPoint(Vector3.zero), sphereScale, sphere);
+
+                var directions = new[]
+                {
+                    Vector3.up, Vector3.forward, Vector3.right, Vector3.up, Vector3.forward, Vector3.right
+                };
+
+                var colors = new[]
+                {
+                    Color.green,
+                    Color.blue,
+                    Color.red,
+                    Color.green * Color.grey,
+                    Color.blue * Color.grey,
+                    Color.red * Color.grey
+                };
+
+                for (var i = 0; i < colors.Length; i++)
+                {
+                    var color = colors[i];
+                    color.a = alpha;
+                    colors[i] = color;
+                }
+
+                var matrices = new[]
+                {
+                    matrix,
+                    Matrix4x4.TRS(matrix.MultiplyPoint(Vector3.zero), Quaternion.identity, Vector3.one)
+                };
+
+                colors[3].a = worldAlpha;
+                colors[4].a = worldAlpha;
+                colors[5].a = worldAlpha;
+
+                for (var i = 0; i < (steps * 6); i++)
+                {
+                    var direction = directions[i / steps];
+                    var color = colors[i / steps];
+                    var m = matrices[i / (steps * 3)];
+                    var scaleTime = ((i % steps) + 1) * distanceStep;
+                    var radius = scale * .05f * scaleTime;
+                    var center = position + m.MultiplyPoint(direction * scaleTime);
+
+                    DrawWireSphere(center, radius, color);
                 }
             }
         }
@@ -484,233 +625,7 @@ namespace Appalachia.Editing.Debugging.Handle
             }
         }
 
-        public static void DrawSphereMasked(Vector3 center, float radius, Color color)
-        {
-            using (_PRF_DrawSphereMasked.Auto())
-            {
-                using (HandleState.New(color, false, CompareFunction.LessEqual))
-                {
-                    Handles.SphereHandleCap(
-                        0,
-                        center,
-                        Quaternion.identity,
-                        radius,
-                        EventType.Layout
-                    );
-                    Handles.zTest = CompareFunction.Greater;
-                    Handles.color = color * zFailAmount;
-                    Handles.SphereHandleCap(
-                        0,
-                        center,
-                        Quaternion.identity,
-                        radius,
-                        EventType.Layout
-                    );
-                }
-            }
-        }
-
-        public static void DrawSphere(Vector3 center, float radius, Color color)
-        {
-            using (_PRF_DrawSphere.Auto())
-            {
-                using (HandleState.New(color, false))
-                {
-                    Graphics.DrawMeshNow(
-                        sphereMesh,
-                        StartDraw(center, Quaternion.identity, radius)
-                    );
-                }
-            }
-        }
-
-        public static void DrawSphere(Vector3 center, float radius)
-        {
-            using (_PRF_DrawSphere.Auto())
-            {
-                Graphics.DrawMeshNow(sphereMesh, StartDraw(center, Quaternion.identity, radius));
-            }
-        }
-
-        public static void DrawWireMatrix(
-            Vector3 position,
-            Matrix4x4 matrix,
-            float scale = 1f,
-            float sphereScale = .5f,
-            float alpha = 1f,
-            float worldAlpha = .35f,
-            int steps = 10,
-            float distanceStep = .5f)
-        {
-            using (_PRF_DrawWireMatrix.Auto())
-            {
-                var sphere = Color.white;
-                sphere.a = alpha;
-                DrawWireSphere(position + matrix.MultiplyPoint(Vector3.zero), sphereScale, sphere);
-
-                var directions = new[]
-                {
-                    Vector3.up,
-                    Vector3.forward,
-                    Vector3.right,
-                    Vector3.up,
-                    Vector3.forward,
-                    Vector3.right
-                };
-
-                var colors = new[]
-                {
-                    Color.green,
-                    Color.blue,
-                    Color.red,
-                    Color.green * Color.grey,
-                    Color.blue * Color.grey,
-                    Color.red * Color.grey
-                };
-
-                for (var i = 0; i < colors.Length; i++)
-                {
-                    var color = colors[i];
-                    color.a = alpha;
-                    colors[i] = color;
-                }
-
-                var matrices = new[]
-                {
-                    matrix,
-                    Matrix4x4.TRS(
-                        matrix.MultiplyPoint(Vector3.zero),
-                        Quaternion.identity,
-                        Vector3.one
-                    )
-                };
-
-                colors[3].a = worldAlpha;
-                colors[4].a = worldAlpha;
-                colors[5].a = worldAlpha;
-
-                for (var i = 0; i < (steps * 6); i++)
-                {
-                    var direction = directions[i / steps];
-                    var color = colors[i / steps];
-                    var m = matrices[i / (steps * 3)];
-                    var scaleTime = ((i % steps) + 1) * distanceStep;
-                    var radius = scale * .05f * scaleTime;
-                    var center = position + m.MultiplyPoint(direction * scaleTime);
-
-                    DrawWireSphere(center, radius, color);
-                }
-            }
-        }
-
-        public static void DrawHandleLine(
-            Vector3 start,
-            Vector3 end,
-            HandleCapType capType,
-            Vector3 up,
-            Vector3 forward,
-            float capSize,
-            Color color)
-        {
-            using (_PRF_DrawHandleLine.Auto())
-            {
-                var capID = GUIUtility.GetControlID(FocusType.Passive);
-                var handleSize = HandleUtility.GetHandleSize(end) * capSize;
-                var handleRotation = Quaternion.LookRotation(forward, up);
-
-                var originalColor = Handles.color;
-
-                Handles.color = color;
-
-                DrawLine(start, end, color);
-
-                switch (capType)
-                {
-                    case HandleCapType.Arrow:
-                        Handles.ArrowHandleCap(
-                            capID,
-                            end,
-                            handleRotation,
-                            handleSize,
-                            EventType.Repaint
-                        );
-                        break;
-                    case HandleCapType.Circle:
-                        Handles.CircleHandleCap(
-                            capID,
-                            end,
-                            handleRotation,
-                            handleSize,
-                            EventType.Repaint
-                        );
-                        break;
-                    case HandleCapType.Cone:
-                        Handles.ConeHandleCap(
-                            capID,
-                            end,
-                            handleRotation,
-                            handleSize,
-                            EventType.Repaint
-                        );
-                        break;
-                    case HandleCapType.Cube:
-                        Handles.CubeHandleCap(
-                            capID,
-                            end,
-                            handleRotation,
-                            handleSize,
-                            EventType.Repaint
-                        );
-                        break;
-                    case HandleCapType.Cylinder:
-                        Handles.CylinderHandleCap(
-                            capID,
-                            end,
-                            handleRotation,
-                            handleSize,
-                            EventType.Repaint
-                        );
-                        break;
-                    case HandleCapType.Dot:
-                        Handles.DotHandleCap(
-                            capID,
-                            end,
-                            handleRotation,
-                            handleSize,
-                            EventType.Repaint
-                        );
-                        break;
-                    case HandleCapType.Rectangle:
-                        Handles.RectangleHandleCap(
-                            capID,
-                            end,
-                            handleRotation,
-                            handleSize,
-                            EventType.Repaint
-                        );
-                        break;
-                    case HandleCapType.Sphere:
-                        Handles.SphereHandleCap(
-                            capID,
-                            end,
-                            handleRotation,
-                            handleSize,
-                            EventType.Repaint
-                        );
-                        break;
-                    default:
-                        throw new ArgumentOutOfRangeException(nameof(capType), capType, null);
-                }
-
-                Handles.color = originalColor;
-            }
-        }
-
-        public static void Label(
-            Vector3 position,
-            string text,
-            Color textColor,
-            Color backgroundColor)
+        public static void Label(Vector3 position, string text, Color textColor, Color backgroundColor)
         {
             var bg = GUI.backgroundColor;
             var cc = GUI.contentColor;
@@ -724,11 +639,7 @@ namespace Appalachia.Editing.Debugging.Handle
             GUI.contentColor = cc;
         }
 
-        public static void Label(
-            Vector3 position,
-            Texture image,
-            Color textColor,
-            Color backgroundColor)
+        public static void Label(Vector3 position, Texture image, Color textColor, Color backgroundColor)
         {
             var bg = GUI.backgroundColor;
             var cc = GUI.contentColor;
@@ -843,16 +754,6 @@ namespace Appalachia.Editing.Debugging.Handle
             }
 
             /// <summary>
-            ///     <para>The value of UnityEditor.Handles.color at the time this UnifiedDrawingScope was created.</para>
-            /// </summary>
-            public Color originalHandlesColor => _originalHandlesColor;
-
-            /// <summary>
-            ///     <para>The value of UnityEditor.Handles.matrix at the time this UnifiedDrawingScope was created.</para>
-            /// </summary>
-            public Matrix4x4 originalHandlesMatrix => _originalHandlesMatrix;
-
-            /// <summary>
             ///     <para>The value of Gizmos.color at the time this UnifiedDrawingScope was created.</para>
             /// </summary>
             public Color originalGizmosColor => _originalGizmosColor;
@@ -861,6 +762,16 @@ namespace Appalachia.Editing.Debugging.Handle
             ///     <para>The value of Gizmos.matrix at the time this UnifiedDrawingScope was created.</para>
             /// </summary>
             public Matrix4x4 originalGizmosMatrix => _originalGizmosMatrix;
+
+            /// <summary>
+            ///     <para>The value of UnityEditor.Handles.color at the time this UnifiedDrawingScope was created.</para>
+            /// </summary>
+            public Color originalHandlesColor => _originalHandlesColor;
+
+            /// <summary>
+            ///     <para>The value of UnityEditor.Handles.matrix at the time this UnifiedDrawingScope was created.</para>
+            /// </summary>
+            public Matrix4x4 originalHandlesMatrix => _originalHandlesMatrix;
 
             /// <summary>
             ///     <para>The value of Gizmos.color at the time this UnifiedDrawingScope was created.</para>
@@ -918,12 +829,6 @@ namespace Appalachia.Editing.Debugging.Handle
                 Gizmos.matrix = _originalGizmosMatrix;
             }
         }
-
-#endregion
-
-#region ProfileMarkers
-
-        private const string _PRF_PFX = nameof(SmartHandles) + ".";
 
 #endregion
 
@@ -1067,10 +972,8 @@ namespace Appalachia.Editing.Debugging.Handle
         }
 
         internal static Color realHandleColor =>
-            (Handles.color * new Color(1f, 1f, 1f, 0.5f)) +
-            (Handles.lighting
-                ? new Color(0.0f, 0.0f, 0.0f, 0.5f)
-                : new Color(0.0f, 0.0f, 0.0f, 0.0f));
+            (Handles.color * new Color(1f,      1f,   1f,   0.5f)) +
+            (Handles.lighting ? new Color(0.0f, 0.0f, 0.0f, 0.5f) : new Color(0.0f, 0.0f, 0.0f, 0.0f));
 
 #endregion
     }

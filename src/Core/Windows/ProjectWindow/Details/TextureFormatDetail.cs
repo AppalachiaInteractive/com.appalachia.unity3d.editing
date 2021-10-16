@@ -1,3 +1,4 @@
+using UnityEditor;
 using UnityEngine;
 
 namespace Appalachia.Editing.Core.Windows.ProjectWindow.Details
@@ -28,6 +29,12 @@ namespace Appalachia.Editing.Core.Windows.ProjectWindow.Details
             }
 
             return string.Empty;
+        }
+
+        [InitializeOnLoadMethod]
+        private static void Initiailze()
+        {
+            ProjectWindowDetails.RegisterDetail(new TextureFormatDetail());
         }
     }
 }

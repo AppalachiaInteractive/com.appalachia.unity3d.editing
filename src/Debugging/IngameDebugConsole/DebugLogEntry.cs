@@ -8,29 +8,47 @@ namespace Appalachia.Editing.Debugging.IngameDebugConsole
     {
         private const int HASH_NOT_CALCULATED = -623218;
 
-        private string completeLog;
-
         // Collapsed count
         public int count;
 
-        private int hashValue;
-
         public string logString;
 
-        // Sprite to show with this entry
         public Sprite logTypeSpriteRepresentation;
         public string stackTrace;
 
-        // Check if two entries have the same origin
-        public bool Equals(DebugLogEntry other)
+        private string completeLog;
+
+        private int hashValue;
+
+        public override int GetHashCode()
         {
-            return (logString == other.logString) && (stackTrace == other.stackTrace);
+            if (hashValue == HASH_NOT_CALCULATED)
+            {
+                unchecked
+                {
+                    hashValue = 17;
+                    hashValue = (hashValue * 23) + (logString == null ? 0 : logString.GetHashCode());
+                    hashValue = (hashValue * 23) + (stackTrace == null ? 0 : stackTrace.GetHashCode());
+                }
+            }
+
+            return hashValue;
         }
 
-        public void Initialize(string logString, string stackTrace)
+        public override string ToString()
+        {
+            if (completeLog == null)
+            {
+                completeLog = string.Concat(logString, "\n", stackTrace);
+            }
+
+            return completeLog;
+        }
+
+        public void Initialize(string logString, string st)
         {
             this.logString = logString;
-            this.stackTrace = stackTrace;
+            this.stackTrace = st;
 
             completeLog = null;
             count = 1;
@@ -46,33 +64,10 @@ namespace Appalachia.Editing.Debugging.IngameDebugConsole
                     (stackTrace.IndexOf(searchTerm, StringComparison.OrdinalIgnoreCase) >= 0));
         }
 
-        // Return a string containing complete information about this debug entry
-        public override string ToString()
+        // Check if two entries have the same origin
+        public bool Equals(DebugLogEntry other)
         {
-            if (completeLog == null)
-            {
-                completeLog = string.Concat(logString, "\n", stackTrace);
-            }
-
-            return completeLog;
-        }
-
-        // Credit: https://stackoverflow.com/a/19250516/2373034
-        public override int GetHashCode()
-        {
-            if (hashValue == HASH_NOT_CALCULATED)
-            {
-                unchecked
-                {
-                    hashValue = 17;
-                    hashValue = (hashValue * 23) +
-                                (logString == null ? 0 : logString.GetHashCode());
-                    hashValue = (hashValue * 23) +
-                                (stackTrace == null ? 0 : stackTrace.GetHashCode());
-                }
-            }
-
-            return hashValue;
+            return (other != null) && (logString == other.logString) && (stackTrace == other.stackTrace);
         }
     }
 }

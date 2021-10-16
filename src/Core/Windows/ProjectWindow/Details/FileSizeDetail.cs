@@ -1,5 +1,6 @@
-using System.IO;
+using System.Collections.Generic;
 using Appalachia.CI.Integration;
+using Appalachia.CI.Integration.FileSystem;
 using UnityEditor;
 using UnityEngine;
 
@@ -10,6 +11,9 @@ namespace Appalachia.Editing.Core.Windows.ProjectWindow.Details
     /// </summary>
     public class FileSizeDetail : ProjectWindowDetailBase
     {
+        private static Dictionary<long, string> _formatLookup;
+        private static Dictionary<string, AppaFileInfo> _lookup;
+
         public FileSizeDetail()
         {
             Name = "File Size";
@@ -19,18 +23,47 @@ namespace Appalachia.Editing.Core.Windows.ProjectWindow.Details
 
         public override string GetLabel(string guid, string assetPath, Object asset)
         {
-            return EditorUtility.FormatBytes(GetFileSize(assetPath));
+            var fileSize = GetFileSize(assetPath);
+
+            if (_formatLookup == null)
+            {
+                _formatLookup = new Dictionary<long, string>();
+            }
+
+            if (!_formatLookup.ContainsKey(fileSize))
+            {
+                _formatLookup.Add(fileSize, EditorUtility.FormatBytes(fileSize));
+            }
+
+            return _formatLookup[fileSize];
         }
 
         private long GetFileSize(string assetPath)
         {
-            var fullAssetPath = string.Concat(
-                ProjectLocations.GetAssetsDirectoryPath().Substring(0, ProjectLocations.GetAssetsDirectoryPath().Length - 7),
-                "/",
-                assetPath
-            );
-            var size = new FileInfo(fullAssetPath).Length;
-            return size;
+            if (_lookup == null)
+            {
+                _lookup = new Dictionary<string, AppaFileInfo>();
+            }
+
+            if (!_lookup.ContainsKey(assetPath))
+            {
+                var fullAssetPath = string.Concat(
+                    ProjectLocations.GetAssetsDirectoryPath()
+                                    .Substring(0, ProjectLocations.GetAssetsDirectoryPath().Length - 7),
+                    "/",
+                    assetPath
+                );
+
+                _lookup.Add(assetPath, new AppaFileInfo(fullAssetPath));
+            }
+
+            return _lookup[assetPath].Length;
+        }
+
+        [InitializeOnLoadMethod]
+        private static void Initiailze()
+        {
+            ProjectWindowDetails.RegisterDetail(new FileSizeDetail());
         }
     }
 }

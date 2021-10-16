@@ -1,3 +1,4 @@
+using Appalachia.CI.Integration.Assets;
 using UnityEditor;
 using UnityEngine;
 
@@ -17,13 +18,19 @@ namespace Appalachia.Editing.Core.Windows.ProjectWindow.Details
 
         public override string GetLabel(string guid, string assetPath, Object asset)
         {
-            var clip = AssetDatabase.LoadAssetAtPath<AnimationClip>(assetPath);
+            var clip = AssetDatabaseManager.LoadAssetAtPath<AnimationClip>(assetPath);
             if (clip != null)
             {
                 return string.Format("{0:F3}", clip.length);
             }
 
             return string.Empty;
+        }
+
+        [InitializeOnLoadMethod]
+        private static void Initiailze()
+        {
+            ProjectWindowDetails.RegisterDetail(new AnimationLengthDetail());
         }
     }
 }

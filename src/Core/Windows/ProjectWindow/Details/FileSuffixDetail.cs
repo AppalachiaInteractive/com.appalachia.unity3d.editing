@@ -1,4 +1,5 @@
-using System.IO;
+using Appalachia.CI.Integration.FileSystem;
+using UnityEditor;
 using UnityEngine;
 
 namespace Appalachia.Editing.Core.Windows.ProjectWindow.Details
@@ -16,7 +17,13 @@ namespace Appalachia.Editing.Core.Windows.ProjectWindow.Details
 
         public override string GetLabel(string guid, string assetPath, Object asset)
         {
-            return Path.GetExtension(assetPath);
+            return AppaPath.GetExtension(assetPath);
+        }
+
+        [InitializeOnLoadMethod]
+        private static void Initiailze()
+        {
+            ProjectWindowDetails.RegisterDetail(new FileSuffixDetail());
         }
     }
 }

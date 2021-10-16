@@ -1,23 +1,27 @@
 {
-    "name": "Appalachia.Editing.Labels",
-    "rootNamespace": "",
-    "references": [
-        "GUID:4a600fa6fa2ca854b8f233a23710b315",
-        "GUID:d1bae2bd6761a4e42a2d264dac07f301",
-        "GUID:7ec7e612bfbe14a459c7dc59c358e760",
-        "GUID:63a32ad87b517324398da8a6fcd4c2a6",
-        "GUID:9ed0d0ce44091f74492c01391adaaf6f",
-        "GUID:a15d55b77c0da1b42af8372f5619c965",
-        "GUID:15a8a4345cdb8584c9a4bab175bd5ded",
-        "GUID:53c314c6d5379534e87ce0066f9abb79"
-    ],
-    "includePlatforms": [],
-    "excludePlatforms": [],
-    "allowUnsafeCode": false,
-    "overrideReferences": false,
-    "precompiledReferences": [],
-    "autoReferenced": true,
-    "defineConstraints": [],
-    "versionDefines": [],
-    "noEngineReferences": false
+  "name": "Appalachia.Editing.Labels",
+  "rootNamespace": "",
+  "references": [
+    "GUID:56ca8901b63fd204692a4a27f67b605e",
+    "GUID:4a600fa6fa2ca854b8f233a23710b315",
+    "GUID:4c32fdd75da6bc94f9b79f03f11f5e30",
+    "GUID:d1bae2bd6761a4e42a2d264dac07f301",
+    "GUID:7ec7e612bfbe14a459c7dc59c358e760",
+    "GUID:63a32ad87b517324398da8a6fcd4c2a6",
+    "GUID:9ed0d0ce44091f74492c01391adaaf6f",
+    "GUID:a15d55b77c0da1b42af8372f5619c965",
+    "GUID:15a8a4345cdb8584c9a4bab175bd5ded",
+    "GUID:53c314c6d5379534e87ce0066f9abb79",
+    "GUID:28ae00157ecf0354981e730179f52cc3"
+  ],
+  "includePlatforms": [],
+  "excludePlatforms": [],
+  "allowUnsafeCode": false,
+  "overrideReferences": false,
+  "precompiledReferences": [],
+  "autoReferenced": true,
+  "defineConstraints": [],
+  "versionDefines": [],
+  "noEngineReferences": false,
+  "optionalUnityReferences": []
 }

@@ -8,9 +8,10 @@ namespace Appalachia.Editing.Assets.Extensions
 {
     public static class AssemblyDefinitionReferenceMetadataExtensions
     {
+        private const int prefixLabelWidth = 175;
         private const string _PRF_PFX = nameof(AssemblyDefinitionReferenceMetadataExtensions) + ".";
-        private static readonly ProfilerMarker _PRF_Draw = new ProfilerMarker(_PRF_PFX + nameof(Draw));
-        const int prefixLabelWidth = 175;
+        private static readonly ProfilerMarker _PRF_Draw = new(_PRF_PFX + nameof(Draw));
+
         public static void Draw(
             this AssemblyDefinitionReferenceMetadata metadata,
             UIFieldMetadataManager fieldManager)

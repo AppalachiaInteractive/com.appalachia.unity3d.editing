@@ -9,7 +9,7 @@ namespace Appalachia.Editing.Core.State
             return EditorGUIUtility.labelWidth;
         }
 
-        protected override void SetNew(float value)
+        protected override void SetNew(float value, bool pushing)
         {
             EditorGUIUtility.labelWidth = value;
         }

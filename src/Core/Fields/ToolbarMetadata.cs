@@ -8,11 +8,9 @@ namespace Appalachia.Editing.Core.Fields
     {
         protected override GUIStyle DefaultStyle => GUI.skin.button;
 
-        public int Toolbar(
-            int tab,
-            string[] tabs,
-            GUI.ToolbarButtonSize size = GUI.ToolbarButtonSize.Fixed)
+        public int Toolbar(int tab, string[] tabs, GUI.ToolbarButtonSize size = GUI.ToolbarButtonSize.Fixed)
         {
+            hasBeenDrawn = true;
             return GUILayout.Toolbar(tab, tabs, style, size, layout);
         }
     }

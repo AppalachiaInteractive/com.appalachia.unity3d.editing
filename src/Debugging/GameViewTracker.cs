@@ -8,15 +8,15 @@ namespace Appalachia.Editing.Debugging
     {
         private const string k_MenuName = "Tools/Toggle GameView tracking %T";
 
-        private static Camera _mainCamera;
-
         // Custom labels can be defined.
         private static readonly PREF<bool> s_Enabled = PREFS.REG("Appalachia/Tracking", "GameView", true);
 
-        [InitializeOnLoadMethod]
-        private static void InitializeOnLoadMethod()
+        private static Camera _mainCamera;
+
+        [MenuItem(k_MenuName, priority = 1050)]
+        public static void ToggleGameViewTracking()
         {
-            EditorApplication.update += ResetState;
+            ToggleEnabled();
         }
 
         [MenuItem(k_MenuName, true)]
@@ -26,32 +26,10 @@ namespace Appalachia.Editing.Debugging
             return true;
         }
 
-        [MenuItem(k_MenuName, priority = 1050)]
-        public static void ToggleGameViewTracking()
+        private static void Disable()
         {
-            ToggleEnabled();
-        }
-
-        private static void ResetState()
-        {
-            EditorApplication.update -= ResetState;
-
-            if (s_Enabled.v)
-            {
-                Enable();
-            }
-        }
-
-        private static void ToggleEnabled()
-        {
-            if (!s_Enabled.v)
-            {
-                Enable();
-            }
-            else
-            {
-                Disable();
-            }
+            SceneView.duringSceneGui -= sceneGUICallback;
+            s_Enabled.v = false;
         }
 
         private static void Enable()
@@ -66,10 +44,20 @@ namespace Appalachia.Editing.Debugging
             s_Enabled.v = true;
         }
 
-        private static void Disable()
+        [InitializeOnLoadMethod]
+        private static void InitializeOnLoadMethod()
         {
-            SceneView.duringSceneGui -= sceneGUICallback;
-            s_Enabled.v = false;
+            EditorApplication.update += ResetState;
+        }
+
+        private static void ResetState()
+        {
+            EditorApplication.update -= ResetState;
+
+            if (s_Enabled.v)
+            {
+                Enable();
+            }
         }
 
         private static void sceneGUICallback(SceneView s)
@@ -86,6 +74,18 @@ namespace Appalachia.Editing.Debugging
                     transform.position /*- (0.1f * transform.forward)*/,
                     transform.rotation
                 );
+            }
+        }
+
+        private static void ToggleEnabled()
+        {
+            if (!s_Enabled.v)
+            {
+                Enable();
+            }
+            else
+            {
+                Disable();
             }
         }
     }

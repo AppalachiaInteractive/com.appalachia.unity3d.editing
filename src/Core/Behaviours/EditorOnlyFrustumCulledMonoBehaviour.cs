@@ -17,8 +17,7 @@ namespace Appalachia.Editing.Core.Behaviours
     {
         private const string _PRF_PFX = nameof(EditorOnlyFrustumCulledMonoBehaviour) + ".";
 
-        private static readonly ProfilerMarker _PRF_OnBecameVisible =
-            new(_PRF_PFX + nameof(OnBecameVisible));
+        private static readonly ProfilerMarker _PRF_OnBecameVisible = new(_PRF_PFX + nameof(OnBecameVisible));
 
         private static readonly ProfilerMarker _PRF_OnBecameInvisible =
             new(_PRF_PFX + nameof(OnBecameInvisible));

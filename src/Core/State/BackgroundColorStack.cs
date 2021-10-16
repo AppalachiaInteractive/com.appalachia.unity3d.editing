@@ -9,7 +9,7 @@ namespace Appalachia.Editing.Core.State
             return GUI.backgroundColor;
         }
 
-        protected override void SetNew(Color value)
+        protected override void SetNew(Color value, bool pushing)
         {
             GUI.backgroundColor = value;
         }

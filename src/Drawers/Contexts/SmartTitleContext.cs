@@ -15,11 +15,6 @@ namespace Appalachia.Editing.Drawers.Contexts
         public ValueResolver<string> SubtitleHelper;
         public ValueResolver<string> TitleHelper;
 
-        protected override ValueResolver[] GetValueResolvers()
-        {
-            return new ValueResolver[] {TitleHelper, SubtitleHelper, ColorHelper};
-        }
-
         public override void Initialize(
             InspectorProperty property,
             SmartTitleAttribute attribute,
@@ -34,6 +29,11 @@ namespace Appalachia.Editing.Drawers.Contexts
             {
                 HideHelper = new IfAttributeHelper(property, attribute.HideIfMemberName);
             }
+        }
+
+        protected override ValueResolver[] GetValueResolvers()
+        {
+            return new ValueResolver[] {TitleHelper, SubtitleHelper, ColorHelper};
         }
     }
 }

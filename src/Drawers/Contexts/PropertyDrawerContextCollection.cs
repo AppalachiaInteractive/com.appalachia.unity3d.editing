@@ -8,6 +8,11 @@ namespace Appalachia.Editing.Drawers.Contexts
         PropertyDrawerContextCollection<TAttribute> : BaseDrawerContextCollection<TAttribute>
         where TAttribute : Attribute
     {
+        public abstract void Initialize(
+            InspectorProperty property,
+            TAttribute attribute,
+            IPropertyValueEntry valueEntry);
+
         public void Construct(
             InspectorProperty property,
             TAttribute attribute,
@@ -19,10 +24,5 @@ namespace Appalachia.Editing.Drawers.Contexts
             Initialize(property, attribute, valueEntry);
             hasError = HasError();
         }
-
-        public abstract void Initialize(
-            InspectorProperty property,
-            TAttribute attribute,
-            IPropertyValueEntry valueEntry);
     }
 }

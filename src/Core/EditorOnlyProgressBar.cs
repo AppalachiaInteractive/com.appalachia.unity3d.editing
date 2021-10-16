@@ -27,11 +27,7 @@ namespace Appalachia.Editing.Core
         private bool _hasShownBar;
         private float _increment;
 
-        public EditorOnlyProgressBar(
-            string title,
-            float total,
-            bool cancellable,
-            int showEvery = 15)
+        public EditorOnlyProgressBar(string title, float total, bool cancellable, int showEvery = 15)
         {
 #if UNITY_EDITOR
             _title = title;
@@ -41,18 +37,9 @@ namespace Appalachia.Editing.Core
 #endif
         }
 
-        public bool Cancelled => _cancelled;
         public bool Cancellable => _cancellable;
 
-        public void Dispose()
-        {
-#if UNITY_EDITOR
-            if (_hasShownBar)
-            {
-                EditorUtility.ClearProgressBar();
-            }
-#endif
-        }
+        public bool Cancelled => _cancelled;
 
         public void Increment(float value)
         {
@@ -62,6 +49,37 @@ namespace Appalachia.Editing.Core
                 _increment += value;
             }
 #endif
+        }
+
+        public void Increment1AndShowProgress(string info)
+        {
+#if UNITY_EDITOR
+            Increment(1);
+            ShowProgress(info);
+#endif
+        }
+
+        public bool Increment1AndShowProgressAndIsCancelled(string info)
+        {
+#if UNITY_EDITOR
+            Increment1AndShowProgress(info);
+#endif
+            return _cancelled;
+        }
+
+        public void Increment1AndShowProgressBasic()
+        {
+#if UNITY_EDITOR
+            Increment1AndShowProgress($"{_increment} / {_total}");
+#endif
+        }
+
+        public bool Increment1AndShowProgressBasicAndIsCancelled()
+        {
+#if UNITY_EDITOR
+            Increment1AndShowProgressBasic();
+#endif
+            return _cancelled;
         }
 
         public void IncrementAndShowProgress(float value, string info)
@@ -79,44 +97,6 @@ namespace Appalachia.Editing.Core
 #endif
         }
 
-        public void Increment1AndShowProgress(string info)
-        {
-#if UNITY_EDITOR
-            Increment(1);
-            ShowProgress(info);
-#endif
-        }
-
-        public void Increment1AndShowProgressBasic()
-        {
-#if UNITY_EDITOR
-            Increment1AndShowProgress($"{_increment} / {_total}");
-#endif
-        }
-
-        public bool Increment1AndShowProgressAndIsCancelled(string info)
-        {
-#if UNITY_EDITOR
-            Increment1AndShowProgress(info);
-#endif
-            return _cancelled;
-        }
-
-        public bool Increment1AndShowProgressBasicAndIsCancelled()
-        {
-#if UNITY_EDITOR
-            Increment1AndShowProgressBasic();
-#endif
-            return _cancelled;
-        }
-
-        private void ShowProgress(string info)
-        {
-#if UNITY_EDITOR
-            ShowProgress(_title, info, _total, _increment);
-#endif
-        }
-
         public void ShowProgress(string title, string info, float total, float current)
         {
 #if UNITY_EDITOR
@@ -126,11 +106,7 @@ namespace Appalachia.Editing.Core
             {
                 if (_cancellable)
                 {
-                    _cancelled = EditorUtility.DisplayCancelableProgressBar(
-                        title,
-                        info,
-                        current / total
-                    );
+                    _cancelled = EditorUtility.DisplayCancelableProgressBar(title, info, current / total);
                     _hasShownBar = true;
                 }
                 else
@@ -142,7 +118,26 @@ namespace Appalachia.Editing.Core
 #endif
         }
 
-        [MenuItem(APPA_MENU.BASE_AppalachiaTools + APPA_MENU.ASM_AppalachiaEditingCore + "Clear Progress Bar")]
+        public void Dispose()
+        {
+#if UNITY_EDITOR
+            if (_hasShownBar)
+            {
+                EditorUtility.ClearProgressBar();
+            }
+#endif
+        }
+
+        private void ShowProgress(string info)
+        {
+#if UNITY_EDITOR
+            ShowProgress(_title, info, _total, _increment);
+#endif
+        }
+
+        [MenuItem(
+            APPA_MENU.BASE_AppalachiaTools + APPA_MENU.ASM_AppalachiaEditingCore + "Clear Progress Bar"
+        )]
         public static void ClearProgressBar()
         {
             EditorUtility.ClearProgressBar();

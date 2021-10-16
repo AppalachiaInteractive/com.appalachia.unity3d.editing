@@ -10,22 +10,21 @@ namespace Appalachia.Editing.Debugging.Testing
     [ExecuteAlways]
     public class Spinner : AppalachiaMonoBehaviour
     {
-        public enum AxisSource
-        {
-            World = 0,
-            Local = 10,
-            Terrain = 20
-        }
+        [SmartLabel] public AxisSource axisSource = AxisSource.World;
 
         [PropertyRange(.01f, 1f)]
         [SmartLabel]
         public float spinRate = .2f;
 
-        [SmartLabel] public AxisSource axisSource = AxisSource.World;
-
         private RaycastHit[] _hits;
 
         private Transform _t;
+
+        public void OnEnable()
+        {
+            _t = transform;
+            _t.rotation = Quaternion.identity;
+        }
 
         public void Update()
         {
@@ -75,10 +74,11 @@ namespace Appalachia.Editing.Debugging.Testing
             _t.rotation *= Quaternion.AngleAxis(adjustment, axis);
         }
 
-        public void OnEnable()
+        public enum AxisSource
         {
-            _t = transform;
-            _t.rotation = Quaternion.identity;
+            World = 0,
+            Local = 10,
+            Terrain = 20
         }
     }
 }

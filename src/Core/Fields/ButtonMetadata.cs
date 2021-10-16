@@ -7,6 +7,5 @@ namespace Appalachia.Editing.Core.Fields
     public class ButtonMetadata : ButtonMetadataBase<ButtonMetadata>
     {
         protected override GUIStyle DefaultStyle => GUI.skin.button;
-
     }
 }

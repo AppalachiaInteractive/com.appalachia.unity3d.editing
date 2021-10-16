@@ -96,10 +96,7 @@ namespace Appalachia.Editing.Debugging.Graphy.Advanced
 #region Section -> Background Images
 
             m_backgroundImages[0]
-               .rectTransform.SetSizeWithCurrentAnchors(
-                    RectTransform.Axis.Horizontal,
-                    preferredWidth + 25
-                );
+               .rectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, preferredWidth + 25);
 
             m_backgroundImages[0].rectTransform.anchoredPosition = new Vector2(
                 ((preferredWidth + 25) / 2) *

@@ -6,24 +6,23 @@ namespace Appalachia.Editing.Debugging
     [ExecuteAlways]
     public class Grounder : MonoBehaviour
     {
-        public Transform reference;
-        public Vector3 offset;
-
-        public LayerMask layers;
-
-        public bool terrainOnly = true;
-
         public Vector3 _lastPosition;
         public Quaternion _lastRotation;
 
         public Vector3 _targetPosition;
         public Quaternion _targetRotation;
 
+        public bool freeze;
+
+        public LayerMask layers;
+        public bool locked;
+        public Vector3 offset;
+
         public float positionLerpSpeed = .1f;
+        public Transform reference;
         public float rotationLerpSpeed = .1f;
 
-        public bool freeze;
-        public bool locked;
+        public bool terrainOnly = true;
         private readonly RaycastHit[] _hits = new RaycastHit[12];
 
         private RaycastHit[] hits = new RaycastHit[16];
@@ -42,8 +41,7 @@ namespace Appalachia.Editing.Debugging
                         return;
                     }
 
-                    if ((transform.position == _targetPosition) &&
-                        (transform.rotation == _targetRotation))
+                    if ((transform.position == _targetPosition) && (transform.rotation == _targetRotation))
                     {
                         locked = true;
                     }
@@ -60,11 +58,7 @@ namespace Appalachia.Editing.Debugging
                         return;
                     }
 
-                    transform.position = Vector3.Lerp(
-                        transform.position,
-                        _targetPosition,
-                        positionLerpSpeed
-                    );
+                    transform.position = Vector3.Lerp(transform.position, _targetPosition, positionLerpSpeed);
 
                     transform.rotation = Quaternion.Slerp(
                         transform.rotation,

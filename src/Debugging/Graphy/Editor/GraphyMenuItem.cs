@@ -11,10 +11,11 @@
  * Attribution is not required, but it is always welcomed!
  * -------------------------------------*/
 
+using Appalachia.CI.Integration.Assets;
 using UnityEditor;
 using UnityEngine;
 
-namespace Appalachia.Editing.Debugging.Graphy.Editor
+namespace Appalachia.Editing.Debugging.Graphy
 {
     public class GraphyMenuItem
     {
@@ -22,37 +23,35 @@ namespace Appalachia.Editing.Debugging.Graphy.Editor
         private static void CreatePrefabVariant()
         {
             // Directory checking
-            if (!AssetDatabase.IsValidFolder("Assets/Graphy - Ultimate Stats Monitor"))
+            if (!AssetDatabaseManager.IsValidFolder("Assets/Graphy - Ultimate Stats Monitor"))
             {
-                AssetDatabase.CreateFolder("Assets", "Graphy - Ultimate Stats Monitor");
+                AssetDatabaseManager.CreateFolder("Assets", "Graphy - Ultimate Stats Monitor");
             }
 
-            if (!AssetDatabase.IsValidFolder(
-                "Assets/Graphy - Ultimate Stats Monitor/Prefab Variants"
-            ))
+            if (!AssetDatabaseManager.IsValidFolder("Assets/Graphy - Ultimate Stats Monitor/Prefab Variants"))
             {
-                AssetDatabase.CreateFolder(
+                AssetDatabaseManager.CreateFolder(
                     "Assets/Graphy - Ultimate Stats Monitor",
                     "Prefab Variants"
                 );
             }
 
-            var graphyPrefabGuid = AssetDatabase.FindAssets("[Graphy]")[0];
+            var graphyPrefabGuid = AssetDatabaseManager.FindAssets("[Graphy]")[0];
 
-            Object originalPrefab = (GameObject) AssetDatabase.LoadAssetAtPath(
-                AssetDatabase.GUIDToAssetPath(graphyPrefabGuid),
+            Object originalPrefab = (GameObject) AssetDatabaseManager.LoadAssetAtPath(
+                AssetDatabaseManager.GUIDToAssetPath(graphyPrefabGuid),
                 typeof(GameObject)
             );
             var objectSource = PrefabUtility.InstantiatePrefab(originalPrefab) as GameObject;
 
-            var prefabVariantCount = AssetDatabase.FindAssets(
-                                                       "Graphy_Variant",
-                                                       new[]
-                                                           {
-                                                               "Assets/Graphy - Ultimate Stats Monitor/Prefab Variants"
-                                                           }
-                                                   )
-                                                  .Length;
+            var prefabVariantCount = AssetDatabaseManager.FindAssets(
+                                                              "Graphy_Variant",
+                                                              new[]
+                                                                  {
+                                                                      "Assets/Graphy - Ultimate Stats Monitor/Prefab Variants"
+                                                                  }
+                                                          )
+                                                         .Length;
 
             var prefabVariant = PrefabUtility.SaveAsPrefabAsset(
                 objectSource,
@@ -74,10 +73,10 @@ namespace Appalachia.Editing.Debugging.Graphy.Editor
         [MenuItem("Tools/Graphy/Import Graphy Customization Scene")]
         private static void ImportGraphyCustomizationScene()
         {
-            var customizationSceneGuid = AssetDatabase.FindAssets("Graphy_CustomizationScene")[0];
+            var customizationSceneGuid = AssetDatabaseManager.FindAssets("Graphy_CustomizationScene")[0];
 
-            AssetDatabase.ImportPackage(
-                AssetDatabase.GUIDToAssetPath(customizationSceneGuid),
+            AssetDatabaseManager.ImportPackage(
+                AssetDatabaseManager.GUIDToAssetPath(customizationSceneGuid),
                 true
             );
         }

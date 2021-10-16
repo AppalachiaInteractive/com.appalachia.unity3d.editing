@@ -11,7 +11,6 @@ using System.Globalization;
 using System.IO;
 using System.Reflection;
 using System.Text;
-
 using Appalachia.CI.Integration;
 using UnityEngine;
 #if UNITY_EDITOR && UNITY_2021_1_OR_NEWER
@@ -28,11 +27,9 @@ namespace Appalachia.Editing.Debugging.IngameDebugConsole
     {
         public delegate bool ParseFunction(string input, out object output);
 
-        // All the commands
-        private static readonly List<ConsoleMethodInfo> methods = new();
         private static readonly List<ConsoleMethodInfo> matchingMethods = new(4);
+        private static readonly List<ConsoleMethodInfo> methods = new();
 
-        // All the parse functions
         private static readonly Dictionary<Type, ParseFunction> parseFunctions = new()
         {
             {typeof(string), ParseString},
@@ -67,6 +64,12 @@ namespace Appalachia.Editing.Debugging.IngameDebugConsole
 #endif
         };
 
+        private static readonly CompareInfo caseInsensitiveComparer = new CultureInfo("en-US").CompareInfo;
+
+        // All the commands
+
+        // All the parse functions
+
         // All the readable names of accepted types
         private static readonly Dictionary<Type, string> typeReadableNames = new()
         {
@@ -86,15 +89,13 @@ namespace Appalachia.Editing.Debugging.IngameDebugConsole
             {typeof(decimal), "Decimal"}
         };
 
+        // CompareInfo used for case-insensitive command name comparison
+
         // Split arguments of an entered command
         private static readonly List<string> commandArguments = new(8);
 
         // Command parameter delimeter groups
         private static readonly string[] inputDelimiters = {"\"\"", "''", "{}", "()", "[]"};
-
-        // CompareInfo used for case-insensitive command name comparison
-        private static readonly CompareInfo caseInsensitiveComparer =
-            new CultureInfo("en-US").CompareInfo;
 
         static DebugLogConsole()
         {
@@ -203,293 +204,10 @@ namespace Appalachia.Editing.Debugging.IngameDebugConsole
                 catch (Exception e)
                 {
                     Debug.LogError(
-                        "Couldn't search assembly for [ConsoleMethod] attributes: " +
-                        assemblyName +
-                        "\n" +
-                        e
+                        "Couldn't search assembly for [ConsoleMethod] attributes: " + assemblyName + "\n" + e
                     );
                 }
             }
-        }
-
-        // Logs the list of available commands
-        public static void LogAllCommands()
-        {
-            var length = 25;
-            for (var i = 0; i < methods.Count; i++)
-            {
-                if (methods[i].IsValid())
-                {
-                    length += methods[i].signature.Length + 7;
-                }
-            }
-
-            var stringBuilder = new StringBuilder(length);
-            stringBuilder.Append("Available commands:");
-
-            for (var i = 0; i < methods.Count; i++)
-            {
-                if (methods[i].IsValid())
-                {
-                    stringBuilder.Append("\n    - ").Append(methods[i].signature);
-                }
-            }
-
-            Debug.Log(stringBuilder.ToString());
-
-            // After typing help, the log that lists all the commands should automatically be expanded for better UX
-            if (DebugLogManager.Instance)
-            {
-                DebugLogManager.Instance.ExpandLatestPendingLog();
-                DebugLogManager.Instance.StripStackTraceFromLatestPendingLog();
-            }
-        }
-
-        // Logs the list of available commands that are either equal to commandName or contain commandName as substring
-        public static void LogAllCommandsWithName(string commandName)
-        {
-            matchingMethods.Clear();
-
-            // First, try to find commands that exactly match the commandName. If there are no such commands, try to find
-            // commands that contain commandName as substring
-            FindCommands(commandName, false, matchingMethods);
-            if (matchingMethods.Count == 0)
-            {
-                FindCommands(commandName, true, matchingMethods);
-            }
-
-            if (matchingMethods.Count == 0)
-            {
-                Debug.LogWarning(string.Concat("ERROR: can't find command '", commandName, "'"));
-            }
-            else
-            {
-                var commandsLength = 25;
-                for (var i = 0; i < matchingMethods.Count; i++)
-                {
-                    commandsLength += matchingMethods[i].signature.Length + 7;
-                }
-
-                var stringBuilder = new StringBuilder(commandsLength);
-                stringBuilder.Append("Matching commands:");
-
-                for (var i = 0; i < matchingMethods.Count; i++)
-                {
-                    stringBuilder.Append("\n    - ").Append(matchingMethods[i].signature);
-                }
-
-                Debug.Log(stringBuilder.ToString());
-
-                if (DebugLogManager.Instance)
-                {
-                    DebugLogManager.Instance.ExpandLatestPendingLog();
-                    DebugLogManager.Instance.StripStackTraceFromLatestPendingLog();
-                }
-            }
-        }
-
-        // Logs system information
-        public static void LogSystemInfo()
-        {
-            var stringBuilder = new StringBuilder(1024);
-            stringBuilder.Append("Rig: ")
-                         .AppendSysInfoIfPresent(SystemInfo.deviceModel)
-                         .AppendSysInfoIfPresent(SystemInfo.processorType)
-                         .AppendSysInfoIfPresent(SystemInfo.systemMemorySize, "MB RAM")
-                         .Append(SystemInfo.processorCount)
-                         .Append(" cores\n");
-            stringBuilder.Append("OS: ").Append(SystemInfo.operatingSystem).Append("\n");
-            stringBuilder.Append("GPU: ")
-                         .Append(SystemInfo.graphicsDeviceName)
-                         .Append(" ")
-                         .Append(SystemInfo.graphicsMemorySize)
-                         .Append("MB ")
-                         .Append(SystemInfo.graphicsDeviceVersion)
-                         .Append(SystemInfo.graphicsMultiThreaded ? " multi-threaded\n" : "\n");
-            stringBuilder.Append("Data Path: ").Append(ProjectLocations.GetAssetsDirectoryPath()).Append("\n");
-            stringBuilder.Append("Persistent Data Path: ")
-                         .Append(Application.persistentDataPath)
-                         .Append("\n");
-            stringBuilder.Append("StreamingAssets Path: ")
-                         .Append(Application.streamingAssetsPath)
-                         .Append("\n");
-            stringBuilder.Append("Temporary Cache Path: ")
-                         .Append(Application.temporaryCachePath)
-                         .Append("\n");
-            stringBuilder.Append("Device ID: ")
-                         .Append(SystemInfo.deviceUniqueIdentifier)
-                         .Append("\n");
-            stringBuilder.Append("Max Texture Size: ")
-                         .Append(SystemInfo.maxTextureSize)
-                         .Append("\n");
-#if UNITY_5_6_OR_NEWER
-            stringBuilder.Append("Max Cubemap Size: ")
-                         .Append(SystemInfo.maxCubemapSize)
-                         .Append("\n");
-#endif
-            stringBuilder.Append("Accelerometer: ")
-                         .Append(
-                              SystemInfo.supportsAccelerometer ? "supported\n" : "not supported\n"
-                          );
-            stringBuilder.Append("Gyro: ")
-                         .Append(SystemInfo.supportsGyroscope ? "supported\n" : "not supported\n");
-            stringBuilder.Append("Location Service: ")
-                         .Append(
-                              SystemInfo.supportsLocationService ? "supported\n" : "not supported\n"
-                          );
-#if !UNITY_2019_1_OR_NEWER
-			stringBuilder.Append( "Image Effects: " ).Append( SystemInfo.supportsImageEffects ? "supported\n" : "not supported\n" );
-			stringBuilder.Append( "RenderToCubemap: " ).Append( SystemInfo.supportsRenderToCubemap ? "supported\n" : "not supported\n" );
-#endif
-            stringBuilder.Append("Compute Shaders: ")
-                         .Append(
-                              SystemInfo.supportsComputeShaders ? "supported\n" : "not supported\n"
-                          );
-            stringBuilder.Append("Shadows: ")
-                         .Append(SystemInfo.supportsShadows ? "supported\n" : "not supported\n");
-            stringBuilder.Append("Instancing: ")
-                         .Append(SystemInfo.supportsInstancing ? "supported\n" : "not supported\n");
-            stringBuilder.Append("Motion Vectors: ")
-                         .Append(
-                              SystemInfo.supportsMotionVectors ? "supported\n" : "not supported\n"
-                          );
-            stringBuilder.Append("3D Textures: ")
-                         .Append(SystemInfo.supports3DTextures ? "supported\n" : "not supported\n");
-#if UNITY_5_6_OR_NEWER
-            stringBuilder.Append("3D Render Textures: ")
-                         .Append(
-                              SystemInfo.supports3DRenderTextures
-                                  ? "supported\n"
-                                  : "not supported\n"
-                          );
-#endif
-            stringBuilder.Append("2D Array Textures: ")
-                         .Append(
-                              SystemInfo.supports2DArrayTextures ? "supported\n" : "not supported\n"
-                          );
-            stringBuilder.Append("Cubemap Array Textures: ")
-                         .Append(
-                              SystemInfo.supportsCubemapArrayTextures
-                                  ? "supported"
-                                  : "not supported"
-                          );
-
-            Debug.Log(stringBuilder.ToString());
-
-            // After typing sysinfo, the log that lists system information should automatically be expanded for better UX
-            if (DebugLogManager.Instance)
-            {
-                DebugLogManager.Instance.ExpandLatestPendingLog();
-                DebugLogManager.Instance.StripStackTraceFromLatestPendingLog();
-            }
-        }
-
-        private static StringBuilder AppendSysInfoIfPresent(
-            this StringBuilder sb,
-            string info,
-            string postfix = null)
-        {
-            if (info != SystemInfo.unsupportedIdentifier)
-            {
-                sb.Append(info);
-
-                if (postfix != null)
-                {
-                    sb.Append(postfix);
-                }
-
-                sb.Append(" ");
-            }
-
-            return sb;
-        }
-
-        private static StringBuilder AppendSysInfoIfPresent(
-            this StringBuilder sb,
-            int info,
-            string postfix = null)
-        {
-            if (info > 0)
-            {
-                sb.Append(info);
-
-                if (postfix != null)
-                {
-                    sb.Append(postfix);
-                }
-
-                sb.Append(" ");
-            }
-
-            return sb;
-        }
-
-        // Add a custom Type to the list of recognized command parameter Types
-        public static void AddCustomParameterType(
-            Type type,
-            ParseFunction parseFunction,
-            string typeReadableName = null)
-        {
-            if (type == null)
-            {
-                Debug.LogError("Parameter type can't be null!");
-                return;
-            }
-
-            if (parseFunction == null)
-            {
-                Debug.LogError("Parameter parseFunction can't be null!");
-                return;
-            }
-
-            parseFunctions[type] = parseFunction;
-
-            if (!string.IsNullOrEmpty(typeReadableName))
-            {
-                typeReadableNames[type] = typeReadableName;
-            }
-        }
-
-        // Remove a custom Type from the list of recognized command parameter Types
-        public static void RemoveCustomParameterType(Type type)
-        {
-            parseFunctions.Remove(type);
-            typeReadableNames.Remove(type);
-        }
-
-        // Add a command related with an instance method (i.e. non static method)
-        public static void AddCommandInstance(
-            string command,
-            string description,
-            string methodName,
-            object instance,
-            params string[] parameterNames)
-        {
-            if (instance == null)
-            {
-                Debug.LogError("Instance can't be null!");
-                return;
-            }
-
-            AddCommand(
-                command,
-                description,
-                methodName,
-                instance.GetType(),
-                instance,
-                parameterNames
-            );
-        }
-
-        // Add a command related with a static method (i.e. no instance is required to call the method)
-        public static void AddCommandStatic(
-            string command,
-            string description,
-            string methodName,
-            Type ownerType,
-            params string[] parameterNames)
-        {
-            AddCommand(command, description, methodName, ownerType, null, parameterNames);
         }
 
         // Add a command that can be related to either a static or an instance method
@@ -508,18 +226,12 @@ namespace Appalachia.Editing.Debugging.IngameDebugConsole
             AddCommand(command, description, method.Method, method.Target, null);
         }
 
-        public static void AddCommand<T1, T2>(
-            string command,
-            string description,
-            Action<T1, T2> method)
+        public static void AddCommand<T1, T2>(string command, string description, Action<T1, T2> method)
         {
             AddCommand(command, description, method.Method, method.Target, null);
         }
 
-        public static void AddCommand<T1, T2>(
-            string command,
-            string description,
-            Func<T1, T2> method)
+        public static void AddCommand<T1, T2>(string command, string description, Func<T1, T2> method)
         {
             AddCommand(command, description, method.Method, method.Target, null);
         }
@@ -532,10 +244,7 @@ namespace Appalachia.Editing.Debugging.IngameDebugConsole
             AddCommand(command, description, method.Method, method.Target, null);
         }
 
-        public static void AddCommand<T1, T2, T3>(
-            string command,
-            string description,
-            Func<T1, T2, T3> method)
+        public static void AddCommand<T1, T2, T3>(string command, string description, Func<T1, T2, T3> method)
         {
             AddCommand(command, description, method.Method, method.Target, null);
         }
@@ -576,13 +285,7 @@ namespace Appalachia.Editing.Debugging.IngameDebugConsole
             Action<T1> method,
             string parameterName)
         {
-            AddCommand(
-                command,
-                description,
-                method.Method,
-                method.Target,
-                new string[1] {parameterName}
-            );
+            AddCommand(command, description, method.Method, method.Target, new string[1] {parameterName});
         }
 
         public static void AddCommand<T1, T2>(
@@ -607,13 +310,7 @@ namespace Appalachia.Editing.Debugging.IngameDebugConsole
             Func<T1, T2> method,
             string parameterName)
         {
-            AddCommand(
-                command,
-                description,
-                method.Method,
-                method.Target,
-                new string[1] {parameterName}
-            );
+            AddCommand(command, description, method.Method, method.Target, new string[1] {parameterName});
         }
 
         public static void AddCommand<T1, T2, T3>(
@@ -711,347 +408,58 @@ namespace Appalachia.Editing.Debugging.IngameDebugConsole
             AddCommand(command, description, method.Method, method.Target, parameterNames);
         }
 
-        // Create a new command and set its properties
-        private static void AddCommand(
+        // Add a command related with an instance method (i.e. non static method)
+        public static void AddCommandInstance(
+            string command,
+            string description,
+            string methodName,
+            object instance,
+            params string[] parameterNames)
+        {
+            if (instance == null)
+            {
+                Debug.LogError("Instance can't be null!");
+                return;
+            }
+
+            AddCommand(command, description, methodName, instance.GetType(), instance, parameterNames);
+        }
+
+        // Add a command related with a static method (i.e. no instance is required to call the method)
+        public static void AddCommandStatic(
             string command,
             string description,
             string methodName,
             Type ownerType,
-            object instance,
-            string[] parameterNames)
+            params string[] parameterNames)
         {
-            // Get the method from the class
-            var method = ownerType.GetMethod(
-                methodName,
-                BindingFlags.Public |
-                BindingFlags.NonPublic |
-                (instance != null ? BindingFlags.Instance : BindingFlags.Static)
-            );
-            if (method == null)
+            AddCommand(command, description, methodName, ownerType, null, parameterNames);
+        }
+
+        // Add a custom Type to the list of recognized command parameter Types
+        public static void AddCustomParameterType(
+            Type type,
+            ParseFunction parseFunction,
+            string typeReadableName = null)
+        {
+            if (type == null)
             {
-                Debug.LogError(methodName + " does not exist in " + ownerType);
+                Debug.LogError("Parameter type can't be null!");
                 return;
             }
 
-            AddCommand(command, description, method, instance, parameterNames);
-        }
-
-        private static void AddCommand(
-            string command,
-            string description,
-            MethodInfo method,
-            object instance,
-            string[] parameterNames)
-        {
-            if (string.IsNullOrEmpty(command))
+            if (parseFunction == null)
             {
-                Debug.LogError("Command name can't be empty!");
+                Debug.LogError("Parameter parseFunction can't be null!");
                 return;
             }
 
-            command = command.Trim();
-            if (command.IndexOf(' ') >= 0)
+            parseFunctions[type] = parseFunction;
+
+            if (!string.IsNullOrEmpty(typeReadableName))
             {
-                Debug.LogError("Command name can't contain whitespace: " + command);
-                return;
+                typeReadableNames[type] = typeReadableName;
             }
-
-            // Fetch the parameters of the class
-            var parameters = method.GetParameters();
-            if (parameters == null)
-            {
-                parameters = new ParameterInfo[0];
-            }
-
-            // Store the parameter types in an array
-            var parameterTypes = new Type[parameters.Length];
-            for (var i = 0; i < parameters.Length; i++)
-            {
-                if (parameters[i].ParameterType.IsByRef)
-                {
-                    Debug.LogError("Command can't have 'out' or 'ref' parameters");
-                    return;
-                }
-
-                var parameterType = parameters[i].ParameterType;
-                if (parseFunctions.ContainsKey(parameterType) ||
-                    typeof(Component).IsAssignableFrom(parameterType) ||
-                    parameterType.IsEnum ||
-                    IsSupportedArrayType(parameterType))
-                {
-                    parameterTypes[i] = parameterType;
-                }
-                else
-                {
-                    Debug.LogError(
-                        string.Concat(
-                            "Parameter ",
-                            parameters[i].Name,
-                            "'s Type ",
-                            parameterType,
-                            " isn't supported"
-                        )
-                    );
-                    return;
-                }
-            }
-
-            var commandIndex = FindCommandIndex(command);
-            if (commandIndex < 0)
-            {
-                commandIndex = ~commandIndex;
-            }
-            else
-            {
-                var commandFirstIndex = commandIndex;
-                var commandLastIndex = commandIndex;
-
-                while ((commandFirstIndex > 0) &&
-                       (caseInsensitiveComparer.Compare(
-                            methods[commandFirstIndex - 1].command,
-                            command,
-                            CompareOptions.IgnoreCase | CompareOptions.IgnoreNonSpace
-                        ) ==
-                        0))
-                {
-                    commandFirstIndex--;
-                }
-
-                while ((commandLastIndex < (methods.Count - 1)) &&
-                       (caseInsensitiveComparer.Compare(
-                            methods[commandLastIndex + 1].command,
-                            command,
-                            CompareOptions.IgnoreCase | CompareOptions.IgnoreNonSpace
-                        ) ==
-                        0))
-                {
-                    commandLastIndex++;
-                }
-
-                commandIndex = commandFirstIndex;
-                for (var i = commandFirstIndex; i <= commandLastIndex; i++)
-                {
-                    var parameterCountDiff =
-                        methods[i].parameterTypes.Length - parameterTypes.Length;
-                    if (parameterCountDiff <= 0)
-                    {
-                        // We are sorting the commands in 2 steps:
-                        // 1: Sorting by their 'command' names which is handled by FindCommandIndex
-                        // 2: Sorting by their parameter counts which is handled here (parameterCountDiff <= 0)
-                        commandIndex = i + 1;
-
-                        // Check if this command has been registered before and if it is, overwrite that command
-                        if (parameterCountDiff == 0)
-                        {
-                            var j = 0;
-                            while ((j < parameterTypes.Length) &&
-                                   (parameterTypes[j] == methods[i].parameterTypes[j]))
-                            {
-                                j++;
-                            }
-
-                            if (j >= parameterTypes.Length)
-                            {
-                                commandIndex = i;
-                                commandLastIndex--;
-                                methods.RemoveAt(i--);
-                            }
-                        }
-                    }
-                }
-            }
-
-            // Create the command
-            var methodSignature = new StringBuilder(256);
-            var parameterSignatures = new string[parameterTypes.Length];
-
-#if USE_BOLD_COMMAND_SIGNATURES
-            methodSignature.Append("<b>");
-#endif
-            methodSignature.Append(command);
-
-            if (parameterTypes.Length > 0)
-            {
-                methodSignature.Append(" ");
-
-                for (var i = 0; i < parameterTypes.Length; i++)
-                {
-                    var parameterSignatureStartIndex = methodSignature.Length;
-
-                    methodSignature.Append("[")
-                                   .Append(GetTypeReadableName(parameterTypes[i]))
-                                   .Append(" ")
-                                   .Append(
-                                        (parameterNames != null) &&
-                                        (i < parameterNames.Length) &&
-                                        !string.IsNullOrEmpty(parameterNames[i])
-                                            ? parameterNames[i]
-                                            : parameters[i].Name
-                                    )
-                                   .Append("]");
-
-                    if (i < (parameterTypes.Length - 1))
-                    {
-                        methodSignature.Append(" ");
-                    }
-
-                    parameterSignatures[i] = methodSignature.ToString(
-                        parameterSignatureStartIndex,
-                        methodSignature.Length - parameterSignatureStartIndex
-                    );
-                }
-            }
-
-#if USE_BOLD_COMMAND_SIGNATURES
-            methodSignature.Append("</b>");
-#endif
-
-            if (!string.IsNullOrEmpty(description))
-            {
-                methodSignature.Append(": ").Append(description);
-            }
-
-            methods.Insert(
-                commandIndex,
-                new ConsoleMethodInfo(
-                    method,
-                    parameterTypes,
-                    instance,
-                    command,
-                    methodSignature.ToString(),
-                    parameterSignatures
-                )
-            );
-        }
-
-        // Remove all commands with the matching command name from the console
-        public static void RemoveCommand(string command)
-        {
-            if (!string.IsNullOrEmpty(command))
-            {
-                for (var i = methods.Count - 1; i >= 0; i--)
-                {
-                    if (caseInsensitiveComparer.Compare(
-                            methods[i].command,
-                            command,
-                            CompareOptions.IgnoreCase | CompareOptions.IgnoreNonSpace
-                        ) ==
-                        0)
-                    {
-                        methods.RemoveAt(i);
-                    }
-                }
-            }
-        }
-
-        // Remove all commands with the matching method from the console
-        public static void RemoveCommand(Action method)
-        {
-            RemoveCommand(method.Method);
-        }
-
-        public static void RemoveCommand<T1>(Action<T1> method)
-        {
-            RemoveCommand(method.Method);
-        }
-
-        public static void RemoveCommand<T1>(Func<T1> method)
-        {
-            RemoveCommand(method.Method);
-        }
-
-        public static void RemoveCommand<T1, T2>(Action<T1, T2> method)
-        {
-            RemoveCommand(method.Method);
-        }
-
-        public static void RemoveCommand<T1, T2>(Func<T1, T2> method)
-        {
-            RemoveCommand(method.Method);
-        }
-
-        public static void RemoveCommand<T1, T2, T3>(Action<T1, T2, T3> method)
-        {
-            RemoveCommand(method.Method);
-        }
-
-        public static void RemoveCommand<T1, T2, T3>(Func<T1, T2, T3> method)
-        {
-            RemoveCommand(method.Method);
-        }
-
-        public static void RemoveCommand<T1, T2, T3, T4>(Action<T1, T2, T3, T4> method)
-        {
-            RemoveCommand(method.Method);
-        }
-
-        public static void RemoveCommand<T1, T2, T3, T4>(Func<T1, T2, T3, T4> method)
-        {
-            RemoveCommand(method.Method);
-        }
-
-        public static void RemoveCommand<T1, T2, T3, T4, T5>(Func<T1, T2, T3, T4, T5> method)
-        {
-            RemoveCommand(method.Method);
-        }
-
-        public static void RemoveCommand(Delegate method)
-        {
-            RemoveCommand(method.Method);
-        }
-
-        public static void RemoveCommand(MethodInfo method)
-        {
-            if (method != null)
-            {
-                for (var i = methods.Count - 1; i >= 0; i--)
-                {
-                    if (methods[i].method == method)
-                    {
-                        methods.RemoveAt(i);
-                    }
-                }
-            }
-        }
-
-        // Returns the first command that starts with the entered argument
-        public static string GetAutoCompleteCommand(string commandStart)
-        {
-            var commandIndex = FindCommandIndex(commandStart);
-            if (commandIndex < 0)
-            {
-                commandIndex = ~commandIndex;
-            }
-
-            string result = null;
-            for (var i = commandIndex;
-                (i >= 0) &&
-                caseInsensitiveComparer.IsPrefix(
-                    methods[i].command,
-                    commandStart,
-                    CompareOptions.IgnoreCase | CompareOptions.IgnoreNonSpace
-                );
-                i--)
-            {
-                result = methods[i].command;
-            }
-
-            if (result == null)
-            {
-                for (var i = commandIndex + 1;
-                    (i < methods.Count) &&
-                    caseInsensitiveComparer.IsPrefix(
-                        methods[i].command,
-                        commandStart,
-                        CompareOptions.IgnoreCase | CompareOptions.IgnoreNonSpace
-                    );
-                    i++)
-                {
-                    result = methods[i].command;
-                }
-            }
-
-            return result;
         }
 
         // Parse the command and try to execute it
@@ -1114,8 +522,7 @@ namespace Appalachia.Editing.Debugging.IngameDebugConsole
                     else
                     {
                         // Check if number of parameters match
-                        if (methods[commandIndex].parameterTypes.Length ==
-                            (commandArguments.Count - 1))
+                        if (methods[commandIndex].parameterTypes.Length == (commandArguments.Count - 1))
                         {
                             matchingMethods.Add(methods[commandIndex]);
                         }
@@ -1228,9 +635,7 @@ namespace Appalachia.Editing.Debugging.IngameDebugConsole
             if (methodToExecute == null)
             {
                 Debug.LogWarning(
-                    !string.IsNullOrEmpty(errorMessage)
-                        ? errorMessage
-                        : "ERROR: something went wrong"
+                    !string.IsNullOrEmpty(errorMessage) ? errorMessage : "ERROR: something went wrong"
                 );
             }
             else
@@ -1274,10 +679,7 @@ namespace Appalachia.Editing.Debugging.IngameDebugConsole
                 {
                     var endIndex = IndexOfChar(command, ' ', i + 1);
                     commandArguments.Add(
-                        command.Substring(
-                            i,
-                            command[endIndex - 1] == ',' ? endIndex - 1 - i : endIndex - i
-                        )
+                        command.Substring(i, command[endIndex - 1] == ',' ? endIndex - 1 - i : endIndex - i)
                     );
                     i = endIndex;
                 }
@@ -1321,6 +723,711 @@ namespace Appalachia.Editing.Debugging.IngameDebugConsole
                     }
                 }
             }
+        }
+
+        // Returns the first command that starts with the entered argument
+        public static string GetAutoCompleteCommand(string commandStart)
+        {
+            var commandIndex = FindCommandIndex(commandStart);
+            if (commandIndex < 0)
+            {
+                commandIndex = ~commandIndex;
+            }
+
+            string result = null;
+            for (var i = commandIndex;
+                (i >= 0) &&
+                caseInsensitiveComparer.IsPrefix(
+                    methods[i].command,
+                    commandStart,
+                    CompareOptions.IgnoreCase | CompareOptions.IgnoreNonSpace
+                );
+                i--)
+            {
+                result = methods[i].command;
+            }
+
+            if (result == null)
+            {
+                for (var i = commandIndex + 1;
+                    (i < methods.Count) &&
+                    caseInsensitiveComparer.IsPrefix(
+                        methods[i].command,
+                        commandStart,
+                        CompareOptions.IgnoreCase | CompareOptions.IgnoreNonSpace
+                    );
+                    i++)
+                {
+                    result = methods[i].command;
+                }
+            }
+
+            return result;
+        }
+
+        public static string GetTypeReadableName(Type type)
+        {
+            string result;
+            if (typeReadableNames.TryGetValue(type, out result))
+            {
+                return result;
+            }
+
+            if (IsSupportedArrayType(type))
+            {
+                var elementType = type.IsArray ? type.GetElementType() : type.GetGenericArguments()[0];
+
+                if (elementType == null)
+
+                {
+                    return null;
+                }
+
+                if (typeReadableNames.TryGetValue(elementType, out result))
+                {
+                    return result + "[]";
+                }
+
+                return elementType.Name + "[]";
+            }
+
+            return type.Name;
+        }
+
+        public static bool IsSupportedArrayType(Type type)
+        {
+            if (type.IsArray)
+            {
+                if (type.GetArrayRank() != 1)
+                {
+                    return false;
+                }
+
+                type = type.GetElementType();
+            }
+            else if (type.IsGenericType)
+            {
+                if (type.GetGenericTypeDefinition() != typeof(List<>))
+                {
+                    return false;
+                }
+
+                type = type.GetGenericArguments()[0];
+            }
+            else
+            {
+                return false;
+            }
+
+            return parseFunctions.ContainsKey(type) ||
+                   typeof(Component).IsAssignableFrom(type) ||
+                   type.IsEnum;
+        }
+
+        // Logs the list of available commands
+        public static void LogAllCommands()
+        {
+            var length = 25;
+            for (var i = 0; i < methods.Count; i++)
+            {
+                if (methods[i].IsValid())
+                {
+                    length += methods[i].signature.Length + 7;
+                }
+            }
+
+            var stringBuilder = new StringBuilder(length);
+            stringBuilder.Append("Available commands:");
+
+            for (var i = 0; i < methods.Count; i++)
+            {
+                if (methods[i].IsValid())
+                {
+                    stringBuilder.Append("\n    - ").Append(methods[i].signature);
+                }
+            }
+
+            Debug.Log(stringBuilder.ToString());
+
+            // After typing help, the log that lists all the commands should automatically be expanded for better UX
+            if (DebugLogManager.Instance)
+            {
+                DebugLogManager.Instance.ExpandLatestPendingLog();
+                DebugLogManager.Instance.StripStackTraceFromLatestPendingLog();
+            }
+        }
+
+        // Logs the list of available commands that are either equal to commandName or contain commandName as substring
+        public static void LogAllCommandsWithName(string commandName)
+        {
+            matchingMethods.Clear();
+
+            // First, try to find commands that exactly match the commandName. If there are no such commands, try to find
+            // commands that contain commandName as substring
+            FindCommands(commandName, false, matchingMethods);
+            if (matchingMethods.Count == 0)
+            {
+                FindCommands(commandName, true, matchingMethods);
+            }
+
+            if (matchingMethods.Count == 0)
+            {
+                Debug.LogWarning(string.Concat("ERROR: can't find command '", commandName, "'"));
+            }
+            else
+            {
+                var commandsLength = 25;
+                for (var i = 0; i < matchingMethods.Count; i++)
+                {
+                    commandsLength += matchingMethods[i].signature.Length + 7;
+                }
+
+                var stringBuilder = new StringBuilder(commandsLength);
+                stringBuilder.Append("Matching commands:");
+
+                for (var i = 0; i < matchingMethods.Count; i++)
+                {
+                    stringBuilder.Append("\n    - ").Append(matchingMethods[i].signature);
+                }
+
+                Debug.Log(stringBuilder.ToString());
+
+                if (DebugLogManager.Instance)
+                {
+                    DebugLogManager.Instance.ExpandLatestPendingLog();
+                    DebugLogManager.Instance.StripStackTraceFromLatestPendingLog();
+                }
+            }
+        }
+
+        // Logs system information
+        public static void LogSystemInfo()
+        {
+            var stringBuilder = new StringBuilder(1024);
+            stringBuilder.Append("Rig: ")
+                         .AppendSysInfoIfPresent(SystemInfo.deviceModel)
+                         .AppendSysInfoIfPresent(SystemInfo.processorType)
+                         .AppendSysInfoIfPresent(SystemInfo.systemMemorySize, "MB RAM")
+                         .Append(SystemInfo.processorCount)
+                         .Append(" cores\n");
+            stringBuilder.Append("OS: ").Append(SystemInfo.operatingSystem).Append("\n");
+            stringBuilder.Append("GPU: ")
+                         .Append(SystemInfo.graphicsDeviceName)
+                         .Append(" ")
+                         .Append(SystemInfo.graphicsMemorySize)
+                         .Append("MB ")
+                         .Append(SystemInfo.graphicsDeviceVersion)
+                         .Append(SystemInfo.graphicsMultiThreaded ? " multi-threaded\n" : "\n");
+            stringBuilder.Append("Data Path: ")
+                         .Append(ProjectLocations.GetAssetsDirectoryPath())
+                         .Append("\n");
+            stringBuilder.Append("Persistent Data Path: ")
+                         .Append(Application.persistentDataPath)
+                         .Append("\n");
+            stringBuilder.Append("StreamingAssets Path: ")
+                         .Append(Application.streamingAssetsPath)
+                         .Append("\n");
+            stringBuilder.Append("Temporary Cache Path: ")
+                         .Append(Application.temporaryCachePath)
+                         .Append("\n");
+            stringBuilder.Append("Device ID: ").Append(SystemInfo.deviceUniqueIdentifier).Append("\n");
+            stringBuilder.Append("Max Texture Size: ").Append(SystemInfo.maxTextureSize).Append("\n");
+#if UNITY_5_6_OR_NEWER
+            stringBuilder.Append("Max Cubemap Size: ").Append(SystemInfo.maxCubemapSize).Append("\n");
+#endif
+            stringBuilder.Append("Accelerometer: ")
+                         .Append(SystemInfo.supportsAccelerometer ? "supported\n" : "not supported\n");
+            stringBuilder.Append("Gyro: ")
+                         .Append(SystemInfo.supportsGyroscope ? "supported\n" : "not supported\n");
+            stringBuilder.Append("Location Service: ")
+                         .Append(SystemInfo.supportsLocationService ? "supported\n" : "not supported\n");
+#if !UNITY_2019_1_OR_NEWER
+			stringBuilder.Append( "Image Effects: " ).Append( SystemInfo.supportsImageEffects ? "supported\n" : "not supported\n" );
+			stringBuilder.Append( "RenderToCubemap: " ).Append( SystemInfo.supportsRenderToCubemap ? "supported\n" : "not supported\n" );
+#endif
+            stringBuilder.Append("Compute Shaders: ")
+                         .Append(SystemInfo.supportsComputeShaders ? "supported\n" : "not supported\n");
+            stringBuilder.Append("Shadows: ")
+                         .Append(SystemInfo.supportsShadows ? "supported\n" : "not supported\n");
+            stringBuilder.Append("Instancing: ")
+                         .Append(SystemInfo.supportsInstancing ? "supported\n" : "not supported\n");
+            stringBuilder.Append("Motion Vectors: ")
+                         .Append(SystemInfo.supportsMotionVectors ? "supported\n" : "not supported\n");
+            stringBuilder.Append("3D Textures: ")
+                         .Append(SystemInfo.supports3DTextures ? "supported\n" : "not supported\n");
+#if UNITY_5_6_OR_NEWER
+            stringBuilder.Append("3D Render Textures: ")
+                         .Append(SystemInfo.supports3DRenderTextures ? "supported\n" : "not supported\n");
+#endif
+            stringBuilder.Append("2D Array Textures: ")
+                         .Append(SystemInfo.supports2DArrayTextures ? "supported\n" : "not supported\n");
+            stringBuilder.Append("Cubemap Array Textures: ")
+                         .Append(SystemInfo.supportsCubemapArrayTextures ? "supported" : "not supported");
+
+            Debug.Log(stringBuilder.ToString());
+
+            // After typing sysinfo, the log that lists system information should automatically be expanded for better UX
+            if (DebugLogManager.Instance)
+            {
+                DebugLogManager.Instance.ExpandLatestPendingLog();
+                DebugLogManager.Instance.StripStackTraceFromLatestPendingLog();
+            }
+        }
+
+        public static bool ParseArgument(string input, Type argumentType, out object output)
+        {
+            ParseFunction parseFunction;
+            if (parseFunctions.TryGetValue(argumentType, out parseFunction))
+            {
+                return parseFunction(input, out output);
+            }
+
+            if (typeof(Component).IsAssignableFrom(argumentType))
+            {
+                return ParseComponent(input, argumentType, out output);
+            }
+
+            if (argumentType.IsEnum)
+            {
+                return ParseEnum(input, argumentType, out output);
+            }
+
+            if (IsSupportedArrayType(argumentType))
+            {
+                return ParseArray(input, argumentType, out output);
+            }
+
+            output = null;
+            return false;
+        }
+
+        public static bool ParseArray(string input, Type arrayType, out object output)
+        {
+            var valuesToParse = new List<string>(2);
+            FetchArgumentsFromCommand(input, valuesToParse);
+
+            var result = (IList) Activator.CreateInstance(arrayType, valuesToParse.Count);
+            output = result;
+
+            if (arrayType.IsArray)
+            {
+                var elementType = arrayType.GetElementType();
+                for (var i = 0; i < valuesToParse.Count; i++)
+                {
+                    object obj;
+                    if (!ParseArgument(valuesToParse[i], elementType, out obj))
+                    {
+                        return false;
+                    }
+
+                    result[i] = obj;
+                }
+            }
+            else
+            {
+                var elementType = arrayType.GetGenericArguments()[0];
+                for (var i = 0; i < valuesToParse.Count; i++)
+                {
+                    object obj;
+                    if (!ParseArgument(valuesToParse[i], elementType, out obj))
+                    {
+                        return false;
+                    }
+
+                    result.Add(obj);
+                }
+            }
+
+            return true;
+        }
+
+        public static bool ParseBool(string input, out object output)
+        {
+            if ((input == "1") || (input.ToLowerInvariant() == "true"))
+            {
+                output = true;
+                return true;
+            }
+
+            if ((input == "0") || (input.ToLowerInvariant() == "false"))
+            {
+                output = false;
+                return true;
+            }
+
+            output = false;
+            return false;
+        }
+
+        public static bool ParseBounds(string input, out object output)
+        {
+            return ParseVector(input, typeof(Bounds), out output);
+        }
+
+        public static bool ParseByte(string input, out object output)
+        {
+            byte value;
+            var result = byte.TryParse(input, out value);
+
+            output = value;
+            return result;
+        }
+
+        public static bool ParseChar(string input, out object output)
+        {
+            char value;
+            var result = char.TryParse(input, out value);
+
+            output = value;
+            return result;
+        }
+
+        public static bool ParseColor(string input, out object output)
+        {
+            return ParseVector(input, typeof(Color), out output);
+        }
+
+        public static bool ParseColor32(string input, out object output)
+        {
+            return ParseVector(input, typeof(Color32), out output);
+        }
+
+        public static bool ParseComponent(string input, Type componentType, out object output)
+        {
+            var gameObject = input == "null" ? null : GameObject.Find(input);
+            output = gameObject ? gameObject.GetComponent(componentType) : null;
+            return true;
+        }
+
+        public static bool ParseDecimal(string input, out object output)
+        {
+            decimal value;
+            var result = decimal.TryParse(
+                !input.EndsWith("f", StringComparison.OrdinalIgnoreCase)
+                    ? input
+                    : input.Substring(0, input.Length - 1),
+                out value
+            );
+
+            output = value;
+            return result;
+        }
+
+        public static bool ParseDouble(string input, out object output)
+        {
+            double value;
+            var result = double.TryParse(
+                !input.EndsWith("f", StringComparison.OrdinalIgnoreCase)
+                    ? input
+                    : input.Substring(0, input.Length - 1),
+                out value
+            );
+
+            output = value;
+            return result;
+        }
+
+        public static bool ParseEnum(string input, Type enumType, out object output)
+        {
+            const int NONE = 0, OR = 1, AND = 2;
+
+            var outputInt = 0;
+            var operation = NONE; // 0: nothing, 1: OR with outputInt, 2: AND with outputInt
+            for (var i = 0; i < input.Length; i++)
+            {
+                string enumStr;
+                var orIndex = input.IndexOf('|',  i);
+                var andIndex = input.IndexOf('&', i);
+                if (orIndex < 0)
+                {
+                    enumStr = input.Substring(i, (andIndex < 0 ? input.Length : andIndex) - i).Trim();
+                }
+                else
+                {
+                    enumStr = input.Substring(i, (andIndex < 0 ? orIndex : Mathf.Min(andIndex, orIndex)) - i)
+                                   .Trim();
+                }
+
+                int value;
+                if (!int.TryParse(enumStr, out value))
+                {
+                    try
+                    {
+                        // Case-insensitive enum parsing
+                        value = Convert.ToInt32(Enum.Parse(enumType, enumStr, true));
+                    }
+                    catch
+                    {
+                        output = null;
+                        return false;
+                    }
+                }
+
+                if (operation == NONE)
+                {
+                    outputInt = value;
+                }
+                else if (operation == OR)
+                {
+                    outputInt |= value;
+                }
+                else
+                {
+                    outputInt &= value;
+                }
+
+                if (orIndex >= 0)
+                {
+                    if (andIndex > orIndex)
+                    {
+                        operation = AND;
+                        i = andIndex;
+                    }
+                    else
+                    {
+                        operation = OR;
+                        i = orIndex;
+                    }
+                }
+                else if (andIndex >= 0)
+                {
+                    operation = AND;
+                    i = andIndex;
+                }
+                else
+                {
+                    i = input.Length;
+                }
+            }
+
+            output = Enum.ToObject(enumType, outputInt);
+            return true;
+        }
+
+        public static bool ParseFloat(string input, out object output)
+        {
+            float value;
+            var result = float.TryParse(
+                !input.EndsWith("f", StringComparison.OrdinalIgnoreCase)
+                    ? input
+                    : input.Substring(0, input.Length - 1),
+                out value
+            );
+
+            output = value;
+            return result;
+        }
+
+        public static bool ParseGameObject(string input, out object output)
+        {
+            output = input == "null" ? null : GameObject.Find(input);
+            return true;
+        }
+
+        public static bool ParseInt(string input, out object output)
+        {
+            int value;
+            var result = int.TryParse(input, out value);
+
+            output = value;
+            return result;
+        }
+
+        public static bool ParseLong(string input, out object output)
+        {
+            long value;
+            var result = long.TryParse(
+                !input.EndsWith("L", StringComparison.OrdinalIgnoreCase)
+                    ? input
+                    : input.Substring(0, input.Length - 1),
+                out value
+            );
+
+            output = value;
+            return result;
+        }
+
+        public static bool ParseQuaternion(string input, out object output)
+        {
+            return ParseVector(input, typeof(Quaternion), out output);
+        }
+
+        public static bool ParseRect(string input, out object output)
+        {
+            return ParseVector(input, typeof(Rect), out output);
+        }
+
+        public static bool ParseRectOffset(string input, out object output)
+        {
+            return ParseVector(input, typeof(RectOffset), out output);
+        }
+
+        public static bool ParseSByte(string input, out object output)
+        {
+            sbyte value;
+            var result = sbyte.TryParse(input, out value);
+
+            output = value;
+            return result;
+        }
+
+        public static bool ParseShort(string input, out object output)
+        {
+            short value;
+            var result = short.TryParse(input, out value);
+
+            output = value;
+            return result;
+        }
+
+        public static bool ParseString(string input, out object output)
+        {
+            output = input;
+            return true;
+        }
+
+        public static bool ParseUInt(string input, out object output)
+        {
+            uint value;
+            var result = uint.TryParse(input, out value);
+
+            output = value;
+            return result;
+        }
+
+        public static bool ParseULong(string input, out object output)
+        {
+            ulong value;
+            var result = ulong.TryParse(
+                !input.EndsWith("L", StringComparison.OrdinalIgnoreCase)
+                    ? input
+                    : input.Substring(0, input.Length - 1),
+                out value
+            );
+
+            output = value;
+            return result;
+        }
+
+        public static bool ParseUShort(string input, out object output)
+        {
+            ushort value;
+            var result = ushort.TryParse(input, out value);
+
+            output = value;
+            return result;
+        }
+
+        public static bool ParseVector2(string input, out object output)
+        {
+            return ParseVector(input, typeof(Vector2), out output);
+        }
+
+        public static bool ParseVector3(string input, out object output)
+        {
+            return ParseVector(input, typeof(Vector3), out output);
+        }
+
+        public static bool ParseVector4(string input, out object output)
+        {
+            return ParseVector(input, typeof(Vector4), out output);
+        }
+
+        // Remove all commands with the matching command name from the console
+        public static void RemoveCommand(string command)
+        {
+            if (!string.IsNullOrEmpty(command))
+            {
+                for (var i = methods.Count - 1; i >= 0; i--)
+                {
+                    if (caseInsensitiveComparer.Compare(
+                            methods[i].command,
+                            command,
+                            CompareOptions.IgnoreCase | CompareOptions.IgnoreNonSpace
+                        ) ==
+                        0)
+                    {
+                        methods.RemoveAt(i);
+                    }
+                }
+            }
+        }
+
+        // Remove all commands with the matching method from the console
+        public static void RemoveCommand(Action method)
+        {
+            RemoveCommand(method.Method);
+        }
+
+        public static void RemoveCommand<T1>(Action<T1> method)
+        {
+            RemoveCommand(method.Method);
+        }
+
+        public static void RemoveCommand<T1>(Func<T1> method)
+        {
+            RemoveCommand(method.Method);
+        }
+
+        public static void RemoveCommand<T1, T2>(Action<T1, T2> method)
+        {
+            RemoveCommand(method.Method);
+        }
+
+        public static void RemoveCommand<T1, T2>(Func<T1, T2> method)
+        {
+            RemoveCommand(method.Method);
+        }
+
+        public static void RemoveCommand<T1, T2, T3>(Action<T1, T2, T3> method)
+        {
+            RemoveCommand(method.Method);
+        }
+
+        public static void RemoveCommand<T1, T2, T3>(Func<T1, T2, T3> method)
+        {
+            RemoveCommand(method.Method);
+        }
+
+        public static void RemoveCommand<T1, T2, T3, T4>(Action<T1, T2, T3, T4> method)
+        {
+            RemoveCommand(method.Method);
+        }
+
+        public static void RemoveCommand<T1, T2, T3, T4>(Func<T1, T2, T3, T4> method)
+        {
+            RemoveCommand(method.Method);
+        }
+
+        public static void RemoveCommand<T1, T2, T3, T4, T5>(Func<T1, T2, T3, T4, T5> method)
+        {
+            RemoveCommand(method.Method);
+        }
+
+        public static void RemoveCommand(Delegate method)
+        {
+            RemoveCommand(method.Method);
+        }
+
+        public static void RemoveCommand(MethodInfo method)
+        {
+            if (method != null)
+            {
+                for (var i = methods.Count - 1; i >= 0; i--)
+                {
+                    if (methods[i].method == method)
+                    {
+                        methods.RemoveAt(i);
+                    }
+                }
+            }
+        }
+
+        // Remove a custom Type from the list of recognized command parameter Types
+        public static void RemoveCustomParameterType(Type type)
+        {
+            parseFunctions.Remove(type);
+            typeReadableNames.Remove(type);
         }
 
         // Finds all commands that have a matching signature with command
@@ -1507,58 +1614,256 @@ namespace Appalachia.Editing.Debugging.IngameDebugConsole
             }
         }
 
-        // Find the index of the delimiter group that 'c' belongs to
-        private static int IndexOfDelimiterGroup(char c)
-        {
-            for (var i = 0; i < inputDelimiters.Length; i++)
-            {
-                if (c == inputDelimiters[i][0])
-                {
-                    return i;
-                }
-            }
-
-            return -1;
-        }
-
-        private static int IndexOfDelimiterGroupEnd(
+        // Create a new command and set its properties
+        private static void AddCommand(
             string command,
-            int delimiterIndex,
-            int startIndex)
+            string description,
+            string methodName,
+            Type ownerType,
+            object instance,
+            string[] parameterNames)
         {
-            var startChar = inputDelimiters[delimiterIndex][0];
-            var endChar = inputDelimiters[delimiterIndex][1];
-
-            // Check delimiter's depth for array support (e.g. [[1 2] [3 4]] for Vector2 array)
-            var depth = 1;
-
-            for (var i = startIndex; i < command.Length; i++)
+            // Get the method from the class
+            var method = ownerType.GetMethod(
+                methodName,
+                BindingFlags.Public |
+                BindingFlags.NonPublic |
+                (instance != null ? BindingFlags.Instance : BindingFlags.Static)
+            );
+            if (method == null)
             {
-                var c = command[i];
-                if ((c == endChar) && (--depth <= 0))
-                {
-                    return i;
-                }
-
-                if (c == startChar)
-                {
-                    depth++;
-                }
+                Debug.LogError(methodName + " does not exist in " + ownerType);
+                return;
             }
 
-            return command.Length;
+            AddCommand(command, description, method, instance, parameterNames);
         }
 
-        // Find the index of char in the string, or return the length of string instead of -1
-        private static int IndexOfChar(string command, char c, int startIndex)
+        private static void AddCommand(
+            string command,
+            string description,
+            MethodInfo method,
+            object instance,
+            string[] parameterNames)
         {
-            var result = command.IndexOf(c, startIndex);
-            if (result < 0)
+            if (string.IsNullOrEmpty(command))
             {
-                result = command.Length;
+                Debug.LogError("Command name can't be empty!");
+                return;
             }
 
-            return result;
+            command = command.Trim();
+            if (command.IndexOf(' ') >= 0)
+            {
+                Debug.LogError("Command name can't contain whitespace: " + command);
+                return;
+            }
+
+            // Fetch the parameters of the class
+            var parameters = method.GetParameters();
+            if (parameters == null)
+            {
+                parameters = new ParameterInfo[0];
+            }
+
+            // Store the parameter types in an array
+            var parameterTypes = new Type[parameters.Length];
+            for (var i = 0; i < parameters.Length; i++)
+            {
+                if (parameters[i].ParameterType.IsByRef)
+                {
+                    Debug.LogError("Command can't have 'out' or 'ref' parameters");
+                    return;
+                }
+
+                var parameterType = parameters[i].ParameterType;
+                if (parseFunctions.ContainsKey(parameterType) ||
+                    typeof(Component).IsAssignableFrom(parameterType) ||
+                    parameterType.IsEnum ||
+                    IsSupportedArrayType(parameterType))
+                {
+                    parameterTypes[i] = parameterType;
+                }
+                else
+                {
+                    Debug.LogError(
+                        string.Concat(
+                            "Parameter ",
+                            parameters[i].Name,
+                            "'s Type ",
+                            parameterType,
+                            " isn't supported"
+                        )
+                    );
+                    return;
+                }
+            }
+
+            var commandIndex = FindCommandIndex(command);
+            if (commandIndex < 0)
+            {
+                commandIndex = ~commandIndex;
+            }
+            else
+            {
+                var commandFirstIndex = commandIndex;
+                var commandLastIndex = commandIndex;
+
+                while ((commandFirstIndex > 0) &&
+                       (caseInsensitiveComparer.Compare(
+                            methods[commandFirstIndex - 1].command,
+                            command,
+                            CompareOptions.IgnoreCase | CompareOptions.IgnoreNonSpace
+                        ) ==
+                        0))
+                {
+                    commandFirstIndex--;
+                }
+
+                while ((commandLastIndex < (methods.Count - 1)) &&
+                       (caseInsensitiveComparer.Compare(
+                            methods[commandLastIndex + 1].command,
+                            command,
+                            CompareOptions.IgnoreCase | CompareOptions.IgnoreNonSpace
+                        ) ==
+                        0))
+                {
+                    commandLastIndex++;
+                }
+
+                commandIndex = commandFirstIndex;
+                for (var i = commandFirstIndex; i <= commandLastIndex; i++)
+                {
+                    var parameterCountDiff = methods[i].parameterTypes.Length - parameterTypes.Length;
+                    if (parameterCountDiff <= 0)
+                    {
+                        // We are sorting the commands in 2 steps:
+                        // 1: Sorting by their 'command' names which is handled by FindCommandIndex
+                        // 2: Sorting by their parameter counts which is handled here (parameterCountDiff <= 0)
+                        commandIndex = i + 1;
+
+                        // Check if this command has been registered before and if it is, overwrite that command
+                        if (parameterCountDiff == 0)
+                        {
+                            var j = 0;
+                            while ((j < parameterTypes.Length) &&
+                                   (parameterTypes[j] == methods[i].parameterTypes[j]))
+                            {
+                                j++;
+                            }
+
+                            if (j >= parameterTypes.Length)
+                            {
+                                commandIndex = i;
+                                commandLastIndex--;
+                                methods.RemoveAt(i--);
+                            }
+                        }
+                    }
+                }
+            }
+
+            // Create the command
+            var methodSignature = new StringBuilder(256);
+            var parameterSignatures = new string[parameterTypes.Length];
+
+#if USE_BOLD_COMMAND_SIGNATURES
+            methodSignature.Append("<b>");
+#endif
+            methodSignature.Append(command);
+
+            if (parameterTypes.Length > 0)
+            {
+                methodSignature.Append(" ");
+
+                for (var i = 0; i < parameterTypes.Length; i++)
+                {
+                    var parameterSignatureStartIndex = methodSignature.Length;
+
+                    methodSignature.Append("[")
+                                   .Append(GetTypeReadableName(parameterTypes[i]))
+                                   .Append(" ")
+                                   .Append(
+                                        (parameterNames != null) &&
+                                        (i < parameterNames.Length) &&
+                                        !string.IsNullOrEmpty(parameterNames[i])
+                                            ? parameterNames[i]
+                                            : parameters[i].Name
+                                    )
+                                   .Append("]");
+
+                    if (i < (parameterTypes.Length - 1))
+                    {
+                        methodSignature.Append(" ");
+                    }
+
+                    parameterSignatures[i] = methodSignature.ToString(
+                        parameterSignatureStartIndex,
+                        methodSignature.Length - parameterSignatureStartIndex
+                    );
+                }
+            }
+
+#if USE_BOLD_COMMAND_SIGNATURES
+            methodSignature.Append("</b>");
+#endif
+
+            if (!string.IsNullOrEmpty(description))
+            {
+                methodSignature.Append(": ").Append(description);
+            }
+
+            methods.Insert(
+                commandIndex,
+                new ConsoleMethodInfo(
+                    method,
+                    parameterTypes,
+                    instance,
+                    command,
+                    methodSignature.ToString(),
+                    parameterSignatures
+                )
+            );
+        }
+
+        private static StringBuilder AppendSysInfoIfPresent(
+            this StringBuilder sb,
+            string info,
+            string postfix = null)
+        {
+            if (info != SystemInfo.unsupportedIdentifier)
+            {
+                sb.Append(info);
+
+                if (postfix != null)
+                {
+                    sb.Append(postfix);
+                }
+
+                sb.Append(" ");
+            }
+
+            return sb;
+        }
+
+        private static StringBuilder AppendSysInfoIfPresent(
+            this StringBuilder sb,
+            int info,
+            string postfix = null)
+        {
+            if (info > 0)
+            {
+                sb.Append(info);
+
+                if (postfix != null)
+                {
+                    sb.Append(postfix);
+                }
+
+                sb.Append(" ");
+            }
+
+            return sb;
         }
 
         // Find command's index in the list of registered commands using binary search
@@ -1592,420 +1897,55 @@ namespace Appalachia.Editing.Debugging.IngameDebugConsole
             return ~min;
         }
 
-        public static bool IsSupportedArrayType(Type type)
+        // Find the index of char in the string, or return the length of string instead of -1
+        private static int IndexOfChar(string command, char c, int startIndex)
         {
-            if (type.IsArray)
+            var result = command.IndexOf(c, startIndex);
+            if (result < 0)
             {
-                if (type.GetArrayRank() != 1)
-                {
-                    return false;
-                }
-
-                type = type.GetElementType();
-            }
-            else if (type.IsGenericType)
-            {
-                if (type.GetGenericTypeDefinition() != typeof(List<>))
-                {
-                    return false;
-                }
-
-                type = type.GetGenericArguments()[0];
-            }
-            else
-            {
-                return false;
+                result = command.Length;
             }
 
-            return parseFunctions.ContainsKey(type) ||
-                   typeof(Component).IsAssignableFrom(type) ||
-                   type.IsEnum;
-        }
-
-        public static string GetTypeReadableName(Type type)
-        {
-            string result;
-            if (typeReadableNames.TryGetValue(type, out result))
-            {
-                return result;
-            }
-
-            if (IsSupportedArrayType(type))
-            {
-                var elementType =
-                    type.IsArray ? type.GetElementType() : type.GetGenericArguments()[0];
-                if (typeReadableNames.TryGetValue(elementType, out result))
-                {
-                    return result + "[]";
-                }
-
-                return elementType.Name + "[]";
-            }
-
-            return type.Name;
-        }
-
-        public static bool ParseArgument(string input, Type argumentType, out object output)
-        {
-            ParseFunction parseFunction;
-            if (parseFunctions.TryGetValue(argumentType, out parseFunction))
-            {
-                return parseFunction(input, out output);
-            }
-
-            if (typeof(Component).IsAssignableFrom(argumentType))
-            {
-                return ParseComponent(input, argumentType, out output);
-            }
-
-            if (argumentType.IsEnum)
-            {
-                return ParseEnum(input, argumentType, out output);
-            }
-
-            if (IsSupportedArrayType(argumentType))
-            {
-                return ParseArray(input, argumentType, out output);
-            }
-
-            output = null;
-            return false;
-        }
-
-        public static bool ParseString(string input, out object output)
-        {
-            output = input;
-            return true;
-        }
-
-        public static bool ParseBool(string input, out object output)
-        {
-            if ((input == "1") || (input.ToLowerInvariant() == "true"))
-            {
-                output = true;
-                return true;
-            }
-
-            if ((input == "0") || (input.ToLowerInvariant() == "false"))
-            {
-                output = false;
-                return true;
-            }
-
-            output = false;
-            return false;
-        }
-
-        public static bool ParseInt(string input, out object output)
-        {
-            int value;
-            var result = int.TryParse(input, out value);
-
-            output = value;
             return result;
         }
 
-        public static bool ParseUInt(string input, out object output)
+        // Find the index of the delimiter group that 'c' belongs to
+        private static int IndexOfDelimiterGroup(char c)
         {
-            uint value;
-            var result = uint.TryParse(input, out value);
-
-            output = value;
-            return result;
-        }
-
-        public static bool ParseLong(string input, out object output)
-        {
-            long value;
-            var result = long.TryParse(
-                !input.EndsWith("L", StringComparison.OrdinalIgnoreCase)
-                    ? input
-                    : input.Substring(0, input.Length - 1),
-                out value
-            );
-
-            output = value;
-            return result;
-        }
-
-        public static bool ParseULong(string input, out object output)
-        {
-            ulong value;
-            var result = ulong.TryParse(
-                !input.EndsWith("L", StringComparison.OrdinalIgnoreCase)
-                    ? input
-                    : input.Substring(0, input.Length - 1),
-                out value
-            );
-
-            output = value;
-            return result;
-        }
-
-        public static bool ParseByte(string input, out object output)
-        {
-            byte value;
-            var result = byte.TryParse(input, out value);
-
-            output = value;
-            return result;
-        }
-
-        public static bool ParseSByte(string input, out object output)
-        {
-            sbyte value;
-            var result = sbyte.TryParse(input, out value);
-
-            output = value;
-            return result;
-        }
-
-        public static bool ParseShort(string input, out object output)
-        {
-            short value;
-            var result = short.TryParse(input, out value);
-
-            output = value;
-            return result;
-        }
-
-        public static bool ParseUShort(string input, out object output)
-        {
-            ushort value;
-            var result = ushort.TryParse(input, out value);
-
-            output = value;
-            return result;
-        }
-
-        public static bool ParseChar(string input, out object output)
-        {
-            char value;
-            var result = char.TryParse(input, out value);
-
-            output = value;
-            return result;
-        }
-
-        public static bool ParseFloat(string input, out object output)
-        {
-            float value;
-            var result = float.TryParse(
-                !input.EndsWith("f", StringComparison.OrdinalIgnoreCase)
-                    ? input
-                    : input.Substring(0, input.Length - 1),
-                out value
-            );
-
-            output = value;
-            return result;
-        }
-
-        public static bool ParseDouble(string input, out object output)
-        {
-            double value;
-            var result = double.TryParse(
-                !input.EndsWith("f", StringComparison.OrdinalIgnoreCase)
-                    ? input
-                    : input.Substring(0, input.Length - 1),
-                out value
-            );
-
-            output = value;
-            return result;
-        }
-
-        public static bool ParseDecimal(string input, out object output)
-        {
-            decimal value;
-            var result = decimal.TryParse(
-                !input.EndsWith("f", StringComparison.OrdinalIgnoreCase)
-                    ? input
-                    : input.Substring(0, input.Length - 1),
-                out value
-            );
-
-            output = value;
-            return result;
-        }
-
-        public static bool ParseVector2(string input, out object output)
-        {
-            return ParseVector(input, typeof(Vector2), out output);
-        }
-
-        public static bool ParseVector3(string input, out object output)
-        {
-            return ParseVector(input, typeof(Vector3), out output);
-        }
-
-        public static bool ParseVector4(string input, out object output)
-        {
-            return ParseVector(input, typeof(Vector4), out output);
-        }
-
-        public static bool ParseQuaternion(string input, out object output)
-        {
-            return ParseVector(input, typeof(Quaternion), out output);
-        }
-
-        public static bool ParseColor(string input, out object output)
-        {
-            return ParseVector(input, typeof(Color), out output);
-        }
-
-        public static bool ParseColor32(string input, out object output)
-        {
-            return ParseVector(input, typeof(Color32), out output);
-        }
-
-        public static bool ParseRect(string input, out object output)
-        {
-            return ParseVector(input, typeof(Rect), out output);
-        }
-
-        public static bool ParseRectOffset(string input, out object output)
-        {
-            return ParseVector(input, typeof(RectOffset), out output);
-        }
-
-        public static bool ParseBounds(string input, out object output)
-        {
-            return ParseVector(input, typeof(Bounds), out output);
-        }
-
-        public static bool ParseGameObject(string input, out object output)
-        {
-            output = input == "null" ? null : GameObject.Find(input);
-            return true;
-        }
-
-        public static bool ParseComponent(string input, Type componentType, out object output)
-        {
-            var gameObject = input == "null" ? null : GameObject.Find(input);
-            output = gameObject ? gameObject.GetComponent(componentType) : null;
-            return true;
-        }
-
-        public static bool ParseEnum(string input, Type enumType, out object output)
-        {
-            const int NONE = 0, OR = 1, AND = 2;
-
-            var outputInt = 0;
-            var operation = NONE; // 0: nothing, 1: OR with outputInt, 2: AND with outputInt
-            for (var i = 0; i < input.Length; i++)
+            for (var i = 0; i < inputDelimiters.Length; i++)
             {
-                string enumStr;
-                var orIndex = input.IndexOf('|',  i);
-                var andIndex = input.IndexOf('&', i);
-                if (orIndex < 0)
+                if (c == inputDelimiters[i][0])
                 {
-                    enumStr = input.Substring(i, (andIndex < 0 ? input.Length : andIndex) - i)
-                                   .Trim();
-                }
-                else
-                {
-                    enumStr = input.Substring(
-                                        i,
-                                        (andIndex < 0 ? orIndex : Mathf.Min(andIndex, orIndex)) - i
-                                    )
-                                   .Trim();
-                }
-
-                int value;
-                if (!int.TryParse(enumStr, out value))
-                {
-                    try
-                    {
-                        // Case-insensitive enum parsing
-                        value = Convert.ToInt32(Enum.Parse(enumType, enumStr, true));
-                    }
-                    catch
-                    {
-                        output = null;
-                        return false;
-                    }
-                }
-
-                if (operation == NONE)
-                {
-                    outputInt = value;
-                }
-                else if (operation == OR)
-                {
-                    outputInt |= value;
-                }
-                else
-                {
-                    outputInt &= value;
-                }
-
-                if (orIndex >= 0)
-                {
-                    if (andIndex > orIndex)
-                    {
-                        operation = AND;
-                        i = andIndex;
-                    }
-                    else
-                    {
-                        operation = OR;
-                        i = orIndex;
-                    }
-                }
-                else if (andIndex >= 0)
-                {
-                    operation = AND;
-                    i = andIndex;
-                }
-                else
-                {
-                    i = input.Length;
+                    return i;
                 }
             }
 
-            output = Enum.ToObject(enumType, outputInt);
-            return true;
+            return -1;
         }
 
-        public static bool ParseArray(string input, Type arrayType, out object output)
+        private static int IndexOfDelimiterGroupEnd(string command, int delimiterIndex, int startIndex)
         {
-            var valuesToParse = new List<string>(2);
-            FetchArgumentsFromCommand(input, valuesToParse);
+            var startChar = inputDelimiters[delimiterIndex][0];
+            var endChar = inputDelimiters[delimiterIndex][1];
 
-            var result = (IList) Activator.CreateInstance(arrayType, valuesToParse.Count);
-            output = result;
+            // Check delimiter's depth for array support (e.g. [[1 2] [3 4]] for Vector2 array)
+            var depth = 1;
 
-            if (arrayType.IsArray)
+            for (var i = startIndex; i < command.Length; i++)
             {
-                var elementType = arrayType.GetElementType();
-                for (var i = 0; i < valuesToParse.Count; i++)
+                var c = command[i];
+                if ((c == endChar) && (--depth <= 0))
                 {
-                    object obj;
-                    if (!ParseArgument(valuesToParse[i], elementType, out obj))
-                    {
-                        return false;
-                    }
-
-                    result[i] = obj;
+                    return i;
                 }
-            }
-            else
-            {
-                var elementType = arrayType.GetGenericArguments()[0];
-                for (var i = 0; i < valuesToParse.Count; i++)
-                {
-                    object obj;
-                    if (!ParseArgument(valuesToParse[i], elementType, out obj))
-                    {
-                        return false;
-                    }
 
-                    result.Add(obj);
+                if (c == startChar)
+                {
+                    depth++;
                 }
             }
 
-            return true;
+            return command.Length;
         }
 
         // Create a vector of specified type (fill the blank slots with 0 or ignore unnecessary slots)

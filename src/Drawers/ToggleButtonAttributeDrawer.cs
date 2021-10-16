@@ -1,4 +1,5 @@
 using Appalachia.Core.Attributes.Editing;
+using Appalachia.Editing.Core.State;
 using Appalachia.Editing.Drawers.Contexts;
 using Appalachia.Utility.Colors;
 using Sirenix.OdinInspector.Editor;
@@ -41,7 +42,7 @@ namespace Appalachia.Editing.Drawers
                 GUIHelper.PopLabelColor();
                 EditorGUILayout.EndVertical();
 
-                GUIHelper.PushColor(color);
+                UIStateStacks.foregroundColor.Push(color);
 
                 if (GUILayout.Button(
                     context.LabelHelper.GetValue(),
@@ -70,7 +71,7 @@ namespace Appalachia.Editing.Drawers
                     }
                 }
 
-                GUIHelper.PopColor();
+                UIStateStacks.foregroundColor.Pop();
 
                 EditorGUILayout.EndHorizontal();
             }

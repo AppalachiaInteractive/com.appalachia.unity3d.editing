@@ -24,13 +24,9 @@ namespace Appalachia.Editing.Core.Fields
             return baseStyle;
         }
 
-        public void DrawText(string menuItem)
-        {
-            EditorGUILayout.LabelField(menuItem, style);
-        }
-
         public bool Draw(string menuItem)
         {
+            hasBeenDrawn = true;
             DrawText(menuItem);
 
             var lastRect = GUILayoutUtility.GetLastRect();
@@ -42,6 +38,7 @@ namespace Appalachia.Editing.Core.Fields
 
         public bool Draw(string menuItem, Color backgroundColor)
         {
+            hasBeenDrawn = true;
             UIStateStacks.backgroundColor.Push(backgroundColor);
 
             var result = Draw(menuItem);
@@ -49,6 +46,12 @@ namespace Appalachia.Editing.Core.Fields
             UIStateStacks.backgroundColor.Pop();
 
             return result;
+        }
+
+        public void DrawText(string menuItem)
+        {
+            hasBeenDrawn = true;
+            EditorGUILayout.LabelField(menuItem, style);
         }
     }
 }

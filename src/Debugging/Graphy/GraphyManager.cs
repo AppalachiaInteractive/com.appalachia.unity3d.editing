@@ -171,8 +171,7 @@ namespace Appalachia.Editing.Debugging.Graphy
         [SerializeField] private ModuleState m_audioModuleState = ModuleState.FULL;
 
         [SerializeField]
-        private LookForAudioListener m_findAudioListenerInCameraIfNull =
-            LookForAudioListener.ON_SCENE_LOAD;
+        private LookForAudioListener m_findAudioListenerInCameraIfNull = LookForAudioListener.ON_SCENE_LOAD;
 
         [SerializeField] private AudioListener m_audioListener;
 
@@ -194,8 +193,7 @@ namespace Appalachia.Editing.Debugging.Graphy
 
         // Advanced ----------------------------------------------------------------------
 
-        [SerializeField]
-        private ModulePosition m_advancedModulePosition = ModulePosition.BOTTOM_LEFT;
+        [SerializeField] private ModulePosition m_advancedModulePosition = ModulePosition.BOTTOM_LEFT;
 
         [SerializeField] private ModuleState m_advancedModuleState = ModuleState.FULL;
 
@@ -995,10 +993,8 @@ namespace Appalachia.Editing.Debugging.Graphy
 
             if (currentKeyboard != null)
             {
-                return (Keyboard.current[key1].wasPressedThisFrame &&
-                        Keyboard.current[key2].isPressed) ||
-                       (Keyboard.current[key2].wasPressedThisFrame &&
-                        Keyboard.current[key1].isPressed);
+                return (Keyboard.current[key1].wasPressedThisFrame && Keyboard.current[key2].isPressed) ||
+                       (Keyboard.current[key2].wasPressedThisFrame && Keyboard.current[key1].isPressed);
             }
 
             return false;

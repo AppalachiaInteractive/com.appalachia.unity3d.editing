@@ -1,4 +1,5 @@
 ﻿using System.Text.RegularExpressions;
+using Appalachia.CI.Integration.Assets;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -185,13 +186,10 @@ namespace Appalachia.Editing.Debugging.IngameDebugConsole
                     var line = logEntry.stackTrace.Substring(regex.Index + 4, regex.Length - 5);
                     var lineSeparator = line.IndexOf(':');
                     var script =
-                        AssetDatabase.LoadAssetAtPath<MonoScript>(line.Substring(0, lineSeparator));
+                        AssetDatabaseManager.LoadAssetAtPath<MonoScript>(line.Substring(0, lineSeparator));
                     if (script != null)
                     {
-                        AssetDatabase.OpenAsset(
-                            script,
-                            int.Parse(line.Substring(lineSeparator + 1))
-                        );
+                        AssetDatabaseManager.OpenAsset(script, int.Parse(line.Substring(lineSeparator + 1)));
                     }
                 }
             }

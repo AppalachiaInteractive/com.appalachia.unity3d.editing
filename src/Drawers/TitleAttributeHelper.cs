@@ -34,9 +34,7 @@ namespace Appalachia.Editing.Drawers
                     guiStyle2 = SirenixGUIStyles.SubtitleCentered;
                     break;
                 case TextAlignment.Right:
-                    guiStyle1 = boldLabel
-                        ? SirenixGUIStyles.BoldTitleRight
-                        : SirenixGUIStyles.TitleRight;
+                    guiStyle1 = boldLabel ? SirenixGUIStyles.BoldTitleRight : SirenixGUIStyles.TitleRight;
                     guiStyle2 = SirenixGUIStyles.SubtitleRight;
                     break;
                 default:
@@ -56,12 +54,7 @@ namespace Appalachia.Editing.Drawers
 
             if ((int) textAlignment > 2)
             {
-                var rect = GUILayoutUtility.GetRect(
-                    0.0f,
-                    18f,
-                    style3,
-                    GUILayoutOptions.ExpandWidth()
-                );
+                var rect = GUILayoutUtility.GetRect(0.0f, 18f, style3, GUILayoutOptions.ExpandWidth());
 
                 GUI.Label(rect, title, style3);
 
@@ -95,10 +88,7 @@ namespace Appalachia.Editing.Drawers
                     return;
                 }
 
-                SirenixEditorGUI.DrawSolidRect(
-                    rect.AlignBottom(1f),
-                    SirenixGUIStyles.LightBorderColor
-                );
+                SirenixEditorGUI.DrawSolidRect(rect.AlignBottom(1f), SirenixGUIStyles.LightBorderColor);
                 GUILayout.Space(1f);
             }
         }

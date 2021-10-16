@@ -13,8 +13,7 @@ using UnityEngine;
 namespace Appalachia.Editing.Drawers.Contexts
 {
     [Serializable]
-    public class
-        SmartInlineButtonContext<T> : PropertyDrawerContextCollection<SmartInlineButtonAttribute>
+    public class SmartInlineButtonContext<T> : PropertyDrawerContextCollection<SmartInlineButtonAttribute>
     {
         public bool HasColorMember;
         public bool HasDisabledMember;
@@ -25,11 +24,6 @@ namespace Appalachia.Editing.Drawers.Contexts
 
         public ValueResolver<string> LabelHelper;
         public Action StaticMethodCaller;
-
-        protected override ValueResolver[] GetValueResolvers()
-        {
-            return new ValueResolver[] {LabelHelper, ColorHelper};
-        }
 
         public override void Initialize(
             InspectorProperty property,
@@ -71,8 +65,7 @@ namespace Appalachia.Editing.Drawers.Contexts
                     }
                     else
                     {
-                        InstanceMethodCaller =
-                            EmitUtilities.CreateWeakInstanceMethodCaller(memberInfo);
+                        InstanceMethodCaller = EmitUtilities.CreateWeakInstanceMethodCaller(memberInfo);
                     }
                 }
                 else if (AppaMemberFinder.Start(valueEntry.ParentType)
@@ -97,6 +90,11 @@ namespace Appalachia.Editing.Drawers.Contexts
             {
                 SirenixEditorGUI.ErrorMessageBox(ErrorMessage);
             }
+        }
+
+        protected override ValueResolver[] GetValueResolvers()
+        {
+            return new ValueResolver[] {LabelHelper, ColorHelper};
         }
     }
 }

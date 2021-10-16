@@ -203,8 +203,7 @@ namespace Appalachia.Editing.Debugging.Graphy.Audio
 
                 for (var j = 0; j < incrementPerIteration; j++)
                 {
-                    currentValue +=
-                        m_audioMonitor.SpectrumHighestValues[(i * incrementPerIteration) + j];
+                    currentValue += m_audioMonitor.SpectrumHighestValues[(i * incrementPerIteration) + j];
                 }
 
                 // Uses 3 values for each bar to accomplish that look
