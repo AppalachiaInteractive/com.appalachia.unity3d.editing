@@ -1,5 +1,5 @@
 ﻿
-Shader "internal/utility/NormalFromDiffuse" 
+Shader "appalachia/utility/NormalFromDiffuse" 
 {
    // generate a full Normal texture from just a diffuse image
    Properties {

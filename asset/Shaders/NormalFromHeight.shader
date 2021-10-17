@@ -1,5 +1,5 @@
 ﻿
-Shader "internal/utility/NormalFromHeight" 
+Shader "appalachia/utility/NormalFromHeight" 
 {
    // generate a full Normal texture from just a displacement image
    Properties {

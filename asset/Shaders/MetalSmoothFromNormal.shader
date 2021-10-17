@@ -1,5 +1,5 @@
 ﻿
-Shader "internal/utility/MetalSmoothFromNormal" 
+Shader "appalachia/utility/MetalSmoothFromNormal" 
 {
    // generate a full smoothness texture from just a normal image
    Properties {

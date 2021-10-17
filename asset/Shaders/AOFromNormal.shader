@@ -1,5 +1,5 @@
 ﻿
-Shader "internal/utility/AOFromNormal" 
+Shader "appalachia/utility/AOFromNormal" 
 {
    // generate a full AO texture from just a normal image
    Properties {

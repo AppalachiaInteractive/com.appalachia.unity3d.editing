@@ -1,5 +1,5 @@
 ﻿
-Shader "internal/utility/HeightFromNormal" 
+Shader "appalachia/utility/HeightFromNormal" 
 {
    // generate a height map from a normal map
    Properties {
