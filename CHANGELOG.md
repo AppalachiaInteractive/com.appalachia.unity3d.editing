@@ -12,6 +12,15 @@
 ## Releasing
 | Hash | Date | Author | Changes |
 |------|------|--------|---------|
+| 9a744e3d70d71093c0f82bb690c2b33ff78dfcbb | 2021-10-16 | Chris Schubert | More project cleanup and refactoring |
+| d51b14ff252bea0bfcd0cc779fdb855dad4a794e | 2021-10-12 | Chris Schubert | Code cleanup |
+| 3eb7cedb9d2d2538fa004771616acd68b9dd1f03 | 2021-10-04 | Chris Schubert | Fixing bug in how the new files are written |
+| 6e379fbf1223cfc5408db21e8866ec453f70642b | 2021-10-04 | Chris Schubert | Adding in asset correction utilities |
+
+
+ ## Tag: `v0.1.2`
+| Hash | Date | Author | Changes |
+|------|------|--------|---------|
 | 20be65849efabd2c48b72f27020545a4e89a5773 | 2021-10-04 | Chris Schubert | Code cleanup and refactoring |
 
 
