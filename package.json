@@ -1,7 +1,7 @@
 {
   "name": "com.appalachia.unity3d.editing",
   "displayName": "Appalachia.Editing for Unity3D",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "unity": "2020.3",
   "description": "Functionality to extend Unity3D when running in the editor.",
   "keywords": [
