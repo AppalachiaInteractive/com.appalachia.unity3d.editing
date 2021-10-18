@@ -12,6 +12,12 @@
 ## Releasing
 | Hash | Date | Author | Changes |
 |------|------|--------|---------|
+| 592b9a01b75f9ca2dbdde316230a5577acae7958 | 2021-10-17 | Chris Schubert | Updating packages |
+
+
+ ## Tag: `v0.1.5`
+| Hash | Date | Author | Changes |
+|------|------|--------|---------|
 | a05b14b6cb67dc07feebd81cd2917e6b68bc4d14 | 2021-10-17 | Chris Schubert | Fixing package jsons |
 
 
