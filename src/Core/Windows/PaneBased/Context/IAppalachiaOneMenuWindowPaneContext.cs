@@ -14,7 +14,7 @@ namespace Appalachia.Editing.Core.Windows.PaneBased.Context
         {
             var menuSelection = GetMenuSelection(menuIndex);
 
-            for (var menuItemIndex = 0; menuItemIndex < MenuOneItems.Count; menuItemIndex++)
+            for (var menuItemIndex = 0; menuItemIndex < items.Count; menuItemIndex++)
             {
                 var visible = menuSelection.IsVisible(menuItemIndex);
 

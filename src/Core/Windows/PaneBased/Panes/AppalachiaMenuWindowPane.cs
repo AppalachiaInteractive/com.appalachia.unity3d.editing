@@ -43,11 +43,14 @@ namespace Appalachia.Editing.Core.Windows.PaneBased.Panes
 
                 for (var menuIndex = 0; menuIndex < context.RequiredMenuCount; menuIndex++)
                 {
+                    var menuSelection = context.GetMenuSelection(menuIndex);
+                    
+                    context.ValidateMenuSelection(menuIndex);
+                    
                     using (fieldMetadataManager.Get<ScrollViewUIMetadata>($"SV_{menuIndex}").GetScope())
                     {
                         OnDrawPaneMenuStart(menuIndex);
 
-                        var menuSelection = context.menuSelections[menuIndex];
                         menuSelection.ResetVisibility();
 
                         for (var menuItemIndex = 0; menuItemIndex < menuSelection.length; menuItemIndex++)
@@ -63,14 +66,14 @@ namespace Appalachia.Editing.Core.Windows.PaneBased.Panes
 
                             if (isSelected)
                             {
-                                context.menuSelections[menuIndex].SetSelected(menuItemIndex);
+                                menuSelection.SetSelected(menuItemIndex);
                             }
                         }
 
                         OnDrawPaneMenuEnd(menuIndex);
                     }
 
-                    context.menuSelections[menuIndex].position = GUILayoutUtility.GetLastRect();
+                    menuSelection.position = GUILayoutUtility.GetLastRect();
                 }
 
                 OnDrawPaneMenusEnd();

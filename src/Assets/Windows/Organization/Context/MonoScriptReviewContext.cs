@@ -20,6 +20,16 @@ namespace Appalachia.Editing.Assets.Windows.Organization.Context
 
         public override int RequiredMenuCount => 1;
 
+        public override void ValidateMenuSelection(int menuIndex)
+        {
+            var menuSelection = GetMenuSelection(menuIndex);
+            
+            if (menuSelection.length != MenuOneItems.Count)
+            {
+                menuSelection.SetLength(MenuOneItems.Count);
+            }
+        }
+
         public IList<MonoScriptReviewMetadata> MenuOneItems => _items;
 
         protected override void OnInitialize()

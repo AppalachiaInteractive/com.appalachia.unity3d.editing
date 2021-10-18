@@ -4,6 +4,7 @@ using Appalachia.Editing.Assets.Extensions;
 using Appalachia.Editing.Assets.Windows.Organization.Context;
 using Appalachia.Editing.Core.Colors;
 using Appalachia.Editing.Core.Fields;
+using Appalachia.Editing.Core.Layout;
 using Appalachia.Editing.Core.Windows.PaneBased.Panes;
 using Unity.Profiling;
 using UnityEditor;
@@ -31,6 +32,8 @@ namespace Appalachia.Editing.Assets.Windows.Organization.Panes
 
         public string TabName => "Assembly Definitions";
 
+        private static readonly ProfilerMarker _PRF_OnDrawPaneMenusStart = new ProfilerMarker(_PRF_PFX + nameof(OnDrawPaneMenusStart));
+      
         public override void OnDrawPaneMenuItem(int menuIndex, int menuItemIndex, out bool isSelected)
         {
             var assemblyDefinitionMetadata = context.MenuOneItems[menuItemIndex];

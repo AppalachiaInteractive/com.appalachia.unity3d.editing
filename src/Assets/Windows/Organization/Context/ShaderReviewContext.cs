@@ -23,6 +23,16 @@ namespace Appalachia.Editing.Assets.Windows.Organization.Context
 
         public IList<ShaderReviewMetadata> MenuOneItems => menuItems;
 
+        public override void ValidateMenuSelection(int menuIndex)
+        {
+            var menuSelection = GetMenuSelection(menuIndex);
+
+            if (menuSelection.length != MenuOneItems.Count)
+            {
+                menuSelection.SetLength(MenuOneItems.Count);
+            }
+        }
+
         protected override void OnInitialize()
         {
             using (_PRF_OnInitialize.Auto())

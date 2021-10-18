@@ -22,6 +22,16 @@ namespace Appalachia.Editing.Assets.Windows.Organization.Context
             Shader
         }
 
+        public override void ValidateMenuSelection(int menuIndex)
+        {
+            var menuSelection = GetMenuSelection(menuIndex);
+            
+            if (menuSelection.length != MenuOneItems.Count)
+            {
+                menuSelection.SetLength(MenuOneItems.Count);
+            }
+        }
+
         protected override void OnInitialize()
         {
             if (menuItems == null)

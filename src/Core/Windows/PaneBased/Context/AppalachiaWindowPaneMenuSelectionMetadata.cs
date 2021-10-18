@@ -65,6 +65,18 @@ namespace Appalachia.Editing.Core.Windows.PaneBased.Context
             visibleCount = 0;
         }
 
+        public void SetLength(int length)
+        {
+            EnsureCollectionSizes(
+                ref _visibility,
+                ref _indexToVisibleIndex,
+                ref _visibleIndexToIndex,
+                length
+            );
+
+            this.length = length;
+        }
+
         public void SetSelected(int index)
         {
             EnsureCollectionSizes(ref _visibility, ref _indexToVisibleIndex, ref _visibleIndexToIndex, index);

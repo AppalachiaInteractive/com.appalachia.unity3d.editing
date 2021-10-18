@@ -21,6 +21,16 @@ namespace Appalachia.Editing.Assets.Windows.Organization.Context
         private List<OrphanedAsset> _orphans;
         private List<string> _relativeAssetPaths;
 
+        public override void ValidateMenuSelection(int menuIndex)
+        {
+            var menuSelection = GetMenuSelection(menuIndex);
+            
+            if (menuSelection.length != MenuOneItems.Count)
+            {
+                menuSelection.SetLength(MenuOneItems.Count);
+            }
+        }
+
         public override int RequiredMenuCount => 1;
 
         public IList<OrphanedAsset> MenuOneItems => _orphans;

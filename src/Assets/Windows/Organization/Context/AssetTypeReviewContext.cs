@@ -37,7 +37,6 @@ namespace Appalachia.Editing.Assets.Windows.Organization.Context
             new(_PRF_PFX + nameof(CorrectAllIssues));
 
         private static readonly TraceMarker _TRACE_OnInitialize = new(_TRACE_PFX + nameof(OnInitialize));
-
         private static readonly TraceMarker _TRACE_OnReset = new(_TRACE_PFX + nameof(OnReset));
         private static readonly TraceMarker _TRACE_ClearTypeState = new(_TRACE_PFX + nameof(ClearTypeState));
 
@@ -67,6 +66,26 @@ namespace Appalachia.Editing.Assets.Windows.Organization.Context
         }
 
         public IList<TypeReviewMetadata> MenuOneItems => types;
+
+        private static string[] GetAssetPathsForType(Type t)
+        {
+            return AssetDatabaseManager.GetProjectAssetPaths(t);
+        }
+
+        private static string[] GetAssetPathsForType<T0>()
+        {
+            return GetAssetPathsForType(typeof(T0));
+        }
+
+        public override void ValidateMenuSelection(int menuIndex)
+        {
+            var menuSelection = GetMenuSelection(menuIndex);
+
+            if (menuSelection.length != MenuOneItems.Count)
+            {
+                menuSelection.SetLength(MenuOneItems.Count);
+            }
+        }
 
         public void CorrectAllIssues(bool dryRun = true)
         {
@@ -470,16 +489,6 @@ namespace Appalachia.Editing.Assets.Windows.Organization.Context
                     }
                 }
             }
-        }
-
-        private static string[] GetAssetPathsForType(Type t)
-        {
-            return AssetDatabaseManager.GetProjectAssetPaths(t);
-        }
-
-        private static string[] GetAssetPathsForType<T0>()
-        {
-            return GetAssetPathsForType(typeof(T0));
         }
     }
 }

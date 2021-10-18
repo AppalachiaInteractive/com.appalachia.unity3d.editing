@@ -13,7 +13,6 @@ namespace Appalachia.Editing.Core.Windows.PaneBased.Context
 
         public abstract int RequiredMenuCount { get; }
         public bool initialized => _initialized;
-        public AppalachiaWindowPaneMenuSelectionMetadata[] menuSelections => _menuSelections;
 
         public void ChangeMenuSelection(int menuIndex, bool up)
         {
@@ -63,6 +62,8 @@ namespace Appalachia.Editing.Core.Windows.PaneBased.Context
             
             return _menuSelections[menuIndex];
         }
+
+        public abstract void ValidateMenuSelection(int menuIndex);
 
         public void Initialize()
         {

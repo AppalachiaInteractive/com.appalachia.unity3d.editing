@@ -30,6 +30,16 @@ namespace Appalachia.Editing.Assets.Windows.Organization.Context
 
         public IList<AssemblyDefinitionMetadata> MenuOneItems => assemblyDefinitionMetadatas;
 
+        public override void ValidateMenuSelection(int menuIndex)
+        {
+            var menuSelection = GetMenuSelection(menuIndex);
+            
+            if (menuSelection.length != MenuOneItems.Count)
+            {
+                menuSelection.SetLength(MenuOneItems.Count);
+            }
+        }
+
         protected override void OnInitialize()
         {
             using (_TRACE_OnInitialize.Auto())

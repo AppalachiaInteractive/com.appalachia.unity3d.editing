@@ -20,6 +20,10 @@ namespace Appalachia.Editing.Assets.Windows.Organization.Context
 
         public override int RequiredMenuCount => 1;
 
+        public override void ValidateMenuSelection(int menuIndex)
+        {
+        }
+
         protected override void OnInitialize()
         {
             using (_PRF_OnInitialize.Auto())
