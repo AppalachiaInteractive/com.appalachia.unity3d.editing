@@ -22,8 +22,8 @@ namespace Appalachia.Editing.Assets.Windows.Organization.Panes
         private static readonly ProfilerMarker _PRF_DrawTypeInstances =
             new(_PRF_PFX + nameof(DrawTypeInstances));
 
-        private static readonly ProfilerMarker _PRF_OnDrawPaneMenusStart =
-            new(_PRF_PFX + nameof(OnDrawPaneMenusStart));
+        private static readonly ProfilerMarker _PRF_DrawPaneHeader =
+            new(_PRF_PFX + nameof(DrawPaneHeader));
 
         private static readonly ProfilerMarker _PRF_OnDrawPaneContent =
             new(_PRF_PFX + nameof(OnDrawPaneContent));
@@ -90,9 +90,10 @@ namespace Appalachia.Editing.Assets.Windows.Organization.Panes
             }
         }
 
-        public override void OnDrawPaneMenusStart()
+
+        public override void DrawPaneHeader()
         {
-            using (_PRF_OnDrawPaneMenusStart.Auto())
+            using (_PRF_DrawPaneHeader.Auto())
             {
                 var header = fieldMetadataManager.Get<LabelH2Metadata>("Project Overview");
 

@@ -41,13 +41,18 @@ namespace Appalachia.Editing.Core.Windows.PaneBased.Panes
             {
                 OnDrawPaneMenusStart();
 
+                
                 for (var menuIndex = 0; menuIndex < context.RequiredMenuCount; menuIndex++)
                 {
                     var menuSelection = context.GetMenuSelection(menuIndex);
                     
                     context.ValidateMenuSelection(menuIndex);
+
+                    var svScope = fieldMetadataManager.Get<ScrollViewUIMetadata>($"SV_{menuIndex}");
                     
-                    using (fieldMetadataManager.Get<ScrollViewUIMetadata>($"SV_{menuIndex}").GetScope())
+                    svScope.AddLayoutOption(GUILayout.MinWidth(300));
+                    
+                    using (svScope.GetScope())
                     {
                         OnDrawPaneMenuStart(menuIndex);
 

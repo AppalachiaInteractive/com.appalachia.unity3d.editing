@@ -145,6 +145,10 @@ namespace Appalachia.Editing.Core.Windows.PaneBased.Panes
 
         public abstract void OnInitialize();
 
+        public virtual void DrawPaneHeader()
+        {
+        }
+
         public void DrawPaneContent()
         {
             using (_TRACE_DrawPaneContent.Auto())
@@ -360,6 +364,8 @@ namespace Appalachia.Editing.Core.Windows.PaneBased.Panes
 
                 OnBeforeDraw();
 
+                DrawPaneHeader();
+                
                 using (new GUILayout.HorizontalScope())
                 {
                     OnBeforeDrawPaneContent();

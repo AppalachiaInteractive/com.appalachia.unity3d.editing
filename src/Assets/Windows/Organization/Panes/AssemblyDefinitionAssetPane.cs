@@ -115,13 +115,21 @@ namespace Appalachia.Editing.Assets.Windows.Organization.Panes
 
             using (new GUILayout.HorizontalScope())
             {
+                var menuSelection = context.GetMenuSelection(0);
+                
                 var updateNamesButton = fieldMetadataManager.Get<MiniButtonMetadata>("Update Names");
 
                 if (updateNamesButton.Button(context.anyNameIssues, backgroundColor: palette.error))
                 {
                     using var assetScope = new AssetEditingScope();
-                    foreach (var assembly in context.MenuOneItems)
+                    for (var index = 0; index < context.MenuOneItems.Count; index++)
                     {
+                        if (!menuSelection.IsVisible(index))
+                        {
+                            continue;
+                        }
+
+                        var assembly = context.MenuOneItems[index];
                         assembly.UpdateNames(generateTestFiles.Value, false);
                     }
                 }
@@ -131,8 +139,14 @@ namespace Appalachia.Editing.Assets.Windows.Organization.Panes
                 if (sortReferences.Button(context.anySortingIssues, backgroundColor: palette.notable))
                 {
                     using var assetScope = new AssetEditingScope();
-                    foreach (var assembly in context.MenuOneItems)
+                    for (var index = 0; index < context.MenuOneItems.Count; index++)
                     {
+                        if (!menuSelection.IsVisible(index))
+                        {
+                            continue;
+                        }
+
+                        var assembly = context.MenuOneItems[index];
                         assembly.SortReferences(generateTestFiles.Value, false);
                     }
                 }
@@ -146,8 +160,14 @@ namespace Appalachia.Editing.Assets.Windows.Organization.Panes
                 ))
                 {
                     using var assetScope = new AssetEditingScope();
-                    foreach (var assembly in context.MenuOneItems)
+                    for (var index = 0; index < context.MenuOneItems.Count; index++)
                     {
+                        if (!menuSelection.IsVisible(index))
+                        {
+                            continue;
+                        }
+
+                        var assembly = context.MenuOneItems[index];
                         assembly.RemoveInvalidAssemblies(generateTestFiles.Value, false);
                     }
                 }
@@ -160,8 +180,14 @@ namespace Appalachia.Editing.Assets.Windows.Organization.Panes
                 ))
                 {
                     using var assetScope = new AssetEditingScope();
-                    foreach (var assembly in context.MenuOneItems)
+                    for (var index = 0; index < context.MenuOneItems.Count; index++)
                     {
+                        if (!menuSelection.IsVisible(index))
+                        {
+                            continue;
+                        }
+                        
+                        var assembly = context.MenuOneItems[index];
                         assembly.ConvertToGuidReferences(
                             context.MenuOneItems,
                             generateTestFiles.Value,
