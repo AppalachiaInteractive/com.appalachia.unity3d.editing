@@ -7,7 +7,11 @@ namespace Appalachia.Editing.Core.Fields
     [Serializable]
     public class ScrollViewUIMetadata : EditorUIFieldMetadata<ScrollViewUIMetadata>
     {
+        public float width;
         public Vector2 scrollPosition;
+
+        private GUIStyle _horizontalScrollbar;
+        private GUIStyle _verticalScrollbar;
 
         protected override GUIStyle DefaultStyle
         {
@@ -22,22 +26,54 @@ namespace Appalachia.Editing.Core.Fields
             }
         }
 
-        public EditorGUILayout.ScrollViewScope GetScope()
+        protected GUIStyle HorizontalScrollbar
         {
-            hasBeenDrawn = true;
-            var scope = new EditorGUILayout.ScrollViewScope(scrollPosition, style, layout)
+            get
             {
-                handleScrollWheel = ShouldHandleScrollWheel()
-            };
+                if (_horizontalScrollbar == null)
+                {
+                    _horizontalScrollbar = new GUIStyle(GUI.skin.horizontalScrollbar);
+                }
 
-            scrollPosition = scope.scrollPosition;
+                return _horizontalScrollbar;
+            }
+        }
 
-            return scope;
+        protected GUIStyle VerticalScrollbar
+        {
+            get
+            {
+                if (_verticalScrollbar == null)
+                {
+                    _verticalScrollbar = new GUIStyle(GUI.skin.verticalScrollbar);
+                }
+
+                return _verticalScrollbar;
+            }
         }
 
         public virtual bool ShouldHandleScrollWheel()
         {
             return true;
+        }
+
+        public IDisposable GetScope(bool alwaysShowHorizontal = false, bool alwaysShowVertical = false)
+        {
+            hasBeenDrawn = true;
+
+            var scope = new EditorGUILayout.ScrollViewScope(
+                scrollPosition,
+                alwaysShowHorizontal,
+                alwaysShowVertical,
+                HorizontalScrollbar,
+                VerticalScrollbar,
+                style,
+                layout
+            ) {handleScrollWheel = ShouldHandleScrollWheel()};
+
+            scrollPosition = scope.scrollPosition;
+
+            return scope;
         }
     }
 }

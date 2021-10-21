@@ -9,5 +9,15 @@ namespace Appalachia.Editing.Core.Windows.PaneBased.Context
         public new int RequiredMenuCount => 2;
 
         public IEnumerable<T2> VisibleMenuTwoItems => GetVisibleItems(1, MenuTwoItems);
+        
+        int IAppalachiaMenuWindowPaneContext.GetMenuItemCount(int menuIndex)
+        {
+            if (menuIndex == 0)
+            {
+                return MenuOneItems.Count;                
+            }
+            
+            return MenuTwoItems.Count;
+        }
     }
 }

@@ -28,5 +28,10 @@ namespace Appalachia.Editing.Core.Windows.PaneBased.Context
                 yield return menuItem;
             }
         }
+
+        int IAppalachiaMenuWindowPaneContext.GetMenuItemCount(int menuIndex)
+        {
+            return MenuOneItems.Count;
+        }
     }
 }

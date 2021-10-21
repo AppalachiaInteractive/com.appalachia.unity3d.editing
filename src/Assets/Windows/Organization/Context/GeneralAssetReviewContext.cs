@@ -15,17 +15,10 @@ namespace Appalachia.Editing.Assets.Windows.Organization.Context
 
         public IList<AssetType> MenuOneItems => menuItems;
 
-        public enum AssetType
-        {
-            Directory,
-            MonoScript,
-            Shader
-        }
-
         public override void ValidateMenuSelection(int menuIndex)
         {
             var menuSelection = GetMenuSelection(menuIndex);
-            
+
             if (menuSelection.length != MenuOneItems.Count)
             {
                 menuSelection.SetLength(MenuOneItems.Count);
@@ -49,6 +42,13 @@ namespace Appalachia.Editing.Assets.Windows.Organization.Context
         protected override void OnReset()
         {
             menuItems?.Clear();
+        }
+
+        public enum AssetType
+        {
+            Directory,
+            MonoScript,
+            Shader
         }
     }
 }

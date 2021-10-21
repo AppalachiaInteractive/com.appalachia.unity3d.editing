@@ -16,7 +16,6 @@ namespace Appalachia.Editing.Core.Windows.PaneBased.Panes
             new(_PRF_PFX + nameof(OnBeforeInitialize));
 
         private static readonly ProfilerMarker _PRF_OnBeforeDraw = new(_PRF_PFX + nameof(OnBeforeDraw));
-
         private static readonly TraceMarker _TRACE_OnBeforeDraw = new(_TRACE_PFX + nameof(OnBeforeDraw));
 
         private static readonly TraceMarker _TRACE_OnBeforeDrawPaneContentStart =
@@ -28,51 +27,17 @@ namespace Appalachia.Editing.Core.Windows.PaneBased.Panes
         private static readonly TraceMarker _TRACE_OnBeforeInitialize =
             new(_TRACE_PFX + nameof(OnBeforeInitialize));
 
+        private static readonly TraceMarker _TRACE_CheckContext = new(_TRACE_PFX + nameof(CheckContext));
+        private static readonly ProfilerMarker _PRF_CheckContext = new(_PRF_PFX + nameof(CheckContext));
+
         public TC context { get; set; }
 
-        private static readonly TraceMarker _TRACE_CheckContext = new TraceMarker(_TRACE_PFX + nameof(CheckContext));
-        private static readonly ProfilerMarker _PRF_CheckContext = new ProfilerMarker(_PRF_PFX + nameof(CheckContext));
-        private void CheckContext()
-        {
-            using (_TRACE_CheckContext.Auto())
-            using (_PRF_CheckContext.Auto())
-            {
-                if (context == null)
-                {
-                    context = new TC();
-                }
-                if (!context.initialized)
-                {
-                    context.Initialize();
-                }
-            }
-        }
-        
         public override void OnBeforeDraw()
         {
             using (_TRACE_OnBeforeDraw.Auto())
             using (_PRF_OnBeforeDraw.Auto())
             {
                 CheckContext();
-                
-                if ((Event.current.type == EventType.KeyDown) &&
-                    context is IAppalachiaMenuWindowPaneContext c)
-                {
-                    var mousePosition = Event.current.mousePosition;
-
-                    var targetMenuIndex = c.GetActiveMenuIndex(mousePosition);
-
-                    if (Event.current.keyCode == KeyCode.DownArrow)
-                    {
-                        context.ChangeMenuSelection(targetMenuIndex, false);
-                    }
-                    else if (Event.current.keyCode == KeyCode.UpArrow)
-                    {
-                        context.ChangeMenuSelection(targetMenuIndex, true);
-                    }
-
-                    window.SafeRepaint();
-                }
             }
         }
 
@@ -87,11 +52,18 @@ namespace Appalachia.Editing.Core.Windows.PaneBased.Panes
 
                 var resetContext = fieldMetadataManager.Get<ButtonMetadata>("Reset Context");
 
-                if (resetContext.Button())
+                fieldMetadataManager.Space(SpaceSize.ButtonPaddingLeft);
+
+                using (new GUILayout.HorizontalScope())
                 {
-                    context.Reset();
-                    context.Initialize();
-                    shouldDraw = false;
+                    if (resetContext.Button())
+                    {
+                        context.Reset();
+                        context.Initialize();
+                        shouldDraw = false;
+                    }
+
+                    DrawContextButtons();
                 }
             }
         }
@@ -101,7 +73,28 @@ namespace Appalachia.Editing.Core.Windows.PaneBased.Panes
             using (_TRACE_OnBeforeInitialize.Auto())
             using (_PRF_OnBeforeInitialize.Auto())
             {
-               CheckContext();
+                CheckContext();
+            }
+        }
+
+        protected virtual void DrawContextButtons()
+        {
+        }
+
+        private void CheckContext()
+        {
+            using (_TRACE_CheckContext.Auto())
+            using (_PRF_CheckContext.Auto())
+            {
+                if (context == null)
+                {
+                    context = new TC();
+                }
+
+                if (!context.initialized)
+                {
+                    context.Initialize();
+                }
             }
         }
     }

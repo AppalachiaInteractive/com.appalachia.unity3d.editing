@@ -1,6 +1,9 @@
 using System;
 using System.Collections.Generic;
+using Appalachia.Editing.Core.Utilities;
 using Unity.Profiling;
+using UnityEditor;
+using UnityEngine;
 
 namespace Appalachia.Editing.Core.Fields
 {
@@ -14,7 +17,63 @@ namespace Appalachia.Editing.Core.Fields
         private static readonly ProfilerMarker _PRF_Add = new(_PRF_PFX + nameof(Add));
 
         private static readonly ProfilerMarker _PRF_Get = new(_PRF_PFX + nameof(Get));
+
+        private Dictionary<Color, GUIStyle> _backgroundStyles;
         private Dictionary<Type, Dictionary<string, EditorUIFieldMetadata>> _lookup = new();
+
+        public float GetSpace(SpaceSize spaceSize)
+        {
+            var size = spaceSize switch
+            {
+                SpaceSize.HeaderPaddingLeft            => 4f,
+                SpaceSize.ButtonGroupBreak             => 2f,
+                SpaceSize.FieldPaddingRight            => 4f,
+                SpaceSize.FieldPaddingMid              => 4f,
+                SpaceSize.SectionStartVertical         => 10f,
+                SpaceSize.SectionEndVertical           => 6f,
+                SpaceSize.ButtonPaddingLeft            => 4f,
+                SpaceSize.ButtonPaddingRight           => 4f,
+                SpaceSize.PreferencesPaddingVertical   => 4f,
+                SpaceSize.ProgressBarFooter            => 4f,
+                SpaceSize.PreferencesLeftPaddingInner  => 6f,
+                SpaceSize.PreferencesLeftPaddingUnder  => 2f,
+                SpaceSize.PreferencesLeftPaddingTop    => 6f,
+                SpaceSize.PreferencesLeftPaddingBottom => 6f,
+                SpaceSize.SectionDividerVertical       => 10f,
+                SpaceSize.MenuItemPaddingLeft          => 8f,
+                SpaceSize.MenuItemSelectionStrip       => 3f,
+                SpaceSize.PreferencesStartVertical     => 4f,
+                SpaceSize.PreferencesEndVertical       => 4f,
+                _                                      => 4f
+            };
+
+            return size;
+        }
+
+        public GUIStyle Background(Color color)
+        {
+            if (_backgroundStyles == null)
+            {
+                _backgroundStyles = new Dictionary<Color, GUIStyle>();
+            }
+
+            GUIStyle bgStyle;
+
+            if (!_backgroundStyles.ContainsKey(color))
+            {
+                bgStyle = new GUIStyle();
+                bgStyle.normal.background = TextureHelper.GetBackground(color);
+                bgStyle.active.background = TextureHelper.GetBackground(color);
+
+                _backgroundStyles.Add(color, bgStyle);
+            }
+            else
+            {
+                bgStyle = _backgroundStyles[color];
+            }
+
+            return bgStyle;
+        }
 
         public T Add<T>(
             string identifier = null,
@@ -49,7 +108,7 @@ namespace Appalachia.Editing.Core.Fields
                 {
                     instance = new T();
                     instance.SetInitializationAction(onInitialize);
-                    instance.Initialize();
+                    instance.Initialize(this);
                     instance.identifier = identifier;
                 }
 
@@ -120,6 +179,18 @@ namespace Appalachia.Editing.Core.Fields
 
                 return instance;
             }
+        }
+
+        public void Space(SpaceSize spaceSize)
+        {
+            var size = GetSpace(spaceSize);
+
+            EditorGUILayout.Space(size, false);
+        }
+
+        public void Space(float size)
+        {
+            EditorGUILayout.Space(size, false);
         }
 
         private void CheckInitialization()

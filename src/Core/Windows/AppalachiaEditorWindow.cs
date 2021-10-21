@@ -16,35 +16,8 @@ namespace Appalachia.Editing.Core.Windows
 {
     public abstract class AppalachiaEditorWindow : EditorWindow
     {
+        private const float REPAINT_THRESHOLD = .1F;
         private const string _PRF_PFX = nameof(AppalachiaEditorWindow) + ".";
-
-        [FoldoutGroup("Execution", false, -1000)]
-        [PropertyOrder(-99)]
-        [ShowInInspector]
-        public bool cancelOnError = true;
-
-        [FoldoutGroup("Execution", false, -1000)]
-        [ReadOnly]
-        [PropertyOrder(-2)]
-        [ShowInInspector]
-        public double executionTime;
-
-        [FoldoutGroup("Execution", false, -1000)]
-        [PropertyOrder(-98)]
-        [ShowInInspector]
-        public bool forceCancelImmediately;
-
-        [FoldoutGroup("Execution", false, -1000)]
-        [ReadOnly]
-        [PropertyOrder(-1)]
-        [ShowInInspector]
-        public bool isExecutingCoroutine;
-
-        [FoldoutGroup("Execution", false, -1000)]
-        [PropertyOrder(-100)]
-        [ShowInInspector]
-        [Range(1, 200)]
-        public int stepSize = 10;
 
         protected static Random rng = new();
 
@@ -70,13 +43,45 @@ namespace Appalachia.Editing.Core.Windows
             new(_PRF_PFX + nameof(ExecuteCoroutineEnumerator));
 
         [FoldoutGroup("Execution", false, -1000)]
+        [PropertyOrder(-99)]
+        [ShowInInspector]
+        public bool cancelOnError = true;
+
+        [FoldoutGroup("Execution", false, -1000)]
+        [PropertyOrder(-98)]
+        [ShowInInspector]
+        public bool forceCancelImmediately;
+
+        [FoldoutGroup("Execution", false, -1000)]
+        [ReadOnly]
+        [PropertyOrder(-1)]
+        [ShowInInspector]
+        public bool isExecutingCoroutine;
+
+        [FoldoutGroup("Execution", false, -1000)]
         [ReadOnly]
         [PropertyOrder(-3)]
         [ShowInInspector]
         [DisplayAsString]
         public DateTime lastExecutionTime;
 
+        [FoldoutGroup("Execution", false, -1000)]
+        [ReadOnly]
+        [PropertyOrder(-2)]
+        [ShowInInspector]
+        public double executionTime;
+
+        [FoldoutGroup("Execution", false, -1000)]
+        [PropertyOrder(-100)]
+        [ShowInInspector]
+        [Range(1, 200)]
+        public int stepSize = 10;
+
         private readonly Stopwatch _stopwatch = new();
+
+        private bool _hasRepaintBeenRequested;
+
+        private float _lastRepaintTime;
 
         public void ExecuteCoroutine(Func<IEnumerator> coroutine)
         {
@@ -86,36 +91,15 @@ namespace Appalachia.Editing.Core.Windows
             }
         }
 
-        protected void BeginExecution()
+        public void SafeRepaint()
         {
-            using (_PRF_BeginExecution.Auto())
+            if (CanRepaint() && ShouldRepaint())
             {
-                isExecutingCoroutine = true;
-                _stopwatch.Restart();
+                ExecuteRepaint();
             }
-        }
-
-        protected void CloseWindow()
-        {
-            using (_PRF_CloseWindow.Auto())
+            else
             {
-                Close();
-                GUIUtility.ExitGUI();
-            }
-        }
-
-        protected virtual void DrawSceneGUI()
-        {
-        }
-
-        protected void EndExecution()
-        {
-            using (_PRF_EndExecution.Auto())
-            {
-                _stopwatch.Stop();
-                lastExecutionTime = DateTime.Now;
-                executionTime = _stopwatch.Elapsed.TotalSeconds;
-                isExecutingCoroutine = false;
+                _hasRepaintBeenRequested = true;                
             }
         }
 
@@ -173,6 +157,39 @@ namespace Appalachia.Editing.Core.Windows
             }
         }
 
+        protected void BeginExecution()
+        {
+            using (_PRF_BeginExecution.Auto())
+            {
+                isExecutingCoroutine = true;
+                _stopwatch.Restart();
+            }
+        }
+
+        protected void CloseWindow()
+        {
+            using (_PRF_CloseWindow.Auto())
+            {
+                Close();
+                GUIUtility.ExitGUI();
+            }
+        }
+
+        protected virtual void DrawSceneGUI()
+        {
+        }
+
+        protected void EndExecution()
+        {
+            using (_PRF_EndExecution.Auto())
+            {
+                _stopwatch.Stop();
+                lastExecutionTime = DateTime.Now;
+                executionTime = _stopwatch.Elapsed.TotalSeconds;
+                isExecutingCoroutine = false;
+            }
+        }
+
         protected void OnDestroy()
         {
             // When the window is destroyed, remove the delegate
@@ -188,6 +205,50 @@ namespace Appalachia.Editing.Core.Windows
             }
         }
 
+        private bool CanRepaint()
+        {
+            return Event.current is not {type: EventType.Repaint};
+        }
+
+        private bool ShouldRepaint()
+        {
+            var elapsed = Time.realtimeSinceStartup - _lastRepaintTime;
+
+            if (elapsed > REPAINT_THRESHOLD)
+            {
+                return true;
+            }
+
+            return false;
+        }
+
+        private bool MustRepaint()
+        {
+            if (!_hasRepaintBeenRequested)
+            {
+                return false;
+            }
+
+            if (!CanRepaint())
+            {
+                return false;
+            }
+
+            if (!ShouldRepaint())
+            {
+                return false;
+            }
+
+            return true;
+        }
+
+        private void ExecuteRepaint()
+        {
+            _hasRepaintBeenRequested = false;
+            _lastRepaintTime = Time.realtimeSinceStartup;
+            Repaint();
+        }
+
         // Window has been selected
         private void OnFocus()
         {
@@ -197,6 +258,14 @@ namespace Appalachia.Editing.Core.Windows
 
             // Add (or re-add) the delegate.
             SceneView.duringSceneGui += OnSceneGUI;
+        }
+
+        private void OnGUI()
+        {
+            if (MustRepaint())
+            {
+                ExecuteRepaint();
+            }
         }
 
         private void OnSceneGUI(SceneView sceneView)
@@ -256,22 +325,6 @@ namespace Appalachia.Editing.Core.Windows
                 {
                     Array.Resize(ref toggles, size);
                 }
-            }
-        }
-
-        private bool _shouldRepaint;
-        
-        public void SafeRepaint()
-        {
-            _shouldRepaint = true;
-        }
-
-        private void OnGUI()
-        {
-            if (_shouldRepaint && (Event.current.type != EventType.Repaint))
-            {
-                this.Repaint();
-                _shouldRepaint = false;
             }
         }
     }

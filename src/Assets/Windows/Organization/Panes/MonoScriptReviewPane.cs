@@ -3,6 +3,7 @@ using Appalachia.Core.Preferences;
 using Appalachia.Editing.Assets.Windows.Organization.Context;
 using Appalachia.Editing.Core.Fields;
 using Appalachia.Editing.Core.Windows.PaneBased.Panes;
+using Appalachia.Editing.Core.Windows.PaneBased.Panes.Interfaces;
 using Appalachia.Utility.Reflection.Extensions;
 using Unity.Profiling;
 
@@ -10,7 +11,7 @@ namespace Appalachia.Editing.Assets.Windows.Organization.Panes
 {
     public class MonoScriptReviewPane : AppalachiaMenuWindowPane<MonoScriptReviewContext>,
                                         IAppalachiaTabbedWindowPane
-                                        
+
     {
         private const string _PRF_PFX = nameof(MonoScriptReviewPane) + ".";
         private const string _TRACE_PFX = nameof(MonoScriptReviewPane) + ".";
@@ -49,20 +50,6 @@ namespace Appalachia.Editing.Assets.Windows.Organization.Panes
 
         public string TabName => "MonoScripts";
 
-        public override void OnDrawPaneMenuItem(int menuIndex, int menuItemIndex, out bool isSelected)
-        {
-            using (_TRACE_OnDrawPaneMenuItem.Auto())
-            using (_PRF_OnDrawPaneMenuItem.Auto())
-            {
-                var item = context.MenuOneItems[menuItemIndex];
-
-                var itemName = item.monoScriptType.GetReadableName();
-                var field = fieldMetadataManager.Get<MenuItemField>(itemName);
-
-                isSelected = field.Draw(itemName);
-            }
-        }
-
         public override bool ShouldDrawMenuItem(int menuIndex, int menuItemIndex)
         {
             using (_TRACE_ShouldDrawMenuItem.Auto())
@@ -76,6 +63,27 @@ namespace Appalachia.Editing.Assets.Windows.Organization.Panes
                 }
 
                 return true;
+            }
+        }
+
+        public override void OnDrawPaneMenuItem(
+            int menuIndex,
+            int menuItemIndex,
+            bool isSelected,
+            out bool wasSelected,
+            out float menuItemHeight)
+        {
+            using (_TRACE_OnDrawPaneMenuItem.Auto())
+            using (_PRF_OnDrawPaneMenuItem.Auto())
+            {
+                var item = context.MenuOneItems[menuItemIndex];
+
+                var itemName = item.monoScriptType.GetReadableName();
+                var field = fieldMetadataManager.Get<MenuItemField>(itemName);
+
+                wasSelected = field.Draw(itemName, isSelected);
+                
+                menuItemHeight = field.height;
             }
         }
 

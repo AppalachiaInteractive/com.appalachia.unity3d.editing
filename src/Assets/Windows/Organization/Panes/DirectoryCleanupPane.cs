@@ -4,8 +4,9 @@ using Appalachia.CI.Integration.FileSystem;
 using Appalachia.Editing.Assets.Windows.Organization.Context;
 using Appalachia.Editing.Core.Fields;
 using Appalachia.Editing.Core.Windows.PaneBased.Panes;
+using Appalachia.Editing.Core.Windows.PaneBased.Panes.Interfaces;
 using Unity.Profiling;
-using UnityEngine;
+using UnityEditor;
 
 namespace Appalachia.Editing.Assets.Windows.Organization.Panes
 {
@@ -41,7 +42,7 @@ namespace Appalachia.Editing.Assets.Windows.Organization.Panes
                     var show = fieldMetadataManager.Get<MiniButtonMetadata>("Show");
                     var delete = fieldMetadataManager.Get<MiniButtonMetadata>("Delete");
 
-                    using (new GUILayout.HorizontalScope())
+                    using (new EditorGUILayout.HorizontalScope())
                     {
                         label.Draw();
 

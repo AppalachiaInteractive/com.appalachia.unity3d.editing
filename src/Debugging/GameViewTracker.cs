@@ -1,6 +1,6 @@
 using Appalachia.Core.Preferences;
-using UnityEditor;
 using UnityEngine;
+using UnityEditor;
 
 namespace Appalachia.Editing.Debugging
 {

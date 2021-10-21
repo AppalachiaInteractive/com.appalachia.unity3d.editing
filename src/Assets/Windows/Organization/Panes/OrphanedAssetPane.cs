@@ -3,13 +3,14 @@ using Appalachia.Editing.Assets.Windows.Organization.Context;
 using Appalachia.Editing.Core.Fields;
 using Appalachia.Editing.Core.Layout;
 using Appalachia.Editing.Core.Windows.PaneBased.Panes;
+using Appalachia.Editing.Core.Windows.PaneBased.Panes.Interfaces;
 using Unity.Profiling;
 using UnityEditor;
 
 namespace Appalachia.Editing.Assets.Windows.Organization.Panes
 {
     public class OrphanedAssetPane : AppalachiaMenuWindowPane<OrphanedAssetContext>,
-                                     IAppalachiaTabbedWindowPane 
+                                     IAppalachiaTabbedWindowPane
     {
         private const string _PRF_PFX = nameof(OrphanedAssetPane) + ".";
 
@@ -28,7 +29,17 @@ namespace Appalachia.Editing.Assets.Windows.Organization.Panes
 
         public string TabName => "Orphans";
 
-        public override void OnDrawPaneMenuItem(int menuIndex, int menuItemIndex, out bool isSelected)
+        public override bool ShouldDrawMenuItem(int menuIndex, int menuItemIndex)
+        {
+            return true;
+        }
+
+        public override void OnDrawPaneMenuItem(
+            int menuIndex,
+            int menuItemIndex,
+            bool isSelected,
+            out bool wasSelected,
+            out float menuItemHeight)
         {
             using (_PRF_OnDrawPaneMenuItem.Auto())
             {
@@ -36,13 +47,10 @@ namespace Appalachia.Editing.Assets.Windows.Organization.Panes
 
                 var menuItem = context.MenuOneItems[menuItemIndex];
 
-                isSelected = menuField.Draw(menuItem.assetPathMetadata.name);
+                wasSelected = menuField.Draw(menuItem.assetPathMetadata.name, isSelected);
+                
+                menuItemHeight = menuField.height;
             }
-        }
-
-        public override bool ShouldDrawMenuItem(int menuIndex, int menuItemIndex)
-        {
-            return true;
         }
 
         public override void OnDrawPaneContent()

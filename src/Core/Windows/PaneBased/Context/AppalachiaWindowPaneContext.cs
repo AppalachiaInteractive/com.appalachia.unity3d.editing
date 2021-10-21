@@ -5,6 +5,7 @@ namespace Appalachia.Editing.Core.Windows.PaneBased.Context
 {
     public abstract class AppalachiaWindowPaneContext
     {
+        protected const string G_ = "Appalachia/Editor Windows";
         private const string _PRF_PFX = nameof(AppalachiaWindowPaneContext) + ".";
 
         private bool _initialized;
@@ -14,27 +15,33 @@ namespace Appalachia.Editing.Core.Windows.PaneBased.Context
         public abstract int RequiredMenuCount { get; }
         public bool initialized => _initialized;
 
-        public void ChangeMenuSelection(int menuIndex, bool up)
+        public bool ChangeMenuSelection(int menuIndex, bool up)
         {
             OnBeforeChangeMenuSelection(menuIndex);
 
-            throw new NotImplementedException();
+            var menuSelection = GetMenuSelection(menuIndex);
 
-            /*var menuSelection = _menuSelections[menuIndex];
+            var visibleIndex = menuSelection.currentVisibleIndex;
 
-            if (up)
+            if (up && (visibleIndex == 0))
             {
-                menuSelection.currentIndex = Math.Max(0, menuSelection.currentIndex - 1);
+                return false;
             }
-            else
+            
+            if (!up && (visibleIndex >= (menuSelection.visibleCount - 1)))
             {
-                menuSelection.currentIndex = Math.Min(
-                    menuSelection.length - 1,
-                    menuSelection.currentIndex + 1
-                );
-            }*/
+                return false;
+            }
 
+            var nextVisibleIndex = visibleIndex + (up ? -1 : 1);
+
+            var nextIndex = menuSelection.GetIndex(nextVisibleIndex);
+
+            menuSelection.SetSelected(nextIndex);
+            
             OnAfterChangeMenuSelection(menuIndex);
+
+            return true;
         }
 
         private void InitializeMenuSelections()
@@ -81,10 +88,10 @@ namespace Appalachia.Editing.Core.Windows.PaneBased.Context
 
         public void Reset()
         {
-            OnReset();
-
             _menuSelections = null;
             _initialized = false;
+            
+            OnReset();
         }
 
         protected abstract void OnInitialize();
@@ -94,6 +101,7 @@ namespace Appalachia.Editing.Core.Windows.PaneBased.Context
         // ReSharper disable once UnusedParameter.Global
         protected virtual void OnAfterChangeMenuSelection(int menuIndex)
         {
+            
         }
 
         // ReSharper disable once UnusedParameter.Global

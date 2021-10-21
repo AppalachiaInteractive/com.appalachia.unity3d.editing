@@ -21,7 +21,7 @@ namespace Appalachia.Editing.Core.Fields
             }
 
             EditorGUI.ProgressBar(p, value, text);
-            GUILayout.Space(5);
+            Space(SpaceSize.ProgressBarFooter);
         }
 
         public void Draw(float value, string text = null)

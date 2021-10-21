@@ -3,10 +3,12 @@ using System.Collections;
 using System.Collections.Generic;
 using Appalachia.Core.Aspects;
 using Appalachia.Core.Aspects.Tracing;
-using Appalachia.Core.Extensions.Helpers;
 using Appalachia.Core.Preferences;
 using Appalachia.Editing.Core.Fields;
 using Appalachia.Editing.Core.Layout;
+using Appalachia.Editing.Core.State;
+using Appalachia.Editing.Core.Windows.PaneBased.Panes.Interfaces;
+using Appalachia.Utility.Colors;
 using Unity.Profiling;
 using UnityEditor;
 using UnityEngine;
@@ -30,8 +32,8 @@ namespace Appalachia.Editing.Core.Windows.PaneBased.Panes
         private static readonly ProfilerMarker _PRF_RegisterFilterPref =
             new(_PRF_PFX + nameof(RegisterFilterPref));
 
-        private static readonly ProfilerMarker _PRF_DrawPreferenceToggles =
-            new(_PRF_PFX + nameof(DrawPreferenceToggles));
+        private static readonly ProfilerMarker _PRF_DrawPreferenceFields =
+            new(_PRF_PFX + nameof(DrawPreferenceFields));
 
         private static readonly ProfilerMarker _PRF_DrawPaneContent = new(_PRF_PFX + nameof(DrawPaneContent));
 
@@ -44,8 +46,8 @@ namespace Appalachia.Editing.Core.Windows.PaneBased.Panes
         private static readonly ProfilerMarker _PRF_ExecuteDrawPaneContent =
             new(_PRF_PFX + nameof(ExecuteDrawPaneContent));
 
-        private static Dictionary<string, IReadOnlyList<IAppalachiaWindowPane>> _childPaneSetCache;
         private static Dictionary<string, IList<IAppalachiaTabbedWindowPane>> _tabPaneSetCache;
+        private static Dictionary<string, IReadOnlyList<IAppalachiaWindowPane>> _childPaneSetCache;
         private static readonly TraceMarker _TRACE_GetChildPanes = new(_TRACE_PFX + nameof(GetChildPanes));
         private static readonly ProfilerMarker _PRF_GetChildPanes = new(_PRF_PFX + nameof(GetChildPanes));
         private static readonly TraceMarker _TRACE_GetTabPanes = new(_TRACE_PFX + nameof(GetTabPanes));
@@ -54,7 +56,7 @@ namespace Appalachia.Editing.Core.Windows.PaneBased.Panes
         private static readonly TraceMarker _TRACE_OnDrawGUI = new(_TRACE_PFX + nameof(OnDrawGUI));
 
         private static readonly TraceMarker _TRACE_DrawPreferenceToggles =
-            new(_TRACE_PFX + nameof(DrawPreferenceToggles));
+            new(_TRACE_PFX + nameof(DrawPreferenceFields));
 
         private static readonly ProfilerMarker _PRF_ExecuteCoroutine =
             new(_PRF_PFX + nameof(ExecuteCoroutine));
@@ -103,11 +105,33 @@ namespace Appalachia.Editing.Core.Windows.PaneBased.Panes
         private static readonly TraceMarker _TRACE_OnBeforeInitialize =
             new(_TRACE_PFX + nameof(OnBeforeInitialize));
 
-        private UIFieldMetadataManager _fieldMetadataManager;
+        private static readonly ProfilerMarker _PRF_DrawPreferencesHorizontal =
+            new(_PRF_PFX + nameof(DrawPreferencesHorizontal));
+
+        private static readonly ProfilerMarker _PRF_DrawPreferencesVertical =
+            new(_PRF_PFX + nameof(DrawPreferencesVertical));
+
+        public static Dictionary<string, IList<IAppalachiaTabbedWindowPane>> tabPaneSetCache { get; set; }
 
         public static Dictionary<string, IReadOnlyList<IAppalachiaWindowPane>> childPaneSetCache { get; set; }
 
-        public static Dictionary<string, IList<IAppalachiaTabbedWindowPane>> tabPaneSetCache { get; set; }
+        private UIFieldMetadataManager _fieldMetadataManager;
+
+        public List<Func<bool>> prefsEnabledIf { get; set; }
+
+        public AppalachiaPaneBasedWindowBase window { get; set; }
+
+        public bool Initialized { get; set; }
+
+        public bool Initializing { get; set; }
+
+        public float InitializationStart { get; set; }
+
+        public int[] preferenceTabLevels { get; set; }
+
+        public List<PREF_BASE> registeredPrefs { get; set; }
+
+        public Rect container { get; set; }
 
         public abstract bool ContentInScrollView { get; }
         public abstract string PaneName { get; }
@@ -127,19 +151,11 @@ namespace Appalachia.Editing.Core.Windows.PaneBased.Panes
             }
         }
 
-        public Rect container { get; set; }
+        protected virtual bool AlwaysShowHorizontalScrollbar => false;
 
-        public float InitializationStart { get; set; }
+        protected virtual bool AlwaysShowVerticalScrollbar => false;
 
-        public bool Initialized { get; set; }
-
-        public bool Initializing { get; set; }
-
-        public int[] preferenceTabLevels { get; set; }
-
-        public List<PREF<bool>> registeredPrefs { get; set; }
-
-        public AppalachiaPaneBasedWindowBase window { get; set; }
+        protected virtual bool DrawPreferences => true;
 
         public abstract void OnDrawPaneContent();
 
@@ -149,152 +165,8 @@ namespace Appalachia.Editing.Core.Windows.PaneBased.Panes
         {
         }
 
-        public void DrawPaneContent()
+        public virtual void OnPreferencesChanged()
         {
-            using (_TRACE_DrawPaneContent.Auto())
-            using (_PRF_DrawPaneContent.Auto())
-            {
-                using (new EditorGUILayout.VerticalScope())
-                {
-                    if (DrawHeader)
-                    {
-                        var headerLabel = fieldMetadataManager.Get<LabelH2Metadata>(PaneName);
-                        headerLabel.Draw();                        
-                    }
-
-                    DrawPreferenceToggles();
-
-                    EditorGUILayout.Space();
-
-                    OnBeforeDrawPaneContentStart(out var shouldDraw);
-
-                    if (!shouldDraw)
-                    {
-                        return;
-                    }
-
-                    if (ContentInScrollView)
-                    {
-                        var scrollView =
-                            fieldMetadataManager.Get<ScrollViewUIMetadata>($"SV_CONTENT_{PaneName}");
-
-                        using (scrollView.GetScope())
-                        {
-                            ExecuteDrawPaneContent();
-                        }
-
-                        container = GUILayoutUtility.GetLastRect();
-                    }
-                    else
-                    {
-                        ExecuteDrawPaneContent();
-                    }
-                }
-            }
-        }
-
-        public void DrawPreferenceToggles()
-        {
-            using (_TRACE_DrawPreferenceToggles.Auto())
-            using (_PRF_DrawPreferenceToggles.Auto())
-            {
-                if ((preferenceTabLevels == null) || (preferenceTabLevels.Length == 0))
-                {
-                    return;
-                }
-
-                GUILayout.HorizontalScope scope;
-
-                using (scope = new GUILayout.HorizontalScope())
-                {
-                    var drawCount = 0;
-                    var levelCount = 0;
-                    var turnoverCount = preferenceTabLevels[levelCount];
-
-                    for (var preferenceIndex = 0; preferenceIndex < registeredPrefs.Count; preferenceIndex++)
-                    {
-                        var preference = registeredPrefs[preferenceIndex];
-
-                        var toggle = fieldMetadataManager.Get<ToggleFieldMetadata>(preference.NiceLabel);
-
-                        preference.v = toggle.Toggle(preference.v);
-                        drawCount += 1;
-
-                        if (drawCount >= turnoverCount)
-                        {
-                            scope.Dispose();
-                            scope = new GUILayout.HorizontalScope();
-
-                            drawCount = 0;
-                            levelCount += 1;
-                            if (levelCount < preferenceTabLevels.Length)
-                            {
-                                turnoverCount = preferenceTabLevels[levelCount];
-                            }
-                        }
-                    }
-                }
-
-                scope.Dispose();
-            }
-        }
-
-        public void ExecuteCoroutine(Func<IEnumerator> coroutine)
-        {
-            using (_TRACE_ExecuteCoroutine.Auto())
-            using (_PRF_ExecuteCoroutine.Auto())
-            {
-                window.ExecuteCoroutine(coroutine);
-            }
-        }
-
-        public void ExecuteDrawPaneContent()
-        {
-            using (_TRACE_ExecuteDrawPaneContent.Auto())
-            using (_PRF_ExecuteDrawPaneContent.Auto())
-            {
-                OnDrawPaneContentStart();
-
-                HorizontalLineSeparator();
-
-                if (this is IAppalachiaTabbedWindowPaneParent p1 && p1.DrawTabsBeforeContent)
-                {
-                    p1.DrawAppalachiaTabbedWindowPane();
-                }
-
-                OnDrawPaneContent();
-
-                if (this is IAppalachiaTabbedWindowPaneParent p2 && !p2.DrawTabsBeforeContent)
-                {
-                    p2.DrawAppalachiaTabbedWindowPane();
-                }
-
-                HorizontalLineSeparator();
-
-                OnDrawPaneContentEnd();
-            }
-        }
-
-        public IReadOnlyList<IAppalachiaWindowPane> GetChildPanes(
-            string paneSetIdentifier,
-            Func<IReadOnlyList<IAppalachiaWindowPane>> initializationFunction)
-        {
-            using (_TRACE_GetChildPanes.Auto())
-            using (_PRF_GetChildPanes.Auto())
-            {
-                return GetPanes(ref _childPaneSetCache, paneSetIdentifier, initializationFunction);
-            }
-        }
-
-        public IList<IAppalachiaTabbedWindowPane> GetTabPanes(
-            string paneSetIdentifier,
-            Func<IList<IAppalachiaTabbedWindowPane>> initializationFunction)
-        {
-            using (_TRACE_GetTabPanes.Auto())
-            using (_PRF_GetTabPanes.Auto())
-            {
-                return GetPanes(ref _tabPaneSetCache, paneSetIdentifier, initializationFunction);
-            }
         }
 
         public IEnumerator Initialize()
@@ -334,6 +206,154 @@ namespace Appalachia.Editing.Core.Windows.PaneBased.Panes
             }
         }
 
+        public IList<IAppalachiaTabbedWindowPane> GetTabPanes(
+            string paneSetIdentifier,
+            Func<IList<IAppalachiaTabbedWindowPane>> initializationFunction)
+        {
+            using (_TRACE_GetTabPanes.Auto())
+            using (_PRF_GetTabPanes.Auto())
+            {
+                return GetPanes(ref _tabPaneSetCache, paneSetIdentifier, initializationFunction);
+            }
+        }
+
+        public IReadOnlyList<IAppalachiaWindowPane> GetChildPanes(
+            string paneSetIdentifier,
+            Func<IReadOnlyList<IAppalachiaWindowPane>> initializationFunction)
+        {
+            using (_TRACE_GetChildPanes.Auto())
+            using (_PRF_GetChildPanes.Auto())
+            {
+                return GetPanes(ref _childPaneSetCache, paneSetIdentifier, initializationFunction);
+            }
+        }
+
+        public void DrawPaneContent()
+        {
+            using (_TRACE_DrawPaneContent.Auto())
+            using (_PRF_DrawPaneContent.Auto())
+            {
+                using (new EditorGUILayout.VerticalScope())
+                {
+                    if (DrawHeader)
+                    {
+                        var headerLabel = fieldMetadataManager.Get<LabelH2Metadata>(PaneName);
+                        headerLabel.Draw();
+                    }
+
+                    if (DrawPreferences)
+                    {
+                        DrawPreferenceFields(true);
+                    }
+
+                    fieldMetadataManager.Space(SpaceSize.PreferencesPaddingVertical);
+
+                    OnBeforeDrawPaneContentStart(out var shouldDraw);
+
+                    if (!shouldDraw)
+                    {
+                        return;
+                    }
+
+                    if (ContentInScrollView)
+                    {
+                        var scrollView =
+                            fieldMetadataManager.Get<ScrollViewUIMetadata>($"SV_CONTENT_{PaneName}");
+
+                        using (scrollView.GetScope(
+                            AlwaysShowHorizontalScrollbar,
+                            AlwaysShowVerticalScrollbar
+                        ))
+                        {
+                            ExecuteDrawPaneContent();
+                        }
+
+                        container = GUILayoutUtility.GetLastRect();
+                    }
+                    else
+                    {
+                        ExecuteDrawPaneContent();
+                    }
+                }
+            }
+        }
+
+        public void DrawPreferenceFields(bool horizontal)
+        {
+            using (_TRACE_DrawPreferenceToggles.Auto())
+            using (_PRF_DrawPreferenceFields.Auto())
+            {
+                if ((preferenceTabLevels == null) || (preferenceTabLevels.Length == 0))
+                {
+                    return;
+                }
+
+                fieldMetadataManager.Space(SpaceSize.SectionStartVertical);
+
+                AppalachiaEditorGUIHelper.HorizontalLineSeparator();
+
+                bool changed;
+
+                if (horizontal)
+                {
+                    changed = DrawPreferencesHorizontal();
+                }
+                else
+                {
+                    fieldMetadataManager.Space(SpaceSize.PreferencesStartVertical);
+
+                    changed = DrawPreferencesVertical();
+
+                    fieldMetadataManager.Space(SpaceSize.PreferencesEndVertical);
+                }
+
+                if (changed)
+                {
+                    OnPreferencesChanged();
+                }
+
+                AppalachiaEditorGUIHelper.HorizontalLineSeparator();
+
+                fieldMetadataManager.Space(SpaceSize.SectionEndVertical);
+            }
+        }
+
+        public void ExecuteCoroutine(Func<IEnumerator> coroutine)
+        {
+            using (_TRACE_ExecuteCoroutine.Auto())
+            using (_PRF_ExecuteCoroutine.Auto())
+            {
+                window.ExecuteCoroutine(coroutine);
+            }
+        }
+
+        public void ExecuteDrawPaneContent()
+        {
+            using (_TRACE_ExecuteDrawPaneContent.Auto())
+            using (_PRF_ExecuteDrawPaneContent.Auto())
+            {
+                OnDrawPaneContentStart();
+
+                HorizontalLineSeparator();
+
+                if (this is IAppalachiaTabbedWindowPaneParent p1 && p1.DrawTabsBeforeContent)
+                {
+                    p1.DrawAppalachiaTabbedWindowPane();
+                }
+
+                OnDrawPaneContent();
+
+                if (this is IAppalachiaTabbedWindowPaneParent p2 && !p2.DrawTabsBeforeContent)
+                {
+                    p2.DrawAppalachiaTabbedWindowPane();
+                }
+
+                HorizontalLineSeparator();
+
+                OnDrawPaneContentEnd();
+            }
+        }
+
         public virtual void OnBeforeDraw()
         {
         }
@@ -365,8 +385,8 @@ namespace Appalachia.Editing.Core.Windows.PaneBased.Panes
                 OnBeforeDraw();
 
                 DrawPaneHeader();
-                
-                using (new GUILayout.HorizontalScope())
+
+                using (new EditorGUILayout.HorizontalScope())
                 {
                     OnBeforeDrawPaneContent();
 
@@ -482,11 +502,12 @@ namespace Appalachia.Editing.Core.Windows.PaneBased.Panes
             }
         }
 
-        public void RegisterFilterPref(
-            ref PREF<bool> pref,
+        public void RegisterFilterPref<T>(
+            ref PREF<T> pref,
             string prefix,
             string settingName,
-            bool defaultValue)
+            T defaultValue,
+            Func<bool> enableIf)
         {
             using (_TRACE_RegisterFilterPref.Auto())
             using (_PRF_RegisterFilterPref.Auto())
@@ -499,14 +520,29 @@ namespace Appalachia.Editing.Core.Windows.PaneBased.Panes
                     pref.OnAwake += OnPreferenceAwake;
                 }
 
+                RegisterFilterPref(pref, enableIf);
+            }
+        }
+
+        public void RegisterFilterPref<T>(PREF<T> pref, Func<bool> enableIf = null)
+        {
+            using (_TRACE_RegisterFilterPref.Auto())
+            using (_PRF_RegisterFilterPref.Auto())
+            {
                 if (registeredPrefs == null)
                 {
-                    registeredPrefs = new List<PREF<bool>>();
+                    registeredPrefs = new List<PREF_BASE>();
+                }
+
+                if (prefsEnabledIf == null)
+                {
+                    prefsEnabledIf = new List<Func<bool>>();
                 }
 
                 if (!registeredPrefs.Contains(pref))
                 {
                     registeredPrefs.Add(pref);
+                    prefsEnabledIf.Add(enableIf);
 
                     var tabLevels = registeredPrefs.Count / 4;
 
@@ -540,6 +576,103 @@ namespace Appalachia.Editing.Core.Windows.PaneBased.Panes
                             preferenceTabLevels[i] = 4;
                         }
                     }
+                }
+            }
+        }
+
+        private bool DrawPreferencesHorizontal()
+        {
+            using (_PRF_DrawPreferencesHorizontal.Auto())
+            {
+                var bgStyle =
+                    fieldMetadataManager.Background(ColorPalette.Default.highlight.Middle.ScaleA(.25f));
+
+                GUILayout.HorizontalScope scope;
+
+                var changed = false;
+
+                using (scope = new GUILayout.HorizontalScope(bgStyle))
+                {
+                    var drawCount = 0;
+                    var levelCount = 0;
+                    var turnoverCount = preferenceTabLevels[levelCount];
+
+                    for (var preferenceIndex = 0; preferenceIndex < registeredPrefs.Count; preferenceIndex++)
+                    {
+                        var preference = registeredPrefs[preferenceIndex];
+
+                        var enableIf = prefsEnabledIf[preferenceIndex];
+                        var enabled = (enableIf == null) || enableIf();
+
+                        using (UIStateStacks.guiEnabled.Auto(enabled))
+                        {
+                            if (preference.Draw())
+                            {
+                                changed = true;
+                            }
+                        }
+
+                        drawCount += 1;
+
+                        if (drawCount >= turnoverCount)
+                        {
+                            scope.Dispose();
+                            scope = new GUILayout.HorizontalScope(bgStyle);
+
+                            drawCount = 0;
+                            levelCount += 1;
+                            if (levelCount < preferenceTabLevels.Length)
+                            {
+                                turnoverCount = preferenceTabLevels[levelCount];
+                            }
+                        }
+                    }
+                }
+
+                scope.Dispose();
+
+                return changed;
+            }
+        }
+
+        private bool DrawPreferencesVertical()
+        {
+            using (_PRF_DrawPreferencesVertical.Auto())
+            {
+                var bgStyle =
+                    fieldMetadataManager.Background(ColorPalette.Default.highlight.Middle.ScaleA(.25f));
+
+                using (new GUILayout.VerticalScope(bgStyle))
+                {
+                    var changed = false;
+                    fieldMetadataManager.Space(SpaceSize.PreferencesLeftPaddingTop);
+
+                    for (var preferenceIndex = 0; preferenceIndex < registeredPrefs.Count; preferenceIndex++)
+                    {
+                        var preference = registeredPrefs[preferenceIndex];
+                        var enableIf = prefsEnabledIf[preferenceIndex];
+                        var enabled = (enableIf == null) || enableIf();
+
+                        using (new GUILayout.HorizontalScope())
+                        {
+                            fieldMetadataManager.Space(SpaceSize.PreferencesLeftPaddingInner);
+
+                            using (UIStateStacks.guiEnabled.Auto(enabled))
+                            {
+                                if (preference.Draw())
+                                {
+                                    changed = true;
+                                }
+                            }
+
+                            fieldMetadataManager.Space(SpaceSize.PreferencesLeftPaddingInner);
+                        }
+
+                        fieldMetadataManager.Space(SpaceSize.PreferencesLeftPaddingUnder);
+                    }
+
+                    fieldMetadataManager.Space(SpaceSize.PreferencesLeftPaddingBottom);
+                    return changed;
                 }
             }
         }

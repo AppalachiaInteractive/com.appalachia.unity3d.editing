@@ -11,13 +11,16 @@ namespace Appalachia.Editing.Core.Windows.PaneBased.Context
         public int currentVisibleIndex;
         public int length;
         public Rect position;
+        public int lastVisibleCount;
         public int visibleCount;
 
         private List<int> _indexToVisibleIndex;
         private List<bool> _visibility;
         private List<int> _visibleIndexToIndex;
 
-        public int GetIndex(int visibilityIndex)
+        public float scrollTime => currentVisibleIndex / (float) Mathf.Max(1, lastVisibleCount);
+
+            public int GetIndex(int visibilityIndex)
         {
             EnsureCollectionSizes(
                 ref _visibility,
@@ -43,25 +46,35 @@ namespace Appalachia.Editing.Core.Windows.PaneBased.Context
             return _visibility[index];
         }
 
-        public void RecordIndexInformation(int index, int visibleIndex)
+        public void RecordIndexInformation(int index, int visibleIndex, bool visible)
         {
             EnsureCollectionSizes(ref _visibility, ref _indexToVisibleIndex, ref _visibleIndexToIndex, index);
-
+            
             _indexToVisibleIndex[index] = visibleIndex;
-            _visibleIndexToIndex[visibleIndex] = index;
+            
+            if (visibleIndex >= 0)
+            {
+                _visibleIndexToIndex[visibleIndex] = index;                
+            }
+            
+            _visibility[index] = visible;
 
-            visibleCount += 1;
+            if (visible)
+            {
+                visibleCount += 1;
+
+            }
         }
 
         public void ResetVisibility()
         {
-            EnsureCollectionSizes(ref _visibility, ref _indexToVisibleIndex, ref _visibleIndexToIndex, 1);
+            /*EnsureCollectionSizes(ref _visibility, ref _indexToVisibleIndex, ref _visibleIndexToIndex, 1);
 
             for (var i = 0; i < _visibility.Count; i++)
             {
                 _visibility[i] = false;
-            }
-
+            }*/
+            lastVisibleCount = visibleCount;
             visibleCount = 0;
         }
 
@@ -75,6 +88,13 @@ namespace Appalachia.Editing.Core.Windows.PaneBased.Context
             );
 
             this.length = length;
+        }
+
+        public bool IsSelected(int index)
+        {
+            EnsureCollectionSizes(ref _visibility, ref _indexToVisibleIndex, ref _visibleIndexToIndex, index);
+
+            return currentIndex == index;
         }
 
         public void SetSelected(int index)

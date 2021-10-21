@@ -42,7 +42,7 @@ namespace Appalachia.Editing.Drawers
                 GUIHelper.PopLabelColor();
                 EditorGUILayout.EndVertical();
 
-                UIStateStacks.foregroundColor.Push(color);
+                UIStateStacks.color.Push(color);
 
                 if (GUILayout.Button(
                     context.LabelHelper.GetValue(),
@@ -71,7 +71,7 @@ namespace Appalachia.Editing.Drawers
                     }
                 }
 
-                UIStateStacks.foregroundColor.Pop();
+                UIStateStacks.color.Pop();
 
                 EditorGUILayout.EndHorizontal();
             }

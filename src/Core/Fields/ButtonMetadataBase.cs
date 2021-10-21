@@ -7,7 +7,7 @@ using UnityEngine;
 namespace Appalachia.Editing.Core.Fields
 {
     [Serializable]
-    public abstract class ButtonMetadataBase<T> : LabelledFieldMetadataBase<T>
+    public abstract class ButtonMetadataBase<T> : LabelledFieldMetadataBase<T>, IButtonMetadata
         where T : EditorUIFieldMetadata<T>
     {
         public bool Button(bool enabled = true, Color contentColor = default, Color backgroundColor = default)

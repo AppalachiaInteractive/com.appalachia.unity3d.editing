@@ -21,25 +21,25 @@ namespace Appalachia.Editing.Assets.Windows.Organization.Context
         private List<OrphanedAsset> _orphans;
         private List<string> _relativeAssetPaths;
 
+        public override int RequiredMenuCount => 1;
+
+        public IList<OrphanedAsset> MenuOneItems => _orphans;
+
         public override void ValidateMenuSelection(int menuIndex)
         {
             var menuSelection = GetMenuSelection(menuIndex);
-            
+
             if (menuSelection.length != MenuOneItems.Count)
             {
                 menuSelection.SetLength(MenuOneItems.Count);
             }
         }
 
-        public override int RequiredMenuCount => 1;
-
-        public IList<OrphanedAsset> MenuOneItems => _orphans;
-
         protected override void OnInitialize()
         {
             using (_PRF_OnInitialize.Auto())
             {
-                _relativeAssetPaths = AssetDatabaseManager.GetAssetPathsByExtension(".asset");
+                _relativeAssetPaths = AssetDatabaseManager.FindAssetPathsByExtension(".asset");
 
                 _orphans = new List<OrphanedAsset>();
 

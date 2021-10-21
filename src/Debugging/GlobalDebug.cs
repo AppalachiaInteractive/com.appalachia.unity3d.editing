@@ -2,6 +2,7 @@
 
 using System;
 using Appalachia.Core.Attributes.Editing;
+using Appalachia.Core.Debugging;
 using Appalachia.Core.Scriptables;
 using Appalachia.Core.Shading;
 using Sirenix.OdinInspector;

@@ -20,35 +20,6 @@ namespace Appalachia.Editing.Assets.Windows.Organization.Context
 
         public override int RequiredMenuCount => 1;
 
-        public override void ValidateMenuSelection(int menuIndex)
-        {
-        }
-
-        protected override void OnInitialize()
-        {
-            using (_PRF_OnInitialize.Auto())
-            {
-                if (emptyDirectories == null)
-                {
-                    emptyDirectories = new List<AppaDirectoryInfo>();
-                }
-
-                emptyDirectories.Clear();
-
-                var assetsFolder = ProjectLocations.GetAssetsAppaDirectory();
-
-                GetEmptyDirectories(assetsFolder, emptyDirectories);
-            }
-        }
-
-        protected override void OnReset()
-        {
-            using (_PRF_OnReset.Auto())
-            {
-                emptyDirectories?.Clear();
-            }
-        }
-
         private static void GetEmptyDirectories(
             AppaDirectoryInfo current,
             List<AppaDirectoryInfo> emptyDirectories)
@@ -85,6 +56,35 @@ namespace Appalachia.Editing.Assets.Windows.Organization.Context
                         emptyDirectories.Add(current);
                     }
                 }
+            }
+        }
+
+        public override void ValidateMenuSelection(int menuIndex)
+        {
+        }
+
+        protected override void OnInitialize()
+        {
+            using (_PRF_OnInitialize.Auto())
+            {
+                if (emptyDirectories == null)
+                {
+                    emptyDirectories = new List<AppaDirectoryInfo>();
+                }
+
+                emptyDirectories.Clear();
+
+                var assetsFolder = ProjectLocations.GetAssetsAppaDirectory();
+
+                GetEmptyDirectories(assetsFolder, emptyDirectories);
+            }
+        }
+
+        protected override void OnReset()
+        {
+            using (_PRF_OnReset.Auto())
+            {
+                emptyDirectories?.Clear();
             }
         }
     }

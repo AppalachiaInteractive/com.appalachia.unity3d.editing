@@ -11,7 +11,7 @@ namespace Appalachia.Editing.Core.Fields
 
         public override GUILayoutOption[] InitializeLayout()
         {
-            return new[] {GUILayout.ExpandWidth(false)};
+            return new[] {GUILayout.ExpandWidth(true)};
         }
     }
 }

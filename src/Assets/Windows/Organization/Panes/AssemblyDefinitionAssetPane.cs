@@ -1,13 +1,11 @@
-using Appalachia.CI.Integration.Assemblies;
-using Appalachia.Core.Preferences;
-using Appalachia.Editing.Assets.Extensions;
 using Appalachia.Editing.Assets.Windows.Organization.Context;
-using Appalachia.Editing.Core.Colors;
+using Appalachia.Editing.Assets.Windows.Organization.Drawers;
+using Appalachia.Editing.Core;
 using Appalachia.Editing.Core.Fields;
-using Appalachia.Editing.Core.Layout;
 using Appalachia.Editing.Core.Windows.PaneBased.Panes;
+using Appalachia.Editing.Core.Windows.PaneBased.Panes.Interfaces;
+using Appalachia.Utility.Colors;
 using Unity.Profiling;
-using UnityEditor;
 using UnityEngine;
 
 namespace Appalachia.Editing.Assets.Windows.Organization.Panes
@@ -19,11 +17,22 @@ namespace Appalachia.Editing.Assets.Windows.Organization.Panes
 
         private static readonly ProfilerMarker _PRF_OnInitialize = new(_PRF_PFX + nameof(OnInitialize));
 
-        private AssemblyDefinitionAssetContext _context;
+        private static readonly ProfilerMarker _PRF_OnDrawPaneMenusStart =
+            new(_PRF_PFX + nameof(OnDrawPaneMenusStart));
 
-        private PREF<bool> appalachiaOnly;
-        private PREF<bool> generateTestFiles;
-        private PREF<bool> onlyShowIssues;
+        private static readonly ProfilerMarker _PRF_ShouldDrawMenuItem =
+            new(_PRF_PFX + nameof(ShouldDrawMenuItem));
+
+        private static readonly ProfilerMarker _PRF_OnDrawPaneMenuItem =
+            new(_PRF_PFX + nameof(OnDrawPaneMenuItem));
+
+        private static readonly ProfilerMarker _PRF_OnDrawPaneContent =
+            new(_PRF_PFX + nameof(OnDrawPaneContent));
+
+        private static readonly ProfilerMarker _PRF_OnDrawPaneContentStart =
+            new(_PRF_PFX + nameof(OnDrawPaneContentStart));
+
+        private AssemblyDefinitionAssetContext _context;
 
         public override bool ContentInScrollView => true;
         public override string PaneName => TabName;
@@ -32,197 +41,147 @@ namespace Appalachia.Editing.Assets.Windows.Organization.Panes
 
         public string TabName => "Assembly Definitions";
 
-        private static readonly ProfilerMarker _PRF_OnDrawPaneMenusStart = new ProfilerMarker(_PRF_PFX + nameof(OnDrawPaneMenusStart));
-      
-        public override void OnDrawPaneMenuItem(int menuIndex, int menuItemIndex, out bool isSelected)
-        {
-            var assemblyDefinitionMetadata = context.MenuOneItems[menuItemIndex];
-            var backgroundColor = GetAssemblyDefinitionColor(assemblyDefinitionMetadata);
-
-            var menuField = fieldMetadataManager.Get<MenuItemField>($"MIF_{menuIndex}");
-
-            isSelected = false;
-
-            if (menuField.Draw("    " + assemblyDefinitionMetadata.assembly_current, backgroundColor))
-            {
-                isSelected = true;
-            }
-        }
+        protected override int MenuWidth => 250;
+        
 
         public override bool ShouldDrawMenuItem(int menuIndex, int menuItemIndex)
         {
-            var assemblyDefinitionMetadata = context.MenuOneItems[menuItemIndex];
-
-            if (onlyShowIssues.Value && !assemblyDefinitionMetadata.AnyIssues)
+            using (_PRF_ShouldDrawMenuItem.Auto())
             {
-                return false;
-            }
+                var assemblyDefinitionMetadata = context.MenuOneItems[menuItemIndex];
 
-            if (assemblyDefinitionMetadata.readOnly)
+                if (!context.ShouldShowInMenu(assemblyDefinitionMetadata))
+                {
+                    return false;
+                }
+
+                return true;
+            }
+        }
+
+        public override void OnDrawPaneMenuItem(
+            int menuIndex,
+            int menuItemIndex,
+            bool isSelected,
+            out bool wasSelected,
+            out float menuItemHeight)
+        {
+            using (_PRF_OnDrawPaneMenuItem.Auto())
             {
-                return false;
-            }
+                using (new GUILayout.HorizontalScope())
+                {
+                    var metadata = context.MenuOneItems[menuItemIndex];
+                    var analysis = metadata.analysis;
 
-            if (appalachiaOnly.Value && !assemblyDefinitionMetadata.filename_current.StartsWith("Appalachia"))
-            {
-                return false;
-            }
+                    var backgroundColor = analysis.AnyIssues ? metadata.IssueColor.ScaleA(.2f) : Color.clear;
 
-            return true;
+                    var icon = analysis.AnyIssues
+                        ? EditorGUIIcons.console_erroricon_sml
+                        : isSelected
+                            ? EditorGUIIcons.console_infoicon_sml
+                            : EditorGUIIcons.console_infoicon_inactive_sml;
+
+                    var menuField = fieldMetadataManager.Get<MenuItemField>(
+                        $"{metadata.Name}.MIF_{menuIndex}",
+                        f =>
+                        {
+                            f.AlterStyle(s => s.fontSize = 10);
+                            f.AddLayoutOption(GUILayout.Height(24f));
+                        }
+                    );
+
+                    wasSelected = false;
+
+                    UnityEditor.EditorGUIUtility.SetIconSize(Vector2.one * 14);
+
+                    if (menuField.DrawBackground(
+                        metadata.assembly_current,
+                        isSelected,
+                        backgroundColor,
+                        icon
+                    ))
+                    {
+                        wasSelected = true;
+                    }
+
+                    menuItemHeight = menuField.height;
+
+                    UnityEditor.EditorGUIUtility.SetIconSize(Vector2.zero);
+                }
+            }
+        }
+
+        public override void OnPreferencesChanged()
+        {
+            context.ValidateSummaryProperties();
         }
 
         public override void OnDrawPaneContent()
         {
-            EditorGUILayout.Space(10f);
-
-            var menuItemIndex = context.GetMenuSelection(0).currentIndex;
-
-            var assemblyDefinitionMetadata = context.MenuOneItems[menuItemIndex];
-
-            assemblyDefinitionMetadata.Draw(context, fieldMetadataManager, generateTestFiles.Value);
-        }
-
-        public override void OnInitialize()
-        {
-            using (_PRF_OnInitialize.Auto())
+            using (_PRF_OnDrawPaneContent.Auto())
             {
-                ((IAppalachiaWindowPane) this).RegisterFilterPref(
-                    ref appalachiaOnly,
-                    "Assembly Definitions",
-                    "Appalachia Only",
-                    true
-                );
+                fieldMetadataManager.Space(SpaceSize.SectionStartVertical);
 
-                ((IAppalachiaWindowPane) this).RegisterFilterPref(
-                    ref onlyShowIssues,
-                    "Assembly Definitions",
-                    "Only issues",
-                    true
-                );
+                var menuItemIndex = context.GetMenuSelection(0).currentIndex;
 
-                ((IAppalachiaWindowPane) this).RegisterFilterPref(
-                    ref generateTestFiles,
-                    "Assembly Definitions",
-                    "Test Files",
-                    true
+                if (context.MenuOneItems.Count <= menuItemIndex)
+                {
+                    context.Reset();
+                    context.Initialize();
+                }
+
+                var assemblyDefinitionMetadata = context.MenuOneItems[menuItemIndex];
+
+                AssemblyDrawer.DrawAssemblyDefinitionMetadata(
+                    assemblyDefinitionMetadata,
+                    context,
+                    fieldMetadataManager,
+                    context.generateTestFiles.Value
                 );
             }
         }
 
         public override void OnDrawPaneContentStart()
         {
-            var palette = ColorPalettes.Editing;
-
-            using (new GUILayout.HorizontalScope())
+            using (_PRF_OnDrawPaneContentStart.Auto())
             {
-                var menuSelection = context.GetMenuSelection(0);
-                
-                var updateNamesButton = fieldMetadataManager.Get<MiniButtonMetadata>("Update Names");
-
-                if (updateNamesButton.Button(context.anyNameIssues, backgroundColor: palette.error))
-                {
-                    using var assetScope = new AssetEditingScope();
-                    for (var index = 0; index < context.MenuOneItems.Count; index++)
-                    {
-                        if (!menuSelection.IsVisible(index))
-                        {
-                            continue;
-                        }
-
-                        var assembly = context.MenuOneItems[index];
-                        assembly.UpdateNames(generateTestFiles.Value, false);
-                    }
-                }
-
-                var sortReferences = fieldMetadataManager.Get<MiniButtonMetadata>("Sort References");
-
-                if (sortReferences.Button(context.anySortingIssues, backgroundColor: palette.notable))
-                {
-                    using var assetScope = new AssetEditingScope();
-                    for (var index = 0; index < context.MenuOneItems.Count; index++)
-                    {
-                        if (!menuSelection.IsVisible(index))
-                        {
-                            continue;
-                        }
-
-                        var assembly = context.MenuOneItems[index];
-                        assembly.SortReferences(generateTestFiles.Value, false);
-                    }
-                }
-
-                var removeInvalidAssembliesButton =
-                    fieldMetadataManager.Get<MiniButtonMetadata>("Remove Invalid Assemblies");
-
-                if (removeInvalidAssembliesButton.Button(
-                    context.anyInvalidReferenceIssues,
-                    backgroundColor: palette.warning
-                ))
-                {
-                    using var assetScope = new AssetEditingScope();
-                    for (var index = 0; index < context.MenuOneItems.Count; index++)
-                    {
-                        if (!menuSelection.IsVisible(index))
-                        {
-                            continue;
-                        }
-
-                        var assembly = context.MenuOneItems[index];
-                        assembly.RemoveInvalidAssemblies(generateTestFiles.Value, false);
-                    }
-                }
-
-                var convertToGuidReferences =
-                    fieldMetadataManager.Get<MiniButtonMetadata>("Convert To Guids");
-                if (convertToGuidReferences.Button(
-                    context.anyNonGuidReferences,
-                    backgroundColor: palette.warning2
-                ))
-                {
-                    using var assetScope = new AssetEditingScope();
-                    for (var index = 0; index < context.MenuOneItems.Count; index++)
-                    {
-                        if (!menuSelection.IsVisible(index))
-                        {
-                            continue;
-                        }
-                        
-                        var assembly = context.MenuOneItems[index];
-                        assembly.ConvertToGuidReferences(
-                            context.MenuOneItems,
-                            generateTestFiles.Value,
-                            false
-                        );
-                    }
-                }
+                AssemblyDrawer.DrawTopLevelAssemblyButtons(context, fieldMetadataManager);
             }
         }
 
-        private static Color GetAssemblyDefinitionColor(AssemblyDefinitionMetadata adm)
+        public override void OnInitialize()
         {
-            var palette = ColorPalettes.Editing;
-
-            if (adm.ShouldUpdateNames)
+            using (_PRF_OnInitialize.Auto())
             {
-                return palette.error;
-            }
+                ((IAppalachiaWindowPane) this).RegisterFilterPref(context.appalachiaOnly);
 
-            if (adm.ShouldSortReferences)
+                ((IAppalachiaWindowPane) this).RegisterFilterPref(context.assetsOnly);
+
+                ((IAppalachiaWindowPane) this).RegisterFilterPref(context.onlyShowIssues);
+
+                ((IAppalachiaWindowPane) this).RegisterFilterPref(
+                    context.issueType,
+                    () => context.onlyShowIssues.v
+                );
+
+                ((IAppalachiaWindowPane) this).RegisterFilterPref(context.generateTestFiles);
+            }
+        }
+
+        private static Color highlightColor => ColorPalette.Default.highlight.Middle;
+        private static Color notableColor => ColorPalette.Default.notable.Quarter;
+        
+        protected override void DrawContextButtons()
+        {
+            var button = fieldMetadataManager.Get<ButtonMetadata>("Reanalyze All");
+
+            if (button.Button(backgroundColor:notableColor))
             {
-                return palette.notable;
+                foreach (var assembly in context.MenuOneItems)
+                {
+                    assembly.Reanalyze();
+                }
             }
-
-            if (adm.HasInvalidAssemblies)
-            {
-                return palette.warning;
-            }
-
-            if (adm.DoesUseNameReferences)
-            {
-                return palette.warning2;
-            }
-
-            return Color.clear;
         }
     }
 }

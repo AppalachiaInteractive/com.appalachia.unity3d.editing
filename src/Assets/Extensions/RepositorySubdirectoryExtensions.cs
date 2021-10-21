@@ -22,15 +22,15 @@ namespace Appalachia.Editing.Assets.Extensions
 
                 if (!metadata.isConventional)
                 {
-                    field_path.Draw(metadata.relativePath, ColorPalettes.Editing.error);
+                    field_path.Draw(metadata.relativePath, ColorPalettes.Default.bad.c10, true);
                 }
                 else
                 {
-                    field_path.Draw(metadata.relativePath);
+                    field_path.Draw(metadata.relativePath, true);
                 }
 
                 field_directory.Draw(metadata.directory);
-                field_inst_count.Draw(metadata.instances.Count.ToString());
+                field_inst_count.Draw(metadata.instances.Count.ToString(), false);
 
                 if (field_instances.Foldout(ref metadata.showInstances))
                 {

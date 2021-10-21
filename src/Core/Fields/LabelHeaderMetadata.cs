@@ -34,7 +34,8 @@ namespace Appalachia.Editing.Core.Fields
                     {
                         border = new RectOffset(0, 0, 0,         0),
                         margin = new RectOffset(0, 0, TopMargin, BottomMargin),
-                        fontSize = FontSize
+                        fontSize = FontSize,
+                        alignment = TextAnchor.MiddleLeft
                     };
                 }
 
@@ -57,11 +58,21 @@ namespace Appalachia.Editing.Core.Fields
         {
             using (_PRF_OnBeforeDraw.Auto())
             {
+                if (labelHeight == 0)
+                {
+                    SetLabelHeight(DefaultLabelHeight + TopMargin + BottomMargin);
+                }
+                
                 if (TopDrawLine)
                 {
                     AppalachiaEditorGUIHelper.HorizontalLineSeparator(TopLineColor, TopLineWidth, TopLineWidth);
                 }
             }
+        }
+
+        public override GUILayoutOption[] InitializeLayout()
+        {
+            return new[] {GUILayout.ExpandWidth(true), GUILayout.MinWidth(1)};
         }
     }
 }

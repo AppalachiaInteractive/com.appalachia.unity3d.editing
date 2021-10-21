@@ -8,30 +8,19 @@ namespace Appalachia.Editing.Core.Colors
     [Serializable]
     public static class ColorPalettes
     {
-        private static ColorPalette _editing;
+        private static ColorPalette _default;
         private static ColorPalette _scratchPalette;
 
-        public static ColorPalette Editing
+        public static ColorPalette Default
         {
             get
             {
-                if (_editing == null)
+                if (_default == null)
                 {
-                    _editing = new ColorPalette
-                    {
-                        error = new Color(1f,      0.37f, 0.34f, 1f),
-                        warning = new Color(1f,    .9f,   0f,    1f),
-                        good = new Color(0.4f,     1f,    0.4f,  1f),
-                        selected = new Color(0.7f, 0.8f,  1f,    1f),
-                        notable = new Color(0f,    .9f,   1f,    1f)
-                    };
-
-                    _editing.error2 = _editing.error.ScaleS(.8f).ScaleV(.8f);
-                    _editing.warning2 = _editing.warning.ScaleS(.8f).ScaleV(.8f);
-                    _editing.good2 = _editing.good.ScaleS(.8f).ScaleV(.8f);
+                    _default = ColorPalette.CreateDefault();
                 }
 
-                return _editing;
+                return _default;
             }
         }
 
@@ -39,7 +28,7 @@ namespace Appalachia.Editing.Core.Colors
         {
             if (_scratchPalette == null)
             {
-                _scratchPalette = assignTo?.Copy() ?? ColorPalette.Default();
+                _scratchPalette = assignTo?.Copy() ?? ColorPalette.CreateDefault();
             }
 
             var paletteChanged = _scratchPalette.Draw();

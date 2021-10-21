@@ -52,5 +52,13 @@ namespace Appalachia.Editing.Core.State
 
         protected abstract T GetCurrent();
         protected abstract void SetNew(T value, bool pushing);
+
+        public UIStackScope<T> Auto(T newValue)
+        {
+            Push(newValue);
+            return new UIStackScope<T>(this);
+        }
+
+        public T Current => GetCurrent();
     }
 }

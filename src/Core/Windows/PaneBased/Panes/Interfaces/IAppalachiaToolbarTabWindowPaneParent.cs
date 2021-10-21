@@ -5,7 +5,7 @@ using Appalachia.Editing.Core.Fields;
 using Unity.Profiling;
 using UnityEngine;
 
-namespace Appalachia.Editing.Core.Windows.PaneBased.Panes
+namespace Appalachia.Editing.Core.Windows.PaneBased.Panes.Interfaces
 {
     public interface IAppalachiaToolbarTabWindowPaneParent : IAppalachiaTabbedWindowPaneParent
     {

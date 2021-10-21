@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using Appalachia.Editing.Assets.Windows.Organization.Context;
 using Appalachia.Editing.Core.Fields;
 using Appalachia.Editing.Core.Windows.PaneBased.Panes;
+using Appalachia.Editing.Core.Windows.PaneBased.Panes.Interfaces;
 using Unity.Profiling;
 
 namespace Appalachia.Editing.Assets.Windows.Organization.Panes
@@ -44,7 +45,17 @@ namespace Appalachia.Editing.Assets.Windows.Organization.Panes
                 }
             );
 
-        public override void OnDrawPaneMenuItem(int menuIndex, int menuItemIndex, out bool isSelected)
+        public override bool ShouldDrawMenuItem(int menuIndex, int menuItemIndex)
+        {
+            return true;
+        }
+
+        public override void OnDrawPaneMenuItem(
+            int menuIndex,
+            int menuItemIndex,
+            bool isSelected,
+            out bool wasSelected,
+            out float menuItemHeight)
         {
             using (_PRF_OnDrawPaneMenuItem.Auto())
             {
@@ -52,13 +63,10 @@ namespace Appalachia.Editing.Assets.Windows.Organization.Panes
 
                 var assetType = context.MenuOneItems[menuItemIndex];
 
-                isSelected = field.Draw(assetType.ToString());
+                wasSelected = field.Draw(assetType.ToString(), isSelected, null);
+                
+                menuItemHeight = field.height;
             }
-        }
-
-        public override bool ShouldDrawMenuItem(int menuIndex, int menuItemIndex)
-        {
-            return true;
         }
 
         public override void OnDrawPaneContent()

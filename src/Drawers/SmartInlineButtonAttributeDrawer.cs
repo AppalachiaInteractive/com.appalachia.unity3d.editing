@@ -163,7 +163,7 @@ namespace Appalachia.Editing.Drawers
                 if (color.HasValue)
                 {
                     //UIStateStacks.foregroundColor.Push(Color.white);
-                    UIStateStacks.foregroundColor.Push(color.Value);
+                    UIStateStacks.color.Push(color.Value);
                 }
 
                 if (disabled.HasValue)
@@ -190,7 +190,7 @@ namespace Appalachia.Editing.Drawers
 
                 if (color.HasValue)
                 {
-                    UIStateStacks.foregroundColor.Pop();
+                    UIStateStacks.color.Pop();
                 }
             }
         }

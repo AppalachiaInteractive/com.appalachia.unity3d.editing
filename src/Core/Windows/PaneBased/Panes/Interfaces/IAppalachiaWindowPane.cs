@@ -5,36 +5,36 @@ using Appalachia.Core.Preferences;
 using Appalachia.Editing.Core.Fields;
 using UnityEngine;
 
-namespace Appalachia.Editing.Core.Windows.PaneBased.Panes
+namespace Appalachia.Editing.Core.Windows.PaneBased.Panes.Interfaces
 {
-    
     public interface IAppalachiaWindowPane
     {
         bool ContentInScrollView { get; }
-        string PaneName { get; }
         bool DrawHeader { get; }
+        string PaneName { get; }
         UIFieldMetadataManager fieldMetadataManager { get; }
-        Rect container { get; set; }
-        float InitializationStart { get; set; }
+        AppalachiaPaneBasedWindowBase window { get; set; }
         bool Initialized { get; set; }
         bool Initializing { get; set; }
+        float InitializationStart { get; set; }
         int[] preferenceTabLevels { get; set; }
-        List<PREF<bool>> registeredPrefs { get; set; }
-        AppalachiaPaneBasedWindowBase window { get; set; }
-        void DrawPaneContent();
-        void DrawPreferenceToggles();
-        void ExecuteCoroutine(Func<IEnumerator> coroutine);
-        void ExecuteDrawPaneContent();
+        List<PREF_BASE> registeredPrefs { get; set; }
+        Rect container { get; set; }
 
-        IReadOnlyList<IAppalachiaWindowPane> GetChildPanes(
-            string paneSetIdentifier,
-            Func<IReadOnlyList<IAppalachiaWindowPane>> initializationFunction);
+        IEnumerator Initialize();
 
         IList<IAppalachiaTabbedWindowPane> GetTabPanes(
             string paneSetIdentifier,
             Func<IList<IAppalachiaTabbedWindowPane>> initializationFunction);
 
-        IEnumerator Initialize();
+        IReadOnlyList<IAppalachiaWindowPane> GetChildPanes(
+            string paneSetIdentifier,
+            Func<IReadOnlyList<IAppalachiaWindowPane>> initializationFunction);
+
+        void DrawPaneContent();
+        void DrawPreferenceFields(bool horizontal);
+        void ExecuteCoroutine(Func<IEnumerator> coroutine);
+        void ExecuteDrawPaneContent();
         void OnBeforeDraw();
         void OnBeforeDrawPaneContent();
         void OnBeforeDrawPaneContentStart(out bool shouldDraw);
@@ -58,10 +58,8 @@ namespace Appalachia.Editing.Core.Windows.PaneBased.Panes
             Action<TL> elementAction,
             Func<TL, bool>[] skipElement);
 
-        void RegisterFilterPref(
-            ref PREF<bool> pref,
-            string prefix,
-            string settingName,
-            bool defaultValue);
+        void RegisterFilterPref<T>(PREF<T> pref, Func<bool> enableIf = null);
+
+        void RegisterFilterPref<T>(ref PREF<T> pref, string prefix, string settingName, T defaultValue, Func<bool> enableIf = null);
     }
 }

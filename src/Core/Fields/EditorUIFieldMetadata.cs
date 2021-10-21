@@ -1,4 +1,5 @@
 using System;
+using Appalachia.CI.Constants;
 using Appalachia.Utility.Reflection.Extensions;
 using Unity.Profiling;
 using UnityEngine;
@@ -42,12 +43,7 @@ namespace Appalachia.Editing.Core.Fields
     public abstract class EditorUIFieldMetadata
     {
         private const string _PRF_PFX = nameof(EditorUIFieldMetadata) + ".";
-
-        public string identifier;
-        public bool hasBeenDrawn;
-
         private static readonly ProfilerMarker _PRF_Initialize = new(_PRF_PFX + nameof(Initialize));
-        private static readonly ProfilerMarker _PRF_Refresh = new(_PRF_PFX + nameof(Refresh));
         private static readonly ProfilerMarker _PRF_CloneStyle = new(_PRF_PFX + nameof(CloneStyle));
         private static readonly ProfilerMarker _PRF_CloneContent = new(_PRF_PFX + nameof(CloneContent));
         private static readonly ProfilerMarker _PRF_CloneLayout = new(_PRF_PFX + nameof(CloneLayout));
@@ -57,19 +53,19 @@ namespace Appalachia.Editing.Core.Fields
 
         private static readonly ProfilerMarker _PRF_AlterStyle = new(_PRF_PFX + nameof(AlterStyle));
 
+        public bool hasBeenDrawn;
+
+        public string identifier;
+
         protected GUIStyle _defaultStyle;
-        private int __clonedContentHashcode;
-        private int __clonedLayoutHashcode;
-        private int __clonedStyleHashcode;
         private GUIContent _content;
 
         private GUILayoutOption[] _layout;
         private GUIStyle _style;
-
-        protected EditorUIFieldMetadata()
-        {
-            Initialize();
-        }
+        private int __clonedContentHashcode;
+        private int __clonedLayoutHashcode;
+        private int __clonedStyleHashcode;
+        private UIFieldMetadataManager _fieldManager;
 
         public GUIContent content
         {
@@ -112,11 +108,34 @@ namespace Appalachia.Editing.Core.Fields
 
         protected abstract GUIStyle DefaultStyle { get; }
 
-        public void AddLayoutOption(GUILayoutOption newOption)
+        protected abstract Action GetInitializationAction();
+
+        public virtual GUIContent InitializeContent()
+        {
+            return new(GUIContent.none);
+        }
+
+        public virtual GUILayoutOption[] InitializeLayout()
+        {
+            return new GUILayoutOption[0];
+        }
+
+        public virtual GUIStyle InitializeStyle()
+        {
+            var s = new GUIStyle(DefaultStyle);
+            s.SupportRichText();
+
+            return s;
+        }
+
+        public void AddLayoutOption(params GUILayoutOption[] newOptions)
         {
             using (_PRF_AddLayoutOption.Auto())
             {
-                AddLayoutOption(newOption, ref _layout);
+                foreach (var newOption in newOptions)
+                {
+                    AddLayoutOption(newOption, ref _layout);                    
+                }
             }
         }
 
@@ -197,10 +216,12 @@ namespace Appalachia.Editing.Core.Fields
             }
         }
 
-        public void Initialize()
+        public void Initialize(UIFieldMetadataManager manager)
         {
             using (_PRF_Initialize.Auto())
             {
+                _fieldManager = manager;
+
                 OnInitialize();
 
                 var action = GetInitializationAction();
@@ -214,40 +235,30 @@ namespace Appalachia.Editing.Core.Fields
             }
         }
 
-        public virtual GUIContent InitializeContent()
+        protected float GetSpace(SpaceSize spaceSize)
         {
-            return GUIContent.none;
+            return _fieldManager.GetSpace(spaceSize);
         }
-
-        public virtual GUILayoutOption[] InitializeLayout()
-        {
-            return new GUILayoutOption[0];
-        }
-
-        public virtual GUIStyle InitializeStyle()
-        {
-            return new(DefaultStyle);
-        }
-
-        public void Refresh(bool doInitialize = true)
-        {
-            using (_PRF_Refresh.Auto())
-            {
-                _content = null;
-                _style = null;
-                _layout = null;
-
-                if (doInitialize)
-                {
-                    Initialize();
-                }
-            }
-        }
-
-        protected abstract Action GetInitializationAction();
 
         protected virtual void OnInitialize()
         {
+        }
+
+        protected void Space(SpaceSize spaceSize)
+        {
+            _fieldManager.Space(spaceSize);
+        }
+
+        protected void Space(float size)
+        {
+            _fieldManager.Space(size);
+        }
+
+        internal static float indent => UnityEditor.EditorGUI.indentLevel * 15f;
+        
+        protected static bool LabelHasContent(GUIContent label)
+        {
+            return label is not {text: ""} || (label.image != null);
         }
 
         protected static void AddLayoutOption(GUILayoutOption newOption, ref GUILayoutOption[] options)

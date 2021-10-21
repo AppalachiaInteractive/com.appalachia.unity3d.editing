@@ -2,13 +2,6 @@ namespace Appalachia.Editing.Core.State
 {
     public static class UIStateStacks
     {
-        private static BackgroundColorStack _backgroundColorStack;
-        private static ContentColorStack _contentColorStack;
-        private static ForegroundColorStack _foregroundColorStack;
-        private static GUIEnabledStack _guiEnabledStack;
-        private static IndentLevelStack _indentLevelStack;
-        private static LabelWidthStack _labelWidthStack;
-
         public static BackgroundColorStack backgroundColor
         {
             get
@@ -35,7 +28,7 @@ namespace Appalachia.Editing.Core.State
             }
         }
 
-        public static ForegroundColorStack foregroundColor
+        public static ForegroundColorStack color
         {
             get
             {
@@ -85,6 +78,26 @@ namespace Appalachia.Editing.Core.State
 
                 return _labelWidthStack;
             }
+        }
+
+        private static BackgroundColorStack _backgroundColorStack;
+        private static ContentColorStack _contentColorStack;
+        private static ForegroundColorStack _foregroundColorStack;
+        private static GUIEnabledStack _guiEnabledStack;
+        private static IndentLevelStack _indentLevelStack;
+        private static LabelWidthStack _labelWidthStack;
+
+        public static UIStackScope<int> Auto(this IndentLevelStack indent)
+        {
+            var current = UnityEditor.EditorGUI.indentLevel;
+            indent.Push(current + 1);
+            return new UIStackScope<int>(indent);
+        }
+
+        public static void Push(this IndentLevelStack indent)
+        {
+            var current = UnityEditor.EditorGUI.indentLevel;
+            indent.Push(current + 1);
         }
     }
 }

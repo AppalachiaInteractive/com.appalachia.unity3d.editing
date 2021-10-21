@@ -103,7 +103,8 @@ namespace Appalachia.Editing.Assets.Windows
 
                                     var bytes = texture.EncodeToPNG();
 
-                                    var newName = $"{obj.name}_mat_{count}_{sharedMaterial.name}_{texture.name}";
+                                    var newName =
+                                        $"{obj.name}_mat_{count}_{sharedMaterial.name}_{texture.name}";
                                     var path = Path.Combine(outputDirectory, newName);
 
                                     File.WriteAllBytes(path, bytes);

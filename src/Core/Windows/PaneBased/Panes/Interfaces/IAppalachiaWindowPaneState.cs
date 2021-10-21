@@ -3,7 +3,7 @@ using Appalachia.Core.Preferences;
 using Appalachia.Editing.Core.Fields;
 using UnityEngine;
 
-namespace Appalachia.Editing.Core.Windows.PaneBased.Panes
+namespace Appalachia.Editing.Core.Windows.PaneBased.Panes.Interfaces
 {
     public interface IAppalachiaWindowPaneState
     {

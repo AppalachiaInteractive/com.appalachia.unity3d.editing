@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace Appalachia.Editing.Core.Windows.PaneBased.Panes
+namespace Appalachia.Editing.Core.Windows.PaneBased.Panes.Interfaces
 {
     public interface IAppalachiaTabbedWindowPane : IAppalachiaWindowPane, IComparable<IAppalachiaTabbedWindowPane>, IComparable
     {

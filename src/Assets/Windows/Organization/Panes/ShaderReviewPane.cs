@@ -3,15 +3,16 @@ using Appalachia.Core.Preferences;
 using Appalachia.Editing.Assets.Windows.Organization.Context;
 using Appalachia.Editing.Core.Fields;
 using Appalachia.Editing.Core.Windows.PaneBased.Panes;
+using Appalachia.Editing.Core.Windows.PaneBased.Panes.Interfaces;
 using Appalachia.Utility.Colors;
 using Unity.Profiling;
+using UnityEditor;
 using UnityEditor.Rendering;
 using UnityEngine;
 
 namespace Appalachia.Editing.Assets.Windows.Organization.Panes
 {
-    public class ShaderReviewPane : AppalachiaMenuWindowPane<ShaderReviewContext>,
-                                    IAppalachiaTabbedWindowPane
+    public class ShaderReviewPane : AppalachiaMenuWindowPane<ShaderReviewContext>, IAppalachiaTabbedWindowPane
     {
         private const string _PRF_PFX = nameof(ShaderReviewPane) + ".";
 
@@ -31,23 +32,9 @@ namespace Appalachia.Editing.Assets.Windows.Organization.Panes
 
         public override string PaneName => TabName;
 
-
         public int DesiredTabIndex => 10;
 
         public string TabName => "Shaders";
-
-        public override void OnDrawPaneMenuItem(int menuIndex, int menuItemIndex, out bool isSelected)
-        {
-            using (_PRF_OnDrawPaneMenuItem.Auto())
-            {
-                var item = context.MenuOneItems[menuItemIndex];
-
-                var itemName = item.info.name;
-                var field = fieldMetadataManager.Get<MenuItemField>(itemName);
-
-                isSelected = field.Draw(itemName);
-            }
-        }
 
         public override bool ShouldDrawMenuItem(int menuIndex, int menuItemIndex)
         {
@@ -64,6 +51,26 @@ namespace Appalachia.Editing.Assets.Windows.Organization.Panes
             }
         }
 
+        public override void OnDrawPaneMenuItem(
+            int menuIndex,
+            int menuItemIndex,
+            bool isSelected,
+            out bool wasSelected,
+            out float menuItemHeight)
+        {
+            using (_PRF_OnDrawPaneMenuItem.Auto())
+            {
+                var item = context.MenuOneItems[menuItemIndex];
+
+                var itemName = item.info.name;
+                var field = fieldMetadataManager.Get<MenuItemField>(itemName);
+
+                wasSelected = field.Draw(itemName, isSelected);
+                
+                menuItemHeight = field.height;
+            }
+        }
+
         public override void OnDrawPaneContent()
         {
             var selectedIndex = context.GetMenuSelection(0).currentIndex;
@@ -76,7 +83,7 @@ namespace Appalachia.Editing.Assets.Windows.Organization.Panes
 
             label.Draw();
 
-            using (new GUILayout.HorizontalScope())
+            using (new EditorGUILayout.HorizontalScope())
             {
                 label.Draw();
 
@@ -97,7 +104,7 @@ namespace Appalachia.Editing.Assets.Windows.Organization.Panes
                     _                                     => Color.clear
                 };
 
-                messages.Draw(shaderMessage.messageDetails, color);
+                messages.Draw(shaderMessage.messageDetails, color, true);
             }
         }
 

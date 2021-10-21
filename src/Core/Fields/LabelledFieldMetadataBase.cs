@@ -17,7 +17,12 @@ namespace Appalachia.Editing.Core.Fields
         private static readonly ProfilerMarker _PRF_InitializeContent =
             new(_PRF_PFX + nameof(InitializeContent));
 
-        protected int _prefixLabelWidth;
+        private int _prefixLabelWidth;
+        private int _labelHeight;
+
+        protected int prefixLabelWidth => _prefixLabelWidth == 0 ? DefaultLabelWidth : _prefixLabelWidth;
+
+        protected int labelHeight => _labelHeight == 0 ? DefaultLabelHeight : _labelHeight; 
 
         public override GUIContent InitializeContent()
         {
@@ -60,5 +65,13 @@ namespace Appalachia.Editing.Core.Fields
         {
             _prefixLabelWidth = width;
         }
+
+        public void SetLabelHeight(int height)
+        {
+            _labelHeight = height;
+        }
+
+        public int DefaultLabelHeight => 18;
+        public int DefaultLabelWidth => 150;
     }
 }

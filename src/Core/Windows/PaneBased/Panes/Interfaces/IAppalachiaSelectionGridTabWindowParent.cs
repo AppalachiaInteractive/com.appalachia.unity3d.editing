@@ -1,10 +1,11 @@
 using System.Linq;
 using Appalachia.Core.Extensions;
 using Appalachia.Editing.Core.Fields;
+using Appalachia.Editing.Core.Layout;
 using Unity.Profiling;
 using UnityEngine;
 
-namespace Appalachia.Editing.Core.Windows.PaneBased.Panes
+namespace Appalachia.Editing.Core.Windows.PaneBased.Panes.Interfaces
 {
     public interface IAppalachiaSelectionGridTabWindowParent : IAppalachiaTabbedWindowPaneParent
     {
@@ -17,12 +18,14 @@ namespace Appalachia.Editing.Core.Windows.PaneBased.Panes
         {
             using (_PRF_DrawAppalachiaTabbedWindowPane.Auto())
             {
-                var toolbar = fieldMetadataManager.Get<SelectionGridMetadata>();
+                fieldMetadataManager.Space(SpaceSize.SectionStartVertical);
+                
+                var selectionGrid = fieldMetadataManager.Get<SelectionGridMetadata>();
 
-                if (!toolbar.hasBeenDrawn)
+                if (!selectionGrid.hasBeenDrawn)
                 {
-                    toolbar.AddLayoutOption(GUILayout.Height(TabHeight));
-                    toolbar.AddLayoutOption(GUILayout.MinWidth(40));
+                    selectionGrid.AddLayoutOption(GUILayout.Height(TabHeight));
+                    selectionGrid.AddLayoutOption(GUILayout.MinWidth(40));
                     
                     var panes = TabPanes;
                     panes.Sort();
@@ -32,7 +35,7 @@ namespace Appalachia.Editing.Core.Windows.PaneBased.Panes
                 
                 OnDrawTabsStart();
                 
-                TabIndex = toolbar.Toolbar(TabIndex, TabNames);
+                TabIndex = selectionGrid.Toolbar(TabIndex, TabNames);
 
                 var selectedTab = TabNames[TabIndex];
 
@@ -47,6 +50,9 @@ namespace Appalachia.Editing.Core.Windows.PaneBased.Panes
                 }
 
                 OnDrawTabsEnd();
+
+                fieldMetadataManager.Space(SpaceSize.SectionEndVertical);
+                AppalachiaEditorGUIHelper.HorizontalLineSeparator(bufferSize: 3f);
             }
         }
     }

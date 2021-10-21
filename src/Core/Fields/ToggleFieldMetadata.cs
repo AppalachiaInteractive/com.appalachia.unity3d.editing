@@ -13,9 +13,9 @@ namespace Appalachia.Editing.Core.Fields
         public bool Toggle(bool value)
         {
             hasBeenDrawn = true;
-            //using (new GUILayout.HorizontalScope())
+            //using (new EditorGUILayout.HorizontalScope())
             {
-                UIStateStacks.labelWidth.Push(_prefixLabelWidth);
+                UIStateStacks.labelWidth.Push(prefixLabelWidth);
 
                 var result = EditorGUILayout.Toggle(content, value, style, layout);
 

@@ -22,5 +22,7 @@ namespace Appalachia.Editing.Core.Windows.PaneBased.Context
 
             return 0;
         }
+
+        public int GetMenuItemCount(int menuIndex);
     }
 }

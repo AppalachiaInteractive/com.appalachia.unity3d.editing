@@ -1,12 +1,13 @@
 using System.Collections.Generic;
 using Appalachia.Editing.Assets.Windows.Organization.Panes;
+using Appalachia.Editing.Core.Fields;
 using Appalachia.Editing.Core.Windows.PaneBased.Panes;
+using Appalachia.Editing.Core.Windows.PaneBased.Panes.Interfaces;
 using UnityEngine;
 
 namespace Appalachia.Editing.Assets.Windows.Organization
 {
-    public class AssetDatabaseOrganizerPane : AppalachiaWindowPane,
-                                              IAppalachiaSelectionGridTabWindowParent
+    public class AssetDatabaseOrganizerPane : AppalachiaWindowPane, IAppalachiaSelectionGridTabWindowParent
     {
         public const string PANE_NAME = "Asset Database Organizer";
         private const float TAB_HEIGHT = 28f;
@@ -37,7 +38,7 @@ namespace Appalachia.Editing.Assets.Windows.Organization
                 }
             );
 
-
+        
         public override void OnDrawPaneContent()
         {
         }

@@ -1,6 +1,7 @@
 using Appalachia.Core.Aspects.Tracing;
 using Appalachia.Core.Preferences;
 using Appalachia.Editing.Core.Windows.PaneBased.Panes;
+using Appalachia.Editing.Core.Windows.PaneBased.Panes.Interfaces;
 using Unity.EditorCoroutines.Editor;
 using Unity.Profiling;
 using UnityEngine;

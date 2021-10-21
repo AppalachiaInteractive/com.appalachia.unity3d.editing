@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using Appalachia.Editing.Core.Fields;
 using Unity.EditorCoroutines.Editor;
 
-namespace Appalachia.Editing.Core.Windows.PaneBased.Panes
+namespace Appalachia.Editing.Core.Windows.PaneBased.Panes.Interfaces
 {
     public interface IAppalachiaTabbedWindowPaneParent : IAppalachiaPaneParent
     {

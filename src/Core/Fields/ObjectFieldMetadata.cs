@@ -33,7 +33,7 @@ namespace Appalachia.Editing.Core.Fields
             where T : Object
         {
             hasBeenDrawn = true;
-            UIStateStacks.labelWidth.Push(_prefixLabelWidth);
+            UIStateStacks.labelWidth.Push(prefixLabelWidth);
 
             var result = EditorGUILayout.ObjectField(content, obj, typeof(T), allowSceneObjects);
 

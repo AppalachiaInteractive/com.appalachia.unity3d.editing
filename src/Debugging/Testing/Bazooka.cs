@@ -2,6 +2,7 @@
 
 using System.Collections.Generic;
 using Appalachia.Core.Behaviours;
+using Appalachia.Core.Debugging;
 using Appalachia.Core.Extensions;
 using Appalachia.Core.Layers;
 using Appalachia.Core.Types.Enums;

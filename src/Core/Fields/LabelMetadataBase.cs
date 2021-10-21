@@ -28,65 +28,107 @@ namespace Appalachia.Editing.Core.Fields
 
         private static readonly ProfilerMarker _PRF_Draw_Color = new(_PRF_PFX + nameof(Draw) + ".Color");
 
-        private GUIContent _cachedContent;
-        private string _cachedLabelValue;
+        private GUIContent _secondLabelContent;
+        private GUIStyle _prefixStyle;
+        private GUILayoutOption[] _prefixLayout;
+        private string _secondLabelValue;
 
-        public void Draw()
+        public void Draw(bool selectable = false)
         {
             using (_PRF_Draw.Auto())
             {
                 hasBeenDrawn = true;
-                UIStateStacks.labelWidth.Push(_prefixLabelWidth);
 
-                OnBeforeDraw();
-
-                using (_PRF_Draw_LabelField.Auto())
+                if (_prefixStyle == null)
                 {
-                    EditorGUILayout.LabelField(content, style, layout);
+                    _prefixStyle = new GUIStyle(style);
+                    _prefixStyle.alignment = TextAnchor.MiddleRight;
+                    _prefixStyle.fontSize = style.fontSize - 1;
+                }
+                
+                if (_prefixLayout == null)
+                {
+                    _prefixLayout = new GUILayoutOption[layout.Length + 2];
+
+                    for (var index = 0; index < layout.Length; index++)
+                    {
+                        var layoutOption = layout[index];
+                        _prefixLayout[index] = layoutOption;
+                    }
+
+                    _prefixLayout[^2] = GUILayout.ExpandWidth(false);
+                    _prefixLayout[^1] = GUILayout.Width(prefixLabelWidth);
                 }
 
-                OnAfterDraw();
+                using (new GUILayout.VerticalScope())
+                {
+                    OnBeforeDraw();
 
-                UIStateStacks.labelWidth.Pop();
+                    using (_PRF_Draw_LabelField.Auto())
+                    {
+                        if ((_secondLabelContent == null) || (_secondLabelContent.text == null))
+                        {
+                            if (selectable && (content.text != null))
+                            {
+                                SelectableLabelField(content, style, layout);
+                            }
+                            else
+                            {
+                                EditorGUILayout.LabelField(content, style, layout);
+                            }
+                        }
+                        else
+                        {
+                            using (new GUILayout.HorizontalScope())
+                            {
+                                if (selectable)
+                                {
+                                    _prefixLayout[^1] = GUILayout.Width(prefixLabelWidth);
+                                    SelectableLabelField(content, _prefixStyle, _prefixLayout);
+                                    SelectableLabelField(_secondLabelContent, style, layout);
+                                }
+                                else
+                                {
+                                    UIStateStacks.labelWidth.Push(prefixLabelWidth);
+                                    EditorGUILayout.PrefixLabel(content, style, _prefixStyle);
+                                    EditorGUILayout.LabelField(_secondLabelContent, style, layout);
+                                    UIStateStacks.labelWidth.Pop();
+                                }
+                            }
+                        }
+                    }
+
+                    OnAfterDraw();
+                }
             }
         }
 
-        public void Draw(string labelValue)
+        public void SelectableLabelField(
+            GUIContent content,
+            GUIStyle style,
+            params GUILayoutOption[] options)
+        {
+            var rect = EditorGUILayout.GetControlRect(false, labelHeight, style, options);
+            EditorGUI.SelectableLabel(rect, content.text, style);
+        }
+
+        public void Draw(string labelValue, bool selectable = false)
         {
             using (_PRF_Draw_Label.Auto())
             {
                 hasBeenDrawn = true;
-                if (labelValue == null)
+
+                if (labelValue != _secondLabelValue)
                 {
-                    Draw();
-                    return;
+                    _secondLabelContent = new GUIContent(labelValue);
+                    _secondLabelValue = labelValue;
                 }
 
-                UIStateStacks.labelWidth.Push(_prefixLabelWidth);
-
-                using (_PRF_Draw_Label_NewContent.Auto())
-                {
-                    if (labelValue != _cachedLabelValue)
-                    {
-                        _cachedContent = new GUIContent(labelValue);
-                        _cachedLabelValue = labelValue;
-                    }
-                }
-
-                OnBeforeDraw();
-
-                using (_PRF_Draw_Label_LabelField.Auto())
-                {
-                    EditorGUILayout.LabelField(content, _cachedContent, style, layout);
-                }
-
-                OnAfterDraw();
-
-                UIStateStacks.labelWidth.Pop();
+                Draw(selectable);
             }
         }
 
-        public void Draw(string labelValue, Color contentColor)
+        public void Draw(string labelValue, Color contentColor, bool selectable = false)
         {
             using (_PRF_Draw_LabelColor.Auto())
             {
@@ -95,7 +137,7 @@ namespace Appalachia.Editing.Core.Fields
                     UIStateStacks.contentColor.Push(contentColor);
                 }
 
-                Draw(labelValue);
+                Draw(labelValue, selectable);
 
                 if (contentColor != Color.clear)
                 {
@@ -104,11 +146,11 @@ namespace Appalachia.Editing.Core.Fields
             }
         }
 
-        public void Draw(Color contentColor)
+        public void Draw(Color contentColor, bool selectable = false)
         {
             using (_PRF_Draw_Color.Auto())
             {
-                Draw(null, contentColor);
+                Draw(null, contentColor, selectable);
             }
         }
 
