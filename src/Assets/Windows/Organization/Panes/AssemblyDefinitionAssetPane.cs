@@ -4,7 +4,7 @@ using Appalachia.Editing.Core;
 using Appalachia.Editing.Core.Fields;
 using Appalachia.Editing.Core.Windows.PaneBased.Panes;
 using Appalachia.Editing.Core.Windows.PaneBased.Panes.Interfaces;
-using Appalachia.Utility.Colors;
+using Appalachia.Utility.src.Colors;
 using Unity.Profiling;
 using UnityEngine;
 
@@ -177,10 +177,14 @@ namespace Appalachia.Editing.Assets.Windows.Organization.Panes
 
             if (button.Button(backgroundColor:notableColor))
             {
+                context.aggregateAnalysis = null;
+                
                 foreach (var assembly in context.MenuOneItems)
                 {
                     assembly.Reanalyze();
                 }
+
+                context.ValidateSummaryProperties();
             }
         }
     }

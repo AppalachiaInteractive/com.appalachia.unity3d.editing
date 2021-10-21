@@ -1,4 +1,4 @@
-using Appalachia.Core.Constants;
+using Appalachia.CI.Constants;
 using Appalachia.Editing.Core.Windows.PaneBased;
 using Unity.Profiling;
 using UnityEditor;

@@ -1,5 +1,5 @@
+using Appalachia.CI.Constants;
 using Appalachia.CI.Integration.Assets;
-using Appalachia.Core.Constants;
 using Appalachia.Editing.Core.Windows;
 using UnityEditor;
 using UnityEngine;

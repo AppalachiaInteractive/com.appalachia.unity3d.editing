@@ -4,7 +4,7 @@ using Appalachia.Editing.Assets.Windows.Organization.Context;
 using Appalachia.Editing.Core.Fields;
 using Appalachia.Editing.Core.Windows.PaneBased.Panes;
 using Appalachia.Editing.Core.Windows.PaneBased.Panes.Interfaces;
-using Appalachia.Utility.Colors;
+using Appalachia.Utility.src.Colors;
 using Unity.Profiling;
 using UnityEditor;
 using UnityEditor.Rendering;
