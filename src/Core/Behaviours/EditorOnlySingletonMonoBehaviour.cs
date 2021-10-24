@@ -8,10 +8,13 @@ namespace Appalachia.Editing.Core.Behaviours
     public abstract class EditorOnlySingletonMonoBehaviour<T> : EditorOnlyMonoBehaviour
         where T : EditorOnlySingletonMonoBehaviour<T>
     {
-        private const string _PRF_PFX = nameof(EditorOnlySingletonMonoBehaviour<T>) + ".";
+#region Profiling And Tracing Markers
 
+        private const string _PRF_PFX = nameof(EditorOnlySingletonMonoBehaviour<T>) + ".";
         private static T __instance;
         private static readonly ProfilerMarker _PRF_Awake = new(_PRF_PFX + nameof(Awake));
+
+#endregion
 
         public static T I => _instance;
         public static T instance => _instance;
@@ -36,6 +39,10 @@ namespace Appalachia.Editing.Core.Behaviours
             }
         }
 
+        protected virtual void OnAwake()
+        {
+        }
+
         protected override void Internal_Awake()
         {
             using (_PRF_Awake.Auto())
@@ -54,10 +61,6 @@ namespace Appalachia.Editing.Core.Behaviours
 
                 OnAwake();
             }
-        }
-
-        protected virtual void OnAwake()
-        {
         }
     }
 }

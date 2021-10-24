@@ -5,12 +5,26 @@ namespace Appalachia.Editing.Core.State
 {
     public abstract class UIStateStack<T>
     {
-        private const string _PRF_PFX = nameof(UIStateStack<T>) + ".";
+#region Profiling And Tracing Markers
 
+        private const string _PRF_PFX = nameof(UIStateStack<T>) + ".";
         private static readonly ProfilerMarker _PRF_Push = new(_PRF_PFX + nameof(Push));
         private static readonly ProfilerMarker _PRF_Pop = new(_PRF_PFX + nameof(Pop));
 
+#endregion
+
         private Stack<T> _stack;
+
+        public T Current => GetCurrent();
+
+        protected abstract T GetCurrent();
+        protected abstract void SetNew(T value, bool pushing);
+
+        public UIStackScope<T> Auto(T newValue)
+        {
+            Push(newValue);
+            return new UIStackScope<T>(this);
+        }
 
         public T Pop()
         {
@@ -49,16 +63,5 @@ namespace Appalachia.Editing.Core.State
                 SetNew(newValue, true);
             }
         }
-
-        protected abstract T GetCurrent();
-        protected abstract void SetNew(T value, bool pushing);
-
-        public UIStackScope<T> Auto(T newValue)
-        {
-            Push(newValue);
-            return new UIStackScope<T>(this);
-        }
-
-        public T Current => GetCurrent();
     }
 }

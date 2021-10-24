@@ -5,16 +5,16 @@ namespace Appalachia.Editing.Debugging.IngameDebugConsole
 {
     public struct QueuedDebugLogEntry
     {
-        public readonly string logString;
-        public readonly string stackTrace;
-        public readonly LogType logType;
-
         public QueuedDebugLogEntry(string logString, string stackTrace, LogType logType)
         {
             this.logString = logString;
             this.stackTrace = stackTrace;
             this.logType = logType;
         }
+
+        public readonly LogType logType;
+        public readonly string logString;
+        public readonly string stackTrace;
 
         // Checks if logString or stackTrace contains the search term
         public bool MatchesSearchTerm(string searchTerm)

@@ -13,8 +13,12 @@ namespace Appalachia.Editing.Drawers.Simple
     [CustomPropertyDrawer(typeof(SerializedEnumAttribute))]
     public class SerializedEnumDrawer : PropertyDrawer
     {
+#region Profiling And Tracing Markers
+
         private const string _PRF_PFX = nameof(SerializedEnumDrawer) + ".";
         private static readonly ProfilerMarker _PRF_OnGUI = new(_PRF_PFX + nameof(OnGUI));
+
+#endregion
 
         public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
         {

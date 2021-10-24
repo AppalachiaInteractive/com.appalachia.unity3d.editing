@@ -19,6 +19,8 @@ namespace Appalachia.Editing.Drawers
     public sealed class
         SmartLabelAttributeDrawer : ContextualPropertyDrawer<SmartLabelAttribute, SmartLabelContext>
     {
+#region Profiling And Tracing Markers
+
         private const string _PRF_PFX = nameof(SmartLabelAttributeDrawer) + ".";
 
         private static readonly ProfilerMarker _PRF_DrawPropertyLayout =
@@ -37,11 +39,12 @@ namespace Appalachia.Editing.Drawers
             new(_PRF_PFX + nameof(DrawTogglePropertyLayout));
 
         private static readonly ProfilerMarker _PRF_UpdateLabel = new(_PRF_PFX + nameof(UpdateLabel));
-
         private static readonly ProfilerMarker _PRF_PushLabel = new(_PRF_PFX + nameof(PushLabel));
         private static readonly ProfilerMarker _PRF_PopLabel = new(_PRF_PFX + nameof(PopLabel));
 
         private static readonly ProfilerMarker _PRF_PushColor = new(_PRF_PFX + nameof(PushColor));
+
+#endregion
 
         private IPropertyValueEntry<bool> boolValueEntry;
 

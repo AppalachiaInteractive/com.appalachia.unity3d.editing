@@ -4,21 +4,21 @@ namespace Appalachia.Editing.Debugging.IngameDebugConsole
 {
     public class DynamicCircularBuffer<T>
     {
-        private T[] arr;
-        private int startIndex;
-
         public DynamicCircularBuffer(int initialCapacity = 2)
         {
             arr = new T[initialCapacity];
         }
+
+        private int startIndex;
+        private T[] arr;
+
+        public int Count { get; private set; }
 
         public T this[int index]
         {
             get => arr[(startIndex + index) % arr.Length];
             set => arr[(startIndex + index) % arr.Length] = value;
         }
-
-        public int Count { get; private set; }
 
         public void Add(T value)
         {

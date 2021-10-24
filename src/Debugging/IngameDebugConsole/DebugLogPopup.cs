@@ -12,26 +12,26 @@ namespace Appalachia.Editing.Debugging.IngameDebugConsole
                                  IDragHandler,
                                  IEndDragHandler
     {
-        // Background image that will change color to indicate an alert
-        private Image backgroundImage;
+        private bool isPopupBeingDragged;
 
         // Canvas group to modify visibility of the popup
         private CanvasGroup canvasGroup;
 
-        // Dimensions of the popup divided by 2
-        private Vector2 halfSize;
-
-        private bool isPopupBeingDragged;
+        private Color normalColor;
 
         // Coroutines for simple code-based animations
         private IEnumerator moveToPosCoroutine;
 
+        // Background image that will change color to indicate an alert
+        private Image backgroundImage;
+
         // Number of new debug entries since the log window has been closed
         private int newInfoCount, newWarningCount, newErrorCount;
-
-        private Color normalColor;
-        private Vector2 normalizedPosition;
         private RectTransform popupTransform;
+
+        // Dimensions of the popup divided by 2
+        private Vector2 halfSize;
+        private Vector2 normalizedPosition;
 
         // Hide the popup
         public void Hide()

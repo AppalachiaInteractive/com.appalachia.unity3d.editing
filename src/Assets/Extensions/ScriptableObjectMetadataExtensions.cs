@@ -7,11 +7,15 @@ namespace Appalachia.Editing.Assets.Extensions
 {
     public static class ScriptableObjectMetadataExtensions
     {
+#region Profiling And Tracing Markers
+
         private const string _PRF_PFX = nameof(ScriptableObjectMetadataExtensions) + ".";
 
         private static readonly ProfilerMarker _PRF_Draw = new(_PRF_PFX + nameof(Draw));
 
-        public static void Draw(this AssetSaveLocationMetadata metadata, UIFieldMetadataManager fieldManager)
+#endregion
+
+        public static void Draw(this AssetSaveLocation metadata, UIFieldMetadataManager fieldManager)
         {
             using (_PRF_Draw.Auto())
             {
@@ -22,18 +26,18 @@ namespace Appalachia.Editing.Assets.Extensions
 
                 field_tl.Draw();
 
-                if (metadata.typeMetadata == null)
+                if (metadata.typePath == null)
                 {
                     field_type.Draw(MessageType.Info);
                 }
                 else
                 {
-                    metadata.typeMetadata?.Draw(fieldManager);
+                    metadata.typePath?.Draw(fieldManager);
                 }
 
                 field_dsl.Draw();
 
-                metadata.saveLocationMetadata.Draw(fieldManager);
+                metadata.saveLocationPath.Draw(fieldManager);
             }
         }
     }

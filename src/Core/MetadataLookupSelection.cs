@@ -15,26 +15,14 @@ namespace Appalachia.Editing.Core
         where T : MetadataLookupBase<T, TValue>
         where TValue : AppalachiaScriptableObject<TValue>, ICategorizable
     {
-        protected T _instance;
         protected Action<TValue> _selection;
-
-        public T Instance => _instance;
-        public Action<TValue> Selection => _selection;
+        protected T _instance;
 
         public PREF<Color> ButtonColor { get; set; }
         public PREF<float> ButtonColorDrop { get; set; }
+        public Action<TValue> Selection => _selection;
 
-        public Color GetButtonRowColor(int row, float drop, Color color)
-        {
-            for (var i = 0; i < row; i++)
-            {
-                color.r *= drop;
-                color.g *= drop;
-                color.b *= drop;
-            }
-
-            return color;
-        }
+        public T Instance => _instance;
 
         public virtual TS Initialize(
             T instance,
@@ -48,6 +36,18 @@ namespace Appalachia.Editing.Core
             ButtonColorDrop = buttonColorDrop;
 
             return this as TS;
+        }
+
+        public Color GetButtonRowColor(int row, float drop, Color color)
+        {
+            for (var i = 0; i < row; i++)
+            {
+                color.r *= drop;
+                color.g *= drop;
+                color.b *= drop;
+            }
+
+            return color;
         }
     }
 }

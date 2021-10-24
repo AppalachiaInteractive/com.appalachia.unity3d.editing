@@ -9,8 +9,6 @@ namespace Appalachia.Editing.Assets
 {
     public class AssetEditingScope : IDisposable
     {
-        private readonly bool _doEdit;
-
         public AssetEditingScope(bool doEdit = true)
         {
             _doEdit = doEdit;
@@ -20,6 +18,8 @@ namespace Appalachia.Editing.Assets
                 AssetDatabaseManager.StartAssetEditing();
             }
         }
+
+        private readonly bool _doEdit;
 
         void IDisposable.Dispose()
         {

@@ -7,10 +7,6 @@ namespace Appalachia.Editing.Core.Fields
     [Serializable]
     public class HelpBoxMetadata : LabelledFieldMetadataBase<HelpBoxMetadata>
     {
-        private static GUIContent s_ErrorIcon;
-        private static GUIContent s_InfoIcon;
-        private static GUIContent s_WarningIcon;
-
         internal static Texture2D errorIcon
         {
             get
@@ -49,6 +45,10 @@ namespace Appalachia.Editing.Core.Fields
                 return s_WarningIcon.image as Texture2D;
             }
         }
+
+        private static GUIContent s_ErrorIcon;
+        private static GUIContent s_InfoIcon;
+        private static GUIContent s_WarningIcon;
 
         protected override GUIStyle DefaultStyle => EditorStyles.helpBox;
 

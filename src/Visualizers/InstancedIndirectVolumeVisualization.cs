@@ -7,10 +7,24 @@ namespace Appalachia.Editing.Visualizers
     public abstract class InstancedIndirectVolumeVisualization : InstancedIndirectVisualization
     {
         [OnValueChanged(nameof(Regenerate))]
-        public Vector3 visualizationDensity = Vector3.one;
+        public float visualizationSize = .25f;
 
         [OnValueChanged(nameof(Regenerate))]
-        public float visualizationSize = .25f;
+        public Vector3 visualizationDensity = Vector3.one;
+
+        // ReSharper disable once UnusedParameter.Global
+        protected virtual void GetRotationAndScale(
+            int index,
+            int xIndex,
+            int yIndex,
+            int zIndex,
+            Vector3 position,
+            out Quaternion rotation,
+            out Vector3 scale)
+        {
+            rotation = Quaternion.identity;
+            scale = Vector3.one * visualizationSize;
+        }
 
         protected override void GetPositionData(
             Bounds bounds,
@@ -50,20 +64,6 @@ namespace Appalachia.Editing.Visualizers
                 rotations[index] = rotation;
                 scales[index] = scale;
             }
-        }
-
-        // ReSharper disable once UnusedParameter.Global
-        protected virtual void GetRotationAndScale(
-            int index,
-            int xIndex,
-            int yIndex,
-            int zIndex,
-            Vector3 position,
-            out Quaternion rotation,
-            out Vector3 scale)
-        {
-            rotation = Quaternion.identity;
-            scale = Vector3.one * visualizationSize;
         }
     }
 }

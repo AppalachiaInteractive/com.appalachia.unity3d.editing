@@ -24,14 +24,14 @@ namespace Appalachia.Editing.Labels
         [DisableIf(nameof(_disableApply))]
         public bool applyLabel;
 
-        [HideInInspector] public int count;
-
         [HorizontalGroup("B", .25f)]
         [LabelText("Delete")]
         [SmartLabel(Postfix = true)]
         [OnValueChanged(nameof(OnDeleteChanged))]
         [DisableIf(nameof(_disableDelete))]
         public bool deleteLabel;
+
+        [HideInInspector] public int count;
 
         [ReadOnly]
         [SmartLabel]

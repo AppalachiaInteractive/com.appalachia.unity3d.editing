@@ -10,8 +10,8 @@ namespace Appalachia.Editing.Drawers.Contexts
     [Serializable]
     public class SmartTitleContext : PropertyDrawerContextCollection<SmartTitleAttribute>
     {
-        public ValueResolver<Color> ColorHelper;
         public IfAttributeHelper HideHelper;
+        public ValueResolver<Color> ColorHelper;
         public ValueResolver<string> SubtitleHelper;
         public ValueResolver<string> TitleHelper;
 

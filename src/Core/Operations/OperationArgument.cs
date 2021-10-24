@@ -5,37 +5,6 @@ namespace Appalachia.Editing.Core.Operations
     [HideReferenceObjectPicker]
     public sealed class OperationArgument
     {
-        [ShowIf(nameof(showBooleanArgument))]
-        [HideLabel]
-        [HorizontalGroup]
-        public bool BooleanArgument;
-
-        [ShowIf(nameof(showCharArgument))]
-        [HideLabel]
-        [HorizontalGroup]
-        public char CharArgument;
-
-        [ShowIf(nameof(showCharArrayArgument))]
-        [InlineProperty]
-        [HideLabel]
-        [HorizontalGroup]
-        public char[] CharArrayArgument;
-
-        [ReadOnly]
-        [HideLabel]
-        [HorizontalGroup]
-        public string Description;
-
-        [ShowIf(nameof(showIntArgument))]
-        [HideLabel]
-        [HorizontalGroup]
-        public int IntArgument;
-
-        [ShowIf(nameof(showStringArgument))]
-        [HideLabel]
-        [HorizontalGroup]
-        public string StringArgument;
-
         public OperationArgument(string description, char argument)
         {
             Description = description;
@@ -70,6 +39,37 @@ namespace Appalachia.Editing.Core.Operations
             showIntArgument = true;
             IntArgument = argument;
         }
+
+        [ShowIf(nameof(showBooleanArgument))]
+        [HideLabel]
+        [HorizontalGroup]
+        public bool BooleanArgument;
+
+        [ShowIf(nameof(showCharArgument))]
+        [HideLabel]
+        [HorizontalGroup]
+        public char CharArgument;
+
+        [ShowIf(nameof(showCharArrayArgument))]
+        [InlineProperty]
+        [HideLabel]
+        [HorizontalGroup]
+        public char[] CharArrayArgument;
+
+        [ShowIf(nameof(showIntArgument))]
+        [HideLabel]
+        [HorizontalGroup]
+        public int IntArgument;
+
+        [ReadOnly]
+        [HideLabel]
+        [HorizontalGroup]
+        public string Description;
+
+        [ShowIf(nameof(showStringArgument))]
+        [HideLabel]
+        [HorizontalGroup]
+        public string StringArgument;
 
 #pragma warning disable CS0414
 

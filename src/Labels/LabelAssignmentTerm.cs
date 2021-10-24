@@ -8,8 +8,9 @@ namespace Appalachia.Editing.Labels
             this.allowedMagnitude = allowedMagnitude;
         }
 
-        public readonly string term;
         public readonly float allowedMagnitude;
+
+        public readonly string term;
 
         public override string ToString()
         {

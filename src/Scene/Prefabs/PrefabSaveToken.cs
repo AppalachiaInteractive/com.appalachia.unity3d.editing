@@ -15,11 +15,6 @@ namespace Appalachia.Editing.Scene.Prefabs
 {
     public sealed class PrefabSaveToken : IDisposable
     {
-        private Action<PrefabDisposalToken> _onDispose;
-        private string _path;
-        private GameObject _prefab;
-        private UnityEngine.SceneManagement.Scene _scene;
-
         public PrefabSaveToken(
             GameObject prefab,
             UnityEngine.SceneManagement.Scene scene,
@@ -44,6 +39,11 @@ namespace Appalachia.Editing.Scene.Prefabs
             Mutable = objs[0];
             _onDispose = onDispose;
         }
+
+        private Action<PrefabDisposalToken> _onDispose;
+        private GameObject _prefab;
+        private UnityEngine.SceneManagement.Scene _scene;
+        private string _path;
 
         public GameObject Mutable { get; private set; }
 

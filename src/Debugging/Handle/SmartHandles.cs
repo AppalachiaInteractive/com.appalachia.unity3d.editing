@@ -14,6 +14,8 @@ namespace Appalachia.Editing.Debugging.Handle
 {
     public static class SmartHandles
     {
+#region Profiling And Tracing Markers
+
 #region ProfileMarkers
 
         private const string _PRF_PFX = nameof(SmartHandles) + ".";
@@ -21,11 +23,8 @@ namespace Appalachia.Editing.Debugging.Handle
 #endregion
 
         private static readonly ProfilerMarker _PRF_DrawHandleLine = new(_PRF_PFX + nameof(DrawHandleLine));
-
         private static readonly ProfilerMarker _PRF_DrawLine = new(_PRF_PFX + nameof(DrawLine));
-
         private static readonly ProfilerMarker _PRF_DrawLineMasked = new(_PRF_PFX + nameof(DrawLineMasked));
-
         private static readonly ProfilerMarker _PRF_DrawSolidDisc = new(_PRF_PFX + nameof(DrawSolidDisc));
 
         private static readonly ProfilerMarker _PRF_DrawSolidDiscMasked =
@@ -72,38 +71,36 @@ namespace Appalachia.Editing.Debugging.Handle
             new(_PRF_PFX + nameof(DrawWireDiscMasked));
 
         private static readonly ProfilerMarker _PRF_DrawWireMatrix = new(_PRF_PFX + nameof(DrawWireMatrix));
-
         private static readonly ProfilerMarker _PRF_DrawWireMesh = new(_PRF_PFX + nameof(DrawWireMesh));
-
         private static readonly ProfilerMarker _PRF_DrawWireSphere = new(_PRF_PFX + nameof(DrawWireSphere));
 
         private static readonly ProfilerMarker _PRF_DrawWireSphereMasked =
             new(_PRF_PFX + nameof(DrawWireSphereMasked));
 
         public static float zFailAmount = .2f;
-
-        private static Vector3[] _drawWireCubeArray;
-        private static Vector3[] _drawWireCubeLines;
         private static Mesh s_ConeMesh;
         private static Mesh s_CubeMesh;
         private static Mesh s_CylinderMesh;
-        private static Vector3 s_InitialScale;
         private static Mesh s_QuadMesh;
         private static Mesh s_SphereMesh;
+        private static Vector3 s_InitialScale;
+        private static Vector3[] _drawWireCubeArray;
+        private static Vector3[] _drawWireCubeLines;
 
         private static readonly ProfilerMarker _PRF_DrawWireCube_Internal =
             new(_PRF_PFX + nameof(DrawWireCube_Internal));
 
-        private static readonly int HandleColor = Shader.PropertyToID("_HandleColor");
-        private static readonly int HandleSize = Shader.PropertyToID("_HandleSize");
-        private static readonly int HandleZTest = Shader.PropertyToID("_HandleZTest");
-        private static readonly int ObjectToWorld = Shader.PropertyToID("_ObjectToWorld");
+#endregion
+
         private static readonly GUIContent s_Image = new();
 
         private static readonly GUIContent s_Text = new();
         private static readonly GUIContent s_TextImage = new();
 
-        private static GUIStyle _baseLabelStyle;
+        private static readonly int HandleColor = Shader.PropertyToID("_HandleColor");
+        private static readonly int HandleSize = Shader.PropertyToID("_HandleSize");
+        private static readonly int HandleZTest = Shader.PropertyToID("_HandleZTest");
+        private static readonly int ObjectToWorld = Shader.PropertyToID("_ObjectToWorld");
 
         public static GUIStyle BaseLabelStyle
         {
@@ -120,6 +117,8 @@ namespace Appalachia.Editing.Debugging.Handle
                 return _baseLabelStyle;
             }
         }
+
+        private static GUIStyle _baseLabelStyle;
 
         public static void DrawCube(Vector3 center, float radius)
         {
@@ -706,15 +705,6 @@ namespace Appalachia.Editing.Debugging.Handle
         /// </summary>
         public class UnifiedDrawingScope : IDisposable
         {
-            private readonly Color _originalGizmosColor;
-            private readonly Matrix4x4 _originalGizmosMatrix;
-            private readonly Color _originalHandlesColor;
-            private readonly Matrix4x4 _originalHandlesMatrix;
-
-            private Color _currentUnifiedColor;
-            private Matrix4x4 _currentUnifiedMatrix;
-            private bool _isDisposed;
-
             /// <summary>
             ///     <para>Create a new DrawingScope and set UnityEditor.Handles.color and/or UnityEditor.Handles.matrix to the specified values.</para>
             /// </summary>
@@ -753,20 +743,29 @@ namespace Appalachia.Editing.Debugging.Handle
                 _currentUnifiedColor = color;
             }
 
+            private readonly Color _originalGizmosColor;
+            private readonly Color _originalHandlesColor;
+            private readonly Matrix4x4 _originalGizmosMatrix;
+            private readonly Matrix4x4 _originalHandlesMatrix;
+            private bool _isDisposed;
+
+            private Color _currentUnifiedColor;
+            private Matrix4x4 _currentUnifiedMatrix;
+
             /// <summary>
             ///     <para>The value of Gizmos.color at the time this UnifiedDrawingScope was created.</para>
             /// </summary>
             public Color originalGizmosColor => _originalGizmosColor;
 
             /// <summary>
-            ///     <para>The value of Gizmos.matrix at the time this UnifiedDrawingScope was created.</para>
-            /// </summary>
-            public Matrix4x4 originalGizmosMatrix => _originalGizmosMatrix;
-
-            /// <summary>
             ///     <para>The value of UnityEditor.Handles.color at the time this UnifiedDrawingScope was created.</para>
             /// </summary>
             public Color originalHandlesColor => _originalHandlesColor;
+
+            /// <summary>
+            ///     <para>The value of Gizmos.matrix at the time this UnifiedDrawingScope was created.</para>
+            /// </summary>
+            public Matrix4x4 originalGizmosMatrix => _originalGizmosMatrix;
 
             /// <summary>
             ///     <para>The value of UnityEditor.Handles.matrix at the time this UnifiedDrawingScope was created.</para>

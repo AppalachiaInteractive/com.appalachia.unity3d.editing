@@ -12,8 +12,12 @@ namespace Appalachia.Editing.Drawers.Simple
     [CustomPropertyDrawer(typeof(EnumFlagsAttribute))]
     public class EnumFlagsDrawer : PropertyDrawer
     {
+#region Profiling And Tracing Markers
+
         private const string _PRF_PFX = nameof(EnumFlagsDrawer) + ".";
         private static readonly ProfilerMarker _PRF_OnGUI = new(_PRF_PFX + nameof(OnGUI));
+
+#endregion
 
         public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
         {

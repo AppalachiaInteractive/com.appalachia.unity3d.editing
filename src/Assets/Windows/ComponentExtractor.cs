@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using Appalachia.Core.Assets;
 using Appalachia.Core.Extensions;
-using Appalachia.Core.Extensions.Helpers;
 using Appalachia.Editing.Core.Common;
 using Appalachia.Editing.Core.Windows;
 using Sirenix.OdinInspector;
@@ -16,14 +15,14 @@ namespace Appalachia.Editing.Assets.Windows
 {
     public class ComponentExtractor : AppalachiaEditorWindow
     {
+        [InlineProperty]
+        [ListDrawerSettings(HideAddButton = true, HideRemoveButton = true, DraggableItems = false)]
+        public List<CheckboxListElement<Type>> eligibleComponents = new();
+
         [ListDrawerSettings(HideAddButton = true, DraggableItems = false)]
         public List<GameObject> objectsToExtractFrom = new();
 
         [FolderPath] public string outputDirectory;
-
-        [InlineProperty]
-        [ListDrawerSettings(HideAddButton = true, HideRemoveButton = true, DraggableItems = false)]
-        public List<CheckboxListElement<Type>> eligibleComponents = new();
 
         [Button]
         public void Extract()
@@ -171,7 +170,7 @@ namespace Appalachia.Editing.Assets.Windows
 
         private void SaveAsset(Object objectToSave, string path)
         {
-            DebugHelper.Log($"Saving {objectToSave.name} at [{path}].");
+            Debug.Log($"Saving {objectToSave.name} at [{path}].");
 
             try
             {

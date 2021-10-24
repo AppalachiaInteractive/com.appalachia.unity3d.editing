@@ -12,8 +12,12 @@ namespace Appalachia.Editing.Drawers.Simple
     [CustomPropertyDrawer(typeof(MinMaxAttribute))]
     public class MinMaxDrawer : PropertyDrawer
     {
+#region Profiling And Tracing Markers
+
         private const string _PRF_PFX = nameof(MinMaxDrawer) + ".";
         private static readonly ProfilerMarker _PRF_OnGUI = new(_PRF_PFX + nameof(OnGUI));
+
+#endregion
 
         public override void OnGUI(Rect pos, SerializedProperty prop, GUIContent label)
         {

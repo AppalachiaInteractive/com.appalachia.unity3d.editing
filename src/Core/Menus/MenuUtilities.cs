@@ -102,16 +102,6 @@ namespace Appalachia.Editing.Core.Menus
             }
         }
 
-        public static void ForEachGameObjectSelection(Action<GameObject> action)
-        {
-            var objs = Selection.gameObjects;
-
-            foreach (var obj in objs)
-            {
-                action(obj);
-            }
-        }
-
         public static IEnumerable<T> ForEachGameObjectSelection<T>(Func<GameObject, T> function)
         {
             var objs = Selection.gameObjects;
@@ -119,6 +109,16 @@ namespace Appalachia.Editing.Core.Menus
             foreach (var obj in objs)
             {
                 yield return function(obj);
+            }
+        }
+
+        public static void ForEachGameObjectSelection(Action<GameObject> action)
+        {
+            var objs = Selection.gameObjects;
+
+            foreach (var obj in objs)
+            {
+                action(obj);
             }
         }
     }

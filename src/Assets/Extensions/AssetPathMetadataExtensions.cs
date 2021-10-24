@@ -1,6 +1,7 @@
 using Appalachia.CI.Integration.Paths;
 using Appalachia.Editing.Core.Colors;
 using Appalachia.Editing.Core.Fields;
+using Appalachia.Editing.Core.Layout;
 using Unity.Profiling;
 using UnityEditor;
 using UnityEngine;
@@ -9,10 +10,14 @@ namespace Appalachia.Editing.Assets.Extensions
 {
     public static class AssetPathMetadataExtensions
     {
+#region Profiling And Tracing Markers
+
         private const string _PRF_PFX = nameof(AssetPathMetadataExtensions) + ".";
         private static readonly ProfilerMarker _PRF_Draw = new(_PRF_PFX + nameof(Draw));
 
-        public static void Draw(this AssetPathMetadata metadata, UIFieldMetadataManager fieldMetadataManager)
+#endregion
+
+        public static void Draw(this AssetPath metadata, UIFieldMetadataManager fieldMetadataManager)
         {
             using (_PRF_Draw.Auto())
             {
@@ -66,9 +71,13 @@ namespace Appalachia.Editing.Assets.Extensions
                         field_name.Draw(metadata.name, true);
 
                         //GUILayout.FlexibleSpace();
-                        field_type.Draw(metadata.pathType.ToString(), ColorPalettes.Default.notable.Middle, true);
+                        field_type.Draw(
+                            metadata.pathType.ToString(),
+                            ColorPalettes.Default.notable.Middle,
+                            true
+                        );
 
-                        fieldMetadataManager.Space(SpaceSize.FieldPaddingRight);
+                        APPAGUI.SPACE.SIZE.FieldPaddingRight.MAKE();
                     }
 
                     field_rel.Draw(metadata.relativePath, ColorPalettes.Default.good.Middle, true);
@@ -89,7 +98,7 @@ namespace Appalachia.Editing.Assets.Extensions
                             metadata.doesExist ? Color.clear : ColorPalettes.Default.bad.Middle
                         );
 
-                        fieldMetadataManager.Space(SpaceSize.FieldPaddingMid);
+                        APPAGUI.SPACE.SIZE.FieldPaddingMid.MAKE();
 
                         if (field_cre.Button(!metadata.doesExist && metadata.isDirectory))
                         {
@@ -105,7 +114,7 @@ namespace Appalachia.Editing.Assets.Extensions
                         GUILayout.FlexibleSpace();
                     }
 
-                    fieldMetadataManager.Space(SpaceSize.SectionEndVertical);
+                    APPAGUI.SPACE.SIZE.SectionEndVertical.MAKE();
                 }
             }
         }

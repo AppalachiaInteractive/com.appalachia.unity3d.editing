@@ -8,6 +8,7 @@ namespace Appalachia.Editing.Scene.Prefabs
 {
     public struct AutoDisposePreviewScene
     {
+        private static readonly Finalizer finalizer = new();
         private static UnityEngine.SceneManagement.Scene _previewScene;
 
         public UnityEngine.SceneManagement.Scene previewScene
@@ -22,8 +23,6 @@ namespace Appalachia.Editing.Scene.Prefabs
                 return _previewScene;
             }
         }
-
-        private static readonly Finalizer finalizer = new();
 
         private sealed class Finalizer
         {

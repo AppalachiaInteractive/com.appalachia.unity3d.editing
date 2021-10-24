@@ -10,6 +10,8 @@ namespace Appalachia.Editing.Core.Fields
     public abstract class EditorUIFieldMetadata<T> : EditorUIFieldMetadata
         where T : EditorUIFieldMetadata<T>
     {
+#region Profiling And Tracing Markers
+
         private const string _PRF_PFX = nameof(EditorUIFieldMetadata<T>) + ".";
 
         private static readonly ProfilerMarker _PRF_GetInitializationAction =
@@ -17,6 +19,8 @@ namespace Appalachia.Editing.Core.Fields
 
         private static readonly ProfilerMarker _PRF_SetInitializationAction =
             new(_PRF_PFX + nameof(SetInitializationAction));
+
+#endregion
 
         protected Action<EditorUIFieldMetadata<T>> _initializeAction;
 
@@ -42,6 +46,8 @@ namespace Appalachia.Editing.Core.Fields
     [Serializable]
     public abstract class EditorUIFieldMetadata
     {
+#region Profiling And Tracing Markers
+
         private const string _PRF_PFX = nameof(EditorUIFieldMetadata) + ".";
         private static readonly ProfilerMarker _PRF_Initialize = new(_PRF_PFX + nameof(Initialize));
         private static readonly ProfilerMarker _PRF_CloneStyle = new(_PRF_PFX + nameof(CloneStyle));
@@ -52,6 +58,10 @@ namespace Appalachia.Editing.Core.Fields
         private static readonly ProfilerMarker _PRF_AlterContent = new(_PRF_PFX + nameof(AlterContent));
 
         private static readonly ProfilerMarker _PRF_AlterStyle = new(_PRF_PFX + nameof(AlterStyle));
+
+#endregion
+
+        internal static float indent => UnityEditor.EditorGUI.indentLevel * 15f;
 
         public bool hasBeenDrawn;
 
@@ -66,6 +76,8 @@ namespace Appalachia.Editing.Core.Fields
         private int __clonedLayoutHashcode;
         private int __clonedStyleHashcode;
         private UIFieldMetadataManager _fieldManager;
+
+        protected abstract GUIStyle DefaultStyle { get; }
 
         public GUIContent content
         {
@@ -106,8 +118,6 @@ namespace Appalachia.Editing.Core.Fields
             }
         }
 
-        protected abstract GUIStyle DefaultStyle { get; }
-
         protected abstract Action GetInitializationAction();
 
         public virtual GUIContent InitializeContent()
@@ -128,13 +138,17 @@ namespace Appalachia.Editing.Core.Fields
             return s;
         }
 
+        protected virtual void OnInitialize()
+        {
+        }
+
         public void AddLayoutOption(params GUILayoutOption[] newOptions)
         {
             using (_PRF_AddLayoutOption.Auto())
             {
                 foreach (var newOption in newOptions)
                 {
-                    AddLayoutOption(newOption, ref _layout);                    
+                    AddLayoutOption(newOption, ref _layout);
                 }
             }
         }
@@ -235,32 +249,6 @@ namespace Appalachia.Editing.Core.Fields
             }
         }
 
-        protected float GetSpace(SpaceSize spaceSize)
-        {
-            return _fieldManager.GetSpace(spaceSize);
-        }
-
-        protected virtual void OnInitialize()
-        {
-        }
-
-        protected void Space(SpaceSize spaceSize)
-        {
-            _fieldManager.Space(spaceSize);
-        }
-
-        protected void Space(float size)
-        {
-            _fieldManager.Space(size);
-        }
-
-        internal static float indent => UnityEditor.EditorGUI.indentLevel * 15f;
-        
-        protected static bool LabelHasContent(GUIContent label)
-        {
-            return label is not {text: ""} || (label.image != null);
-        }
-
         protected static void AddLayoutOption(GUILayoutOption newOption, ref GUILayoutOption[] options)
         {
             using (_PRF_AddLayoutOption.Auto())
@@ -297,6 +285,11 @@ namespace Appalachia.Editing.Core.Fields
 
                 options = newArray;
             }
+        }
+
+        protected static bool LabelHasContent(GUIContent label)
+        {
+            return label is not {text: ""} || (label.image != null);
         }
     }
 }

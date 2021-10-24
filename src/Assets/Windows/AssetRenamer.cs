@@ -16,20 +16,28 @@ namespace Appalachia.Editing.Assets.Windows
 {
     public class AssetRenamer : AppalachiaEditorWindow
     {
-        [ReadOnly]
-        [BoxGroup("Operations")]
-        [SmartLabel]
-        public string exampleInput;
+        public enum ApplicationTarget
+        {
+            BothFileAndAssetName,
+            FileNameOnly,
+            AssetNameOnly
+        }
 
-        [ReadOnly]
-        [BoxGroup("Operations")]
-        [SmartLabel]
-        public string exampleOutput;
+        public enum FilterTarget
+        {
+            ObjectName,
+            FileName,
+            FilePath,
+            ObjectNameOrFileName,
+            ObjectNameAndFileName,
+            ObjectNameOrFilePath,
+            ObjectNameAndFilePath,
+            ObjectNameOrFileNameOrFilePath,
+            ObjectNameAndFileNameAndFilePath
+        }
 
-        [HorizontalGroup("Filters/Operations/A")]
-        [OnValueChanged(nameof(CalculateFilterEffectiveness), true)]
-        [SmartLabel]
-        public FilterTarget filterTarget;
+        [BoxGroup("Operations")]
+        public ApplicationTarget operationTarget = ApplicationTarget.BothFileAndAssetName;
 
         [BoxGroup("Filters/Operations")]
         [HorizontalGroup("Filters/Operations/A")]
@@ -37,6 +45,16 @@ namespace Appalachia.Editing.Assets.Windows
         [SmartLabel]
         [ToggleLeft]
         public bool invertFilter;
+
+        [BoxGroup("Filters/Operations")]
+        [OnValueChanged(nameof(CalculateFilterEffectiveness), true)]
+        [InlineProperty]
+        public FilterOperationMetadata listFilter = new(FilterOperation.Contains);
+
+        [HorizontalGroup("Filters/Operations/A")]
+        [OnValueChanged(nameof(CalculateFilterEffectiveness), true)]
+        [SmartLabel]
+        public FilterTarget filterTarget;
 
         [BoxGroup("Filters/Operations")]
         [ReadOnly]
@@ -48,25 +66,27 @@ namespace Appalachia.Editing.Assets.Windows
         [AssetsOnly]
         public List<Object> objectsToRename = new();
 
-        [BoxGroup("Operations")]
-        public ApplicationTarget operationTarget = ApplicationTarget.BothFileAndAssetName;
-
-        [BoxGroup("Filters/Query")]
-        [SmartLabel]
-        [OnValueChanged(nameof(CalculateQueryExample))]
-        public string query;
-
-        [BoxGroup("Filters/Operations")]
-        [OnValueChanged(nameof(CalculateFilterEffectiveness), true)]
-        [InlineProperty]
-        public FilterOperationMetadata listFilter = new(FilterOperation.Contains);
-
         [InlineProperty]
         [BoxGroup("Operations")]
         [ListDrawerSettings(Expanded = true, AddCopiesLastElement = true)]
         [OnValueChanged(nameof(CalculateExample), IncludeChildren = true)]
         public List<StringOperationMetadata> operations =
             new() {new StringOperationMetadata(StringOperation.RemoveString)};
+
+        [ReadOnly]
+        [BoxGroup("Operations")]
+        [SmartLabel]
+        public string exampleInput;
+
+        [ReadOnly]
+        [BoxGroup("Operations")]
+        [SmartLabel]
+        public string exampleOutput;
+
+        [BoxGroup("Filters/Query")]
+        [SmartLabel]
+        [OnValueChanged(nameof(CalculateQueryExample))]
+        public string query;
 
         [ReadOnly]
         [BoxGroup("Filters/Query")]
@@ -80,11 +100,11 @@ namespace Appalachia.Editing.Assets.Windows
         [ValueDropdown(nameof(FilterTypes))]
         public Type type;
 
-        private ValueDropdownList<Type> _filterTypes;
-
         private float currentOperationCount;
 
         private float maxNumberOfOperations;
+
+        private ValueDropdownList<Type> _filterTypes;
 
         private bool _canFilterType => type != default;
 
@@ -572,26 +592,6 @@ namespace Appalachia.Editing.Assets.Windows
 
             // Nifty little trick to quickly position the window in the middle of the editor.
             window.position = window.position.AlignCenter(700, 700);
-        }
-
-        public enum ApplicationTarget
-        {
-            BothFileAndAssetName,
-            FileNameOnly,
-            AssetNameOnly
-        }
-
-        public enum FilterTarget
-        {
-            ObjectName,
-            FileName,
-            FilePath,
-            ObjectNameOrFileName,
-            ObjectNameAndFileName,
-            ObjectNameOrFilePath,
-            ObjectNameAndFilePath,
-            ObjectNameOrFileNameOrFilePath,
-            ObjectNameAndFileNameAndFilePath
         }
     }
 }

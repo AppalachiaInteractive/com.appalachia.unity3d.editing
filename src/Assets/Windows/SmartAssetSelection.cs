@@ -22,6 +22,12 @@ namespace Appalachia.Editing.Assets.Windows
 
         [BoxGroup(CenterLabel = false, GroupID = "Set", GroupName = "Set", Order = 2, ShowLabel = false)]
         [ShowIf(nameof(filterList))]
+        [OnValueChanged(nameof(CalculateFilterEffectiveness), true)]
+        [InlineProperty]
+        public FilterOperationMetadata listFilter = new(FilterOperation.Contains);
+
+        [BoxGroup(CenterLabel = false, GroupID = "Set", GroupName = "Set", Order = 2, ShowLabel = false)]
+        [ShowIf(nameof(filterList))]
         [ReadOnly]
         public int listObjectsPassingFilter;
 
@@ -30,12 +36,6 @@ namespace Appalachia.Editing.Assets.Windows
         [OnValueChanged(nameof(UpdateSelection), IncludeChildren = true)]
         [AssetsOnly]
         public List<Object> selections = new();
-
-        [BoxGroup(CenterLabel = false, GroupID = "Set", GroupName = "Set", Order = 2, ShowLabel = false)]
-        [ShowIf(nameof(filterList))]
-        [OnValueChanged(nameof(CalculateFilterEffectiveness), true)]
-        [InlineProperty]
-        public FilterOperationMetadata listFilter = new(FilterOperation.Contains);
 
         private bool CanApplyFilter => filterList && (listObjectsPassingFilter > 0);
 

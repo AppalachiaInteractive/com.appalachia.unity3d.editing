@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using Appalachia.Core.Extensions;
-using Appalachia.Core.Extensions.Helpers;
 using Appalachia.Editing.Assets.Context;
 using Appalachia.Editing.Core.Windows;
 using Sirenix.OdinInspector;
@@ -11,14 +10,14 @@ namespace Appalachia.Editing.Assets.Windows
 {
     public class AssetSaver : AppalachiaEditorWindow
     {
+        [ListDrawerSettings(HideAddButton = true, HideRemoveButton = true, DraggableItems = false)]
+        [InlineProperty]
+        public List<AssetComponent> componentsToSave;
+
         [ListDrawerSettings(HideAddButton = true, DraggableItems = false)]
         public List<GameObject> objectsToSave = new();
 
         [FolderPath] public string outputFolder;
-
-        [ListDrawerSettings(HideAddButton = true, HideRemoveButton = true, DraggableItems = false)]
-        [InlineProperty]
-        public List<AssetComponent> componentsToSave;
 
         [Button]
         public void ReconnectTreeMeshes()
@@ -29,7 +28,7 @@ namespace Appalachia.Editing.Assets.Windows
 
                 if (prefab == null)
                 {
-                    DebugHelper.LogWarning($"Was not able to find prefab from tree {tree.name}.");
+                    Debug.LogWarning($"Was not able to find prefab from tree {tree.name}.");
                     break;
                 }
 
@@ -39,7 +38,7 @@ namespace Appalachia.Editing.Assets.Windows
 
                 if ((objs == null) || (objs.Length == 0))
                 {
-                    DebugHelper.LogWarning(
+                    Debug.LogWarning(
                         $"Was not able to find objects for prefab {prefab.name} at [{assetPath}]."
                     );
                     break;
@@ -57,9 +56,7 @@ namespace Appalachia.Editing.Assets.Windows
                     }
                     else
                     {
-                        DebugHelper.LogWarning(
-                            $"Was not able to find mesh on object {obj.name} at {assetPath}"
-                        );
+                        Debug.LogWarning($"Was not able to find mesh on object {obj.name} at {assetPath}");
                     }
                 }
 
@@ -71,7 +68,7 @@ namespace Appalachia.Editing.Assets.Windows
                 }
                 else
                 {
-                    DebugHelper.LogWarning($"Was not able to find mesh on prefab {prefab.name}");
+                    Debug.LogWarning($"Was not able to find mesh on prefab {prefab.name}");
                 }
             }
         }

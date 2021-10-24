@@ -15,15 +15,15 @@ namespace Appalachia.Editing.Drawers.Contexts
     [Serializable]
     public class SmartInlineButtonContext<T> : PropertyDrawerContextCollection<SmartInlineButtonAttribute>
     {
+        public Action StaticMethodCaller;
+        public Action<object, T> InstanceParameterMethodCaller;
+        public Action<object> InstanceMethodCaller;
         public bool HasColorMember;
         public bool HasDisabledMember;
-        public ValueResolver<Color> ColorHelper;
         public IfAttributeHelper DisabledHelper;
-        public Action<object> InstanceMethodCaller;
-        public Action<object, T> InstanceParameterMethodCaller;
+        public ValueResolver<Color> ColorHelper;
 
         public ValueResolver<string> LabelHelper;
-        public Action StaticMethodCaller;
 
         public override void Initialize(
             InspectorProperty property,

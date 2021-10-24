@@ -11,8 +11,8 @@ namespace Appalachia.Editing.Drawers.Simple
     public class MethodButtonAttributeDrawer : PropertyDrawer
     {
         private readonly float buttonHeight = EditorGUIUtility.singleLineHeight * 2;
-        private MethodButtonAttribute attr;
         private int buttonCount;
+        private MethodButtonAttribute attr;
 
         public override float GetPropertyHeight(SerializedProperty property, GUIContent label)
         {

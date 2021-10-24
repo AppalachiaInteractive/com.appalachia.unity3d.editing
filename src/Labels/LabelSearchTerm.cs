@@ -20,6 +20,10 @@ namespace Appalachia.Editing.Labels
         [SerializeField]
         public bool enabled;
 
+        [HideInInspector]
+        [NonSerialized]
+        public bool found;
+
         [GUIColor(nameof(_labelColor))]
         [ValueDropdown(nameof(labelList))]
         [InlineProperty]
@@ -28,10 +32,6 @@ namespace Appalachia.Editing.Labels
         [HorizontalGroup("A" /*, .1f*/)]
         [SerializeField]
         public string label;
-
-        [HideInInspector]
-        [NonSerialized]
-        public bool found;
 
         private Color _labelColor =>
             enabled ? ColorPrefs.Instance.EnabledSubdued.v : ColorPrefs.Instance.DisabledImportantSubdued.v;

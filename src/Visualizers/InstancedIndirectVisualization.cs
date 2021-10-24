@@ -11,11 +11,13 @@ namespace Appalachia.Editing.Visualizers
 {
     public abstract class InstancedIndirectVisualization : EditorOnlyMonoBehaviour
     {
-        [ReadOnly] public int framesRendered;
+        private static readonly int IndirectShaderDataBuffer =
+            Shader.PropertyToID("IndirectShaderDataBuffer");
+
+        private static HashSet<InstancedIndirectVisualization> _visualizers;
 
         public bool receiveShadows = true;
-
-        public ShadowCastingMode shadowMode = ShadowCastingMode.On;
+        [ReadOnly] public int framesRendered;
 
         [ReadOnly] public int visualizationCount;
 
@@ -25,31 +27,28 @@ namespace Appalachia.Editing.Visualizers
         [OnValueChanged(nameof(Regenerate))]
         public Mesh visualizationMesh;
 
-        private static readonly int IndirectShaderDataBuffer =
-            Shader.PropertyToID("IndirectShaderDataBuffer");
-
-        private static HashSet<InstancedIndirectVisualization> _visualizers;
+        public ShadowCastingMode shadowMode = ShadowCastingMode.On;
 
         protected IndirectShaderData[] _transforms;
 
         protected Material _visualizationMaterial;
 
-        private Bounds _bounds;
-        private int _bufferVisualizationCount;
-        private Vector3[] _positions;
-
         private bool _prepared;
-        private Quaternion[] _rotations;
-        private Vector3[] _scales;
+
+        private Bounds _bounds;
 
         private ComputeBuffer indirectDataBuffer;
-
-        public override EditorOnlyExclusionStyle exclusionStyle => EditorOnlyExclusionStyle.Component;
+        private int _bufferVisualizationCount;
+        private Quaternion[] _rotations;
+        private Vector3[] _positions;
+        private Vector3[] _scales;
 
         protected abstract bool CanGenerate { get; }
         protected abstract bool CanVisualize { get; }
 
         protected abstract bool ShouldRegenerate { get; }
+
+        public override EditorOnlyExclusionStyle exclusionStyle => EditorOnlyExclusionStyle.Component;
 
         protected abstract Bounds GetBounds();
 
@@ -63,18 +62,6 @@ namespace Appalachia.Editing.Visualizers
         protected abstract void PrepareSubsequentGenerations();
 
         protected abstract void WhenDisabled();
-
-        protected override void Internal_OnEnable()
-        {
-            if (_visualizers == null)
-            {
-                _visualizers = new HashSet<InstancedIndirectVisualization>();
-            }
-
-            _visualizers.Add(this);
-
-            Regenerate();
-        }
 
         protected void RefreshBuffers()
         {
@@ -161,6 +148,18 @@ namespace Appalachia.Editing.Visualizers
             RefreshBuffers();
         }
 
+        protected override void Internal_OnEnable()
+        {
+            if (_visualizers == null)
+            {
+                _visualizers = new HashSet<InstancedIndirectVisualization>();
+            }
+
+            _visualizers.Add(this);
+
+            Regenerate();
+        }
+
         private void OnDisable()
         {
             indirectDataBuffer?.Release();
@@ -223,8 +222,8 @@ namespace Appalachia.Editing.Visualizers
 
         public struct IndirectShaderData
         {
-            public Matrix4x4 PositionMatrix;
             public Matrix4x4 InversePositionMatrix;
+            public Matrix4x4 PositionMatrix;
         }
     }
 }

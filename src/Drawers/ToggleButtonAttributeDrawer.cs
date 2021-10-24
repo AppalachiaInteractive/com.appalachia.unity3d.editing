@@ -1,7 +1,7 @@
 using Appalachia.Core.Attributes.Editing;
 using Appalachia.Editing.Core.State;
 using Appalachia.Editing.Drawers.Contexts;
-using Appalachia.Utility.src.Colors;
+using Appalachia.Utility.Colors;
 using Sirenix.OdinInspector.Editor;
 using Sirenix.Utilities;
 using Sirenix.Utilities.Editor;

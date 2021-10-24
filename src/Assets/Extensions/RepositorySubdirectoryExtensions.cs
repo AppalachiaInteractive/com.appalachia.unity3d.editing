@@ -8,8 +8,12 @@ namespace Appalachia.Editing.Assets.Extensions
 {
     public static class RepositorySubdirectoryExtensions
     {
+#region Profiling And Tracing Markers
+
         private const string _PRF_PFX = nameof(RepositorySubdirectoryExtensions) + ".";
         private static readonly ProfilerMarker _PRF_Draw = new(_PRF_PFX + nameof(Draw));
+
+#endregion
 
         public static void Draw(this RepositorySubdirectory metadata, UIFieldMetadataManager fieldManager)
         {
@@ -30,7 +34,7 @@ namespace Appalachia.Editing.Assets.Extensions
                 }
 
                 field_directory.Draw(metadata.directory);
-                field_inst_count.Draw(metadata.instances.Count.ToString(), false);
+                field_inst_count.Draw(metadata.instances.Count.ToString());
 
                 if (field_instances.Foldout(ref metadata.showInstances))
                 {

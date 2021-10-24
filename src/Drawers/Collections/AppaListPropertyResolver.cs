@@ -16,8 +16,9 @@ namespace Appalachia.Editing.Drawers.Collections
     public class AppaListPropertyResolver<TElement, TList> : BaseOrderedCollectionResolver<TList>
         where TList : AppaList<TElement>
     {
-        private const string _PRF_PFX = nameof(AppaListPropertyResolver<TElement, TList>) + ".";
+#region Profiling And Tracing Markers
 
+        private const string _PRF_PFX = nameof(AppaListPropertyResolver<TElement, TList>) + ".";
         private static readonly ProfilerMarker _PRF_GetChildInfo = new(_PRF_PFX + nameof(GetChildInfo));
 
         private static readonly ProfilerMarker _PRF_ChildPropertyRequiresRefresh =
@@ -27,7 +28,6 @@ namespace Appalachia.Editing.Drawers.Collections
             new(_PRF_PFX + nameof(ChildNameToIndex));
 
         private static readonly ProfilerMarker _PRF_GetChildCount = new(_PRF_PFX + nameof(GetChildCount));
-
         private static readonly ProfilerMarker _PRF_Add = new(_PRF_PFX + nameof(Add));
 
         private static readonly ProfilerMarker _PRF_InsertAt = new(_PRF_PFX + nameof(InsertAt));
@@ -37,6 +37,8 @@ namespace Appalachia.Editing.Drawers.Collections
 
         private static readonly ProfilerMarker _PRF_CollectionIsReadOnly =
             new(_PRF_PFX + nameof(CollectionIsReadOnly));
+
+#endregion
 
         private readonly Dictionary<int, InspectorPropertyInfo> childInfos = new();
 

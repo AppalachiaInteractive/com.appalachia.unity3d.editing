@@ -11,15 +11,15 @@ namespace Appalachia.Editing.Core.Windows.ProjectWindow.Details
     /// </summary>
     public class FileSizeDetail : ProjectWindowDetailBase
     {
-        private static Dictionary<long, string> _formatLookup;
-        private static Dictionary<string, AppaFileInfo> _lookup;
-
         public FileSizeDetail()
         {
             Name = "File Size";
             Alignment = TextAlignment.Right;
             ColumnWidth = 80;
         }
+
+        private static Dictionary<long, string> _formatLookup;
+        private static Dictionary<string, AppaFileInfo> _lookup;
 
         public override string GetLabel(string guid, string assetPath, Object asset)
         {

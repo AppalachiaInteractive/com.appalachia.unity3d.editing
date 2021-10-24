@@ -24,11 +24,6 @@ namespace Appalachia.Editing.Core.Fields
             }
         }
 
-        public override GUILayoutOption[] InitializeLayout()
-        {
-            return new[] {GUILayout.ExpandWidth(true)};
-        }
-
         public T Draw<T>(T obj, bool allowSceneObjects = false)
             where T : Object
         {
@@ -40,6 +35,11 @@ namespace Appalachia.Editing.Core.Fields
             UIStateStacks.labelWidth.Pop();
 
             return (T) result;
+        }
+
+        public override GUILayoutOption[] InitializeLayout()
+        {
+            return new[] {GUILayout.ExpandWidth(true)};
         }
     }
 }

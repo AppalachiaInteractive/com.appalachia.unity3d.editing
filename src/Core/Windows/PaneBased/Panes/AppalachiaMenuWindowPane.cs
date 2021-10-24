@@ -1,27 +1,42 @@
 // ReSharper disable UnusedParameter.Global
 
 using Appalachia.Core.Aspects.Tracing;
+using Appalachia.Core.Context.Contexts;
 using Appalachia.Editing.Core.Fields;
-using Appalachia.Editing.Core.Windows.PaneBased.Context;
+using Appalachia.Editing.Core.Layout;
 using Unity.Profiling;
 using UnityEngine;
 
 namespace Appalachia.Editing.Core.Windows.PaneBased.Panes
 {
     public abstract class AppalachiaMenuWindowPane<TC> : AppalachiaContextualWindowPane<TC>
-        where TC : AppalachiaWindowPaneContext, new()
+        where TC : AppaMenuContext, new()
     {
+#region Profiling And Tracing Markers
+
         private const string _PRF_PFX = nameof(AppalachiaMenuWindowPane<TC>) + ".";
         private const string _TRACE_PFX = nameof(AppalachiaMenuWindowPane<TC>) + ".";
 
         private static readonly ProfilerMarker _PRF_DrawAppalachiaMenuWindowPane =
             new(_PRF_PFX + nameof(OnBeforeDrawPaneContent));
 
-        protected override bool DrawPreferences => false;
+        private static readonly ProfilerMarker _PRF_OnBeforeDraw = new(_PRF_PFX + nameof(OnBeforeDraw));
+        private static readonly TraceMarker _TRACE_OnBeforeDraw = new(_TRACE_PFX + nameof(OnBeforeDraw));
+
+#endregion
+
+        protected float menuItemHeight;
+
+        protected ScrollViewUIMetadata menuScrollView;
+
+        protected virtual bool AlwaysShowMenuHorizontalScrollbar => true;
+        protected virtual bool AlwaysShowMenuVerticalScrollbar => true;
 
         protected virtual int MenuWidth => 300;
 
-        public abstract bool ShouldDrawMenuItem(int menuIndex, int menuItemIndex);
+        protected override bool DrawPreferences => false;
+
+        public abstract void DrawSelectedContent(bool show);
 
         public abstract void OnDrawPaneMenuItem(
             int menuIndex,
@@ -29,6 +44,8 @@ namespace Appalachia.Editing.Core.Windows.PaneBased.Panes
             bool isSelected,
             out bool wasSelected,
             out float menuItemHeight);
+
+        public abstract bool ShouldDrawMenuItem(int menuIndex, int menuItemIndex);
 
         public virtual void OnDrawPaneMenuEnd(int menuIndex)
         {
@@ -46,9 +63,6 @@ namespace Appalachia.Editing.Core.Windows.PaneBased.Panes
         {
         }
 
-        private static readonly ProfilerMarker _PRF_OnBeforeDraw = new ProfilerMarker(_PRF_PFX + nameof(OnBeforeDraw));
-        private static readonly TraceMarker _TRACE_OnBeforeDraw = new TraceMarker(_TRACE_PFX + nameof(OnBeforeDraw));
-
         public override void OnBeforeDraw()
         {
             using (_TRACE_OnBeforeDraw.Auto())
@@ -56,12 +70,11 @@ namespace Appalachia.Editing.Core.Windows.PaneBased.Panes
             {
                 base.OnBeforeDraw();
 
-                if ((Event.current.type == EventType.KeyDown) &&
-                    context is IAppalachiaMenuWindowPaneContext c)
+                if (Event.current.type == EventType.KeyDown)
                 {
                     var mousePosition = Event.current.mousePosition;
 
-                    var targetMenuIndex = c.GetActiveMenuIndex(mousePosition);
+                    var targetMenuIndex = context.GetActiveMenuIndex(mousePosition);
 
                     var up = Event.current.keyCode == KeyCode.UpArrow;
                     var down = Event.current.keyCode == KeyCode.DownArrow;
@@ -94,8 +107,8 @@ namespace Appalachia.Editing.Core.Windows.PaneBased.Panes
                         if (difference > maxDifference)
                         {
                             var shift = difference - maxDifference;
-                            
-                            menuScrollView.scrollPosition.y = Mathf.Clamp(currentScrollY+shift, 0, 10000);                            
+
+                            menuScrollView.scrollPosition.y = Mathf.Clamp(currentScrollY + shift, 0, 10000);
                         }
                     }
                 }
@@ -104,15 +117,12 @@ namespace Appalachia.Editing.Core.Windows.PaneBased.Panes
             }
         }
 
-
-        protected ScrollViewUIMetadata menuScrollView;
-        protected float menuItemHeight;
-        
         public override void OnBeforeDrawPaneContent()
         {
             using (_PRF_DrawAppalachiaMenuWindowPane.Auto())
             {
                 OnDrawPaneMenusStart();
+
                 for (var menuIndex = 0; menuIndex < context.RequiredMenuCount; menuIndex++)
                 {
                     var menuSelection = context.GetMenuSelection(menuIndex);
@@ -122,32 +132,20 @@ namespace Appalachia.Editing.Core.Windows.PaneBased.Panes
                     if (menuScrollView == null)
                     {
                         menuScrollView = fieldMetadataManager.Get<ScrollViewUIMetadata>(
-                            $"SV_{menuIndex}",
+                            $"{PaneName}_SV_{menuIndex}",
                             sv =>
                             {
                                 sv.width = MenuWidth;
-                                sv.AddLayoutOption(GUILayout.Width(MenuWidth));
+                                sv.AlwaysShowVertical = AlwaysShowMenuVerticalScrollbar;
+                                sv.AlwaysShowHorizontal = AlwaysShowHorizontalScrollbar;
                             }
                         );
                     }
 
-                    using (new GUILayout.VerticalScope())
+                    using (new GUILayout.VerticalScope(APPAGUI.Width(MenuWidth).ExpandWidth(false)))
                     {
-                        DrawPreferenceFields(false);
+                        PreferencesDrawer.DrawPreferenceFields(false);
 
-                        /*
-                        UnityEditor.EditorGUILayout.LabelField(nameof(menuSelection.currentIndex), menuSelection.currentIndex.ToString());
-                        UnityEditor.EditorGUILayout.LabelField(nameof(menuSelection.currentVisibleIndex), menuSelection.currentVisibleIndex.ToString());
-                        var sp = menuScrollView.scrollPosition;
-                        UnityEditor.EditorGUILayout.LabelField(
-                            nameof(menuScrollView.scrollPosition),
-                            $"x: {sp.x} y: {sp.y}"
-                        );
-                        UnityEditor.EditorGUILayout.LabelField(
-                            "Scroll Time",
-                            $"{menuSelection.scrollTime}%"
-                        );*/
-                        
                         using (menuScrollView.GetScope())
                         {
                             OnDrawPaneMenuStart(menuIndex);
@@ -171,7 +169,13 @@ namespace Appalachia.Editing.Core.Windows.PaneBased.Panes
 
                                 var isSelected = menuSelection.IsSelected(menuItemIndex);
 
-                                OnDrawPaneMenuItem(menuIndex, menuItemIndex, isSelected, out var wasSelected, out var menuItemHeightTemp);
+                                OnDrawPaneMenuItem(
+                                    menuIndex,
+                                    menuItemIndex,
+                                    isSelected,
+                                    out var wasSelected,
+                                    out var menuItemHeightTemp
+                                );
 
                                 if (menuItemHeightTemp != 0)
                                 {
@@ -193,6 +197,16 @@ namespace Appalachia.Editing.Core.Windows.PaneBased.Panes
 
                 OnDrawPaneMenusEnd();
             }
+        }
+
+        public override void OnDrawPaneContent()
+        {
+            var menuSelection = context.GetMenuSelection(0);
+            var menuItemIndex = menuSelection.currentIndex;
+
+            var visibility = menuSelection.IsVisible(menuItemIndex);
+
+            DrawSelectedContent(visibility);
         }
     }
 }

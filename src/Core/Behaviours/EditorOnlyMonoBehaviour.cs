@@ -15,9 +15,12 @@ namespace Appalachia.Editing.Core.Behaviours
     [ExecuteAlways]
     public abstract class EditorOnlyMonoBehaviour : AppalachiaMonoBehaviour
     {
+#region Profiling And Tracing Markers
+
         private const string _PRF_PFX = nameof(EditorOnlyMonoBehaviour) + ".";
 
         private static readonly ProfilerMarker _PRF_Awake = new(_PRF_PFX + "Awake");
+
         private static readonly ProfilerMarker _PRF_OnEnable = new(_PRF_PFX + "OnEnable");
         private static readonly ProfilerMarker _PRF_Start = new(_PRF_PFX + nameof(Start));
         private static readonly ProfilerMarker _PRF_Reset = new(_PRF_PFX + "Reset");
@@ -26,7 +29,25 @@ namespace Appalachia.Editing.Core.Behaviours
         private static readonly ProfilerMarker _PRF_Ensure_EditorTag =
             new(_PRF_PFX + nameof(EnsureCorrectEditorTag));
 
+#endregion
+
         [HideInInspector] public abstract EditorOnlyExclusionStyle exclusionStyle { get; }
+
+        protected virtual void Internal_Awake()
+        {
+        }
+
+        protected virtual void Internal_OnEnable()
+        {
+        }
+
+        protected virtual void Internal_Reset()
+        {
+        }
+
+        protected virtual void Internal_Start()
+        {
+        }
 
         public void EnsureCorrectEditorTag()
         {
@@ -136,22 +157,6 @@ namespace Appalachia.Editing.Core.Behaviours
 
                 Internal_Awake();
             }
-        }
-
-        protected virtual void Internal_Awake()
-        {
-        }
-
-        protected virtual void Internal_OnEnable()
-        {
-        }
-
-        protected virtual void Internal_Reset()
-        {
-        }
-
-        protected virtual void Internal_Start()
-        {
         }
 
         protected void OnEnable()

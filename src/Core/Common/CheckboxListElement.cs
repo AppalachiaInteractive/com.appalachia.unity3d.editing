@@ -5,8 +5,7 @@ namespace Appalachia.Editing.Core.Common
     [HideReferenceObjectPicker]
     public class CheckboxListElement<T>
     {
-        public T element;
-
         [HideLabel] public bool include;
+        public T element;
     }
 }

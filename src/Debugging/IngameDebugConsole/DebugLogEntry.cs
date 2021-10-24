@@ -11,14 +11,39 @@ namespace Appalachia.Editing.Debugging.IngameDebugConsole
         // Collapsed count
         public int count;
 
-        public string logString;
-
         public Sprite logTypeSpriteRepresentation;
+
+        public string logString;
         public string stackTrace;
+
+        private int hashValue;
 
         private string completeLog;
 
-        private int hashValue;
+        public void Initialize(string logString, string st)
+        {
+            this.logString = logString;
+            stackTrace = st;
+
+            completeLog = null;
+            count = 1;
+            hashValue = HASH_NOT_CALCULATED;
+        }
+
+        // Checks if logString or stackTrace contains the search term
+        public bool MatchesSearchTerm(string searchTerm)
+        {
+            return ((logString != null) &&
+                    (logString.IndexOf(searchTerm, StringComparison.OrdinalIgnoreCase) >= 0)) ||
+                   ((stackTrace != null) &&
+                    (stackTrace.IndexOf(searchTerm, StringComparison.OrdinalIgnoreCase) >= 0));
+        }
+
+        // Check if two entries have the same origin
+        public bool Equals(DebugLogEntry other)
+        {
+            return (other != null) && (logString == other.logString) && (stackTrace == other.stackTrace);
+        }
 
         public override int GetHashCode()
         {
@@ -43,31 +68,6 @@ namespace Appalachia.Editing.Debugging.IngameDebugConsole
             }
 
             return completeLog;
-        }
-
-        public void Initialize(string logString, string st)
-        {
-            this.logString = logString;
-            this.stackTrace = st;
-
-            completeLog = null;
-            count = 1;
-            hashValue = HASH_NOT_CALCULATED;
-        }
-
-        // Checks if logString or stackTrace contains the search term
-        public bool MatchesSearchTerm(string searchTerm)
-        {
-            return ((logString != null) &&
-                    (logString.IndexOf(searchTerm, StringComparison.OrdinalIgnoreCase) >= 0)) ||
-                   ((stackTrace != null) &&
-                    (stackTrace.IndexOf(searchTerm, StringComparison.OrdinalIgnoreCase) >= 0));
-        }
-
-        // Check if two entries have the same origin
-        public bool Equals(DebugLogEntry other)
-        {
-            return (other != null) && (logString == other.logString) && (stackTrace == other.stackTrace);
         }
     }
 }

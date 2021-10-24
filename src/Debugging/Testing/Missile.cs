@@ -5,10 +5,10 @@ namespace Appalachia.Editing.Debugging.Testing
 {
     public class Missile : MonoBehaviour
     {
+        public bool keepAlive;
         public Collider c;
         public double createdAt;
         public GameObject go;
-        public bool keepAlive;
         public Rigidbody rb;
 
         public double age => Time.time - createdAt;

@@ -9,20 +9,20 @@ namespace Appalachia.Editing.Debugging
     public class GrounderPatrol : MonoBehaviour
     {
         public bool freeze;
-
-        [ReadOnly] public Vector3 lastPosition;
-        public Vector3 origin;
-        public List<Vector3> points = new();
         public bool pointsAreRelative = true;
 
         public float positionSpeed = .1f;
         public float rotationSpeed = .1f;
-        [ReadOnly] public Vector3 targetForward;
+        public float yOffset = .5f;
         [ReadOnly] public int targetIndex;
+        public List<Vector3> points = new();
+
+        [ReadOnly] public Vector3 lastPosition;
+        public Vector3 origin;
+        [ReadOnly] public Vector3 targetForward;
 
         [ReadOnly] public Vector3 targetPosition;
         [ReadOnly] public Vector3 targetUp;
-        public float yOffset = .5f;
 
         private RaycastHit[] hits = new RaycastHit[16];
 

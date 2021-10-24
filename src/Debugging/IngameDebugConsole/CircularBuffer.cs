@@ -4,17 +4,17 @@ namespace Appalachia.Editing.Debugging.IngameDebugConsole
 {
     public class CircularBuffer<T>
     {
-        private readonly T[] arr;
-        private int startIndex;
-
         public CircularBuffer(int capacity)
         {
             arr = new T[capacity];
         }
 
-        public T this[int index] => arr[(startIndex + index) % arr.Length];
+        private readonly T[] arr;
+        private int startIndex;
 
         public int Count { get; private set; }
+
+        public T this[int index] => arr[(startIndex + index) % arr.Length];
 
         // Old elements are overwritten when capacity is reached
         public void Add(T value)

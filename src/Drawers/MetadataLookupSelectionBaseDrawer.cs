@@ -17,10 +17,19 @@ namespace Appalachia.Editing.Drawers
         where TValue : AppalachiaScriptableObject<TValue>, ICategorizable
     {
         private static PREF<int> _itemsPerRow;
-        protected List<string> _categories;
-        protected GUITabGroup _tabGroup;
-        protected Dictionary<string, List<TValue>> _tabItems;
         protected Dictionary<string, GUITabPage> _tabs;
+        protected Dictionary<string, List<TValue>> _tabItems;
+        protected GUITabGroup _tabGroup;
+        protected List<string> _categories;
+
+        [Button]
+        public void Reset()
+        {
+            _tabGroup = null;
+            _tabs = null;
+            _tabItems = null;
+            _categories = null;
+        }
 
         public override void OnInspectorGUI()
         {
@@ -91,15 +100,6 @@ namespace Appalachia.Editing.Drawers
             _tabGroup.EndGroup();
 
             GUI.color = originalColor;
-        }
-
-        [Button]
-        public void Reset()
-        {
-            _tabGroup = null;
-            _tabs = null;
-            _tabItems = null;
-            _categories = null;
         }
 
         private void EnsureInitialized()

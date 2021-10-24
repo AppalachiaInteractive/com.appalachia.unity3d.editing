@@ -1,5 +1,5 @@
 using System;
-using Appalachia.Utility.src.Colors;
+using Appalachia.Utility.Colors;
 using UnityEditor;
 using UnityEngine;
 
@@ -8,9 +8,6 @@ namespace Appalachia.Editing.Core.Colors
     [Serializable]
     public static class ColorPalettes
     {
-        private static ColorPalette _default;
-        private static ColorPalette _scratchPalette;
-
         public static ColorPalette Default
         {
             get
@@ -23,6 +20,9 @@ namespace Appalachia.Editing.Core.Colors
                 return _default;
             }
         }
+
+        private static ColorPalette _default;
+        private static ColorPalette _scratchPalette;
 
         internal static void DrawScratchPalette(ColorPalette assignTo)
         {

@@ -12,6 +12,45 @@ namespace Appalachia.Editing.Assets.Windows
 {
     public class GameObjectRenamer : AppalachiaEditorWindow
     {
+        [BoxGroup(CenterLabel = false, GroupID = "Set", GroupName = "Set", Order = 2, ShowLabel = false)]
+        [OnValueChanged(nameof(CalculateFilterEffectiveness), true)]
+        public bool filterList;
+
+        [BoxGroup(CenterLabel = false, GroupID = "Set", GroupName = "Set", Order = 2, ShowLabel = false)]
+        [ShowIf(nameof(filterList))]
+        [OnValueChanged(nameof(CalculateFilterEffectiveness), true)]
+        public bool invertFilter;
+
+        [BoxGroup(CenterLabel = false, GroupID = "Set", GroupName = "Set", Order = 2, ShowLabel = false)]
+        [ShowIf(nameof(filterList))]
+        [OnValueChanged(nameof(CalculateFilterEffectiveness), true)]
+        [InlineProperty]
+        public FilterOperationMetadata listFilter = new(FilterOperation.Contains);
+
+        [BoxGroup(CenterLabel = false, GroupID = "Set", GroupName = "Set", Order = 2, ShowLabel = false)]
+        [ShowIf(nameof(filterList))]
+        [ReadOnly]
+        public int listObjectsPassingFilter;
+
+        [BoxGroup(CenterLabel = false, GroupID = "Set", GroupName = "Set", Order = 2, ShowLabel = false)]
+        [ListDrawerSettings(HideAddButton = true, DraggableItems = false)]
+        [OnValueChanged(nameof(CalculateExample), IncludeChildren = true)]
+        [SceneObjectsOnly]
+        public List<Object> objectsToRename = new();
+
+        [InlineProperty]
+        [BoxGroup(
+            CenterLabel = true,
+            GroupID = "Operations",
+            GroupName = "Operations",
+            Order = 3,
+            ShowLabel = true
+        )]
+        [ListDrawerSettings(Expanded = true, AddCopiesLastElement = true)]
+        [OnValueChanged(nameof(CalculateExample), IncludeChildren = true)]
+        public List<StringOperationMetadata> operations =
+            new() {new StringOperationMetadata(StringOperation.RemoveString)};
+
         [ReadOnly]
         [BoxGroup(
             CenterLabel = true,
@@ -31,45 +70,6 @@ namespace Appalachia.Editing.Assets.Windows
             ShowLabel = true
         )]
         public string exampleOutput;
-
-        [BoxGroup(CenterLabel = false, GroupID = "Set", GroupName = "Set", Order = 2, ShowLabel = false)]
-        [OnValueChanged(nameof(CalculateFilterEffectiveness), true)]
-        public bool filterList;
-
-        [BoxGroup(CenterLabel = false, GroupID = "Set", GroupName = "Set", Order = 2, ShowLabel = false)]
-        [ShowIf(nameof(filterList))]
-        [OnValueChanged(nameof(CalculateFilterEffectiveness), true)]
-        public bool invertFilter;
-
-        [BoxGroup(CenterLabel = false, GroupID = "Set", GroupName = "Set", Order = 2, ShowLabel = false)]
-        [ShowIf(nameof(filterList))]
-        [ReadOnly]
-        public int listObjectsPassingFilter;
-
-        [BoxGroup(CenterLabel = false, GroupID = "Set", GroupName = "Set", Order = 2, ShowLabel = false)]
-        [ListDrawerSettings(HideAddButton = true, DraggableItems = false)]
-        [OnValueChanged(nameof(CalculateExample), IncludeChildren = true)]
-        [SceneObjectsOnly]
-        public List<Object> objectsToRename = new();
-
-        [BoxGroup(CenterLabel = false, GroupID = "Set", GroupName = "Set", Order = 2, ShowLabel = false)]
-        [ShowIf(nameof(filterList))]
-        [OnValueChanged(nameof(CalculateFilterEffectiveness), true)]
-        [InlineProperty]
-        public FilterOperationMetadata listFilter = new(FilterOperation.Contains);
-
-        [InlineProperty]
-        [BoxGroup(
-            CenterLabel = true,
-            GroupID = "Operations",
-            GroupName = "Operations",
-            Order = 3,
-            ShowLabel = true
-        )]
-        [ListDrawerSettings(Expanded = true, AddCopiesLastElement = true)]
-        [OnValueChanged(nameof(CalculateExample), IncludeChildren = true)]
-        public List<StringOperationMetadata> operations =
-            new() {new StringOperationMetadata(StringOperation.RemoveString)};
 
         private float currentOperationCount;
 

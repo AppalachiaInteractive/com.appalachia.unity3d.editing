@@ -12,9 +12,9 @@ namespace Appalachia.Editing.Drawers.Contexts
     {
         public bool ColorError;
         public Color? HSVColor;
+        public float Size;
         public string InputLabelText;
         public string OutputLabelText;
-        public float Size;
         public ValueResolver<Color> ColorHelper;
 
         public override void Initialize(

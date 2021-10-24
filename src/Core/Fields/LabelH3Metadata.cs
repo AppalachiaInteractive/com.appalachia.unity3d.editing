@@ -1,6 +1,5 @@
 using System;
 using Appalachia.Editing.Core.Layout;
-using Appalachia.Editing.Core.Windows;
 using UnityEngine;
 
 namespace Appalachia.Editing.Core.Fields
@@ -10,19 +9,19 @@ namespace Appalachia.Editing.Core.Fields
     {
         public override bool BottomDrawLine => true;
 
-        public override Color BottomLineColor => AppalachiaEditorGUIHelper.LineColorH3Soft;
+        public override bool TopDrawLine => true;
+
+        public override Color BottomLineColor => APPAGUI.LineColorH3Soft;
+
+        public override Color TopLineColor => APPAGUI.LineColorH3;
 
         public override float BottomLineWidth => 1f;
+
+        public override float TopLineWidth => 1f;
 
         public override int BottomMargin => 1;
 
         public override int FontSize => 12;
-
-        public override bool TopDrawLine => true;
-
-        public override Color TopLineColor => AppalachiaEditorGUIHelper.LineColorH3;
-
-        public override float TopLineWidth => 1f;
 
         public override int TopMargin => 1;
     }

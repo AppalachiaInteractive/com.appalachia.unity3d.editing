@@ -1,8 +1,6 @@
 using Appalachia.Core.Aspects.Tracing;
 using Appalachia.Core.Preferences;
 using Appalachia.Editing.Core.Windows.PaneBased.Panes;
-using Appalachia.Editing.Core.Windows.PaneBased.Panes.Interfaces;
-using Unity.EditorCoroutines.Editor;
 using Unity.Profiling;
 using UnityEngine;
 
@@ -10,18 +8,22 @@ namespace Appalachia.Editing.Core.Windows.PaneBased
 {
     public abstract class AppalachiaPaneBasedWindow<TW, TP> : AppalachiaPaneBasedWindowBase
         where TW : AppalachiaPaneBasedWindow<TW, TP>
-        where TP : IAppalachiaWindowPane, new()
+        where TP : AppalachiaWindowPane, new()
     {
+#region Profiling And Tracing Markers
+
         private const string _PRF_PFX = nameof(AppalachiaPaneBasedWindow<TW, TP>) + ".";
         private const string _TRACE_PFX = nameof(AppalachiaPaneBasedWindow<TW, TP>) + ".";
-
-        public TP mainPane;
         private static readonly ProfilerMarker _PRF_OnGUI = new(_PRF_PFX + nameof(OnGUI));
         private static readonly ProfilerMarker _PRF_OnEnable = new(_PRF_PFX + nameof(OnEnable));
         private static readonly TraceMarker _TRACE_OnEnable = new(_TRACE_PFX + nameof(OnEnable));
         private static readonly TraceMarker _TRACE_OnGUI = new(_TRACE_PFX + nameof(OnGUI));
         private static readonly TraceMarker _TRACE_Get = new(_TRACE_PFX + nameof(Get));
         private static readonly ProfilerMarker _PRF_Get = new(_PRF_PFX + nameof(Get));
+
+#endregion
+
+        public TP mainPane;
 
         private void OnEnable()
         {
@@ -44,9 +46,9 @@ namespace Appalachia.Editing.Core.Windows.PaneBased
                     mainPane = new TP();
                 }
 
-                if (!mainPane.Initialized && !mainPane.Initializing)
+                if (!mainPane.FullyInitialized && !mainPane.PaneIsInitializing)
                 {
-                    EditorCoroutineUtility.StartCoroutine(mainPane.Initialize(), this);
+                    ExecuteCoroutine(() => mainPane.Initialize());
                 }
 
                 if (mainPane.window == null)

@@ -7,8 +7,8 @@ using Appalachia.Core.Extensions;
 using Appalachia.Core.Layers;
 using Appalachia.Core.Types.Enums;
 using Appalachia.Simulation.Core;
-using Appalachia.Utility.src.Colors;
-using Appalachia.Utility.src.Constants;
+using Appalachia.Utility.Colors;
+using Appalachia.Utility.Constants;
 using Sirenix.OdinInspector;
 using Unity.Profiling;
 using UnityEditor;
@@ -22,39 +22,54 @@ namespace Appalachia.Editing.Debugging.Testing
     [ExecuteAlways]
     public class Bazooka : SingletonMonoBehaviour<Bazooka>
     {
-        public event OnPostFire OnPostFire;
+#region Profiling And Tracing Markers
 
-        public event OnPreFire OnPreFire;
         private const string _PRF_PFX = nameof(Bazooka) + ".";
 
-        [FoldoutGroup("Advanced")]
-        public Vector2 allowedForceRange = new(.5f, 25f);
+        private static readonly ProfilerMarker _PRF_FindOrphanedMissiles =
+            new(_PRF_PFX + nameof(FindOrphanedMissiles));
 
-        [FoldoutGroup("Advanced")]
-        [MinMaxSlider(-1, 1, true)]
-        public Vector2 allowedLeftToRightRange = new(-.5f, .5f);
+        private static readonly ProfilerMarker _PRF_CheckOutstandingMissiles =
+            new(_PRF_PFX + nameof(CheckOutstandingMissiles));
 
-        [FoldoutGroup("Advanced")]
-        public Vector2 allowedLifetimes = new(1.0f, 180f);
+        private static readonly ProfilerMarker _PRF_OnEnable = new(_PRF_PFX + nameof(OnEnable));
+        private static readonly ProfilerMarker _PRF_Fire = new(_PRF_PFX + nameof(Fire));
+        private static readonly ProfilerMarker _PRF_SoftFire = new(_PRF_PFX + nameof(SoftFire));
+        private static readonly ProfilerMarker _PRF_Drop = new(_PRF_PFX + nameof(Drop));
 
-        [FoldoutGroup("Advanced")]
-        public Vector2 allowedMassRange = new(.1f, 10f);
+        private static readonly ProfilerMarker _PRF_OnDrawGizmosSelected =
+            new(_PRF_PFX + nameof(OnDrawGizmosSelected));
 
-        [FoldoutGroup("Advanced")]
-        public Vector2Int allowedOutstanding = new(1, 100);
+        private static readonly ProfilerMarker _PRF_Update = new(_PRF_PFX + nameof(Update));
+        private static readonly ProfilerMarker _PRF_FindMissileRoot = new(_PRF_PFX + nameof(FindMissileRoot));
 
-        [FoldoutGroup("Advanced")]
-        public Vector2 allowedScaleRange = new(.05f, 3f);
-
-        [FoldoutGroup("Force")]
-        public CollisionDetectionMode collisionDetectionMode = CollisionDetectionMode.ContinuousDynamic;
-
-        [FoldoutGroup("Advanced")]
-        public PrimitiveColliderType defaultPrimitive = PrimitiveColliderType.Sphere;
+#endregion
 
         [FoldoutGroup("General")]
         [ToggleLeft]
         public bool exact;
+
+        [FoldoutGroup("Limits")] public bool limited = true;
+
+        [FoldoutGroup("Missile")]
+        [ToggleLeft]
+        [ShowIf(nameof(_showMass))]
+        public bool scaleMass = true;
+
+        [FoldoutGroup("Missile")]
+        [ToggleLeft]
+        public bool uniformScale;
+
+        [FoldoutGroup("Missile")]
+        [ToggleLeft]
+        public bool updateMass = true;
+
+        [FoldoutGroup("Missile")]
+        [ToggleLeft]
+        public bool updateMaterial = true;
+
+        [FoldoutGroup("Force")]
+        public CollisionDetectionMode collisionDetectionMode = CollisionDetectionMode.ContinuousDynamic;
 
         [FoldoutGroup("Force")]
         [ShowIf(nameof(exact))]
@@ -67,93 +82,23 @@ namespace Appalachia.Editing.Debugging.Testing
         public float forceForwardToVerticalRatio = 0.1f;
 
         [FoldoutGroup("Force")]
-        [HideIf(nameof(exact))]
-        [MinMaxSlider(-1.0f, 1.0f, true)]
-        public Vector2 forceForwardToVerticalRatioRange = new(-.1f, .1f);
-
-        [FoldoutGroup("Force")]
         [ShowIf(nameof(exact))]
         [PropertyRange(nameof(_allowedLeftToRightRatioMin), nameof(_allowedLeftToRightRatioMax))]
         public float forceLeftToRightRatio;
 
         [FoldoutGroup("Force")]
-        [HideIf(nameof(exact))]
-        [MinMaxSlider(nameof(_allowedLeftToRightRatioMin), nameof(_allowedLeftToRightRatioMax), true)]
-        public Vector2 forceLeftToRightRatioRange = new(-.25f, .25f);
-
-        [FoldoutGroup("Force")] public ForceMode forceMode = ForceMode.VelocityChange;
-
-        [FoldoutGroup("Force")]
-        [HideIf(nameof(exact))]
-        [MinMaxSlider(nameof(_allowedForceRangeMin), nameof(_allowedForceRangeMax), true)]
-        public Vector2 forceRange = new(1f, 2f);
-
-        [FoldoutGroup("Force")]
         [PropertyRange(0.0f, 1f)]
         public float forceScalingPerMeter = 0.1f;
-
-        [FoldoutGroup("Force")]
-        public RigidbodyInterpolation interpolation = RigidbodyInterpolation.Interpolate;
-
-        [FoldoutGroup("General")]
-        public LayerSelection layer;
-
-        [FoldoutGroup("Limits")] public bool limited = true;
 
         [FoldoutGroup("Missile")]
         [ShowIf(nameof(_showMass))]
         [PropertyRange(nameof(_massMin), nameof(_massMax))]
         public float mass = 1.0f;
 
-        [FoldoutGroup("Missile")]
-        [ShowIf(nameof(_showMassRange))]
-        [MinMaxSlider(nameof(_massMin), nameof(_massMax), true)]
-        public Vector2 massRange = new(.8f, 1.2f);
-
-        [FoldoutGroup("Missile")]
-        [ShowIf(nameof(updateMaterial))]
-        public PhysicMaterial material;
-
         [FoldoutGroup("Limits")]
         [ShowIf(nameof(limited))]
         [PropertyRange(nameof(_allowedLifetimesMin), nameof(_allowedLifetimesMax))]
         public float maxLife = 30;
-
-        [FoldoutGroup("Missile")]
-        public GameObject missileRoot;
-
-        [FoldoutGroup("Limits")]
-        [ShowIf(nameof(limited))]
-        [PropertyRange(nameof(_allowedOutstandingMin), nameof(_allowedOutstandingMax))]
-        public int outstandingFires = 15;
-
-        [FoldoutGroup("Missile")]
-        public GameObject prefab;
-
-        [FoldoutGroup("Missile")]
-        [ToggleLeft]
-        [ShowIf(nameof(_showMass))]
-        public bool scaleMass = true;
-
-        [FoldoutGroup("Missile")]
-        [ShowIf(nameof(_showScalingRangeUniform))]
-        [MinMaxSlider(nameof(_scaleMin), nameof(_scaleMax), true)]
-        public Vector2 scalingRangeUniform = new(.8f, 1.2f);
-
-        [FoldoutGroup("Missile")]
-        [ShowIf(nameof(_showScalingRange))]
-        [MinMaxSlider(nameof(_scaleMin), nameof(_scaleMax), true)]
-        public Vector2 scalingRangeX = new(.8f, 1.2f);
-
-        [FoldoutGroup("Missile")]
-        [ShowIf(nameof(_showScalingRange))]
-        [MinMaxSlider(nameof(_scaleMin), nameof(_scaleMax), true)]
-        public Vector2 scalingRangeY = new(.8f, 1.2f);
-
-        [FoldoutGroup("Missile")]
-        [ShowIf(nameof(_showScalingRange))]
-        [MinMaxSlider(nameof(_scaleMin), nameof(_scaleMax), true)]
-        public Vector2 scalingRangeZ = new(.8f, 1.2f);
 
         [FoldoutGroup("Missile")]
         [ShowIf(nameof(_showScalingUniform))]
@@ -175,70 +120,109 @@ namespace Appalachia.Editing.Debugging.Testing
         [PropertyRange(nameof(_scaleMin), nameof(_scaleMax))]
         public float scalingZ = 1.0f;
 
-        [FoldoutGroup("Missile")]
-        [ToggleLeft]
-        public bool uniformScale;
+        [FoldoutGroup("Force")] public ForceMode forceMode = ForceMode.VelocityChange;
 
         [FoldoutGroup("Missile")]
-        [ToggleLeft]
-        public bool updateMass = true;
+        public GameObject missileRoot;
 
         [FoldoutGroup("Missile")]
-        [ToggleLeft]
-        public bool updateMaterial = true;
+        public GameObject prefab;
 
-        private static readonly ProfilerMarker _PRF_FindOrphanedMissiles =
-            new(_PRF_PFX + nameof(FindOrphanedMissiles));
+        [FoldoutGroup("Limits")]
+        [ShowIf(nameof(limited))]
+        [PropertyRange(nameof(_allowedOutstandingMin), nameof(_allowedOutstandingMax))]
+        public int outstandingFires = 15;
 
-        private static readonly ProfilerMarker _PRF_CheckOutstandingMissiles =
-            new(_PRF_PFX + nameof(CheckOutstandingMissiles));
+        [FoldoutGroup("General")]
+        public LayerSelection layer;
 
-        private static readonly ProfilerMarker _PRF_OnEnable = new(_PRF_PFX + nameof(OnEnable));
-        private static readonly ProfilerMarker _PRF_Fire = new(_PRF_PFX + nameof(Fire));
-        private static readonly ProfilerMarker _PRF_SoftFire = new(_PRF_PFX + nameof(SoftFire));
-        private static readonly ProfilerMarker _PRF_Drop = new(_PRF_PFX + nameof(Drop));
+        [FoldoutGroup("Missile")]
+        [ShowIf(nameof(updateMaterial))]
+        public PhysicMaterial material;
 
-        private static readonly ProfilerMarker _PRF_OnDrawGizmosSelected =
-            new(_PRF_PFX + nameof(OnDrawGizmosSelected));
+        [FoldoutGroup("Advanced")]
+        public PrimitiveColliderType defaultPrimitive = PrimitiveColliderType.Sphere;
 
-        private static readonly ProfilerMarker _PRF_Update = new(_PRF_PFX + nameof(Update));
+        [FoldoutGroup("Force")]
+        public RigidbodyInterpolation interpolation = RigidbodyInterpolation.Interpolate;
 
-        private static readonly ProfilerMarker _PRF_FindMissileRoot = new(_PRF_PFX + nameof(FindMissileRoot));
+        [FoldoutGroup("Advanced")]
+        public Vector2 allowedForceRange = new(.5f, 25f);
+
+        [FoldoutGroup("Advanced")]
+        [MinMaxSlider(-1, 1, true)]
+        public Vector2 allowedLeftToRightRange = new(-.5f, .5f);
+
+        [FoldoutGroup("Advanced")]
+        public Vector2 allowedLifetimes = new(1.0f, 180f);
+
+        [FoldoutGroup("Advanced")]
+        public Vector2 allowedMassRange = new(.1f, 10f);
+
+        [FoldoutGroup("Advanced")]
+        public Vector2 allowedScaleRange = new(.05f, 3f);
+
+        [FoldoutGroup("Force")]
+        [HideIf(nameof(exact))]
+        [MinMaxSlider(-1.0f, 1.0f, true)]
+        public Vector2 forceForwardToVerticalRatioRange = new(-.1f, .1f);
+
+        [FoldoutGroup("Force")]
+        [HideIf(nameof(exact))]
+        [MinMaxSlider(nameof(_allowedLeftToRightRatioMin), nameof(_allowedLeftToRightRatioMax), true)]
+        public Vector2 forceLeftToRightRatioRange = new(-.25f, .25f);
+
+        [FoldoutGroup("Force")]
+        [HideIf(nameof(exact))]
+        [MinMaxSlider(nameof(_allowedForceRangeMin), nameof(_allowedForceRangeMax), true)]
+        public Vector2 forceRange = new(1f, 2f);
+
+        [FoldoutGroup("Missile")]
+        [ShowIf(nameof(_showMassRange))]
+        [MinMaxSlider(nameof(_massMin), nameof(_massMax), true)]
+        public Vector2 massRange = new(.8f, 1.2f);
+
+        [FoldoutGroup("Missile")]
+        [ShowIf(nameof(_showScalingRangeUniform))]
+        [MinMaxSlider(nameof(_scaleMin), nameof(_scaleMax), true)]
+        public Vector2 scalingRangeUniform = new(.8f, 1.2f);
+
+        [FoldoutGroup("Missile")]
+        [ShowIf(nameof(_showScalingRange))]
+        [MinMaxSlider(nameof(_scaleMin), nameof(_scaleMax), true)]
+        public Vector2 scalingRangeX = new(.8f, 1.2f);
+
+        [FoldoutGroup("Missile")]
+        [ShowIf(nameof(_showScalingRange))]
+        [MinMaxSlider(nameof(_scaleMin), nameof(_scaleMax), true)]
+        public Vector2 scalingRangeY = new(.8f, 1.2f);
+
+        [FoldoutGroup("Missile")]
+        [ShowIf(nameof(_showScalingRange))]
+        [MinMaxSlider(nameof(_scaleMin), nameof(_scaleMax), true)]
+        public Vector2 scalingRangeZ = new(.8f, 1.2f);
+
+        [FoldoutGroup("Advanced")]
+        public Vector2Int allowedOutstanding = new(1, 100);
 
         private readonly RaycastHit[] _hits = new RaycastHit[4];
 
-        private Queue<Missile> _backupMissiles;
+        private bool _generationQueued;
+        private Collider c;
 
         private float _fireStrength = 1.0f;
+        private float missile_force;
+        private float missile_mass;
 
-        private bool _generationQueued;
+        private Queue<Missile> _backupMissiles;
 
         private Queue<Missile> _missiles;
-        private Vector3 _scalingVector;
+        private Rigidbody rb;
 
         private Transform _t;
-        private Collider c;
-        private float missile_force;
+        private Vector3 _scalingVector;
 
         private Vector3 missile_forceVector;
-        private float missile_mass;
-        private Rigidbody rb;
-        private float _allowedForceRangeMax => allowedForceRange.y;
-
-        private float _allowedForceRangeMin => allowedForceRange.x;
-        private float _allowedLeftToRightRatioMax => allowedLeftToRightRange.y;
-        private float _allowedLeftToRightRatioMin => allowedLeftToRightRange.x;
-        private float _allowedLifetimesMax => allowedLifetimes.y;
-        private float _allowedLifetimesMin => allowedLifetimes.x;
-        private int _allowedOutstandingMax => allowedOutstanding.y;
-        private int _allowedOutstandingMin => allowedOutstanding.x;
-        private Color _drop => Colors.DeepSkyBlue1;
-
-        private Color _fire => Colors.CadmiumOrange;
-        private float _massMax => allowedMassRange.y;
-        private float _massMin => allowedMassRange.x;
-        private float _scaleMax => allowedScaleRange.y;
-        private float _scaleMin => allowedScaleRange.x;
 
         private bool _showMass => updateMass && exact;
 
@@ -249,7 +233,26 @@ namespace Appalachia.Editing.Debugging.Testing
         private bool _showScalingRangeUniform => !exact && uniformScale;
 
         private bool _showScalingUniform => exact && uniformScale;
+        private Color _drop => Colors.DeepSkyBlue1;
+
+        private Color _fire => Colors.CadmiumOrange;
         private Color _softFire => Colors.CadmiumYellow;
+        private float _allowedForceRangeMax => allowedForceRange.y;
+
+        private float _allowedForceRangeMin => allowedForceRange.x;
+        private float _allowedLeftToRightRatioMax => allowedLeftToRightRange.y;
+        private float _allowedLeftToRightRatioMin => allowedLeftToRightRange.x;
+        private float _allowedLifetimesMax => allowedLifetimes.y;
+        private float _allowedLifetimesMin => allowedLifetimes.x;
+        private float _massMax => allowedMassRange.y;
+        private float _massMin => allowedMassRange.x;
+        private float _scaleMax => allowedScaleRange.y;
+        private float _scaleMin => allowedScaleRange.x;
+        private int _allowedOutstandingMax => allowedOutstanding.y;
+        private int _allowedOutstandingMin => allowedOutstanding.x;
+        public event OnPostFire OnPostFire;
+
+        public event OnPreFire OnPreFire;
 
         [Button(ButtonSizes.Large)]
         [LabelText("Drop")]

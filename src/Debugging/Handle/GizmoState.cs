@@ -7,6 +7,8 @@ namespace Appalachia.Editing.Debugging.Handle
 {
     internal class GizmoState : SelfPoolingObject<GizmoState>, IDisposable
     {
+#region Profiling And Tracing Markers
+
         // ReSharper disable once MemberHidesStaticFromOuterClass
         private const string _PRF_PFX = nameof(GizmoState) + ".";
         private static readonly ProfilerMarker _PRF_GizmoState = new(_PRF_PFX + nameof(GizmoState));
@@ -16,8 +18,8 @@ namespace Appalachia.Editing.Debugging.Handle
         private static readonly ProfilerMarker _PRF_Reset = new(_PRF_PFX + nameof(Reset));
         private static readonly ProfilerMarker _PRF_Initialize = new(_PRF_PFX + nameof(Initialize));
 
-        private Color _color;
-        private bool _sRGB;
+#endregion
+
 #pragma warning disable 612
         public GizmoState()
 #pragma warning restore 612
@@ -26,6 +28,21 @@ namespace Appalachia.Editing.Debugging.Handle
             {
                 _color = Gizmos.color;
                 _sRGB = GL.sRGBWrite;
+            }
+        }
+
+        private bool _sRGB;
+
+        private Color _color;
+
+        public void Dispose()
+        {
+            using (_PRF_Dispose.Auto())
+            {
+                Gizmos.color = _color;
+                GL.sRGBWrite = _sRGB;
+
+                Return();
             }
         }
 
@@ -44,17 +61,6 @@ namespace Appalachia.Editing.Debugging.Handle
             {
                 _color = Gizmos.color;
                 _sRGB = GL.sRGBWrite;
-            }
-        }
-
-        public void Dispose()
-        {
-            using (_PRF_Dispose.Auto())
-            {
-                Gizmos.color = _color;
-                GL.sRGBWrite = _sRGB;
-
-                Return();
             }
         }
 

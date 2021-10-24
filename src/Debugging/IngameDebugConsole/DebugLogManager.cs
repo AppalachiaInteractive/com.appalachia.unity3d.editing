@@ -1202,9 +1202,9 @@ namespace Appalachia.Editing.Debugging.IngameDebugConsole
 
             this.searchTerm = searchTerm;
             var inSearchMode = !string.IsNullOrEmpty(searchTerm);
-            if (inSearchMode || this.isInSearchMode)
+            if (inSearchMode || isInSearchMode)
             {
-                this.isInSearchMode = inSearchMode;
+                isInSearchMode = inSearchMode;
                 FilterLogs();
             }
         }

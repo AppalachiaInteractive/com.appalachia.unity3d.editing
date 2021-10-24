@@ -15,18 +15,6 @@ namespace Appalachia.Editing.Core
 {
     public class EditorOnlyProgressBar : IDisposable
     {
-        private readonly bool _cancellable;
-
-        private readonly object _lock = new();
-        private readonly int _showEvery;
-        private readonly string _title;
-        private readonly float _total;
-        private bool _cancelled;
-        private int _counter;
-
-        private bool _hasShownBar;
-        private float _increment;
-
         public EditorOnlyProgressBar(string title, float total, bool cancellable, int showEvery = 15)
         {
 #if UNITY_EDITOR
@@ -36,6 +24,18 @@ namespace Appalachia.Editing.Core
             _showEvery = math.max(1, showEvery);
 #endif
         }
+
+        private readonly bool _cancellable;
+        private readonly float _total;
+        private readonly int _showEvery;
+
+        private readonly object _lock = new();
+        private readonly string _title;
+        private bool _cancelled;
+
+        private bool _hasShownBar;
+        private float _increment;
+        private int _counter;
 
         public bool Cancellable => _cancellable;
 

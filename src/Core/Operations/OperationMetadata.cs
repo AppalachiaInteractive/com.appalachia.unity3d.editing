@@ -8,20 +8,6 @@ namespace Appalachia.Editing.Core.Operations
     public abstract class OperationMetadata<TI, TO>
         where TI : struct
     {
-        [SmartLabel]
-        [InlineProperty]
-        [ListDrawerSettings(
-            HideAddButton = true,
-            HideRemoveButton = true,
-            DraggableItems = false,
-            Expanded = true
-        )]
-        public List<OperationArgument> Arguments;
-
-        [OnValueChanged(nameof(SetupOperationBase))]
-        [SmartLabel]
-        public TI operation;
-
         protected OperationMetadata()
         {
             operation = default;
@@ -35,6 +21,20 @@ namespace Appalachia.Editing.Core.Operations
             Arguments = new List<OperationArgument>();
             SetupOperationBase();
         }
+
+        [SmartLabel]
+        [InlineProperty]
+        [ListDrawerSettings(
+            HideAddButton = true,
+            HideRemoveButton = true,
+            DraggableItems = false,
+            Expanded = true
+        )]
+        public List<OperationArgument> Arguments;
+
+        [OnValueChanged(nameof(SetupOperationBase))]
+        [SmartLabel]
+        public TI operation;
 
         public abstract TO ApplyOperation(string input);
 

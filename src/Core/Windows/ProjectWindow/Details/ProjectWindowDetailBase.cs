@@ -9,9 +9,9 @@ namespace Appalachia.Editing.Core.Windows.ProjectWindow.Details
     public abstract class ProjectWindowDetailBase
     {
         private const string ShowPrefsKey = "ProjectWindowDetails.Show.";
-        public TextAlignment Alignment = TextAlignment.Left;
         public int ColumnWidth = 100;
         public string Name = "Base";
+        public TextAlignment Alignment = TextAlignment.Left;
 
         public bool Visible
         {

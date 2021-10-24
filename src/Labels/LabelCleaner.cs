@@ -6,7 +6,7 @@ using Appalachia.Core.Extensions;
 using Appalachia.Editing.Assets;
 using Appalachia.Editing.Core;
 using Appalachia.Editing.Core.Windows;
-using Appalachia.Utility.src.Colors;
+using Appalachia.Utility.Colors;
 using Sirenix.OdinInspector;
 using UnityEditor;
 using UnityEditor.Callbacks;

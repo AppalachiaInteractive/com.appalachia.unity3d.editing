@@ -1,17 +1,4 @@
-﻿/* ---------------------------------------
- * Author:          Martin Pane (martintayx@gmail.com) (@tayx94)
- * Contributors:    https://github.com/Tayx94/graphy/graphs/contributors
- * Project:         Graphy - Ultimate Stats Monitor
- * Date:            23-Dec-17
- * Studio:          Tayx
- *
- * Git repo:        https://github.com/Tayx94/graphy
- *
- * This project is released under the MIT license.
- * Attribution is not required, but it is always welcomed!
- * -------------------------------------*/
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using Appalachia.Editing.Debugging.Graphy.Audio;
@@ -28,12 +15,6 @@ namespace Appalachia.Editing.Debugging.Graphy
     /// </summary>
     public class GraphyDebugger : G_Singleton<GraphyDebugger>
     {
-#region Variables -> Serialized Private
-
-        [SerializeField] private List<DebugPacket> m_debugPackets = new();
-
-#endregion
-
         /* ----- TODO: ----------------------------
          * Add summaries to the variables.
          * Add summaries to the functions.
@@ -45,6 +26,12 @@ namespace Appalachia.Editing.Debugging.Graphy
         {
         }
 
+#region Variables -> Serialized Private
+
+        [SerializeField] private List<DebugPacket> m_debugPackets = new();
+
+#endregion
+
 #region Structs -> Public
 
         [Serializable]
@@ -53,11 +40,11 @@ namespace Appalachia.Editing.Debugging.Graphy
             [Tooltip("Comparer operator to use")]
             public DebugComparer Comparer;
 
-            [Tooltip("Value to compare against the chosen variable")]
-            public float Value;
-
             [Tooltip("Variable to compare against")]
             public DebugVariable Variable;
+
+            [Tooltip("Value to compare against the chosen variable")]
+            public float Value;
         }
 
 #endregion
@@ -70,41 +57,42 @@ namespace Appalachia.Editing.Debugging.Graphy
             [Tooltip("If false, it won't be checked")]
             public bool Active = true;
 
-            public ConditionEvaluation ConditionEvaluation = ConditionEvaluation.All_conditions_must_be_met;
-
             [Tooltip("If true, it pauses the editor")]
             public bool DebugBreak;
 
-            [Tooltip("List of conditions that will be checked each frame")]
-            public List<DebugCondition> DebugConditions = new();
-
             [Tooltip("If true, once the actions are executed, this DebugPacket will delete itself")]
             public bool ExecuteOnce = true;
+
+            public bool TakeScreenshot;
+
+            public ConditionEvaluation ConditionEvaluation = ConditionEvaluation.All_conditions_must_be_met;
 
             [Tooltip(
                 "Time to wait before checking if conditions are met again (once they have already been met and if ExecuteOnce is false)"
             )]
             public float ExecuteSleepTime = 2;
 
-            [Tooltip("Optional Id. It's used to get or remove DebugPackets in runtime")]
-            public int Id;
-
             [Tooltip(
                 "Time to wait before checking if conditions are met (use this to avoid low fps drops triggering the conditions when loading the game)"
             )]
             public float InitSleepTime = 2;
 
-            [Multiline] public string Message = string.Empty;
+            [Tooltip("Optional Id. It's used to get or remove DebugPackets in runtime")]
+            public int Id;
+
+            public List<Action> Callbacks = new();
+
+            [Tooltip("List of conditions that will be checked each frame")]
+            public List<DebugCondition> DebugConditions = new();
 
             // Actions on conditions met
 
             public MessageType MessageType;
+
+            [Multiline] public string Message = string.Empty;
             public string ScreenshotFileName = "Graphy_Screenshot";
 
-            public bool TakeScreenshot;
-
             public UnityEvent UnityEvents;
-            public List<Action> Callbacks = new();
 
             private bool canBeChecked;
             private bool executed;

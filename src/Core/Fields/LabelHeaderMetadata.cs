@@ -1,5 +1,4 @@
 using Appalachia.Editing.Core.Layout;
-using Appalachia.Editing.Core.Windows;
 using Unity.Profiling;
 using UnityEditor;
 using UnityEngine;
@@ -9,19 +8,22 @@ namespace Appalachia.Editing.Core.Fields
     public abstract class LabelHeaderMetadata<T> : LabelMetadataBase<T>
         where T : LabelHeaderMetadata<T>
     {
-        private const string _PRF_PFX = nameof(LabelHeaderMetadata<T>) + ".";
+#region Profiling And Tracing Markers
 
+        private const string _PRF_PFX = nameof(LabelHeaderMetadata<T>) + ".";
         private static readonly ProfilerMarker _PRF_OnBeforeDraw = new(_PRF_PFX + nameof(OnBeforeDraw));
         private static readonly ProfilerMarker _PRF_OnAfterDraw = new(_PRF_PFX + nameof(OnAfterDraw));
 
+#endregion
+
         public abstract bool BottomDrawLine { get; }
+        public abstract bool TopDrawLine { get; }
         public abstract Color BottomLineColor { get; }
+        public abstract Color TopLineColor { get; }
         public abstract float BottomLineWidth { get; }
+        public abstract float TopLineWidth { get; }
         public abstract int BottomMargin { get; }
         public abstract int FontSize { get; }
-        public abstract bool TopDrawLine { get; }
-        public abstract Color TopLineColor { get; }
-        public abstract float TopLineWidth { get; }
         public abstract int TopMargin { get; }
 
         protected override GUIStyle DefaultStyle
@@ -43,13 +45,18 @@ namespace Appalachia.Editing.Core.Fields
             }
         }
 
+        public override GUILayoutOption[] InitializeLayout()
+        {
+            return new[] {GUILayout.ExpandWidth(true), GUILayout.MinWidth(1)};
+        }
+
         protected override void OnAfterDraw()
         {
             using (_PRF_OnAfterDraw.Auto())
             {
                 if (BottomDrawLine)
                 {
-                    AppalachiaEditorGUIHelper.HorizontalLineSeparator(BottomLineColor, BottomLineWidth, BottomLineWidth);
+                    APPAGUI.DrawHorizontalLineSeperator(BottomLineColor, BottomLineWidth, BottomLineWidth);
                 }
             }
         }
@@ -62,17 +69,12 @@ namespace Appalachia.Editing.Core.Fields
                 {
                     SetLabelHeight(DefaultLabelHeight + TopMargin + BottomMargin);
                 }
-                
+
                 if (TopDrawLine)
                 {
-                    AppalachiaEditorGUIHelper.HorizontalLineSeparator(TopLineColor, TopLineWidth, TopLineWidth);
+                    APPAGUI.DrawHorizontalLineSeperator(TopLineColor, TopLineWidth, TopLineWidth);
                 }
             }
-        }
-
-        public override GUILayoutOption[] InitializeLayout()
-        {
-            return new[] {GUILayout.ExpandWidth(true), GUILayout.MinWidth(1)};
         }
     }
 }

@@ -20,13 +20,20 @@ namespace Appalachia.Editing.Labels
 {
     public static class LabelManager
     {
-        public static List<LabelData> labelDatas = new();
-
-        private static Dictionary<Type, Dictionary<object, string>> _enumTypeLookup;
-
-        private static ValueDropdownList<string> _labelDropdownList;
-        private static string[] _strings;
         public static bool Initialized => labelDatas?.Count > 0;
+
+        public static string[] strings
+        {
+            get
+            {
+                if (_strings == null)
+                {
+                    InitializeLabels();
+                }
+
+                return _strings;
+            }
+        }
 
         public static ValueDropdownList<string> labelDropdownList
         {
@@ -41,18 +48,12 @@ namespace Appalachia.Editing.Labels
             }
         }
 
-        public static string[] strings
-        {
-            get
-            {
-                if (_strings == null)
-                {
-                    InitializeLabels();
-                }
+        public static List<LabelData> labelDatas = new();
 
-                return _strings;
-            }
-        }
+        private static Dictionary<Type, Dictionary<object, string>> _enumTypeLookup;
+        private static string[] _strings;
+
+        private static ValueDropdownList<string> _labelDropdownList;
 
         public static void ApplyLabelsToPrefab<T>(GameObject asset, T value)
         {

@@ -13,13 +13,13 @@ namespace Appalachia.Editing.Assets.Windows
         [PropertyOrder(175)]
         public int found;
 
-        [ListDrawerSettings]
-        [PropertyOrder(200)]
-        public List<Material> foundMaterials = new();
-
         [ReadOnly]
         [PropertyOrder(150)]
         public int searched;
+
+        [ListDrawerSettings]
+        [PropertyOrder(200)]
+        public List<Material> foundMaterials = new();
 
         [TabGroup("Shader")]
         [PropertyOrder(1)]

@@ -10,6 +10,13 @@ namespace Appalachia.Editing.Debugging.Testing
     [ExecuteAlways]
     public class Spinner : AppalachiaMonoBehaviour
     {
+        public enum AxisSource
+        {
+            World = 0,
+            Local = 10,
+            Terrain = 20
+        }
+
         [SmartLabel] public AxisSource axisSource = AxisSource.World;
 
         [PropertyRange(.01f, 1f)]
@@ -72,13 +79,6 @@ namespace Appalachia.Editing.Debugging.Testing
             var adjustment = Time.deltaTime * spinRate * 360f;
 
             _t.rotation *= Quaternion.AngleAxis(adjustment, axis);
-        }
-
-        public enum AxisSource
-        {
-            World = 0,
-            Local = 10,
-            Terrain = 20
         }
     }
 }

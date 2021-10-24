@@ -17,11 +17,11 @@ namespace Appalachia.Editing.Labels
     [Serializable]
     public class LabelSearchSet
     {
-        [BoxGroup("B", ShowLabel = false)]
-        [ListDrawerSettings(Expanded = true)]
-        [SerializeField]
-        [OnValueChanged(nameof(ResetDisplayName))]
-        public List<LabelSearchTerm> exclusions;
+        public LabelSearchSet()
+        {
+            terms = new List<LabelSearchTerm> {new()};
+            exclusions = new List<LabelSearchTerm>();
+        }
 
         [BoxGroup("B", ShowLabel = false)]
         [SmartLabel]
@@ -37,26 +37,31 @@ namespace Appalachia.Editing.Labels
         [OnValueChanged(nameof(ResetDisplayName))]
         public LabelMatchStyle matchStyle;
 
+        [BoxGroup("B", ShowLabel = false)]
+        [ListDrawerSettings(Expanded = true)]
+        [SerializeField]
+        [OnValueChanged(nameof(ResetDisplayName))]
+        public List<LabelSearchTerm> exclusions;
+
         [BoxGroup("A", ShowLabel = false)]
         [ListDrawerSettings(Expanded = true)]
         [SerializeField]
         [OnValueChanged(nameof(ResetDisplayName))]
         public List<LabelSearchTerm> terms;
 
-        [NonSerialized] private StringBuilder _builder;
-
-        [NonSerialized] private string _displayName;
         [NonSerialized] private int _exclusionCount;
-        [NonSerialized] private StringBuilder _logBuilder;
         [NonSerialized] private int _termCount;
 
-        public LabelSearchSet()
-        {
-            terms = new List<LabelSearchTerm> {new()};
-            exclusions = new List<LabelSearchTerm>();
-        }
+        [NonSerialized] private string _displayName;
+
+        [NonSerialized] private StringBuilder _builder;
+        [NonSerialized] private StringBuilder _logBuilder;
 
         public bool CanSearch => (terms != null) && (terms.Count > 0) && terms.Any(t => t.enabled);
+
+        public int ExclusionCount => exclusions.Count(t => t.enabled);
+
+        public int TermCount => terms.Count(t => t.enabled);
 
         public string DisplayName
         {
@@ -152,10 +157,6 @@ namespace Appalachia.Editing.Labels
                 }
             }
         }
-
-        public int ExclusionCount => exclusions.Count(t => t.enabled);
-
-        public int TermCount => terms.Count(t => t.enabled);
 
         public void AddNewLabel()
         {

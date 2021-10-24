@@ -10,7 +10,10 @@ namespace Appalachia.Editing.Scene.Windows
 {
     public class TransformRandomizer : AppalachiaEditorWindow
     {
-        public List<GameObject> objectsToRandomize = new();
+        public TransformRandomizer()
+        {
+            Reset();
+        }
 
         [InlineProperty]
         [CheckboxEnabled(EnableIf = true, Min = 0, Max = 25)]
@@ -48,10 +51,7 @@ namespace Appalachia.Editing.Scene.Windows
         [CheckboxEnabled(EnableIf = true, Min = 0, Max = 10)]
         public CheckboxField<float> scaleZ;
 
-        public TransformRandomizer()
-        {
-            Reset();
-        }
+        public List<GameObject> objectsToRandomize = new();
 
         [Button]
         public void Randomize()

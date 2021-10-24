@@ -1,6 +1,7 @@
 using System;
+using Appalachia.Editing.Core.Layout;
 using Appalachia.Editing.Core.State;
-using Appalachia.Utility.src.Colors;
+using Appalachia.Utility.Colors;
 using UnityEditor;
 using UnityEngine;
 
@@ -9,10 +10,10 @@ namespace Appalachia.Editing.Core.Fields
     [Serializable]
     public class MenuItemField : EditorUIFieldMetadata<MenuItemField>
     {
-        private string _lastIcon;
         private float _height;
+        private string _lastIcon;
         public float height => _height;
-        
+
         protected override GUIStyle DefaultStyle => EditorStyles.toolbarButton;
 
         public bool Draw(string menuItem, bool isSelected, string icon = null)
@@ -55,10 +56,8 @@ namespace Appalachia.Editing.Core.Fields
 
             using (new GUILayout.HorizontalScope())
             {
-                var spaceSize = GetSpace(SpaceSize.MenuItemPaddingLeft);
-                var stripSize = GetSpace(SpaceSize.MenuItemSelectionStrip);
-
-                Space(spaceSize);
+                var spaceSize = APPAGUI.SPACE.SIZE.MenuItemPaddingLeft.MAKE_GET();
+                var stripSize = APPAGUI.SPACE.SIZE.MenuItemSelectionStrip.MAKE_GET();
 
                 result = GUILayout.Button(content, style, layout);
 

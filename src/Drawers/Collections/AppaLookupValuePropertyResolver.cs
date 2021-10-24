@@ -19,6 +19,8 @@ namespace Appalachia.Editing.Drawers.Collections
         where TKList : AppaList<TKey>, new()
         where TVList : AppaList<TValue>, new()
     {
+#region Profiling And Tracing Markers
+
         private const string _PRF_PFX =
             nameof(AppaLookupValuePropertyResolver<T, TKey, TValue, TKList, TVList>) + ".";
 
@@ -31,7 +33,6 @@ namespace Appalachia.Editing.Drawers.Collections
             new(_PRF_PFX + nameof(ChildNameToIndex));
 
         private static readonly ProfilerMarker _PRF_GetChildCount = new(_PRF_PFX + nameof(GetChildCount));
-
         private static readonly ProfilerMarker _PRF_Add = new(_PRF_PFX + nameof(Add));
 
         private static readonly ProfilerMarker _PRF_InsertAt = new(_PRF_PFX + nameof(InsertAt));
@@ -41,6 +42,8 @@ namespace Appalachia.Editing.Drawers.Collections
 
         private static readonly ProfilerMarker _PRF_CollectionIsReadOnly =
             new(_PRF_PFX + nameof(CollectionIsReadOnly));
+
+#endregion
 
         private readonly Dictionary<int, InspectorPropertyInfo> childInfos = new();
 

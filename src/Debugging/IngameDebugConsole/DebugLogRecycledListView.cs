@@ -12,27 +12,27 @@ namespace Appalachia.Editing.Debugging.IngameDebugConsole
         // Log items used to visualize the debug entries at specified indices
         private readonly Dictionary<int, DebugLogItem> logItemsAtIndices = new(256);
 
-        // Unique debug entries
-        private List<DebugLogEntry> collapsedLogEntries;
-
-        // Current indices of debug entries shown on screen
-        private int currentTopIndex = -1, currentBottomIndex = -1;
-        private float deltaHeightOfSelectedLogEntry;
-        private float heightOfSelectedLogEntry;
-
-        private int indexOfSelectedLogEntry = int.MaxValue;
+        private bool isCollapseOn;
 
         // Indices of debug entries to show in collapsedLogEntries
         private DebugLogIndexList indicesOfEntriesToShow;
 
-        private bool isCollapseOn;
+        private DebugLogManager manager;
+        private float deltaHeightOfSelectedLogEntry;
+        private float heightOfSelectedLogEntry;
 
         private float logItemHeight, _1OverLogItemHeight;
-
-        private DebugLogManager manager;
         private float positionOfSelectedLogEntry = float.MaxValue;
-        private ScrollRect scrollView;
         private float viewportHeight;
+
+        // Current indices of debug entries shown on screen
+        private int currentTopIndex = -1, currentBottomIndex = -1;
+
+        private int indexOfSelectedLogEntry = int.MaxValue;
+
+        // Unique debug entries
+        private List<DebugLogEntry> collapsedLogEntries;
+        private ScrollRect scrollView;
 
         public float ItemHeight => logItemHeight;
         public float SelectedItemHeight => heightOfSelectedLogEntry;

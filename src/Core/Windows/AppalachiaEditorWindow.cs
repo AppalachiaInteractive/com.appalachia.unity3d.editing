@@ -1,12 +1,9 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Diagnostics;
+using Appalachia.Core.Context.Elements;
 using Appalachia.Core.Extensions;
-using Appalachia.Core.Extensions.Helpers;
-using Appalachia.Core.Preferences;
 using Sirenix.OdinInspector;
-using Unity.EditorCoroutines.Editor;
 using Unity.Profiling;
 using UnityEditor;
 using UnityEngine;
@@ -14,9 +11,11 @@ using Random = System.Random;
 
 namespace Appalachia.Editing.Core.Windows
 {
-    public abstract class AppalachiaEditorWindow : EditorWindow
+    [InitializeOnLoad]
+    public abstract class AppalachiaEditorWindow : EditorWindow, IAppalachiaWindow
     {
-        private const float REPAINT_THRESHOLD = .1F;
+#region Profiling And Tracing Markers
+
         private const string _PRF_PFX = nameof(AppalachiaEditorWindow) + ".";
 
         protected static Random rng = new();
@@ -32,15 +31,9 @@ namespace Appalachia.Editing.Core.Windows
         private static readonly ProfilerMarker _PRF_OpenWindow = new(_PRF_PFX + nameof(OpenWindow));
         private static readonly ProfilerMarker _PRF_OnSceneGUI = new(_PRF_PFX + nameof(OnSceneGUI));
 
-        private static readonly ProfilerMarker _PRF_ExecuteCoroutine =
-            new(_PRF_PFX + nameof(ExecuteCoroutine));
+#endregion
 
-        private static readonly ProfilerMarker _PRF_BeginExecution = new(_PRF_PFX + nameof(BeginExecution));
-
-        private static readonly ProfilerMarker _PRF_EndExecution = new(_PRF_PFX + nameof(EndExecution));
-
-        private static readonly ProfilerMarker _PRF_ExecuteCoroutineEnumerator =
-            new(_PRF_PFX + nameof(ExecuteCoroutineEnumerator));
+        private const float REPAINT_THRESHOLD = .1F;
 
         [FoldoutGroup("Execution", false, -1000)]
         [PropertyOrder(-99)]
@@ -53,116 +46,68 @@ namespace Appalachia.Editing.Core.Windows
         public bool forceCancelImmediately;
 
         [FoldoutGroup("Execution", false, -1000)]
+        [PropertyOrder(-100)]
+        [ShowInInspector]
+        [Range(1, 200)]
+        public int stepSize = 10;
+
+        private AppaCoroutineRunner _coroutineRunner;
+
+        private bool _hasRepaintBeenRequested;
+
+        private float _lastRepaintTime;
+
+        [FoldoutGroup("Execution", false, -1000)]
         [ReadOnly]
         [PropertyOrder(-1)]
         [ShowInInspector]
-        public bool isExecutingCoroutine;
+        public bool isExecutingCoroutine => _coroutineRunner?.IsExecutingCoroutine ?? false;
 
         [FoldoutGroup("Execution", false, -1000)]
         [ReadOnly]
         [PropertyOrder(-3)]
         [ShowInInspector]
         [DisplayAsString]
-        public DateTime lastExecutionTime;
+        public DateTime lastExecutionTime => _coroutineRunner?.LastExecutionTime ?? DateTime.MinValue;
 
         [FoldoutGroup("Execution", false, -1000)]
         [ReadOnly]
         [PropertyOrder(-2)]
         [ShowInInspector]
-        public double executionTime;
+        public double executionTime => _coroutineRunner?.ExecutionTime ?? 0f;
 
-        [FoldoutGroup("Execution", false, -1000)]
-        [PropertyOrder(-100)]
-        [ShowInInspector]
-        [Range(1, 200)]
-        public int stepSize = 10;
-
-        private readonly Stopwatch _stopwatch = new();
-
-        private bool _hasRepaintBeenRequested;
-
-        private float _lastRepaintTime;
+        protected virtual void DrawSceneGUI()
+        {
+        }
 
         public void ExecuteCoroutine(Func<IEnumerator> coroutine)
         {
-            using (_PRF_ExecuteCoroutine.Auto())
+            if (_coroutineRunner == null)
             {
-                EditorCoroutineUtility.StartCoroutine(ExecuteCoroutineEnumerator(coroutine), this);
+                _coroutineRunner = new AppaCoroutineRunner();
             }
+
+            _coroutineRunner.CancelOnError = cancelOnError;
+            _coroutineRunner.ForceCancelImmediately = forceCancelImmediately;
+            _coroutineRunner.StepSize = stepSize;
+
+            _coroutineRunner.ExecuteCoroutine(coroutine);
         }
 
-        public void SafeRepaint()
+        public void SafeRepaint(bool forceRepaint = false)
         {
-            if (CanRepaint() && ShouldRepaint())
+            if (CanRepaint() && ShouldRepaint(forceRepaint))
             {
                 ExecuteRepaint();
             }
             else
             {
-                _hasRepaintBeenRequested = true;                
-            }
-        }
-
-        protected IEnumerator ExecuteCoroutineEnumerator(Func<IEnumerator> coroutine)
-        {
-            using (_PRF_ExecuteCoroutineEnumerator.Auto())
-            {
-                try
+                if (forceRepaint)
                 {
-                    BeginExecution();
-
-                    var count = -1;
-
-                    var routineResults = coroutine();
-
-                    while (true)
-                    {
-                        if (forceCancelImmediately)
-                        {
-                            break;
-                        }
-
-                        count += 1;
-                        object current = null;
-
-                        try
-                        {
-                            if (!routineResults.MoveNext())
-                            {
-                                break;
-                            }
-
-                            current = routineResults.Current;
-                        }
-                        catch (Exception ex)
-                        {
-                            DebugHelper.LogError($"Error executing coroutine: [{ex}");
-
-                            if (cancelOnError)
-                            {
-                                break;
-                            }
-                        }
-
-                        if ((count % stepSize) == 0)
-                        {
-                            yield return current;
-                        }
-                    }
+                    _lastRepaintTime = 0f;
                 }
-                finally
-                {
-                    EndExecution();
-                }
-            }
-        }
 
-        protected void BeginExecution()
-        {
-            using (_PRF_BeginExecution.Auto())
-            {
-                isExecutingCoroutine = true;
-                _stopwatch.Restart();
+                _hasRepaintBeenRequested = true;
             }
         }
 
@@ -175,21 +120,6 @@ namespace Appalachia.Editing.Core.Windows
             }
         }
 
-        protected virtual void DrawSceneGUI()
-        {
-        }
-
-        protected void EndExecution()
-        {
-            using (_PRF_EndExecution.Auto())
-            {
-                _stopwatch.Stop();
-                lastExecutionTime = DateTime.Now;
-                executionTime = _stopwatch.Elapsed.TotalSeconds;
-                isExecutingCoroutine = false;
-            }
-        }
-
         protected void OnDestroy()
         {
             // When the window is destroyed, remove the delegate
@@ -197,7 +127,7 @@ namespace Appalachia.Editing.Core.Windows
             SceneView.duringSceneGui -= OnSceneGUI;
         }
 
-        protected void OnPreferenceAwake<T>(PREF<T> pref)
+        protected void OnPreferenceAwake()
         {
             using (_PRF_OnPreferenceAwake.Auto())
             {
@@ -210,16 +140,11 @@ namespace Appalachia.Editing.Core.Windows
             return Event.current is not {type: EventType.Repaint};
         }
 
-        private bool ShouldRepaint()
+        private void ExecuteRepaint()
         {
-            var elapsed = Time.realtimeSinceStartup - _lastRepaintTime;
-
-            if (elapsed > REPAINT_THRESHOLD)
-            {
-                return true;
-            }
-
-            return false;
+            _hasRepaintBeenRequested = false;
+            _lastRepaintTime = Time.realtimeSinceStartup;
+            Repaint();
         }
 
         private bool MustRepaint()
@@ -234,19 +159,12 @@ namespace Appalachia.Editing.Core.Windows
                 return false;
             }
 
-            if (!ShouldRepaint())
+            if (!ShouldRepaint(false))
             {
                 return false;
             }
 
             return true;
-        }
-
-        private void ExecuteRepaint()
-        {
-            _hasRepaintBeenRequested = false;
-            _lastRepaintTime = Time.realtimeSinceStartup;
-            Repaint();
         }
 
         // Window has been selected
@@ -280,6 +198,23 @@ namespace Appalachia.Editing.Core.Windows
                 // Do your drawing here using GUI.
                 Handles.EndGUI();
             }
+        }
+
+        private bool ShouldRepaint(bool forceRepaint)
+        {
+            if (forceRepaint)
+            {
+                return true;
+            }
+
+            var elapsed = Time.realtimeSinceStartup - _lastRepaintTime;
+
+            if (elapsed > REPAINT_THRESHOLD)
+            {
+                return true;
+            }
+
+            return false;
         }
 
         protected static void OpenWindow<T>()

@@ -15,10 +15,14 @@ namespace Appalachia.Editing.Drawers
         SmartTitleGroupAttributeDrawer : ContextualGroupDrawer<SmartTitleGroupAttribute,
             SmartTitleGroupContext>
     {
+#region Profiling And Tracing Markers
+
         private const string _PRF_PFX = nameof(SmartTitleGroupAttributeDrawer) + ".";
 
         private static readonly ProfilerMarker _PRF_DrawPropertyLayout =
             new(_PRF_PFX + nameof(DrawPropertyLayout));
+
+#endregion
 
         protected override void DrawPropertyLayout(GUIContent label)
         {

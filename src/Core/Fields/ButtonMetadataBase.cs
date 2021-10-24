@@ -1,6 +1,6 @@
 using System;
 using Appalachia.Editing.Core.State;
-using Appalachia.Utility.src.Colors;
+using Appalachia.Utility.Colors;
 using UnityEditor;
 using UnityEngine;
 
@@ -13,7 +13,7 @@ namespace Appalachia.Editing.Core.Fields
         public bool Button(bool enabled = true, Color contentColor = default, Color backgroundColor = default)
         {
             hasBeenDrawn = true;
-            
+
             if (contentColor != Color.clear)
             {
                 UIStateStacks.contentColor.Push(contentColor.ScaleA(enabled ? 1f : .5f));

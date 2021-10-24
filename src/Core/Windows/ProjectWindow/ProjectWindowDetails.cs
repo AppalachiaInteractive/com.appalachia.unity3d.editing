@@ -15,18 +15,23 @@ namespace Appalachia.Editing.Core.Windows.ProjectWindow
     [InitializeOnLoad]
     public static class ProjectWindowDetails
     {
-        private const string _PRF_PFX = nameof(ProjectWindowDetails) + ".";
-        private const int MenuIconWidth = 20;
-        private const int SpaceBetweenColumns = 10;
+#region Profiling And Tracing Markers
 
-        private static List<ProjectWindowDetailBase> _details = new();
+        private const string _PRF_PFX = nameof(ProjectWindowDetails) + ".";
+
         private static GUIStyle _rightAlignedStyle;
+        private static List<ProjectWindowDetailBase> _details = new();
         private static readonly ProfilerMarker _PRF_RegisterDetail = new(_PRF_PFX + nameof(RegisterDetail));
 
         private static readonly ProfilerMarker _PRF_DrawAssetDetails =
             new(_PRF_PFX + nameof(DrawAssetDetails));
 
         private static readonly ProfilerMarker _PRF_DrawMenuIcon = new(_PRF_PFX + nameof(DrawMenuIcon));
+
+#endregion
+
+        private const int MenuIconWidth = 20;
+        private const int SpaceBetweenColumns = 10;
 
         private static GUIStyle RightAlignedStyle
         {

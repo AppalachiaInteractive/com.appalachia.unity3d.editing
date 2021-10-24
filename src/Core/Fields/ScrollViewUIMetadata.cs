@@ -1,4 +1,5 @@
 using System;
+using Appalachia.Editing.Core.Layout;
 using UnityEditor;
 using UnityEngine;
 
@@ -12,6 +13,9 @@ namespace Appalachia.Editing.Core.Fields
 
         private GUIStyle _horizontalScrollbar;
         private GUIStyle _verticalScrollbar;
+        public bool AlwaysShowHorizontal { get; set; }
+
+        public bool AlwaysShowVertical { get; set; }
 
         protected override GUIStyle DefaultStyle
         {
@@ -57,14 +61,14 @@ namespace Appalachia.Editing.Core.Fields
             return true;
         }
 
-        public IDisposable GetScope(bool alwaysShowHorizontal = false, bool alwaysShowVertical = false)
+        public IDisposable GetScope()
         {
             hasBeenDrawn = true;
 
             var scope = new EditorGUILayout.ScrollViewScope(
                 scrollPosition,
-                alwaysShowHorizontal,
-                alwaysShowVertical,
+                AlwaysShowHorizontal,
+                AlwaysShowVertical,
                 HorizontalScrollbar,
                 VerticalScrollbar,
                 style,
@@ -74,6 +78,11 @@ namespace Appalachia.Editing.Core.Fields
             scrollPosition = scope.scrollPosition;
 
             return scope;
+        }
+
+        public override GUILayoutOption[] InitializeLayout()
+        {
+            return APPAGUI.ExpandWidth().ExpandHeight();
         }
     }
 }

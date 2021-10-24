@@ -6,11 +6,11 @@ namespace Appalachia.Editing.Core.State
     {
         public UIStackScope(UIStateStack<T> stack)
         {
-            this._stack = stack;
+            _stack = stack;
         }
 
         private readonly UIStateStack<T> _stack;
-        
+
         public void Dispose()
         {
             _stack.Pop();

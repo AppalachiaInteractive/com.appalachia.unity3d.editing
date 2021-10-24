@@ -4,18 +4,18 @@ namespace Appalachia.Editing.Debugging.IngameDebugConsole
 {
     public class DebugLogIndexList
     {
-        private int[] indices;
-        private int size;
-
         public DebugLogIndexList()
         {
             indices = new int[64];
             size = 0;
         }
 
-        public int this[int index] => indices[index];
+        private int size;
+        private int[] indices;
 
         public int Count => size;
+
+        public int this[int index] => indices[index];
 
         public void Add(int index)
         {

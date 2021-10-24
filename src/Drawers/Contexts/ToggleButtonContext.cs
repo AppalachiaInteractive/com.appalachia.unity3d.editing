@@ -12,11 +12,11 @@ namespace Appalachia.Editing.Drawers.Contexts
     [Serializable]
     public class ToggleButtonContext<T> : PropertyDrawerContextCollection<ToggleButtonAttribute>
     {
-        public string ErrorMessage;
-        public Action<object> InstanceMethodCaller;
-        public Action<object, T> InstanceParameterMethodCaller;
-        public ValueResolver<string> LabelHelper;
         public Action StaticMethodCaller;
+        public Action<object, T> InstanceParameterMethodCaller;
+        public Action<object> InstanceMethodCaller;
+        public string ErrorMessage;
+        public ValueResolver<string> LabelHelper;
 
         public override void Initialize(
             InspectorProperty property,

@@ -13,6 +13,7 @@ namespace Appalachia.Editing.Core.Fields
         public bool Toggle(bool value)
         {
             hasBeenDrawn = true;
+
             //using (new EditorGUILayout.HorizontalScope())
             {
                 UIStateStacks.labelWidth.Push(prefixLabelWidth);
