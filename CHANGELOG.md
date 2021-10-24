@@ -12,6 +12,12 @@
 ## Releasing
 | Hash | Date | Author | Changes |
 |------|------|--------|---------|
+
+
+ ## Tag: `v0.1.8, origin/main`
+| Hash | Date | Author | Changes |
+|------|------|--------|---------|
+| 86a4b5d71fae6fd5b6bedd654e0bd1963a6e7cb8 | 2021-10-24 | Chris Schubert | Finalizing integration assembly and package analysis and updating package versioning |
 | bfd2e8049a4458d10c39b6289ab6c0b1a301bf0f | 2021-10-23 | Chris Schubert | Updating file layout and preparing for integration with UI project |
 
 
