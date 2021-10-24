@@ -504,6 +504,7 @@ namespace Appalachia.Editing.Core.Layout
                 DETAIL_LABEL_HEIGHT = 20,
                 HeaderLabelHeight = 30,
                 HeaderPrefixWidth = 120,
+                AnalysisDetailPrefixWidth = 200,
                 HighlightFieldsLabelHeight = 22,
                 NF_LABEL_WIDTH = 80,
                 PREFIX_LABEL_WIDTH = 125,

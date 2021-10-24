@@ -6,7 +6,7 @@ using UnityEngine;
 namespace Appalachia.Editing.Core.Layout
 {
     public class AnalysisButtonAction<TA, TT, TE, TB>
-        where TA : AnalysisMetadata<TA, TT, TE>, new()
+        where TA : AnalysisGroup<TA, TT, TE>, new()
         where TB : EditorUIFieldMetadata<TB>, IButtonMetadata, new()
         where TE : Enum
     {
@@ -29,7 +29,7 @@ namespace Appalachia.Editing.Core.Layout
             bool enabled,
             Color color,
             TE analysisType,
-            Action<AnalysisResult> correction2) : this(enabled, color)
+            Action<AnalysisType<TA, TT, TE>> correction2) : this(enabled, color)
         {
             this.analysisType = analysisType;
             this.correction2 = correction2;
@@ -42,7 +42,7 @@ namespace Appalachia.Editing.Core.Layout
             this.color = color;
         }
 
-        public Action<AnalysisResult> correction2;
+        public Action<AnalysisType<TA, TT, TE>> correction2;
         public Action<TA> correction1;
         public bool enabled;
         public Color color;
@@ -59,7 +59,7 @@ namespace Appalachia.Editing.Core.Layout
             }
             else
             {
-                var issue = analysis.IssueByType(analysisType);
+                var issue = analysis.GetAnalysisByType(analysisType);
                 correction2(issue);
             }
         }
