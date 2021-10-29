@@ -585,7 +585,7 @@ namespace Appalachia.Editing.Assets.Windows
             }
         }
 
-        [MenuItem("Tools/Asset Renamer")]
+        [UnityEditor.MenuItem(PKG.Menu.Appalachia.Tools.Base + "Asset Renamer")]
         private static void OpenWindow()
         {
             var window = GetWindow<AssetRenamer>();

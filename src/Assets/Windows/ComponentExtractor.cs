@@ -183,7 +183,7 @@ namespace Appalachia.Editing.Assets.Windows
             }
         }
 
-        [MenuItem("Tools/Component Extractor")]
+        [UnityEditor.MenuItem(PKG.Menu.Appalachia.Tools.Base + "Component Extractor")]
         private static void OpenWindow()
         {
             var window = GetWindow<ComponentExtractor>();

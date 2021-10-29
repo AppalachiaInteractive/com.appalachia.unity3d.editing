@@ -89,7 +89,6 @@ namespace Appalachia.Editing.Core.Windows.PaneBased.Panes
 
         #endregion
 
-        protected const string G_ = "Appalachia/Editor Windows";
 
         protected AppalachiaWindowPane()
         {

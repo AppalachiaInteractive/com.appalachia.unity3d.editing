@@ -56,11 +56,7 @@ namespace Appalachia.Editing.Assets.Windows
                 : AssetDatabaseManager.LoadAllAssetsAtPath(assetPath);
         }
 
-        [MenuItem(
-            APPA_MENU.BASE_AppalachiaWindows +
-            APPA_MENU.ASM_AppalachiaEditingAssets +
-            nameof(ComponentErrorFinder)
-        )]
+        [UnityEditor.MenuItem(PKG.Menu.Appalachia.Windows.Base + "Component Error Finder")]
         public static void ShowWindow()
         {
             GetWindow(typeof(ComponentErrorFinder));

@@ -140,7 +140,7 @@ namespace Appalachia.Editing.Scene.Windows
             scaleZ.value = 0f;
         }
 
-        [MenuItem("Tools/Transform Randomizer")]
+        [UnityEditor.MenuItem(PKG.Menu.Appalachia.Tools.Base + "Transform Randomizer")]
         private static void OpenWindow()
         {
             OpenWindow<TransformRandomizer>();

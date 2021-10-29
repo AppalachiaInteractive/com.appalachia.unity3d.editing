@@ -7,7 +7,7 @@ namespace Appalachia.Editing.Debugging.Handle
 {
     internal class GizmoState : SelfPoolingObject<GizmoState>, IDisposable
     {
-#region Profiling And Tracing Markers
+        #region Profiling And Tracing Markers
 
         // ReSharper disable once MemberHidesStaticFromOuterClass
         private const string _PRF_PFX = nameof(GizmoState) + ".";
@@ -18,7 +18,7 @@ namespace Appalachia.Editing.Debugging.Handle
         private static readonly ProfilerMarker _PRF_Reset = new(_PRF_PFX + nameof(Reset));
         private static readonly ProfilerMarker _PRF_Initialize = new(_PRF_PFX + nameof(Initialize));
 
-#endregion
+        #endregion
 
 #pragma warning disable 612
         public GizmoState()

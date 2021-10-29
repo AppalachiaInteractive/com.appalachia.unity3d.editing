@@ -53,9 +53,12 @@ namespace Appalachia.Editing.Drawers
                 }
                 else if (!isHidden)
                 {
+                    var title = context.TitleHelper.GetValue();
+                    var subtitle = context.SubtitleHelper.GetValue();
+                    
                     TitleAttributeHelper.Title(
-                        context.TitleHelper.GetValue(),
-                        context.SubtitleHelper.GetValue(),
+                        title,
+                        subtitle,
                         (TextAlignment) Attribute.Alignment,
                         Attribute.HorizontalLine,
                         Attribute.Bold,

@@ -14,13 +14,13 @@ namespace Appalachia.Editing.Debugging.Handle
 {
     public static class SmartHandles
     {
-#region Profiling And Tracing Markers
+        #region Profiling And Tracing Markers
 
-#region ProfileMarkers
+        #region ProfileMarkers
 
         private const string _PRF_PFX = nameof(SmartHandles) + ".";
 
-#endregion
+        #endregion
 
         private static readonly ProfilerMarker _PRF_DrawHandleLine = new(_PRF_PFX + nameof(DrawHandleLine));
         private static readonly ProfilerMarker _PRF_DrawLine = new(_PRF_PFX + nameof(DrawLine));
@@ -90,7 +90,7 @@ namespace Appalachia.Editing.Debugging.Handle
         private static readonly ProfilerMarker _PRF_DrawWireCube_Internal =
             new(_PRF_PFX + nameof(DrawWireCube_Internal));
 
-#endregion
+        #endregion
 
         private static readonly GUIContent s_Image = new();
 
@@ -101,6 +101,8 @@ namespace Appalachia.Editing.Debugging.Handle
         private static readonly int HandleSize = Shader.PropertyToID("_HandleSize");
         private static readonly int HandleZTest = Shader.PropertyToID("_HandleZTest");
         private static readonly int ObjectToWorld = Shader.PropertyToID("_ObjectToWorld");
+
+        private static GUIStyle _baseLabelStyle;
 
         public static GUIStyle BaseLabelStyle
         {
@@ -117,8 +119,6 @@ namespace Appalachia.Editing.Debugging.Handle
                 return _baseLabelStyle;
             }
         }
-
-        private static GUIStyle _baseLabelStyle;
 
         public static void DrawCube(Vector3 center, float radius)
         {
@@ -698,7 +698,7 @@ namespace Appalachia.Editing.Debugging.Handle
             return guiContentArray;
         }
 
-#region UnifiedDrawingScope
+        #region UnifiedDrawingScope
 
         /// <summary>
         ///     <para>Disposable helper struct for automatically setting and reverting Gizmos and UnityEditor.Handles properties.</para>
@@ -829,9 +829,9 @@ namespace Appalachia.Editing.Debugging.Handle
             }
         }
 
-#endregion
+        #endregion
 
-#region Handle Meshes
+        #region Handle Meshes
 
         private static Mesh cubeMesh
         {
@@ -974,7 +974,7 @@ namespace Appalachia.Editing.Debugging.Handle
             (Handles.color * new Color(1f,      1f,   1f,   0.5f)) +
             (Handles.lighting ? new Color(0.0f, 0.0f, 0.0f, 0.5f) : new Color(0.0f, 0.0f, 0.0f, 0.0f));
 
-#endregion
+        #endregion
     }
 }
 

@@ -13,7 +13,7 @@ namespace Appalachia.Editing.Assets.Context
 
         private static bool _assetsSaved;
 
-        [MenuItem("Assets/Make/Asset Subfolders")]
+        [UnityEditor.MenuItem(PKG.Menu.Assets.Base + "Make/Asset Subfolders")]
         public static void CreateFolders(MenuCommand c)
         {
             if (_assetsSaved)

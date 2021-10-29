@@ -86,7 +86,7 @@ namespace Appalachia.Editing.Assets.Windows
             }
         }
 
-        [MenuItem("Tools/Asset Saver")]
+        [UnityEditor.MenuItem(PKG.Menu.Appalachia.Tools.Base + "Asset Saver")]
         private static void OpenWindow()
         {
             var window = GetWindow<AssetSaver>();

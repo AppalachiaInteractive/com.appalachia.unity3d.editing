@@ -6,23 +6,26 @@ namespace Appalachia.Editing.Debugging
 {
     public static class GameViewTracker
     {
-        private const string k_MenuName = "Tools/Toggle GameView tracking %T";
+        #region Preferences
 
-        // Custom labels can be defined.
-        private static readonly PREF<bool> s_Enabled = PREFS.REG("Appalachia/Tracking", "GameView", true);
+        private static readonly PREF<bool> s_Enabled = PREFS.REG(PKG.Prefs.Group, "GameView", true);
+
+        #endregion
+
+        private const string NAME = "Toggle GameView tracking %T";
 
         private static Camera _mainCamera;
 
-        [MenuItem(k_MenuName, priority = 1050)]
+        [MenuItem(PKG.Menu.Appalachia.Tools.Base + NAME, priority = PKG.Menu.Appalachia.Tools.Priority)]
         public static void ToggleGameViewTracking()
         {
             ToggleEnabled();
         }
 
-        [MenuItem(k_MenuName, true)]
+        [MenuItem(PKG.Menu.Appalachia.Tools.Base + NAME, true, priority = PKG.Menu.Appalachia.Tools.Priority)]
         public static bool ToggleGameViewTrackingValidate()
         {
-            Menu.SetChecked(k_MenuName, s_Enabled.v);
+            Menu.SetChecked(PKG.Menu.Appalachia.Tools.Base + NAME, s_Enabled.v);
             return true;
         }
 

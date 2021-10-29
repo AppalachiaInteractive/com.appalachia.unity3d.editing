@@ -12,11 +12,9 @@ using UnityEngine.Rendering;
 namespace Appalachia.Editing.Scene.Menus
 {
     [InitializeOnLoad]
+    
     public static class HandlesMenu
     {
-        private const string G_ = "Appalachia/Handles";
-        private const string MENU_BASE_ = "Tools/" + G_ + "/";
-
         static HandlesMenu()
         {
         }
@@ -24,7 +22,7 @@ namespace Appalachia.Editing.Scene.Menus
         [ExecuteOnEnable]
         private static void OnEnable()
         {
-            _Z_PREF = PREFS.REG(G_, "Default UnityEditor.Handles ZTest", CompareFunction.Always);
+            _Z_PREF = PREFS.REG(PKG.Prefs.Group, "Default UnityEditor.Handles ZTest", CompareFunction.Always);
 
             Handles.zTest = _Z_PREF.v;
         }
@@ -32,12 +30,12 @@ namespace Appalachia.Editing.Scene.Menus
 #region Default UnityEditor.Handles ZTest
 
         public static PREF<CompareFunction> _Z_PREF = PREFS.REG(
-            G_,
+            PKG.Prefs.Group,
             "Default UnityEditor.Handles ZTest",
             CompareFunction.Always
         );
 
-        private const string Z_TEST = MENU_BASE_ + "ZTest";
+        private const string Z_TEST = PKG.Menu.Appalachia.Tools.Base + "ZTest";
 
         private static readonly CompareFunction _ZT_DIS_v = CompareFunction.Disabled;
         private static readonly CompareFunction _ZT_NEV_v = CompareFunction.Never;
@@ -79,126 +77,126 @@ namespace Appalachia.Editing.Scene.Menus
         private const string _ZT_GRE_m = Z_TEST + _ZT_GRE_s;
         private const string _ZT_ALW_m = Z_TEST + _ZT_ALW_s;
 
-        [MenuItem(_ZT_DIS_m, true)]
+        [UnityEditor.MenuItem(_ZT_DIS_m, true)]
         private static bool _ZT_DIS_V()
         {
             Menu.SetChecked(_ZT_DIS_m, _ZT_DIS_chk);
             return true;
         }
 
-        [MenuItem(_ZT_NEV_m, true)]
+        [UnityEditor.MenuItem(_ZT_NEV_m, true)]
         private static bool _ZT_NEV_V()
         {
             Menu.SetChecked(_ZT_NEV_m, _ZT_NEV_chk);
             return true;
         }
 
-        [MenuItem(_ZT_LES_m, true)]
+        [UnityEditor.MenuItem(_ZT_LES_m, true)]
         private static bool _ZT_LES_V()
         {
             Menu.SetChecked(_ZT_LES_m, _ZT_LES_chk);
             return true;
         }
 
-        [MenuItem(_ZT_EQU_m, true)]
+        [UnityEditor.MenuItem(_ZT_EQU_m, true)]
         private static bool _ZT_EQU_V()
         {
             Menu.SetChecked(_ZT_EQU_m, _ZT_EQU_chk);
             return true;
         }
 
-        [MenuItem(_ZT_LEQ_m, true)]
+        [UnityEditor.MenuItem(_ZT_LEQ_m, true)]
         private static bool _ZT_LEQ_V()
         {
             Menu.SetChecked(_ZT_LEQ_m, _ZT_LEQ_chk);
             return true;
         }
 
-        [MenuItem(_ZT_GRT_m, true)]
+        [UnityEditor.MenuItem(_ZT_GRT_m, true)]
         private static bool _ZT_GRT_V()
         {
             Menu.SetChecked(_ZT_GRT_m, _ZT_GRT_chk);
             return true;
         }
 
-        [MenuItem(_ZT_NEQ_m, true)]
+        [UnityEditor.MenuItem(_ZT_NEQ_m, true)]
         private static bool _ZT_NEQ_V()
         {
             Menu.SetChecked(_ZT_NEQ_m, _ZT_NEQ_chk);
             return true;
         }
 
-        [MenuItem(_ZT_GRE_m, true)]
+        [UnityEditor.MenuItem(_ZT_GRE_m, true)]
         private static bool _ZT_GRE_V()
         {
             Menu.SetChecked(_ZT_GRE_m, _ZT_GRE_chk);
             return true;
         }
 
-        [MenuItem(_ZT_ALW_m, true)]
+        [UnityEditor.MenuItem(_ZT_ALW_m, true)]
         private static bool _ZT_ALW_V()
         {
             Menu.SetChecked(_ZT_ALW_m, _ZT_ALW_chk);
             return true;
         }
 
-        [MenuItem(_ZT_DIS_m)]
+        [UnityEditor.MenuItem(_ZT_DIS_m)]
         private static void _ZT_DIS_()
         {
             _Z_PREF.v = _ZT_DIS_v;
             Handles.zTest = _Z_PREF.v;
         }
 
-        [MenuItem(_ZT_NEV_m)]
+        [UnityEditor.MenuItem(_ZT_NEV_m)]
         private static void _ZT_NEV_()
         {
             _Z_PREF.v = _ZT_NEV_v;
             Handles.zTest = _Z_PREF.v;
         }
 
-        [MenuItem(_ZT_LES_m)]
+        [UnityEditor.MenuItem(_ZT_LES_m)]
         private static void _ZT_LES_()
         {
             _Z_PREF.v = _ZT_LES_v;
             Handles.zTest = _Z_PREF.v;
         }
 
-        [MenuItem(_ZT_EQU_m)]
+        [UnityEditor.MenuItem(_ZT_EQU_m)]
         private static void _ZT_EQU_()
         {
             _Z_PREF.v = _ZT_EQU_v;
             Handles.zTest = _Z_PREF.v;
         }
 
-        [MenuItem(_ZT_LEQ_m)]
+        [UnityEditor.MenuItem(_ZT_LEQ_m)]
         private static void _ZT_LEQ_()
         {
             _Z_PREF.v = _ZT_LEQ_v;
             Handles.zTest = _Z_PREF.v;
         }
 
-        [MenuItem(_ZT_GRT_m)]
+        [UnityEditor.MenuItem(_ZT_GRT_m)]
         private static void _ZT_GRT_()
         {
             _Z_PREF.v = _ZT_GRT_v;
             Handles.zTest = _Z_PREF.v;
         }
 
-        [MenuItem(_ZT_NEQ_m)]
+        [UnityEditor.MenuItem(_ZT_NEQ_m)]
         private static void _ZT_NEQ_()
         {
             _Z_PREF.v = _ZT_NEQ_v;
             Handles.zTest = _Z_PREF.v;
         }
 
-        [MenuItem(_ZT_GRE_m)]
+        [UnityEditor.MenuItem(_ZT_GRE_m)]
         private static void _ZT_GRE_()
         {
             _Z_PREF.v = _ZT_GRE_v;
             Handles.zTest = _Z_PREF.v;
         }
 
-        [MenuItem(_ZT_ALW_m)]
+        [UnityEditor.MenuItem(_ZT_ALW_m)]
         private static void _ZT_ALW_()
         {
             _Z_PREF.v = _ZT_ALW_v;

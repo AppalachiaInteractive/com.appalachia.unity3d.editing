@@ -17,12 +17,12 @@ using UnityEngine;
 namespace Appalachia.Editing.Debugging.Testing
 {
 
-#endregion
+    #endregion
 
     [ExecuteAlways]
     public class Bazooka : SingletonMonoBehaviour<Bazooka>
     {
-#region Profiling And Tracing Markers
+        #region Profiling And Tracing Markers
 
         private const string _PRF_PFX = nameof(Bazooka) + ".";
 
@@ -43,7 +43,7 @@ namespace Appalachia.Editing.Debugging.Testing
         private static readonly ProfilerMarker _PRF_Update = new(_PRF_PFX + nameof(Update));
         private static readonly ProfilerMarker _PRF_FindMissileRoot = new(_PRF_PFX + nameof(FindMissileRoot));
 
-#endregion
+        #endregion
 
         [FoldoutGroup("General")]
         [ToggleLeft]
@@ -681,34 +681,34 @@ namespace Appalachia.Editing.Debugging.Testing
         }
 
 #if UNITY_EDITOR
-        [MenuItem("Tools/Bazooka!/Fire!!!!" + SHC.CTRL_ALT_SHFT_F)]
+        [MenuItem(PKG.Menu.Appalachia.Tools.Base + "Bazooka!/Fire!!!!" + SHC.CTRL_ALT_SHFT_F)]
         private static void MenuFire()
         {
             instance._generationQueued = true;
             instance._fireStrength = 1.0f;
         }
 
-        [MenuItem("Tools/Bazooka!/Fire" + SHC.CTRL_ALT_SHFT_R)]
+        [MenuItem(PKG.Menu.Appalachia.Tools.Base + "Bazooka!/Fire" + SHC.CTRL_ALT_SHFT_R)]
         private static void MenuSoftFire()
         {
             instance._generationQueued = true;
             instance._fireStrength = 0.25f;
         }
 
-        [MenuItem("Tools/Bazooka!/Drop Bomb!" + SHC.CTRL_ALT_SHFT_D)]
+        [MenuItem(PKG.Menu.Appalachia.Tools.Base + "Bazooka!/Drop Bomb!" + SHC.CTRL_ALT_SHFT_D)]
         private static void MenuDrop()
         {
             instance._generationQueued = true;
             instance._fireStrength = 0.05f;
         }
 
-        [MenuItem("Tools/Bazooka!/Destroy Missiles!" + SHC.CTRL_ALT_SHFT_C)]
+        [MenuItem(PKG.Menu.Appalachia.Tools.Base + "Bazooka!/Destroy Missiles!" + SHC.CTRL_ALT_SHFT_C)]
         private static void MenuClear()
         {
             instance.DestroyAllMissiles();
         }
 
-        [MenuItem("Tools/Bazooka!/Load Missile!" + SHC.CTRL_ALT_SHFT_M)]
+        [MenuItem(PKG.Menu.Appalachia.Tools.Base + "Bazooka!/Load Missile!" + SHC.CTRL_ALT_SHFT_M)]
         private static void MenuSetMissile()
         {
             if ((Selection.gameObjects != null) && (Selection.gameObjects.Length == 1))

@@ -251,7 +251,7 @@ namespace Appalachia.Editing.Assets.Windows
             }
         }
 
-        [MenuItem("Tools/Game Object Renamer")]
+        [UnityEditor.MenuItem(PKG.Menu.Appalachia.Tools.Base + "Game Object Renamer")]
         private static void OpenWindow()
         {
             var window = GetWindow<GameObjectRenamer>();

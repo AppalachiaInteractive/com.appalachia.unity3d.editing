@@ -6,7 +6,7 @@ namespace Appalachia.Editing.Debugging.Graphy
 {
     public class GraphyMenuItem
     {
-        [MenuItem("Tools/Graphy/Create Prefab Variant")]
+        [UnityEditor.MenuItem(PKG.Menu.Appalachia.Tools.Base + "Graphy/Create Prefab Variant")]
         private static void CreatePrefabVariant()
         {
             // Directory checking
@@ -57,7 +57,7 @@ namespace Appalachia.Editing.Debugging.Graphy
             }
         }
 
-        [MenuItem("Tools/Graphy/Import Graphy Customization Scene")]
+        [UnityEditor.MenuItem(PKG.Menu.Appalachia.Tools.Base + "Graphy/Import Graphy Customization Scene")]
         private static void ImportGraphyCustomizationScene()
         {
             var customizationSceneGuid = AssetDatabaseManager.FindAssets("Graphy_CustomizationScene")[0];

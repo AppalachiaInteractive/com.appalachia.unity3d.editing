@@ -104,7 +104,7 @@ namespace Appalachia.Editing.Assets.Windows
             }
         }
 
-        [MenuItem("Tools/Materials/Shader Search")]
+        [UnityEditor.MenuItem(PKG.Menu.Appalachia.Tools.Base + "Materials/Shader Search")]
         private static void OpenWindow()
         {
             OpenWindow<ShaderSearch>();

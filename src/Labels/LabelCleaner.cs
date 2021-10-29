@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Appalachia.CI.Integration.Assets;
 using Appalachia.Core.Attributes.Editing;
 using Appalachia.Core.Extensions;
 using Appalachia.Editing.Assets;
@@ -19,7 +20,7 @@ namespace Appalachia.Editing.Labels
     {
         private static LabelCleaner _instance;
 
-        [MenuItem("Tools/Labels/Label Manager Window", priority = -10)]
+        [UnityEditor.MenuItem(PKG.Menu.Appalachia.Tools.Base + "Labels/Label Manager Window", priority = -10)]
         private static void OpenWindow()
         {
             _instance = GetWindow<LabelCleaner>();

@@ -5,8 +5,8 @@ using UnityEngine;
 
 namespace Appalachia.Editing.Core.Fields
 {
-    public abstract class LabelMetadataBase<T> : LabelledFieldMetadataBase<T>
-        where T : EditorUIFieldMetadata<T>
+    public abstract class LabelMetadataBase<T> : PrefixLabelFieldBase<T>
+        where T : LabelMetadataBase<T>
     {
         #region Profiling And Tracing Markers
 
@@ -33,8 +33,6 @@ namespace Appalachia.Editing.Core.Fields
         #endregion
 
         private GUIContent _secondLabelContent;
-        private GUILayoutOption[] _prefixLayout;
-        private GUIStyle _prefixStyle;
         private string _secondLabelValue;
 
         protected virtual void OnAfterDraw()
@@ -51,27 +49,7 @@ namespace Appalachia.Editing.Core.Fields
             {
                 hasBeenDrawn = true;
 
-                if (_prefixStyle == null)
-                {
-                    _prefixStyle = new GUIStyle(style)
-                    {
-                        alignment = TextAnchor.MiddleRight, fontSize = style.fontSize - 1
-                    };
-                }
-
-                if (_prefixLayout == null)
-                {
-                    _prefixLayout = new GUILayoutOption[layout.Length + 2];
-
-                    for (var index = 0; index < layout.Length; index++)
-                    {
-                        var layoutOption = layout[index];
-                        _prefixLayout[index] = layoutOption;
-                    }
-
-                    _prefixLayout[^2] = GUILayout.ExpandWidth(false);
-                    _prefixLayout[^1] = GUILayout.MaxWidth(prefixLabelWidth);
-                }
+                InitializePrefixLabel();
 
                 using (new GUILayout.VerticalScope())
                 {
@@ -94,18 +72,15 @@ namespace Appalachia.Editing.Core.Fields
                         {
                             using (new GUILayout.HorizontalScope())
                             {
+                                DrawPrefixLabel(selectable);
+
                                 if (selectable)
                                 {
-                                    _prefixLayout[^1] = GUILayout.MaxWidth(prefixLabelWidth);
-                                    SelectableLabelField(content,             _prefixStyle, _prefixLayout);
-                                    SelectableLabelField(_secondLabelContent, style,        layout);
+                                    SelectableLabelField(_secondLabelContent, style, layout);
                                 }
                                 else
                                 {
-                                    UIStateStacks.labelWidth.Push(prefixLabelWidth);
-                                    EditorGUILayout.PrefixLabel(content, style, _prefixStyle);
                                     EditorGUILayout.LabelField(_secondLabelContent, style, layout);
-                                    UIStateStacks.labelWidth.Pop();
                                 }
                             }
                         }
@@ -234,12 +209,6 @@ namespace Appalachia.Editing.Core.Fields
                     UIStateStacks.contentColor.Pop();
                 }
             }
-        }
-
-        public void SelectableLabelField(GUIContent content, GUIStyle style, params GUILayoutOption[] options)
-        {
-            var rect = EditorGUILayout.GetControlRect(false, labelHeight, style, options);
-            EditorGUI.SelectableLabel(rect, content.text, style);
         }
     }
 }

@@ -166,5 +166,10 @@ namespace Appalachia.Editing.Core.Fields
                 }
             }
         }
+
+        public void Reset()
+        {
+            _lookup.Clear();
+        }
     }
 }

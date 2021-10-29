@@ -61,6 +61,11 @@ namespace Appalachia.Editing.Core.Windows.PaneBased.Panes
                     TabNames = panes.Select(p => p.TabName).ToArray();
                 }
 
+                if (TabNames.Length == 0)
+                {
+                    return;
+                }
+                
                 OnDrawTabsStart();
 
                 TabIndex = Style == PaneParentStyle.Toolbar

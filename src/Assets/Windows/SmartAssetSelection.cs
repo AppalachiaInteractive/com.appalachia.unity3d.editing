@@ -130,7 +130,7 @@ namespace Appalachia.Editing.Assets.Windows
             Selection.objects = selections.ToArray();
         }
 
-        [MenuItem("Tools/Smart Asset Selection")]
+        [UnityEditor.MenuItem(PKG.Menu.Appalachia.Tools.Base + "Smart Asset Selection")]
         private static void OpenWindow()
         {
             var window = GetWindow<SmartAssetSelection>();

@@ -135,8 +135,8 @@ namespace Appalachia.Editing.Core
 #endif
         }
 
-        [MenuItem(
-            APPA_MENU.BASE_AppalachiaTools + APPA_MENU.ASM_AppalachiaEditingCore + "Clear Progress Bar"
+        [UnityEditor.MenuItem(
+            PKG.Menu.Appalachia.Tools.Base + "Clear Progress Bar"
         )]
         public static void ClearProgressBar()
         {

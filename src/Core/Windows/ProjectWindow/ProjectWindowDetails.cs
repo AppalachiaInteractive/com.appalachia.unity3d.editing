@@ -47,7 +47,7 @@ namespace Appalachia.Editing.Core.Windows.ProjectWindow
             }
         }
 
-        [MenuItem("Appalachia/Tools/Appalachia.Editing.Core/Project Window Details")]
+        [UnityEditor.MenuItem(PKG.Menu.Appalachia.Windows.Base + "Project Window Details")]
         public static void Menu()
         {
             //Event.current.Use();

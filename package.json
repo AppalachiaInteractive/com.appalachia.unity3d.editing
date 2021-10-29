@@ -22,15 +22,18 @@
     "registry": "http://35.211.123.13:4873/"
   },
   "dependencies": {
-    "com.appalachia.unity3d.amplify.shader-editor": "0.2.12",
-    "com.appalachia.unity3d.amplify.impostors": "0.1.17",
     "com.unity.editorcoroutines": "1.0.0",
-    "com.appalachia.unity3d.utility": "0.1.3",
-    "com.appalachia.unity3d.core": "0.1.7",
-    "com.appalachia.unity3d.ci": "0.1.3",
+    "com.appalachia.unity3d.utility": "0.1.4",
+    "com.appalachia.unity3d.core": "0.1.8",
+    "com.appalachia.unity3d.ci": "0.1.4",
     "com.unity.mathematics": "1.2.4",
-    "com.appalachia.unity3d.simulation": "0.1.13",
-    "com.unity.inputsystem": "1.1.1"
+    "com.appalachia.unity3d.simulation": "0.1.14",
+    "com.unity.inputsystem": "1.1.1",
+    "com.unity.addressables": "1.19.9",
+    "com.unity.collections": "1.0.0-pre.6",
+    "com.unity.render-pipelines.core": "12.1.0",
+    "com.appalachia.unity3d.third-party.amplify": "0.1.0",
+    "com.unity.timeline": "1.6.2"
   },
   "scripts": {
     "preversion": "bash ~/com.appalachia/appa/appa package unity3d preversion",
@@ -43,6 +46,5 @@
     "prepublishOnly": "bash ~/com.appalachia/appa/appa package unity3d prepublishOnly",
     "publish": "bash ~/com.appalachia/appa/appa package unity3d publish",
     "postpublish": "bash ~/com.appalachia/appa/appa package unity3d postpublish"
-  },
-  "exports": null
+  }
 }
