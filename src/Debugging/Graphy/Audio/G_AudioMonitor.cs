@@ -10,7 +10,7 @@ namespace Appalachia.Editing.Debugging.Graphy.Audio
     /// </summary>
     public class G_AudioMonitor : MonoBehaviour
     {
-#region Variables -> Private
+        #region Variables -> Private
 
         private const float m_refValue = 1f;
 
@@ -25,9 +25,9 @@ namespace Appalachia.Editing.Debugging.Graphy.Audio
 
         private int m_spectrumSize = 512;
 
-#endregion
+        #endregion
 
-#region Properties -> Public
+        #region Properties -> Public
 
         /// <summary>
         ///     Current audio spectrum from the specified AudioListener.
@@ -49,9 +49,9 @@ namespace Appalachia.Editing.Debugging.Graphy.Audio
         /// </summary>
         public bool SpectrumDataAvailable => m_audioListener != null;
 
-#endregion
+        #endregion
 
-#region Methods -> Unity Callbacks
+        #region Methods -> Unity Callbacks
 
         private void Awake()
         {
@@ -117,9 +117,9 @@ namespace Appalachia.Editing.Debugging.Graphy.Audio
             SceneManager.sceneLoaded -= OnSceneLoaded;
         }
 
-#endregion
+        #endregion
 
-#region Methods -> Public
+        #region Methods -> Public
 
         public void UpdateParameters()
         {
@@ -159,9 +159,9 @@ namespace Appalachia.Editing.Debugging.Graphy.Audio
             return (db + 160f) / 160f;
         }
 
-#endregion
+        #endregion
 
-#region Methods -> Private
+        #region Methods -> Private
 
         /// <summary>
         ///     Tries to find an audio listener in the main camera.
@@ -195,6 +195,6 @@ namespace Appalachia.Editing.Debugging.Graphy.Audio
             SceneManager.sceneLoaded += OnSceneLoaded;
         }
 
-#endregion
+        #endregion
     }
 }

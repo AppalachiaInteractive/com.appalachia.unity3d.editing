@@ -9,7 +9,7 @@ namespace Appalachia.Editing.Debugging.Graphy.Shader
     /// </summary>
     public class G_GraphShader
     {
-#region Variables
+        #region Variables
 
         public const int ArrayMaxSizeFull = 512;
         public const int ArrayMaxSizeLight = 128;
@@ -40,9 +40,9 @@ namespace Appalachia.Editing.Debugging.Graphy.Shader
         private int m_cautionColorPropertyId;
         private int m_criticalColorPropertyId;
 
-#endregion
+        #endregion
 
-#region Methods -> Public
+        #region Methods -> Public
 
         /// <summary>
         ///     This is done to avoid a design problem that arrays in shaders have,
@@ -113,6 +113,6 @@ namespace Appalachia.Editing.Debugging.Graphy.Shader
             Image.material.SetFloatArray(Name, ShaderArrayValues);
         }
 
-#endregion
+        #endregion
     }
 }

@@ -16,7 +16,6 @@ namespace Appalachia.Editing.Debugging.IngameDebugConsole
         private SerializedProperty receiveLogcatLogsInAndroid;
         private SerializedProperty resizeFromRight;
         private SerializedProperty showCommandSuggestions;
-        private SerializedProperty singleton;
         private SerializedProperty startInPopupMode;
         private SerializedProperty startMinimized;
         private SerializedProperty toggleKey;
@@ -27,7 +26,6 @@ namespace Appalachia.Editing.Debugging.IngameDebugConsole
         {
             serializedObject.Update();
 
-            EditorGUILayout.PropertyField(singleton);
             EditorGUILayout.PropertyField(minimumHeight);
 
             EditorGUILayout.PropertyField(enableHorizontalResizing);
@@ -45,12 +43,6 @@ namespace Appalachia.Editing.Debugging.IngameDebugConsole
             else
             {
                 DrawSubProperty(startMinimized);
-            }
-
-            EditorGUILayout.PropertyField(toggleWithKey);
-            if (toggleWithKey.boolValue)
-            {
-                DrawSubProperty(toggleKey);
             }
 
             EditorGUILayout.PropertyField(enableSearchbar);
@@ -82,7 +74,6 @@ namespace Appalachia.Editing.Debugging.IngameDebugConsole
 
         private void OnEnable()
         {
-            singleton = serializedObject.FindProperty("singleton");
             minimumHeight = serializedObject.FindProperty("minimumHeight");
             enableHorizontalResizing = serializedObject.FindProperty("enableHorizontalResizing");
             resizeFromRight = serializedObject.FindProperty("resizeFromRight");

@@ -5,12 +5,12 @@ using UnityEngine;
 
 namespace Appalachia.Editing.Core.Behaviours
 {
-    public abstract class EditorOnlySingletonMonoBehaviour<T> : EditorOnlyMonoBehaviour
-        where T : EditorOnlySingletonMonoBehaviour<T>
+    public abstract class EditorOnlySingletonBehaviour<T> : EditorOnlyBehaviour
+        where T : EditorOnlySingletonBehaviour<T>
     {
 #region Profiling And Tracing Markers
 
-        private const string _PRF_PFX = nameof(EditorOnlySingletonMonoBehaviour<T>) + ".";
+        private const string _PRF_PFX = nameof(EditorOnlySingletonBehaviour<T>) + ".";
         private static T __instance;
         private static readonly ProfilerMarker _PRF_Awake = new(_PRF_PFX + nameof(Awake));
 

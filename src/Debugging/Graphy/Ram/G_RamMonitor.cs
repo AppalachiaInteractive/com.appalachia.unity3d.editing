@@ -9,7 +9,7 @@ namespace Appalachia.Editing.Debugging.Graphy.Ram
 {
     public class G_RamMonitor : MonoBehaviour
     {
-#region Methods -> Unity Callbacks
+        #region Methods -> Unity Callbacks
 
         private void Update()
         {
@@ -18,14 +18,14 @@ namespace Appalachia.Editing.Debugging.Graphy.Ram
             MonoRam = Profiler.GetMonoUsedSizeLong() / 1048576f;
         }
 
-#endregion
+        #endregion
 
-#region Properties -> Public
+        #region Properties -> Public
 
         public float AllocatedRam { get; private set; }
         public float ReservedRam { get; private set; }
         public float MonoRam { get; private set; }
 
-#endregion
+        #endregion
     }
 }

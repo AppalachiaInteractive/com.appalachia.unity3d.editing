@@ -4,7 +4,7 @@ namespace Appalachia.Editing.Debugging.Graphy.Graph
 {
     public abstract class G_Graph : MonoBehaviour
     {
-#region Methods -> Protected
+        #region Methods -> Protected
 
         /// <summary>
         ///     Updates the graph/s.
@@ -16,6 +16,6 @@ namespace Appalachia.Editing.Debugging.Graphy.Graph
         /// </summary>
         protected abstract void CreatePoints();
 
-#endregion
+        #endregion
     }
 }

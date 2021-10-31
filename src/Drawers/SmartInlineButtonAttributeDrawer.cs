@@ -56,7 +56,7 @@ namespace Appalachia.Editing.Drawers
 
                 using (_PRF_DrawInlineButton_DrawButton.Auto())
                 {
-                    var labelText = context.LabelHelper.GetValue();
+                    var labelText = context.Label;
 
                     var labelWidth = labelText.Length * 8.0f;
 
@@ -155,10 +155,22 @@ namespace Appalachia.Editing.Drawers
                 }
             }
         }
-
+  
         private void HandleDrawingInlineButton(Color? color, bool? disabled)
         {
             using (_PRF_HandleDrawingInlineButton.Auto())
+            {
+                PushInlineButton(color, disabled);
+                DrawInlineButton();
+                PopInlineButton(color, disabled);
+            }
+        }
+
+
+        private static readonly ProfilerMarker _PRF_PushInlineButton = new ProfilerMarker(_PRF_PFX + nameof(PushInlineButton));
+        private void PushInlineButton(Color? color, bool? disabled)
+        {
+            using (_PRF_PushInlineButton.Auto())
             {
                 if (color.HasValue)
                 {

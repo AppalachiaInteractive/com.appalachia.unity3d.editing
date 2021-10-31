@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Appalachia.Core.Behaviours;
 using Appalachia.Editing.Debugging.Graphy.Audio;
 using Appalachia.Editing.Debugging.Graphy.Fps;
 using Appalachia.Editing.Debugging.Graphy.Ram;
-using Appalachia.Editing.Debugging.Graphy.Util;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -13,7 +13,7 @@ namespace Appalachia.Editing.Debugging.Graphy
     /// <summary>
     ///     Main class to access the Graphy Debugger API.
     /// </summary>
-    public class GraphyDebugger : G_Singleton<GraphyDebugger>
+    public class GraphyDebugger : SingletonAppalachiaBehaviour<GraphyDebugger>
     {
         /* ----- TODO: ----------------------------
          * Add summaries to the variables.
@@ -26,13 +26,13 @@ namespace Appalachia.Editing.Debugging.Graphy
         {
         }
 
-#region Variables -> Serialized Private
+        #region Variables -> Serialized Private
 
         [SerializeField] private List<DebugPacket> m_debugPackets = new();
 
-#endregion
+        #endregion
 
-#region Structs -> Public
+        #region Structs -> Public
 
         [Serializable]
         public struct DebugCondition
@@ -47,9 +47,9 @@ namespace Appalachia.Editing.Debugging.Graphy
             public float Value;
         }
 
-#endregion
+        #endregion
 
-#region Helper Classes
+        #region Helper Classes
 
         [Serializable]
         public class DebugPacket
@@ -124,9 +124,9 @@ namespace Appalachia.Editing.Debugging.Graphy
             }
         }
 
-#endregion
+        #endregion
 
-#region Enums -> Public
+        #region Enums -> Public
 
         public enum DebugVariable
         {
@@ -162,17 +162,17 @@ namespace Appalachia.Editing.Debugging.Graphy
             Error
         }
 
-#endregion
+        #endregion
 
-#region Variables -> Private
+        #region Variables -> Private
 
         private G_FpsMonitor m_fpsMonitor;
         private G_RamMonitor m_ramMonitor;
         private G_AudioMonitor m_audioMonitor;
 
-#endregion
+        #endregion
 
-#region Methods -> Unity Callbacks
+        #region Methods -> Unity Callbacks
 
         private void Start()
         {
@@ -186,9 +186,9 @@ namespace Appalachia.Editing.Debugging.Graphy
             CheckDebugPackets();
         }
 
-#endregion
+        #endregion
 
-#region Public Methods
+        #region Public Methods
 
         /// <summary>
         ///     Add a new DebugPacket.
@@ -368,9 +368,9 @@ namespace Appalachia.Editing.Debugging.Graphy
             }
         }
 
-#endregion
+        #endregion
 
-#region Methods -> Private
+        #region Methods -> Private
 
         /// <summary>
         ///     Checks all the Debug Packets to see if they have to be executed.
@@ -562,6 +562,6 @@ namespace Appalachia.Editing.Debugging.Graphy
             }
         }
 
-#endregion
+        #endregion
     }
 }

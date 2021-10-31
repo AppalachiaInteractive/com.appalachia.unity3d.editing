@@ -13,7 +13,7 @@ namespace Appalachia.Editing.Debugging.Graphy.Advanced
 {
     public class G_AdvancedData : MonoBehaviour, IMovable, IModifiableState
     {
-#region Methods -> Private
+        #region Methods -> Private
 
         private void Init()
         {
@@ -25,7 +25,7 @@ namespace Appalachia.Editing.Debugging.Graphy.Advanced
 
             m_rectTransform = GetComponent<RectTransform>();
 
-#region Section -> Text
+            #region Section -> Text
 
             m_processorTypeText.text = "CPU: " +
                                        SystemInfo.processorType +
@@ -78,9 +78,9 @@ namespace Appalachia.Editing.Debugging.Graphy.Advanced
                 }
             }
 
-#endregion
+            #endregion
 
-#region Section -> Background Images
+            #region Section -> Background Images
 
             m_backgroundImages[0]
                .rectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, preferredWidth + 25);
@@ -91,14 +91,14 @@ namespace Appalachia.Editing.Debugging.Graphy.Advanced
                 m_backgroundImages[0].rectTransform.anchoredPosition.y
             );
 
-#endregion
+            #endregion
 
             UpdateParameters();
         }
 
-#endregion
+        #endregion
 
-#region Variables -> Serialized Private
+        #region Variables -> Serialized Private
 
         [SerializeField] private List<Image> m_backgroundImages = new();
 
@@ -119,9 +119,9 @@ namespace Appalachia.Editing.Debugging.Graphy.Advanced
         [SerializeField]
         private float m_updateRate = 1f; // 1 update per sec.
 
-#endregion
+        #endregion
 
-#region Variables -> Private
+        #region Variables -> Private
 
         private GraphyManager m_graphyManager;
 
@@ -136,9 +136,9 @@ namespace Appalachia.Editing.Debugging.Graphy.Advanced
 
         private readonly string[] m_windowStrings = {"Window: ", "x", "@", "Hz", "[", "dpi]"};
 
-#endregion
+        #endregion
 
-#region Methods -> Unity Callbacks
+        #region Methods -> Unity Callbacks
 
         private void OnEnable()
         {
@@ -172,9 +172,9 @@ namespace Appalachia.Editing.Debugging.Graphy.Advanced
             }
         }
 
-#endregion
+        #endregion
 
-#region Methods -> Public
+        #region Methods -> Public
 
         public void SetPosition(GraphyManager.ModulePosition newModulePosition)
         {
@@ -323,6 +323,6 @@ namespace Appalachia.Editing.Debugging.Graphy.Advanced
             SetState(m_currentModuleState, true);
         }
 
-#endregion
+        #endregion
     }
 }

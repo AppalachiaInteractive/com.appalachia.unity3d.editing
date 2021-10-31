@@ -3,7 +3,7 @@ using Sirenix.OdinInspector;
 
 namespace Appalachia.Editing.Debugging
 {
-    public class GlobalDebugManager : EditorOnlySingletonMonoBehaviour<GlobalDebugManager>
+    public class GlobalDebugManager : EditorOnlySingletonBehaviour<GlobalDebugManager>
     {
         public override EditorOnlyExclusionStyle exclusionStyle =>
             EditorOnlyExclusionStyle.ObjectIfNoConflict;

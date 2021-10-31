@@ -7,7 +7,7 @@ namespace Appalachia.Editing.Debugging.Graphy.Audio
 {
     public class G_AudioGraph : G_Graph
     {
-#region Methods -> Public
+        #region Methods -> Public
 
         public void UpdateParameters()
         {
@@ -45,9 +45,9 @@ namespace Appalachia.Editing.Debugging.Graphy.Audio
             CreatePoints();
         }
 
-#endregion
+        #endregion
 
-#region Methods -> Private
+        #region Methods -> Private
 
         private void Init()
         {
@@ -64,9 +64,9 @@ namespace Appalachia.Editing.Debugging.Graphy.Audio
             m_isInitialized = true;
         }
 
-#endregion
+        #endregion
 
-#region Variables -> Serialized Private
+        #region Variables -> Serialized Private
 
         [SerializeField] private Image m_imageGraph;
         [SerializeField] private Image m_imageGraphHighestValues;
@@ -76,9 +76,9 @@ namespace Appalachia.Editing.Debugging.Graphy.Audio
 
         [SerializeField] private bool m_isInitialized;
 
-#endregion
+        #endregion
 
-#region Variables -> Private
+        #region Variables -> Private
 
         private GraphyManager m_graphyManager;
 
@@ -92,9 +92,9 @@ namespace Appalachia.Editing.Debugging.Graphy.Audio
         private float[] m_graphArray;
         private float[] m_graphArrayHighestValue;
 
-#endregion
+        #endregion
 
-#region Methods -> Unity Callbacks
+        #region Methods -> Unity Callbacks
 
         private void OnEnable()
         {
@@ -123,9 +123,9 @@ namespace Appalachia.Editing.Debugging.Graphy.Audio
             }
         }
 
-#endregion
+        #endregion
 
-#region Methods -> Protected Override
+        #region Methods -> Protected Override
 
         protected override void UpdateGraph()
         {
@@ -276,6 +276,6 @@ namespace Appalachia.Editing.Debugging.Graphy.Audio
             m_shaderGraphHighestValues.UpdateAverage();
         }
 
-#endregion
+        #endregion
     }
 }

@@ -13,11 +13,11 @@ using UnityEngine;
 namespace Appalachia.Editing.Core.Behaviours
 {
     [ExecuteAlways]
-    public abstract class EditorOnlyMonoBehaviour : AppalachiaMonoBehaviour
+    public abstract class EditorOnlyBehaviour : AppalachiaBehaviour
     {
 #region Profiling And Tracing Markers
 
-        private const string _PRF_PFX = nameof(EditorOnlyMonoBehaviour) + ".";
+        private const string _PRF_PFX = nameof(EditorOnlyBehaviour) + ".";
 
         private static readonly ProfilerMarker _PRF_Awake = new(_PRF_PFX + "Awake");
 
@@ -71,7 +71,7 @@ namespace Appalachia.Editing.Core.Behaviours
                             break;
                         }
 
-                        var others = GetComponents<EditorOnlyMonoBehaviour>();
+                        var others = GetComponents<EditorOnlyBehaviour>();
 
                         var hasOtherComponentThatDoesNotExcludeObject = false;
                         for (var i = 0; i < others.Length; i++)
@@ -104,7 +104,7 @@ namespace Appalachia.Editing.Core.Behaviours
                             break;
                         }
 
-                        var others = GetComponents<EditorOnlyMonoBehaviour>();
+                        var others = GetComponents<EditorOnlyBehaviour>();
 
                         var hasOtherComponentThatDoesNotExcludeObject = false;
                         for (var i = 0; i < others.Length; i++)

@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Appalachia.Editing.Labels
 {
-    public class LabelSets : SelfSavingSingletonScriptableObject<LabelSets>
+    public class LabelSets : SingletonAppalachiaObject<LabelSets>
     {
         public LabelAssignmentCollection assemblies;
         public LabelAssignmentCollection objects;

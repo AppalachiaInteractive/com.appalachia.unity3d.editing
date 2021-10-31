@@ -1,4 +1,5 @@
 ﻿using System;
+using Appalachia.Core.Behaviours;
 using Appalachia.Editing.Debugging.Graphy.Advanced;
 using Appalachia.Editing.Debugging.Graphy.Audio;
 using Appalachia.Editing.Debugging.Graphy.Fps;
@@ -16,7 +17,7 @@ namespace Appalachia.Editing.Debugging.Graphy
     /// <summary>
     ///     Main class to access the Graphy API.
     /// </summary>
-    public class GraphyManager : G_Singleton<GraphyManager>
+    public class GraphyManager : SingletonAppalachiaBehaviour<GraphyManager>
     {
         protected GraphyManager()
         {
@@ -24,7 +25,7 @@ namespace Appalachia.Editing.Debugging.Graphy
 
         //Enums
 
-#region Enums -> Public
+        #region Enums -> Public
 
         public enum Mode
         {
@@ -84,9 +85,9 @@ namespace Appalachia.Editing.Debugging.Graphy
             FPS_BASIC_ADVANCED_FULL = 11
         }
 
-#endregion
+        #endregion
 
-#region Variables -> Serialized Private
+        #region Variables -> Serialized Private
 
         [SerializeField] private Mode m_graphyMode = Mode.FULL;
 
@@ -99,19 +100,13 @@ namespace Appalachia.Editing.Debugging.Graphy
 
         [SerializeField] private bool m_enableHotkeys = true;
 
-#if GRAPHY_NEW_INPUT
         [SerializeField] private Key m_toggleModeKeyCode = Key.G;
-#else
-        [SerializeField] private    KeyCode                 m_toggleModeKeyCode = KeyCode.G;
-#endif
+
         [SerializeField] private bool m_toggleModeCtrl = true;
         [SerializeField] private bool m_toggleModeAlt;
 
-#if GRAPHY_NEW_INPUT
         [SerializeField] private Key m_toggleActiveKeyCode = Key.H;
-#else
-        [SerializeField] private    KeyCode                 m_toggleActiveKeyCode = KeyCode.H;
-#endif
+
         [SerializeField] private bool m_toggleActiveCtrl = true;
         [SerializeField] private bool m_toggleActiveAlt;
 
@@ -184,9 +179,9 @@ namespace Appalachia.Editing.Debugging.Graphy
 
         [SerializeField] private ModuleState m_advancedModuleState = ModuleState.FULL;
 
-#endregion
+        #endregion
 
-#region Variables -> Private
+        #region Variables -> Private
 
         private bool m_initialized;
         private bool m_active = true;
@@ -203,11 +198,11 @@ namespace Appalachia.Editing.Debugging.Graphy
 
         private ModulePreset m_modulePresetState = ModulePreset.FPS_BASIC_ADVANCED_FULL;
 
-#endregion
+        #endregion
 
         //TODO: Maybe sort these into Get and GetSet sections.
 
-#region Properties -> Public
+        #region Properties -> Public
 
         public Mode GraphyMode
         {
@@ -536,9 +531,9 @@ namespace Appalachia.Editing.Debugging.Graphy
             }
         }
 
-#endregion
+        #endregion
 
-#region Methods -> Unity Callbacks
+        #region Methods -> Unity Callbacks
 
         private void Start()
         {
@@ -551,14 +546,6 @@ namespace Appalachia.Editing.Debugging.Graphy
             G_FloatString.Dispose();
         }
 
-        private void Update()
-        {
-            if (m_focused && m_enableHotkeys)
-            {
-                CheckForHotkeyPresses();
-            }
-        }
-
         private void OnApplicationFocus(bool isFocused)
         {
             m_focused = isFocused;
@@ -569,9 +556,9 @@ namespace Appalachia.Editing.Debugging.Graphy
             }
         }
 
-#endregion
+        #endregion
 
-#region Methods -> Public
+        #region Methods -> Public
 
         public void SetModulePosition(ModuleType moduleType, ModulePosition modulePosition)
         {
@@ -772,9 +759,9 @@ namespace Appalachia.Editing.Debugging.Graphy
             }
         }
 
-#endregion
+        #endregion
 
-#region Methods -> Private
+        #region Methods -> Private
 
         private void Init()
         {
@@ -813,10 +800,8 @@ namespace Appalachia.Editing.Debugging.Graphy
             m_initialized = true;
         }
 
-        private void CheckForHotkeyPresses()
+        /*private void CheckForHotkeyPresses()
         {
-#if GRAPHY_NEW_INPUT
-
             // Toggle Mode ---------------------------------------
             if (m_toggleModeCtrl && m_toggleModeAlt)
             {
@@ -887,82 +872,9 @@ namespace Appalachia.Editing.Debugging.Graphy
                     ToggleActive();
                 }
             }
-#else
-            // Toggle Mode ---------------------------------------
-            if (m_toggleModeCtrl && m_toggleModeAlt)
-            {
-                if (CheckFor3KeyPress(m_toggleModeKeyCode, KeyCode.LeftControl, KeyCode.LeftAlt)
-                    || CheckFor3KeyPress(m_toggleModeKeyCode, KeyCode.RightControl, KeyCode.LeftAlt)
-                    || CheckFor3KeyPress(m_toggleModeKeyCode, KeyCode.RightControl, KeyCode.RightAlt)
-                    || CheckFor3KeyPress(m_toggleModeKeyCode, KeyCode.LeftControl, KeyCode.RightAlt))
-                {
-                    ToggleModes();
-                }
-            }
-            else if (m_toggleModeCtrl)
-            {
-                if (    CheckFor2KeyPress(m_toggleModeKeyCode, KeyCode.LeftControl)
-                    ||  CheckFor2KeyPress(m_toggleModeKeyCode, KeyCode.RightControl))
-                {
-                    ToggleModes();
-                }
-            }
-            else if (m_toggleModeAlt)
-            {
-                if (    CheckFor2KeyPress(m_toggleModeKeyCode, KeyCode.LeftAlt)
-                    ||  CheckFor2KeyPress(m_toggleModeKeyCode, KeyCode.RightAlt))
-                {
-                    ToggleModes();
-                }
-            }
-            else
-            {
-                if (CheckFor1KeyPress(m_toggleModeKeyCode))
-                {
-                    ToggleModes();
-                }
-            }
+        }*/
 
-            // Toggle Active -------------------------------------
-            if (m_toggleActiveCtrl && m_toggleActiveAlt)
-            {
-                if (    CheckFor3KeyPress(m_toggleActiveKeyCode, KeyCode.LeftControl, KeyCode.LeftAlt)
-                    ||  CheckFor3KeyPress(m_toggleActiveKeyCode, KeyCode.RightControl, KeyCode.LeftAlt)
-                    ||  CheckFor3KeyPress(m_toggleActiveKeyCode, KeyCode.RightControl, KeyCode.RightAlt)
-                    ||  CheckFor3KeyPress(m_toggleActiveKeyCode, KeyCode.LeftControl, KeyCode.RightAlt))
-                {
-                    ToggleActive();
-                }
-            }
-            
-            else if (m_toggleActiveCtrl)
-            {
-                if (    CheckFor2KeyPress(m_toggleActiveKeyCode, KeyCode.LeftControl)
-                    ||  CheckFor2KeyPress(m_toggleActiveKeyCode, KeyCode.RightControl))
-                {
-                    ToggleActive();
-                }
-            }
-            else if (m_toggleActiveAlt)
-            {
-                if (    CheckFor2KeyPress(m_toggleActiveKeyCode, KeyCode.LeftAlt)
-                    ||  CheckFor2KeyPress(m_toggleActiveKeyCode, KeyCode.RightAlt))
-                {
-                    ToggleActive();
-                }
-            }
-            else
-            {
-                if (CheckFor1KeyPress(m_toggleActiveKeyCode))
-                {
-                    ToggleActive();
-                }
-            }
-#endif
-        }
-
-#if GRAPHY_NEW_INPUT
-        private bool CheckFor1KeyPress(Key key)
+        /*private bool CheckFor1KeyPress(Key key)
         {
             var currentKeyboard = Keyboard.current;
 
@@ -1005,26 +917,8 @@ namespace Appalachia.Editing.Debugging.Graphy
             }
 
             return false;
-        }
-#else
-        private bool CheckFor1KeyPress(KeyCode key)
-        {
-            return Input.GetKeyDown(key);
-        }
+        }*/
 
-        private bool CheckFor2KeyPress(KeyCode key1, KeyCode key2)
-        {
-            return Input.GetKeyDown(key1) && Input.GetKey(key2)
-                || Input.GetKeyDown(key2) && Input.GetKey(key1);
-        }
-
-        private bool CheckFor3KeyPress(KeyCode key1, KeyCode key2, KeyCode key3)
-        {
-            return Input.GetKeyDown(key1) && Input.GetKey(key2) && Input.GetKey(key3)
-                || Input.GetKeyDown(key2) && Input.GetKey(key1) && Input.GetKey(key3)
-                || Input.GetKeyDown(key3) && Input.GetKey(key1) && Input.GetKey(key2);
-        }
-#endif
         private void UpdateAllParameters()
         {
             m_fpsManager.UpdateParameters();
@@ -1041,6 +935,6 @@ namespace Appalachia.Editing.Debugging.Graphy
             m_advancedData.RefreshParameters();
         }
 
-#endregion
+        #endregion
     }
 }

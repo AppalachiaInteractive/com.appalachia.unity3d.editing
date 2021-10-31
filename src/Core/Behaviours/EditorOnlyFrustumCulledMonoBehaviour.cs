@@ -13,11 +13,11 @@ namespace Appalachia.Editing.Core.Behaviours
 {
 #if UNITY_EDITOR
     [ExecuteAlways]
-    public abstract class EditorOnlyFrustumCulledMonoBehaviour : EditorOnlyMonoBehaviour
+    public abstract class EditorOnlyFrustumCulledBehaviour : EditorOnlyBehaviour
     {
 #region Profiling And Tracing Markers
 
-        private const string _PRF_PFX = nameof(EditorOnlyFrustumCulledMonoBehaviour) + ".";
+        private const string _PRF_PFX = nameof(EditorOnlyFrustumCulledBehaviour) + ".";
 
         private static readonly ProfilerMarker _PRF_OnBecameVisible = new(_PRF_PFX + nameof(OnBecameVisible));
 

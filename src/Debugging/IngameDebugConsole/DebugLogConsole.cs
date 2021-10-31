@@ -577,10 +577,10 @@ namespace Appalachia.Editing.Debugging.IngameDebugConsole
                     Debug.LogWarning(stringBuilder.ToString());
 
                     // The log that lists method signature(s) for this command should automatically be expanded for better UX
-                    if (DebugLogManager.Instance)
+                    if (DebugLogManager.instance)
                     {
-                        DebugLogManager.Instance.ExpandLatestPendingLog();
-                        DebugLogManager.Instance.StripStackTraceFromLatestPendingLog();
+                        DebugLogManager.instance.ExpandLatestPendingLog();
+                        DebugLogManager.instance.StripStackTraceFromLatestPendingLog();
                     }
                 }
 
@@ -850,10 +850,10 @@ namespace Appalachia.Editing.Debugging.IngameDebugConsole
             Debug.Log(stringBuilder.ToString());
 
             // After typing help, the log that lists all the commands should automatically be expanded for better UX
-            if (DebugLogManager.Instance)
+            if (DebugLogManager.instance)
             {
-                DebugLogManager.Instance.ExpandLatestPendingLog();
-                DebugLogManager.Instance.StripStackTraceFromLatestPendingLog();
+                DebugLogManager.instance.ExpandLatestPendingLog();
+                DebugLogManager.instance.StripStackTraceFromLatestPendingLog();
             }
         }
 
@@ -892,10 +892,10 @@ namespace Appalachia.Editing.Debugging.IngameDebugConsole
 
                 Debug.Log(stringBuilder.ToString());
 
-                if (DebugLogManager.Instance)
+                if (DebugLogManager.instance)
                 {
-                    DebugLogManager.Instance.ExpandLatestPendingLog();
-                    DebugLogManager.Instance.StripStackTraceFromLatestPendingLog();
+                    DebugLogManager.instance.ExpandLatestPendingLog();
+                    DebugLogManager.instance.StripStackTraceFromLatestPendingLog();
                 }
             }
         }
@@ -967,10 +967,10 @@ namespace Appalachia.Editing.Debugging.IngameDebugConsole
             Debug.Log(stringBuilder.ToString());
 
             // After typing sysinfo, the log that lists system information should automatically be expanded for better UX
-            if (DebugLogManager.Instance)
+            if (DebugLogManager.instance)
             {
-                DebugLogManager.Instance.ExpandLatestPendingLog();
-                DebugLogManager.Instance.StripStackTraceFromLatestPendingLog();
+                DebugLogManager.instance.ExpandLatestPendingLog();
+                DebugLogManager.instance.StripStackTraceFromLatestPendingLog();
             }
         }
 

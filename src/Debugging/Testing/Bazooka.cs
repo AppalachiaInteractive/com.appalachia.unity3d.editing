@@ -20,7 +20,7 @@ namespace Appalachia.Editing.Debugging.Testing
     #endregion
 
     [ExecuteAlways]
-    public class Bazooka : SingletonMonoBehaviour<Bazooka>
+    public class Bazooka : SingletonAppalachiaBehaviour<Bazooka>
     {
         #region Profiling And Tracing Markers
 

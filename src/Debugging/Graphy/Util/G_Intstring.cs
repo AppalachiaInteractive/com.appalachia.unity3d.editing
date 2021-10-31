@@ -4,7 +4,7 @@ namespace Appalachia.Editing.Debugging.Graphy.Util
 {
     public static class G_IntString
     {
-#region Variables -> Private
+        #region Variables -> Private
 
         /// <summary>
         ///     List of negative ints casted to strings.
@@ -16,9 +16,9 @@ namespace Appalachia.Editing.Debugging.Graphy.Util
         /// </summary>
         private static string[] m_positiveBuffer = new string[0];
 
-#endregion
+        #endregion
 
-#region Properties -> Public
+        #region Properties -> Public
 
         /// <summary>
         ///     The lowest int value of the existing number buffer.
@@ -30,9 +30,9 @@ namespace Appalachia.Editing.Debugging.Graphy.Util
         /// </summary>
         public static int MaxValue => m_positiveBuffer.Length;
 
-#endregion
+        #endregion
 
-#region Methods -> Public
+        #region Methods -> Public
 
         /// <summary>
         ///     Initialize the buffers.
@@ -99,6 +99,6 @@ namespace Appalachia.Editing.Debugging.Graphy.Util
             return value.ToString();
         }
 
-#endregion
+        #endregion
     }
 }

@@ -4,7 +4,7 @@ namespace Appalachia.Editing.Debugging.Graphy.Util
 {
     public static class G_FloatString
     {
-#region Variables -> Private
+        #region Variables -> Private
 
         /// <summary>
         ///     Float represented as a string, formatted.
@@ -26,17 +26,17 @@ namespace Appalachia.Editing.Debugging.Graphy.Util
         /// </summary>
         private static string[] m_positiveBuffer = new string[0];
 
-#endregion
+        #endregion
 
-#region Properties -> Public
+        #region Properties -> Public
 
         public static float MinValue => -(m_negativeBuffer.Length - 1).FromIndex();
 
         public static float MaxValue => (m_positiveBuffer.Length - 1).FromIndex();
 
-#endregion
+        #endregion
 
-#region Methods -> Public
+        #region Methods -> Public
 
         public static void Init(float minNegativeValue, float maxPositiveValue)
         {
@@ -112,9 +112,9 @@ namespace Appalachia.Editing.Debugging.Graphy.Util
             return i;
         }
 
-#endregion
+        #endregion
 
-#region Methods -> Private
+        #region Methods -> Private
 
         private static int ToIndex(this float f)
         {
@@ -126,6 +126,6 @@ namespace Appalachia.Editing.Debugging.Graphy.Util
             return i.ToFloat() / m_decimalMultiplier;
         }
 
-#endregion
+        #endregion
     }
 }

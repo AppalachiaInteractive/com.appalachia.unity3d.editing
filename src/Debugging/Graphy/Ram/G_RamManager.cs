@@ -17,15 +17,15 @@ namespace Appalachia.Editing.Debugging.Graphy.Ram
          * Check if we should add a "RequireComponent" for "RamText".
          * --------------------------------------*/
 
-#region Variables -> Serialized Private
+        #region Variables -> Serialized Private
 
         [SerializeField] private GameObject m_ramGraphGameObject;
 
         [SerializeField] private List<Image> m_backgroundImages = new();
 
-#endregion
+        #endregion
 
-#region Variables -> Private
+        #region Variables -> Private
 
         private GraphyManager m_graphyManager;
 
@@ -39,9 +39,9 @@ namespace Appalachia.Editing.Debugging.Graphy.Ram
         private GraphyManager.ModuleState m_previousModuleState = GraphyManager.ModuleState.FULL;
         private GraphyManager.ModuleState m_currentModuleState = GraphyManager.ModuleState.FULL;
 
-#endregion
+        #endregion
 
-#region Methods -> Unity Callbacks
+        #region Methods -> Unity Callbacks
 
         private void Awake()
         {
@@ -53,9 +53,9 @@ namespace Appalachia.Editing.Debugging.Graphy.Ram
             UpdateParameters();
         }
 
-#endregion
+        #endregion
 
-#region Methods -> Public
+        #region Methods -> Public
 
         public void SetPosition(GraphyManager.ModulePosition newModulePosition)
         {
@@ -191,9 +191,9 @@ namespace Appalachia.Editing.Debugging.Graphy.Ram
             SetState(m_currentModuleState, true);
         }
 
-#endregion
+        #endregion
 
-#region Methods -> Private
+        #region Methods -> Private
 
         private void Init()
         {
@@ -219,6 +219,6 @@ namespace Appalachia.Editing.Debugging.Graphy.Ram
             m_ramGraphGameObject.SetActive(active);
         }
 
-#endregion
+        #endregion
     }
 }

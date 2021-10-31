@@ -8,7 +8,7 @@ using UnityEngine;
 namespace Appalachia.Editing.Debugging.Testing
 {
     [ExecuteAlways]
-    public class Spinner : AppalachiaMonoBehaviour
+    public class Spinner : AppalachiaBehaviour
     {
         public enum AxisSource
         {
@@ -59,7 +59,7 @@ namespace Appalachia.Editing.Debugging.Testing
                         Vector3.down,
                         _hits,
                         100f,
-                        LAYERS.Terrain.Mask
+                        Layers.ByName.Terrain.Mask
                     );
 
                     if (hitCount > 0)

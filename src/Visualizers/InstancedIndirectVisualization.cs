@@ -10,7 +10,7 @@ using UnityEngine.Rendering;
 namespace Appalachia.Editing.Visualizers
 {
     
-    public abstract class InstancedIndirectVisualization : EditorOnlyMonoBehaviour
+    public abstract class InstancedIndirectVisualization : EditorOnlyBehaviour
     {
         private static readonly int IndirectShaderDataBuffer =
             Shader.PropertyToID("IndirectShaderDataBuffer");

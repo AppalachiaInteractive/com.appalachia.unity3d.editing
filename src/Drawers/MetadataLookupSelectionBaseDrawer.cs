@@ -13,8 +13,8 @@ namespace Appalachia.Editing.Drawers
 
     public abstract class MetadataLookupSelectionBaseDrawer<T, TCollection, TValue> : AppalachiaEditor<T>
         where T : MetadataLookupSelection<T, TCollection, TValue>
-        where TCollection : MetadataLookupBase<TCollection, TValue>
-        where TValue : AppalachiaScriptableObject<TValue>, ICategorizable
+        where TCollection : AppalachiaMetadataCollection<TCollection, TValue>
+        where TValue : AppalachiaObject<TValue>, ICategorizable
     {
         private static PREF<int> _itemsPerRow;
         protected Dictionary<string, GUITabPage> _tabs;

@@ -8,16 +8,16 @@ namespace Appalachia.Editing.Debugging.Graphy.Audio
 {
     public class G_AudioManager : MonoBehaviour, IMovable, IModifiableState
     {
-#region Variables -> Serialized Private
+        #region Variables -> Serialized Private
 
         [SerializeField] private GameObject m_audioGraphGameObject;
         [SerializeField] private Text m_audioDbText;
 
         [SerializeField] private List<Image> m_backgroundImages = new();
 
-#endregion
+        #endregion
 
-#region Variables -> Private
+        #region Variables -> Private
 
         private GraphyManager m_graphyManager;
 
@@ -32,9 +32,9 @@ namespace Appalachia.Editing.Debugging.Graphy.Audio
         private GraphyManager.ModuleState m_previousModuleState = GraphyManager.ModuleState.FULL;
         private GraphyManager.ModuleState m_currentModuleState = GraphyManager.ModuleState.FULL;
 
-#endregion
+        #endregion
 
-#region Methods -> Unity Callbacks
+        #region Methods -> Unity Callbacks
 
         private void Awake()
         {
@@ -46,9 +46,9 @@ namespace Appalachia.Editing.Debugging.Graphy.Audio
             UpdateParameters();
         }
 
-#endregion
+        #endregion
 
-#region Methods -> Public
+        #region Methods -> Public
 
         public void SetPosition(GraphyManager.ModulePosition newModulePosition)
         {
@@ -188,9 +188,9 @@ namespace Appalachia.Editing.Debugging.Graphy.Audio
             SetState(m_currentModuleState, true);
         }
 
-#endregion
+        #endregion
 
-#region Methods -> Private
+        #region Methods -> Private
 
         private void Init()
         {
@@ -217,6 +217,6 @@ namespace Appalachia.Editing.Debugging.Graphy.Audio
             m_audioGraphGameObject.SetActive(active);
         }
 
-#endregion
+        #endregion
     }
 }

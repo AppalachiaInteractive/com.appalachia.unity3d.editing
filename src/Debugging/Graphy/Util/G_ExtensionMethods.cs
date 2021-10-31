@@ -6,7 +6,7 @@ namespace Appalachia.Editing.Debugging.Graphy.Util
 {
     public static class G_ExtensionMethods
     {
-#region Methods -> Extension Methods
+        #region Methods -> Extension Methods
 
         /// <summary>
         ///     Functions as the SetActive function in the GameObject class, but for a list of them.
@@ -47,6 +47,6 @@ namespace Appalachia.Editing.Debugging.Graphy.Util
             return images;
         }
 
-#endregion
+        #endregion
     }
 }

@@ -23,18 +23,14 @@ namespace Appalachia.Editing.Drawers.Contexts
         public IfAttributeHelper DisabledHelper;
         public ValueResolver<Color> ColorHelper;
 
-        public ValueResolver<string> LabelHelper;
+        public string Label;
 
         public override void Initialize(
             InspectorProperty property,
             SmartInlineButtonAttribute attribute,
             IPropertyValueEntry valueEntry)
         {
-            LabelHelper = ValueResolver.Get(
-                property,
-                attribute.Label ?? attribute.MemberMethod.SplitPascalCase(),
-                "Label Error"
-            );
+            Label = attribute.Label ?? attribute.MemberMethod.SplitPascalCase();
 
             HasDisabledMember = !string.IsNullOrWhiteSpace(attribute.DisableIf);
             if (HasDisabledMember)
@@ -50,7 +46,7 @@ namespace Appalachia.Editing.Drawers.Contexts
 
             string ErrorMessage = null;
 
-            if (!LabelHelper.HasError)
+            if (Label != null)
             {
                 MethodInfo memberInfo;
                 if (AppaMemberFinder.Start(valueEntry.ParentType)
@@ -94,7 +90,7 @@ namespace Appalachia.Editing.Drawers.Contexts
 
         protected override ValueResolver[] GetValueResolvers()
         {
-            return new ValueResolver[] {LabelHelper, ColorHelper};
+            return new ValueResolver[] {ColorHelper};
         }
     }
 }

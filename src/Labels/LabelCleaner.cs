@@ -20,7 +20,7 @@ namespace Appalachia.Editing.Labels
     {
         private static LabelCleaner _instance;
 
-        [UnityEditor.MenuItem(PKG.Menu.Appalachia.Tools.Base + "Labels/Label Manager Window", priority = -10)]
+        [UnityEditor.MenuItem(PKG.Menu.Appalachia.Tools.Base + "Label Manager Window", priority = -10)]
         private static void OpenWindow()
         {
             _instance = GetWindow<LabelCleaner>();

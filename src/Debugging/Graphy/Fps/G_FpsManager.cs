@@ -8,7 +8,7 @@ namespace Appalachia.Editing.Debugging.Graphy.Fps
 {
     public class G_FpsManager : MonoBehaviour, IMovable, IModifiableState
     {
-#region Variables -> Serialized Private
+        #region Variables -> Serialized Private
 
         [SerializeField] private GameObject m_fpsGraphGameObject;
 
@@ -16,15 +16,15 @@ namespace Appalachia.Editing.Debugging.Graphy.Fps
 
         [SerializeField] private List<Image> m_backgroundImages = new();
 
-#endregion
+        #endregion
 
-#region Variables -> Private
+        #region Variables -> Private
 
         private GraphyManager m_graphyManager;
 
         private G_FpsGraph m_fpsGraph;
         private G_FpsMonitor m_fpsMonitor;
-        private G_FpsText m_fpsText;
+        private G_FpsText _mGFpsText;
 
         private RectTransform m_rectTransform;
 
@@ -33,9 +33,9 @@ namespace Appalachia.Editing.Debugging.Graphy.Fps
         private GraphyManager.ModuleState m_previousModuleState = GraphyManager.ModuleState.FULL;
         private GraphyManager.ModuleState m_currentModuleState = GraphyManager.ModuleState.FULL;
 
-#endregion
+        #endregion
 
-#region Methods -> Unity Callbacks
+        #region Methods -> Unity Callbacks
 
         private void Awake()
         {
@@ -47,9 +47,9 @@ namespace Appalachia.Editing.Debugging.Graphy.Fps
             UpdateParameters();
         }
 
-#endregion
+        #endregion
 
-#region Methods -> Public
+        #region Methods -> Public
 
         public void SetPosition(GraphyManager.ModulePosition newModulePosition)
         {
@@ -183,7 +183,7 @@ namespace Appalachia.Editing.Debugging.Graphy.Fps
 
             m_fpsGraph.UpdateParameters();
             m_fpsMonitor.UpdateParameters();
-            m_fpsText.UpdateParameters();
+            _mGFpsText.UpdateParameters();
 
             SetState(m_graphyManager.FpsModuleState);
         }
@@ -197,14 +197,14 @@ namespace Appalachia.Editing.Debugging.Graphy.Fps
 
             m_fpsGraph.UpdateParameters();
             m_fpsMonitor.UpdateParameters();
-            m_fpsText.UpdateParameters();
+            _mGFpsText.UpdateParameters();
 
             SetState(m_currentModuleState, true);
         }
 
-#endregion
+        #endregion
 
-#region Methods -> Private
+        #region Methods -> Private
 
         private void Init()
         {
@@ -214,7 +214,7 @@ namespace Appalachia.Editing.Debugging.Graphy.Fps
 
             m_fpsGraph = GetComponent<G_FpsGraph>();
             m_fpsMonitor = GetComponent<G_FpsMonitor>();
-            m_fpsText = GetComponent<G_FpsText>();
+            _mGFpsText = GetComponent<G_FpsText>();
 
             foreach (Transform child in transform)
             {
@@ -231,6 +231,6 @@ namespace Appalachia.Editing.Debugging.Graphy.Fps
             m_fpsGraphGameObject.SetActive(active);
         }
 
-#endregion
+        #endregion
     }
 }

@@ -6,16 +6,16 @@ namespace Appalachia.Editing.Debugging.Graphy.Fps
 {
     public class G_FpsText : MonoBehaviour
     {
-#region Methods -> Public
+        #region Methods -> Public
 
         public void UpdateParameters()
         {
             m_updateRate = m_graphyManager.FpsTextUpdateRate;
         }
 
-#endregion
+        #endregion
 
-#region Variables -> Serialized Private
+        #region Variables -> Serialized Private
 
         [SerializeField] private Text m_fpsText;
         [SerializeField] private Text m_msText;
@@ -24,9 +24,9 @@ namespace Appalachia.Editing.Debugging.Graphy.Fps
         [SerializeField] private Text m_onePercentFpsText;
         [SerializeField] private Text m_zero1PercentFpsText;
 
-#endregion
+        #endregion
 
-#region Variables -> Private
+        #region Variables -> Private
 
         private GraphyManager m_graphyManager;
 
@@ -44,9 +44,9 @@ namespace Appalachia.Editing.Debugging.Graphy.Fps
 
         private const string m_msStringFormat = "0.0";
 
-#endregion
+        #endregion
 
-#region Methods -> Unity Callbacks
+        #region Methods -> Unity Callbacks
 
         private void Awake()
         {
@@ -92,9 +92,9 @@ namespace Appalachia.Editing.Debugging.Graphy.Fps
             }
         }
 
-#endregion
+        #endregion
 
-#region Methods -> Private
+        #region Methods -> Private
 
         /// <summary>
         ///     Assigns color to a text according to their fps numeric value and
@@ -134,6 +134,6 @@ namespace Appalachia.Editing.Debugging.Graphy.Fps
             UpdateParameters();
         }
 
-#endregion
+        #endregion
     }
 }

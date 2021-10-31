@@ -12,7 +12,7 @@ using UnityEngine;
 namespace Appalachia.Editing.Debugging
 {
     [Serializable]
-    public class GlobalDebug : SelfSavingSingletonScriptableObject<GlobalDebug>
+    public class GlobalDebug : SingletonAppalachiaObject<GlobalDebug>
     {
         [BoxGroup("Debug/Mesh")]
         [HideLabel]

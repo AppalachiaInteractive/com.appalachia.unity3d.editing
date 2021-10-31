@@ -6,7 +6,7 @@ namespace Appalachia.Editing.Debugging.Graphy.Ram
 {
     public class G_RamText : MonoBehaviour
     {
-#region Methods -> Public
+        #region Methods -> Public
 
         public void UpdateParameters()
         {
@@ -17,9 +17,9 @@ namespace Appalachia.Editing.Debugging.Graphy.Ram
             m_updateRate = m_graphyManager.RamTextUpdateRate;
         }
 
-#endregion
+        #endregion
 
-#region Methods -> Private
+        #region Methods -> Private
 
         private void Init()
         {
@@ -34,17 +34,17 @@ namespace Appalachia.Editing.Debugging.Graphy.Ram
             UpdateParameters();
         }
 
-#endregion
+        #endregion
 
-#region Variables -> Serialized Private
+        #region Variables -> Serialized Private
 
         [SerializeField] private Text m_allocatedSystemMemorySizeText;
         [SerializeField] private Text m_reservedSystemMemorySizeText;
         [SerializeField] private Text m_monoSystemMemorySizeText;
 
-#endregion
+        #endregion
 
-#region Variables -> Private
+        #region Variables -> Private
 
         private GraphyManager m_graphyManager;
 
@@ -54,9 +54,9 @@ namespace Appalachia.Editing.Debugging.Graphy.Ram
 
         private float m_deltaTime;
 
-#endregion
+        #endregion
 
-#region Methods -> Unity Callbacks
+        #region Methods -> Unity Callbacks
 
         private void Awake()
         {
@@ -78,6 +78,6 @@ namespace Appalachia.Editing.Debugging.Graphy.Ram
             }
         }
 
-#endregion
+        #endregion
     }
 }

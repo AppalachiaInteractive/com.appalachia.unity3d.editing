@@ -10007,7 +10007,7 @@ namespace Appalachia.Editing.Core
 
 #region UI Menu Items
 
-            [UnityEditor.MenuItem(PKG.Menu.Appalachia.Tools.Base + "EditorGUI Icons/Explore", false, 22)]
+            [UnityEditor.MenuItem(PKG.Menu.Appalachia.Tools.Base + "EditorGUI Icons/Explore", priority = PKG.Priority + 22)]
             internal static void ExploreEditorGUIIcons()
             {
                 GetWindow<EditorGUIIconViewer>(false, "EditorGUI Icons", true);

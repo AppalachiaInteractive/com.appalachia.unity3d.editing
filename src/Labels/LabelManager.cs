@@ -201,25 +201,25 @@ namespace Appalachia.Editing.Labels
             }
         }
 
-        [UnityEditor.MenuItem(PKG.Menu.Appalachia.Tools.Base + "Labels/Label Assembly Prefabs", priority = -1050)]
+        [UnityEditor.MenuItem(PKG.Menu.Appalachia.Tools.Base + "Label Assembly Prefabs", priority = -1050)]
         public static void MENU_LabelAssemblyPrefabs()
         {
             ProcessLabelAssignments(LabelSets.instance.assemblies);
         }
 
-        [UnityEditor.MenuItem(PKG.Menu.Appalachia.Tools.Base + "Labels/Label Object Prefabs", priority = -1050)]
+        [UnityEditor.MenuItem(PKG.Menu.Appalachia.Tools.Base + "Label Object Prefabs", priority = -1050)]
         public static void MENU_LabelObjectPrefabs()
         {
             ProcessLabelAssignments(LabelSets.instance.objects);
         }
 
-        [UnityEditor.MenuItem(PKG.Menu.Appalachia.Tools.Base + "Labels/Label Tree Prefabs", priority = -1050)]
+        [UnityEditor.MenuItem(PKG.Menu.Appalachia.Tools.Base + "Label Tree Prefabs", priority = -1050)]
         public static void MENU_LabelTreePrefabs()
         {
             ProcessLabelAssignments(LabelSets.instance.trees);
         }
 
-        [UnityEditor.MenuItem(PKG.Menu.Appalachia.Tools.Base + "Labels/Label Vegetation Prefabs", priority = -1050)]
+        [UnityEditor.MenuItem(PKG.Menu.Appalachia.Tools.Base + "Label Vegetation Prefabs", priority = -1050)]
         public static void MENU_LabelVegetationPrefabs()
         {
             ProcessLabelAssignments(LabelSets.instance.vegetations);

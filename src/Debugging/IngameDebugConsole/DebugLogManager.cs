@@ -5,6 +5,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 using Appalachia.CI.Integration.FileSystem;
+using Appalachia.Core.Behaviours;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -28,18 +29,9 @@ using Screen = UnityEngine.Device.Screen; // To support Device Simulator on Unit
 // An enum to represent filtered log types
 namespace Appalachia.Editing.Debugging.IngameDebugConsole
 {
-    public class DebugLogManager : MonoBehaviour
+    public class DebugLogManager : SingletonAppalachiaBehaviour<DebugLogManager>
     {
-        public static DebugLogManager Instance { get; private set; }
-
 #pragma warning disable 0649
-        [Header("Properties")]
-        [SerializeField]
-        [HideInInspector]
-        [Tooltip(
-            "If enabled, console window will persist between scenes (i.e. not be destroyed when scene changes)"
-        )]
-        private bool singleton = true;
 
         [SerializeField]
         [HideInInspector]
@@ -77,25 +69,6 @@ namespace Appalachia.Editing.Debugging.IngameDebugConsole
         [HideInInspector]
         [Tooltip("If enabled, console window will initially be invisible")]
         private bool startMinimized;
-
-        [SerializeField]
-        [HideInInspector]
-        [Tooltip(
-            "If enabled, pressing the Toggle Key will show/hide (i.e. toggle) the console window at runtime"
-        )]
-        private bool toggleWithKey;
-
-#if ENABLE_INPUT_SYSTEM && !ENABLE_LEGACY_INPUT_MANAGER
-        [SerializeField]
-        [HideInInspector]
-        public InputAction toggleBinding =
-            new("Toggle Binding", InputActionType.Button, "<Keyboard>/backquote", expectedControlType:
-                "Button");
-#else
-		[SerializeField]
-		[HideInInspector]
-		private KeyCode toggleKey = KeyCode.BackQuote;
-#endif
 
         [SerializeField]
         [HideInInspector]
@@ -334,25 +307,8 @@ namespace Appalachia.Editing.Debugging.IngameDebugConsole
 		private DebugLogLogcatListener logcatListener;
 #endif
 
-        private void Awake()
+        protected override void OnAwake()
         {
-            // Only one instance of debug console is allowed
-            if (!Instance)
-            {
-                Instance = this;
-
-                // If it is a singleton object, don't destroy it between scene changes
-                if (singleton)
-                {
-                    DontDestroyOnLoad(gameObject);
-                }
-            }
-            else if (Instance != this)
-            {
-                Destroy(gameObject);
-                return;
-            }
-
             pooledLogEntries = new List<DebugLogEntry>(16);
             pooledLogItems = new List<DebugLogItem>(16);
             commandSuggestionInstances = new List<Text>(8);
@@ -451,34 +407,28 @@ namespace Appalachia.Editing.Debugging.IngameDebugConsole
 
             nullPointerEventData = new PointerEventData(null);
 
+
 #if ENABLE_INPUT_SYSTEM && !ENABLE_LEGACY_INPUT_MANAGER
-            toggleBinding.performed += context =>
-            {
-                if (toggleWithKey)
-                {
-                    if (isLogWindowVisible)
-                    {
-                        HideLogWindow();
-                    }
-                    else
-                    {
-                        ShowLogWindow();
-                    }
-                }
-            };
 
             // On new Input System, scroll sensitivity is much higher than legacy Input system
             logItemsScrollRect.scrollSensitivity *= 0.25f;
 #endif
         }
 
+        public void Toggle()
+        {
+            if (isLogWindowVisible)
+            {
+                HideLogWindow();
+            }
+            else
+            {
+                ShowLogWindow();
+            }
+        }
+        
         private void OnEnable()
         {
-            if (Instance != this)
-            {
-                return;
-            }
-
             // Intercept debug entries
             Application.logMessageReceivedThreaded -= ReceivedLog;
             Application.logMessageReceivedThreaded += ReceivedLog;
@@ -500,12 +450,12 @@ namespace Appalachia.Editing.Debugging.IngameDebugConsole
                 SaveLogsToFile
             );
 
-#if ENABLE_INPUT_SYSTEM && !ENABLE_LEGACY_INPUT_MANAGER
+/*#if ENABLE_INPUT_SYSTEM && !ENABLE_LEGACY_INPUT_MANAGER
             if (toggleWithKey)
             {
                 toggleBinding.Enable();
             }
-#endif
+#endif*/
 
             //Debug.LogAssertion( "assert" );
             //Debug.LogError( "error" );
@@ -516,11 +466,6 @@ namespace Appalachia.Editing.Debugging.IngameDebugConsole
 
         private void OnDisable()
         {
-            if (Instance != this)
-            {
-                return;
-            }
-
             // Stop receiving debug entries
             Application.logMessageReceivedThreaded -= ReceivedLog;
 
@@ -531,12 +476,12 @@ namespace Appalachia.Editing.Debugging.IngameDebugConsole
 
             DebugLogConsole.RemoveCommand("logs.save");
 
-#if ENABLE_INPUT_SYSTEM && !ENABLE_LEGACY_INPUT_MANAGER
+/*#if ENABLE_INPUT_SYSTEM && !ENABLE_LEGACY_INPUT_MANAGER
             if (toggleBinding.enabled)
             {
                 toggleBinding.Disable();
             }
-#endif
+#endif*/
         }
 
         private void Start()

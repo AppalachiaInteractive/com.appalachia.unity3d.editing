@@ -5,7 +5,7 @@ namespace Appalachia.Editing.Debugging.Graphy.Fps
 {
     public class G_FpsMonitor : MonoBehaviour
     {
-#region Methods -> Public
+        #region Methods -> Public
 
         public void UpdateParameters()
         {
@@ -13,9 +13,9 @@ namespace Appalachia.Editing.Debugging.Graphy.Fps
             m_zero1PercentSamples = (short) (m_fpsSamplesCapacity / 1000);
         }
 
-#endregion
+        #endregion
 
-#region Methods -> Private
+        #region Methods -> Private
 
         private void Init()
         {
@@ -25,9 +25,9 @@ namespace Appalachia.Editing.Debugging.Graphy.Fps
             UpdateParameters();
         }
 
-#endregion
+        #endregion
 
-#region Variables -> Private
+        #region Variables -> Private
 
         private short[] m_fpsSamples;
         private short[] m_fpsSamplesSorted;
@@ -39,18 +39,18 @@ namespace Appalachia.Editing.Debugging.Graphy.Fps
 
         private float m_unscaledDeltaTime;
 
-#endregion
+        #endregion
 
-#region Properties -> Public
+        #region Properties -> Public
 
         public short CurrentFPS { get; private set; }
         public short AverageFPS { get; private set; }
         public short OnePercentFPS { get; private set; }
         public short Zero1PercentFps { get; private set; }
 
-#endregion
+        #endregion
 
-#region Methods -> Unity Callbacks
+        #region Methods -> Unity Callbacks
 
         private void Awake()
         {
@@ -133,6 +133,6 @@ namespace Appalachia.Editing.Debugging.Graphy.Fps
             OnePercentFPS = (short) (totalAddedFps / (float) m_onePercentSamples);
         }
 
-#endregion
+        #endregion
     }
 }

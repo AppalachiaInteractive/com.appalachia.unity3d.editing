@@ -11,7 +11,7 @@ namespace Appalachia.Editing.Debugging.Graphy.Ram
 {
     public class G_RamGraph : G_Graph
     {
-#region Methods -> Public
+        #region Methods -> Public
 
         public void UpdateParameters()
         {
@@ -64,9 +64,9 @@ namespace Appalachia.Editing.Debugging.Graphy.Ram
             CreatePoints();
         }
 
-#endregion
+        #endregion
 
-#region Methods -> Private
+        #region Methods -> Private
 
         private void Init()
         {
@@ -87,18 +87,18 @@ namespace Appalachia.Editing.Debugging.Graphy.Ram
             m_isInitialized = true;
         }
 
-#endregion
+        #endregion
 
-#region Methods -> Unity Callbacks
+        #region Methods -> Unity Callbacks
 
         private void Update()
         {
             UpdateGraph();
         }
 
-#endregion
+        #endregion
 
-#region Variables -> Serialized Private
+        #region Variables -> Serialized Private
 
         [SerializeField] private Image m_imageAllocated;
         [SerializeField] private Image m_imageReserved;
@@ -109,9 +109,9 @@ namespace Appalachia.Editing.Debugging.Graphy.Ram
 
         [SerializeField] private bool m_isInitialized;
 
-#endregion
+        #endregion
 
-#region Variables -> Private
+        #region Variables -> Private
 
         private GraphyManager m_graphyManager;
 
@@ -129,9 +129,9 @@ namespace Appalachia.Editing.Debugging.Graphy.Ram
 
         private float m_highestMemory;
 
-#endregion
+        #endregion
 
-#region Methods -> Protected Override
+        #region Methods -> Protected Override
 
         protected override void UpdateGraph()
         {
@@ -255,6 +255,6 @@ namespace Appalachia.Editing.Debugging.Graphy.Ram
             m_shaderGraphMono.UpdateAverage();
         }
 
-#endregion
+        #endregion
     }
 }

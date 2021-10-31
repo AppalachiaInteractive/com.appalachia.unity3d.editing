@@ -6,22 +6,22 @@ namespace Appalachia.Editing.Debugging.Graphy.Audio
 {
     public class G_AudioText : MonoBehaviour
     {
-#region Variables -> Serialized Private
+        #region Variables -> Serialized Private
 
         [SerializeField] private Text m_DBText;
 
-#endregion
+        #endregion
 
-#region Methods -> Public
+        #region Methods -> Public
 
         public void UpdateParameters()
         {
             m_updateRate = m_graphyManager.AudioTextUpdateRate;
         }
 
-#endregion
+        #endregion
 
-#region Methods -> Private
+        #region Methods -> Private
 
         private void Init()
         {
@@ -34,9 +34,9 @@ namespace Appalachia.Editing.Debugging.Graphy.Audio
             UpdateParameters();
         }
 
-#endregion
+        #endregion
 
-#region Variables -> Private
+        #region Variables -> Private
 
         private GraphyManager m_graphyManager;
 
@@ -46,9 +46,9 @@ namespace Appalachia.Editing.Debugging.Graphy.Audio
 
         private float m_deltaTimeOffset;
 
-#endregion
+        #endregion
 
-#region Methods -> Unity Callbacks
+        #region Methods -> Unity Callbacks
 
         private void Awake()
         {
@@ -72,6 +72,6 @@ namespace Appalachia.Editing.Debugging.Graphy.Audio
             }
         }
 
-#endregion
+        #endregion
     }
 }
