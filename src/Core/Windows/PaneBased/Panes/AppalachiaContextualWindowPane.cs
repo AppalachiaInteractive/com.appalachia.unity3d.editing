@@ -3,6 +3,7 @@ using Appalachia.Core.Aspects.Tracing;
 using Appalachia.Core.Context.Contexts;
 using Appalachia.Editing.Core.Fields;
 using Appalachia.Editing.Core.Layout;
+using Appalachia.Editing.Core.State;
 using Unity.Profiling;
 using UnityEngine;
 
@@ -57,13 +58,19 @@ namespace Appalachia.Editing.Core.Windows.PaneBased.Panes
             }
         }
 
+        private ProgressBarMetadata _progressBar;
+        
         public override void OnBeforeDrawPaneContentStart(out bool shouldDraw)
         {
             using (_TRACE_OnBeforeDrawPaneContentStart.Auto())
             using (_PRF_OnBeforeDrawPaneContentStart.Auto())
             {
                 shouldDraw = true;
+                
+                _progressBar ??= fieldMetadataManager.Get<ProgressBarMetadata>(PaneName + "DEFAULTPROGRESSBAR");
 
+                _progressBar.DrawInContext(context, window);
+                
                 var resetContext = fieldMetadataManager.Get<ButtonMetadata>("Reset Context");
 
                 APPAGUI.SPACE.SIZE.ButtonPaddingLeft.MAKE();
@@ -77,7 +84,12 @@ namespace Appalachia.Editing.Core.Windows.PaneBased.Panes
                         return;
                     }
 
-                    DrawContextButtons();
+                    var isGUIEnabled = !context.IsLocked;
+                    
+                    using (UIStateStacks.guiEnabled.Auto(isGUIEnabled))
+                    {
+                        DrawContextButtons();
+                    }
                 }
             }
         }

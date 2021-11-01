@@ -24,10 +24,6 @@ namespace Appalachia.Editing.Core.Windows.PaneBased.Panes
 
         private static readonly ProfilerMarker _PRF_OnDrawGUI = new(_PRF_PFX + nameof(OnDrawGUI));
         private static readonly ProfilerMarker _PRF_Initialize = new(_PRF_PFX + nameof(Initialize));
-
-        private static readonly ProfilerMarker _PRF_OnInitializationGUI =
-            new(_PRF_PFX + nameof(OnInitializationGUI));
-
         private static readonly ProfilerMarker _PRF_DrawPaneContent = new(_PRF_PFX + nameof(DrawPaneContent));
 
         private static readonly ProfilerMarker _PRF_ProcessCollection =
@@ -58,9 +54,6 @@ namespace Appalachia.Editing.Core.Windows.PaneBased.Panes
         private static readonly TraceMarker _TRACE_ExecuteDrawPaneContent =
             new(_TRACE_PFX + nameof(ExecuteDrawPaneContent));
 
-        private static readonly TraceMarker _TRACE_OnInitializationGUI =
-            new(_TRACE_PFX + nameof(OnInitializationGUI));
-
         private static readonly TraceMarker _TRACE_HorizontalLineSeparator =
             new(_TRACE_PFX + nameof(HorizontalLineSeparator));
 
@@ -89,7 +82,6 @@ namespace Appalachia.Editing.Core.Windows.PaneBased.Panes
 
         #endregion
 
-
         protected AppalachiaWindowPane()
         {
             _fieldMetadataManager = new UIFieldMetadataManager();
@@ -102,7 +94,8 @@ namespace Appalachia.Editing.Core.Windows.PaneBased.Panes
         private Dictionary<string, IReadOnlyList<AppalachiaWindowPane>> _childPaneSetCache;
 
         private PreferenceDrawer _preferencesDrawer;
-        private string _lastMessageContent;
+
+        private ProgressBarMetadata _progressBar;
 
         private UIFieldMetadataManager _fieldMetadataManager;
 
@@ -112,7 +105,6 @@ namespace Appalachia.Editing.Core.Windows.PaneBased.Panes
 
         public Dictionary<string, IReadOnlyList<AppalachiaWindowPane>> childPaneSetCache { get; set; }*/
 
-        public float InitializationStart { get; set; }
         public IAppalachiaWindow window { get; set; }
 
         public Rect container { get; set; }
@@ -153,17 +145,22 @@ namespace Appalachia.Editing.Core.Windows.PaneBased.Panes
             }
         }
 
-        public abstract void OnDrawPaneContent();
-
         public abstract IEnumerator OnInitialize();
 
-        public virtual void DrawPaneHeader()
-        {
-        }
+        public abstract void OnDrawPaneContent();
 
         public virtual IEnumerator OnAfterInitialize()
         {
             yield break;
+        }
+
+        public virtual IEnumerator OnBeforeInitialize()
+        {
+            yield break;
+        }
+
+        public virtual void DrawPaneHeader()
+        {
         }
 
         public virtual void OnBeforeDraw()
@@ -177,11 +174,6 @@ namespace Appalachia.Editing.Core.Windows.PaneBased.Panes
         public virtual void OnBeforeDrawPaneContentStart(out bool shouldDraw)
         {
             shouldDraw = true;
-        }
-
-        public virtual IEnumerator OnBeforeInitialize()
-        {
-            yield break;
         }
 
         public virtual void OnDrawPaneContentEnd()
@@ -199,6 +191,143 @@ namespace Appalachia.Editing.Core.Windows.PaneBased.Panes
         protected virtual AppaProgress GetInitializationProgress()
         {
             return default;
+        }
+
+        public static bool operator >(AppalachiaWindowPane left, AppalachiaWindowPane right)
+        {
+            return Comparer<AppalachiaWindowPane>.Default.Compare(left, right) > 0;
+        }
+
+        public static bool operator >=(AppalachiaWindowPane left, AppalachiaWindowPane right)
+        {
+            return Comparer<AppalachiaWindowPane>.Default.Compare(left, right) >= 0;
+        }
+
+        public static bool operator <(AppalachiaWindowPane left, AppalachiaWindowPane right)
+        {
+            return Comparer<AppalachiaWindowPane>.Default.Compare(left, right) < 0;
+        }
+
+        public static bool operator <=(AppalachiaWindowPane left, AppalachiaWindowPane right)
+        {
+            return Comparer<AppalachiaWindowPane>.Default.Compare(left, right) <= 0;
+        }
+
+        public static void HorizontalLineSeparator(
+            Color color = default,
+            float lineWidth = 1f,
+            float bufferSize = 1f)
+        {
+            using (_TRACE_HorizontalLineSeparator.Auto())
+            using (_PRF_HorizontalLineSeparator.Auto())
+            {
+                APPAGUI.DrawHorizontalLineSeperator(color, lineWidth, bufferSize);
+            }
+        }
+
+        private static TC GetPanes<TC>(
+            ref Dictionary<string, TC> cache,
+            string paneSetIdentifier,
+            Func<TC> initializationFunction)
+        {
+            using (_TRACE_GetPanes.Auto())
+            using (_PRF_GetPanes.Auto())
+            {
+                cache ??= new Dictionary<string, TC>();
+
+                if (!cache.ContainsKey(paneSetIdentifier))
+                {
+                    var newPaneSet = initializationFunction();
+                    cache.Add(paneSetIdentifier, newPaneSet);
+                    return newPaneSet;
+                }
+
+                var preExistingPaneSet = cache[paneSetIdentifier];
+
+                if (preExistingPaneSet != null)
+                {
+                    return preExistingPaneSet;
+                }
+
+                {
+                    var newPaneSet = initializationFunction();
+                    cache.Add(paneSetIdentifier, newPaneSet);
+                    return newPaneSet;
+                }
+            }
+        }
+
+        public IEnumerator Initialize()
+        {
+            using (_TRACE_Initialize.Auto())
+            using (_PRF_Initialize.Auto())
+            {
+                if (FullyInitialized || PaneIsInitializing)
+                {
+                    yield break;
+                }
+
+                PaneIsInitialized = false;
+                PaneIsInitializing = true;
+
+                using (_TRACE_Initialize_OnBeforeInitialize.Auto())
+                {
+                    var subenum = OnBeforeInitialize();
+
+                    while (subenum.MoveNext())
+                    {
+                        yield return subenum.Current;
+                    }
+                }
+
+                using (_TRACE_Initialize_OnInitialize.Auto())
+                {
+                    var subenum = OnInitialize();
+
+                    while (subenum.MoveNext())
+                    {
+                        yield return subenum.Current;
+                    }
+                }
+
+                using (_TRACE_Initialize_OnAfterInitialize.Auto())
+                {
+                    var subenum = OnAfterInitialize();
+
+                    while (subenum.MoveNext())
+                    {
+                        yield return subenum.Current;
+                    }
+                }
+
+                PaneIsInitialized = true;
+                PaneIsInitializing = false;
+                _progressBar?.Reset();
+
+                window.SafeRepaint();
+            }
+        }
+
+        public IList<AppalachiaWindowPane> GetTabPanes(
+            string paneSetIdentifier,
+            Func<IList<AppalachiaWindowPane>> initializationFunction)
+        {
+            using (_TRACE_GetTabPanes.Auto())
+            using (_PRF_GetTabPanes.Auto())
+            {
+                return GetPanes(ref _tabPaneSetCache, paneSetIdentifier, initializationFunction);
+            }
+        }
+
+        public IReadOnlyList<AppalachiaWindowPane> GetChildPanes(
+            string paneSetIdentifier,
+            Func<IReadOnlyList<AppalachiaWindowPane>> initializationFunction)
+        {
+            using (_TRACE_GetChildPanes.Auto())
+            using (_PRF_GetChildPanes.Auto())
+            {
+                return GetPanes(ref _childPaneSetCache, paneSetIdentifier, initializationFunction);
+            }
         }
 
         public void DrawPaneContent()
@@ -308,79 +437,6 @@ namespace Appalachia.Editing.Core.Windows.PaneBased.Panes
             }
         }
 
-        public IReadOnlyList<AppalachiaWindowPane> GetChildPanes(
-            string paneSetIdentifier,
-            Func<IReadOnlyList<AppalachiaWindowPane>> initializationFunction)
-        {
-            using (_TRACE_GetChildPanes.Auto())
-            using (_PRF_GetChildPanes.Auto())
-            {
-                return GetPanes(ref _childPaneSetCache, paneSetIdentifier, initializationFunction);
-            }
-        }
-
-        public IList<AppalachiaWindowPane> GetTabPanes(
-            string paneSetIdentifier,
-            Func<IList<AppalachiaWindowPane>> initializationFunction)
-        {
-            using (_TRACE_GetTabPanes.Auto())
-            using (_PRF_GetTabPanes.Auto())
-            {
-                return GetPanes(ref _tabPaneSetCache, paneSetIdentifier, initializationFunction);
-            }
-        }
-
-        public IEnumerator Initialize()
-        {
-            using (_TRACE_Initialize.Auto())
-            using (_PRF_Initialize.Auto())
-            {
-                if (FullyInitialized || PaneIsInitializing)
-                {
-                    yield break;
-                }
-
-                PaneIsInitialized = false;
-                PaneIsInitializing = true;
-
-                using (_TRACE_Initialize_OnBeforeInitialize.Auto())
-                {
-                    var subenum = OnBeforeInitialize();
-                    
-                    while (subenum.MoveNext())
-                    {
-                        yield return subenum.Current;
-                    }
-                }
-
-                using (_TRACE_Initialize_OnInitialize.Auto())
-                {
-                    var subenum = OnInitialize();
-
-                    while (subenum.MoveNext())
-                    {
-                        yield return subenum.Current;
-                    }
-                }
-
-                using (_TRACE_Initialize_OnAfterInitialize.Auto())
-                {
-                    var subenum = OnAfterInitialize();
-                    
-                    while (subenum.MoveNext())
-                    {
-                        yield return subenum.Current;
-                    }
-                }
-
-                PaneIsInitialized = true;
-                PaneIsInitializing = false;
-                InitializationStart = 0f;
-
-                window.SafeRepaint();
-            }
-        }
-
         public void OnDrawGUI()
         {
             using (_TRACE_OnDrawGUI.Auto())
@@ -388,7 +444,10 @@ namespace Appalachia.Editing.Core.Windows.PaneBased.Panes
             {
                 if (!FullyInitialized)
                 {
-                    OnInitializationGUI();
+                    _progressBar ??= fieldMetadataManager.Get<ProgressBarMetadata>(PaneName + "Initializing...");
+
+                    _progressBar.DrawDynamic(GetInitializationProgress, window);
+
                     return;
                 }
 
@@ -402,73 +461,6 @@ namespace Appalachia.Editing.Core.Windows.PaneBased.Panes
 
                     DrawPaneContent();
                 }
-            }
-        }
-
-        public void OnInitializationGUI()
-        {
-            using (_TRACE_OnInitializationGUI.Auto())
-            using (_PRF_OnInitializationGUI.Auto())
-            {
-                var progressBar = fieldMetadataManager.Get<ProgressBarMetadata>(PaneName + "Initializing...");
-
-                if (InitializationStart == 0f)
-                {
-                    InitializationStart = Time.realtimeSinceStartup;
-                }
-
-                var elapsedTime = Time.realtimeSinceStartup - InitializationStart;
-
-                var loopTime = 2f;
-
-                var progressPercentage = (elapsedTime % loopTime) / loopTime;
-
-                progressPercentage = Math.Max(0f, Math.Min(.999f, progressPercentage));
-
-                var defaultMessage = $"Initializing: {elapsedTime:N3}";
-                string messageContent = null;
-
-                var progressMessage = GetInitializationProgress();
-
-                if (progressMessage != default)
-                {
-                    messageContent = $"{progressMessage.message}...";
-
-                    if (progressMessage.progress > 0)
-                    {
-                        if (progressMessage.progress > 1)
-                        {
-                            progressPercentage = progressMessage.progress * .01f;
-                        }
-                        else
-                        {
-                            progressPercentage = progressMessage.progress;
-                        }
-                    }
-                }
-
-                var forceRepaint = false;
-
-                if (_lastMessageContent != messageContent)
-                {
-                    forceRepaint = true;
-                    _lastMessageContent = messageContent;
-                }
-
-                string message = null;
-
-                if (messageContent != null)
-                {
-                    message = $"{defaultMessage} | {messageContent}";
-                }
-                else
-                {
-                    message = defaultMessage;
-                }
-
-                progressBar.Draw(progressPercentage, message);
-
-                window.SafeRepaint(forceRepaint);
             }
         }
 
@@ -530,12 +522,6 @@ namespace Appalachia.Editing.Core.Windows.PaneBased.Panes
             }
         }
 
-        internal void SetWindowInternal(IAppalachiaWindow w)
-        {
-            window = w;
-            _preferencesDrawer.Window = w;
-        }
-
         public int CompareTo(object obj)
         {
             if (ReferenceEquals(null, obj))
@@ -568,68 +554,10 @@ namespace Appalachia.Editing.Core.Windows.PaneBased.Panes
             return DesiredTabIndex.CompareTo(other.DesiredTabIndex);
         }
 
-        public static void HorizontalLineSeparator(
-            Color color = default,
-            float lineWidth = 1f,
-            float bufferSize = 1f)
+        internal void SetWindowInternal(IAppalachiaWindow w)
         {
-            using (_TRACE_HorizontalLineSeparator.Auto())
-            using (_PRF_HorizontalLineSeparator.Auto())
-            {
-                APPAGUI.DrawHorizontalLineSeperator(color, lineWidth, bufferSize);
-            }
-        }
-
-        private static TC GetPanes<TC>(
-            ref Dictionary<string, TC> cache,
-            string paneSetIdentifier,
-            Func<TC> initializationFunction)
-        {
-            using (_TRACE_GetPanes.Auto())
-            using (_PRF_GetPanes.Auto())
-            {
-                cache ??= new Dictionary<string, TC>();
-
-                if (!cache.ContainsKey(paneSetIdentifier))
-                {
-                    var newPaneSet = initializationFunction();
-                    cache.Add(paneSetIdentifier, newPaneSet);
-                    return newPaneSet;
-                }
-
-                var preExistingPaneSet = cache[paneSetIdentifier];
-
-                if (preExistingPaneSet != null)
-                {
-                    return preExistingPaneSet;
-                }
-
-                {
-                    var newPaneSet = initializationFunction();
-                    cache.Add(paneSetIdentifier, newPaneSet);
-                    return newPaneSet;
-                }
-            }
-        }
-
-        public static bool operator >(AppalachiaWindowPane left, AppalachiaWindowPane right)
-        {
-            return Comparer<AppalachiaWindowPane>.Default.Compare(left, right) > 0;
-        }
-
-        public static bool operator >=(AppalachiaWindowPane left, AppalachiaWindowPane right)
-        {
-            return Comparer<AppalachiaWindowPane>.Default.Compare(left, right) >= 0;
-        }
-
-        public static bool operator <(AppalachiaWindowPane left, AppalachiaWindowPane right)
-        {
-            return Comparer<AppalachiaWindowPane>.Default.Compare(left, right) < 0;
-        }
-
-        public static bool operator <=(AppalachiaWindowPane left, AppalachiaWindowPane right)
-        {
-            return Comparer<AppalachiaWindowPane>.Default.Compare(left, right) <= 0;
+            window = w;
+            _preferencesDrawer.Window = w;
         }
     }
 }
