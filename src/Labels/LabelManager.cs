@@ -9,6 +9,7 @@ using Appalachia.Core.Math.Stats;
 using Appalachia.Core.Math.Stats.Implementations;
 using Appalachia.Editing.Assets;
 using Appalachia.Editing.Core;
+using Appalachia.Utility.Extensions;
 using Sirenix.OdinInspector;
 using UnityEditor;
 using UnityEngine;

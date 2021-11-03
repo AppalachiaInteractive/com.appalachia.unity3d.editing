@@ -13,5 +13,10 @@ namespace Appalachia.Editing.Core.Fields
         {
             return new[] {GUILayout.ExpandWidth(true)};
         }
+
+        public override GUIStyle InitializeStyle()
+        {
+            return new GUIStyle(DefaultStyle) {fontSize = 10};
+        }
     }
 }

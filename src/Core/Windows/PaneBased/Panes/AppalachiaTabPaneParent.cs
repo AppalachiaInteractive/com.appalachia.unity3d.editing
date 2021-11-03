@@ -3,6 +3,7 @@ using System.Linq;
 using Appalachia.Core.Aspects.Tracing;
 using Appalachia.Core.Extensions;
 using Appalachia.Editing.Core.Fields;
+using Appalachia.Utility.Extensions;
 using Unity.Profiling;
 using UnityEngine;
 

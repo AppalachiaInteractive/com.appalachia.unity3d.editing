@@ -2,6 +2,7 @@
 using Appalachia.Core.Extensions;
 using Appalachia.Editing.Assets.Context;
 using Appalachia.Editing.Core.Windows;
+using Appalachia.Utility.Extensions;
 using Sirenix.OdinInspector;
 using UnityEditor;
 using UnityEngine;

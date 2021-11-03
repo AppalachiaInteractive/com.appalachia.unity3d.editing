@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 using Appalachia.Core.Extensions;
+using Appalachia.Utility.Extensions;
 
 namespace Appalachia.Editing.Core.Operations
 {

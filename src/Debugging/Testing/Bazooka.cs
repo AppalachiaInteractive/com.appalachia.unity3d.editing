@@ -9,6 +9,7 @@ using Appalachia.Core.Types.Enums;
 using Appalachia.Simulation.Core;
 using Appalachia.Utility.Colors;
 using Appalachia.Utility.Constants;
+using Appalachia.Utility.Extensions;
 using Sirenix.OdinInspector;
 using Unity.Profiling;
 using UnityEditor;

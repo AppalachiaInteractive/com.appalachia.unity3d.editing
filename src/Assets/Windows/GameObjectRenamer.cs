@@ -4,6 +4,7 @@ using System.Linq;
 using Appalachia.Core.Extensions;
 using Appalachia.Editing.Core.Operations;
 using Appalachia.Editing.Core.Windows;
+using Appalachia.Utility.Extensions;
 using Sirenix.OdinInspector;
 using UnityEditor;
 using Object = UnityEngine.Object;

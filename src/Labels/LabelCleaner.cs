@@ -8,6 +8,7 @@ using Appalachia.Editing.Assets;
 using Appalachia.Editing.Core;
 using Appalachia.Editing.Core.Windows;
 using Appalachia.Utility.Colors;
+using Appalachia.Utility.Extensions;
 using Sirenix.OdinInspector;
 using UnityEditor;
 using UnityEditor.Callbacks;

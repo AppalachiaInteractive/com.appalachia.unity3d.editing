@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Appalachia.Core.Context.Elements;
 using Appalachia.Core.Extensions;
+using Appalachia.Utility.Extensions;
 using Sirenix.OdinInspector;
 using Unity.Profiling;
 using UnityEditor;

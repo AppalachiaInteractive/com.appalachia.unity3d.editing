@@ -7,6 +7,7 @@ using Appalachia.Core.Attributes.Editing;
 using Appalachia.Core.Extensions;
 using Appalachia.Editing.Core.Operations;
 using Appalachia.Editing.Core.Windows;
+using Appalachia.Utility.Extensions;
 using Appalachia.Utility.Reflection.Extensions;
 using Sirenix.OdinInspector;
 using UnityEditor;
