@@ -10238,7 +10238,7 @@ namespace Appalachia.Editing.Core
                         Regex.Match("", _searchFilter);
                         _regexState = RegexState.Valid;
                     }
-                    catch (Exception ex)
+                    catch (Exception)
                     {
                         _regexState = RegexState.Invalid;
                     }

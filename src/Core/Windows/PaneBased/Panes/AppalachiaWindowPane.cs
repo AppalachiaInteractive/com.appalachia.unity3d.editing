@@ -7,6 +7,7 @@ using Appalachia.Core.Context.Elements.Progress;
 using Appalachia.Editing.Core.Common;
 using Appalachia.Editing.Core.Fields;
 using Appalachia.Editing.Core.Layout;
+using Appalachia.Utility.Extensions;
 using Unity.Profiling;
 using UnityEditor;
 using UnityEngine;
@@ -274,9 +275,12 @@ namespace Appalachia.Editing.Core.Windows.PaneBased.Panes
                 {
                     var subenum = OnBeforeInitialize();
 
-                    while (subenum.MoveNext())
+                    using (_PRF_Initialize.Suspend())
                     {
-                        yield return subenum.Current;
+                        while (subenum.MoveNext())
+                        {
+                            yield return subenum.Current;
+                        }
                     }
                 }
 
@@ -284,9 +288,12 @@ namespace Appalachia.Editing.Core.Windows.PaneBased.Panes
                 {
                     var subenum = OnInitialize();
 
-                    while (subenum.MoveNext())
+                    using (_PRF_Initialize.Suspend())
                     {
-                        yield return subenum.Current;
+                        while (subenum.MoveNext())
+                        {
+                            yield return subenum.Current;
+                        }
                     }
                 }
 
@@ -294,9 +301,12 @@ namespace Appalachia.Editing.Core.Windows.PaneBased.Panes
                 {
                     var subenum = OnAfterInitialize();
 
-                    while (subenum.MoveNext())
+                    using (_PRF_Initialize.Suspend())
                     {
-                        yield return subenum.Current;
+                        while (subenum.MoveNext())
+                        {
+                            yield return subenum.Current;
+                        }
                     }
                 }
 
@@ -446,7 +456,7 @@ namespace Appalachia.Editing.Core.Windows.PaneBased.Panes
                 {
                     _progressBar ??= fieldMetadataManager.Get<ProgressBarMetadata>(PaneName + "Initializing...");
 
-                    _progressBar.DrawDynamic(GetInitializationProgress, window);
+                    _progressBar.DrawDynamic("Initializing", GetInitializationProgress, window);
 
                     return;
                 }

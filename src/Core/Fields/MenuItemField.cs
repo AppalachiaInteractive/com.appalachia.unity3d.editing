@@ -58,6 +58,7 @@ namespace Appalachia.Editing.Core.Fields
             {
                 var spaceSize = APPAGUI.SPACE.SIZE.MenuItemPaddingLeft.MAKE_GET();
                 var stripSize = APPAGUI.SPACE.SIZE.MenuItemSelectionStrip.MAKE_GET();
+                var stripHeightPadding = APPAGUI.SPACE.SIZE.MenuItemSelectionStripHeightPadding.GET();
 
                 result = GUILayout.Button(content, style, layout);
 
@@ -71,12 +72,12 @@ namespace Appalachia.Editing.Core.Fields
                 {
                     var iconRect = new Rect(
                         (lastRect.x - spaceSize) + 1,
-                        lastRect.y,
+                        lastRect.y - stripHeightPadding,
                         stripSize,
-                        lastRect.height
+                        lastRect.height - (2*stripHeightPadding)
                     );
 
-                    EditorGUI.DrawRect(iconRect, ColorPalette.Default.highlight.Middle);
+                    EditorGUI.DrawRect(iconRect, ColorPalette.Default.notable.Middle.ScaleA(.5f));
                 }
             }
 

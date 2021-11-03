@@ -12,7 +12,7 @@ namespace Appalachia.Editing.Core.Windows.PaneBased.Panes
     public abstract class AppalachiaMenuWindowPane<TC> : AppalachiaContextualWindowPane<TC>
         where TC : AppaMenuContext, new()
     {
-#region Profiling And Tracing Markers
+        #region Profiling And Tracing Markers
 
         private const string _PRF_PFX = nameof(AppalachiaMenuWindowPane<TC>) + ".";
         private const string _TRACE_PFX = nameof(AppalachiaMenuWindowPane<TC>) + ".";
@@ -23,7 +23,7 @@ namespace Appalachia.Editing.Core.Windows.PaneBased.Panes
         private static readonly ProfilerMarker _PRF_OnBeforeDraw = new(_PRF_PFX + nameof(OnBeforeDraw));
         private static readonly TraceMarker _TRACE_OnBeforeDraw = new(_TRACE_PFX + nameof(OnBeforeDraw));
 
-#endregion
+        #endregion
 
         protected float menuItemHeight;
 
@@ -32,9 +32,9 @@ namespace Appalachia.Editing.Core.Windows.PaneBased.Panes
         protected virtual bool AlwaysShowMenuHorizontalScrollbar => true;
         protected virtual bool AlwaysShowMenuVerticalScrollbar => true;
 
-        protected virtual int MenuWidth => 300;
-
         protected override bool DrawPreferences => false;
+
+        public abstract bool ShouldDrawMenuItem(int menuIndex, int menuItemIndex);
 
         public abstract void DrawSelectedContent(bool show);
 
@@ -44,8 +44,6 @@ namespace Appalachia.Editing.Core.Windows.PaneBased.Panes
             bool isSelected,
             out bool wasSelected,
             out float menuItemHeight);
-
-        public abstract bool ShouldDrawMenuItem(int menuIndex, int menuItemIndex);
 
         public virtual void OnDrawPaneMenuEnd(int menuIndex)
         {
@@ -135,14 +133,14 @@ namespace Appalachia.Editing.Core.Windows.PaneBased.Panes
                             $"{PaneName}_SV_{menuIndex}",
                             sv =>
                             {
-                                sv.width = MenuWidth;
+                                sv.width = context.MenuWidth;
                                 sv.AlwaysShowVertical = AlwaysShowMenuVerticalScrollbar;
                                 sv.AlwaysShowHorizontal = AlwaysShowHorizontalScrollbar;
                             }
                         );
                     }
 
-                    using (new GUILayout.VerticalScope(APPAGUI.Width(MenuWidth).ExpandWidth(false)))
+                    using (new GUILayout.VerticalScope(APPAGUI.Width(context.MenuWidth).ExpandWidth(false)))
                     {
                         PreferencesDrawer.DrawPreferenceFields(false);
 

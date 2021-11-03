@@ -98,18 +98,6 @@ namespace Appalachia.Editing.Debugging.Graphy
         [SerializeField] private bool m_background = true;
         [SerializeField] private Color m_backgroundColor = new(0, 0, 0, 0.3f);
 
-        [SerializeField] private bool m_enableHotkeys = true;
-
-        [SerializeField] private Key m_toggleModeKeyCode = Key.G;
-
-        [SerializeField] private bool m_toggleModeCtrl = true;
-        [SerializeField] private bool m_toggleModeAlt;
-
-        [SerializeField] private Key m_toggleActiveKeyCode = Key.H;
-
-        [SerializeField] private bool m_toggleActiveCtrl = true;
-        [SerializeField] private bool m_toggleActiveAlt;
-
         [SerializeField] private ModulePosition m_graphModulePosition = ModulePosition.TOP_RIGHT;
 
         // Fps ---------------------------------------------------------------------------

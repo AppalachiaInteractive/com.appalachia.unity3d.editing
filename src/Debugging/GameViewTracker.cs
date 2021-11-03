@@ -16,13 +16,13 @@ namespace Appalachia.Editing.Debugging
 
         private static Camera _mainCamera;
 
-        [MenuItem(PKG.Menu.Appalachia.Tools.Base + NAME, priority = PKG.Menu.Appalachia.Tools.Priority)]
+        [MenuItem(PKG.Menu.Appalachia.RootTools.Base + NAME, priority = PKG.Menu.Appalachia.RootTools.Priority)]
         public static void ToggleGameViewTracking()
         {
             ToggleEnabled();
         }
 
-        [MenuItem(PKG.Menu.Appalachia.Tools.Base + NAME, true, priority = PKG.Menu.Appalachia.Tools.Priority)]
+        [MenuItem(PKG.Menu.Appalachia.RootTools.Base + NAME, true, priority = PKG.Menu.Appalachia.RootTools.Priority)]
         public static bool ToggleGameViewTrackingValidate()
         {
             Menu.SetChecked(PKG.Menu.Appalachia.Tools.Base + NAME, s_Enabled.v);
@@ -40,6 +40,11 @@ namespace Appalachia.Editing.Debugging
             if (_mainCamera == null)
             {
                 _mainCamera = Camera.main;
+
+                if (_mainCamera == null)
+                {
+                    _mainCamera = Object.FindObjectOfType<Camera>();
+                }
             }
 
             SceneView.duringSceneGui -= sceneGUICallback;

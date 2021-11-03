@@ -52,10 +52,15 @@ namespace Appalachia.Editing.Core.Fields
                 return;
             }
 
-            DrawDynamic(context.GetProgress, window);
+            DrawDynamic(context.ProgressVerb, context.GetProgress, window);
         }
 
-        public void DrawDynamic(
+        public void ResetTime()
+        {
+            _progressStartTime = 0f;
+        }
+        
+        public void DrawDynamic(string verb, 
             Func<AppaProgress> progressGetter,
             IAppalachiaWindow window)
         {
@@ -72,7 +77,7 @@ namespace Appalachia.Editing.Core.Fields
 
             progressPercentage = Math.Max(0f, Math.Min(.999f, progressPercentage));
 
-            var defaultMessage = $"Initializing: {elapsedTime:N3}";
+            var defaultMessage = $"{verb}: {elapsedTime:N3}";
             string messageContent = null;
 
             var progressMessage = progressGetter();

@@ -413,12 +413,12 @@ namespace Appalachia.Editing.Core.Layout
         {
         }
 
-        public static void SplitByColumns(int columns, int items, Action<List<int>> columnDrawer)
+        public static void SplitByColumns(int columns, int items, Action<IReadOnlyList<int>> columnDrawer)
         {
             SplitByAxis(columns, items, columnDrawer, true);
         }
 
-        public static void SplitByRows(int rows, int items, Action<List<int>> rowDrawer)
+        public static void SplitByRows(int rows, int items, Action<IReadOnlyList<int>> rowDrawer)
         {
             SplitByAxis(rows, items, rowDrawer, false);
         }
@@ -437,7 +437,7 @@ namespace Appalachia.Editing.Core.Layout
         private static void SplitByAxis(
             int majorAxisDivisions,
             int items,
-            Action<List<int>> drawer,
+            Action<IReadOnlyList<int>> drawer,
             bool verticalFirst)
         {
             var minorAxisDivisions = 0;
@@ -487,8 +487,9 @@ namespace Appalachia.Editing.Core.Layout
                 FieldPaddingMid = 4,
                 FieldPaddingRight = 4,
                 HeaderPaddingLeft = 4,
-                MenuItemPaddingLeft = 8,
+                MenuItemPaddingLeft = 12,
                 MenuItemSelectionStrip = 3,
+                MenuItemSelectionStripHeightPadding = 1,
                 PreferencesEndVertical = 4,
                 PreferencesLeftPaddingBottom = 6,
                 PreferencesLeftPaddingInner = 6,
