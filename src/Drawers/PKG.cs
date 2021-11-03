@@ -8,7 +8,7 @@ namespace Appalachia.Editing.Drawers
 {
     internal static partial class PKG
     {
-        public const int Priority = -379000;
+        public const int Priority = -385000;
         public const string Name = "Drawers";
         public const string Prefix = Root + Name + "/";
         public const string Root = "Appalachia/";
