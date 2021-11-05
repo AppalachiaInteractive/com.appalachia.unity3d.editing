@@ -8,7 +8,7 @@ namespace Appalachia.Editing.Debugging.IngameDebugConsole
 {
     internal static partial class PKG
     {
-        public const int Priority = -302000;
+        public const int Priority = -301000;
         public const string Name = "Debugging/IngameDebugConsole";
         public const string Prefix = Root + Name + "/";
         public const string Root = "Appalachia/";

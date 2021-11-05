@@ -52,7 +52,7 @@ namespace Appalachia.Editing.Core.Windows
         [Range(1, 200)]
         public int stepSize = 10;
 
-        private AppaCoroutineRunner _coroutineRunner;
+        private AppaWindowBackgroundCoroutineRunner _windowBackgroundCoroutineRunner;
 
         private bool _hasRepaintBeenRequested;
 
@@ -62,20 +62,20 @@ namespace Appalachia.Editing.Core.Windows
         [ReadOnly]
         [PropertyOrder(-1)]
         [ShowInInspector]
-        public bool isExecutingCoroutine => _coroutineRunner?.IsExecutingCoroutine ?? false;
+        public bool isExecutingCoroutine => _windowBackgroundCoroutineRunner?.IsExecutingCoroutine ?? false;
 
         [FoldoutGroup("Execution", false, -1000)]
         [ReadOnly]
         [PropertyOrder(-3)]
         [ShowInInspector]
         [DisplayAsString]
-        public DateTime lastExecutionTime => _coroutineRunner?.LastExecutionTime ?? DateTime.MinValue;
+        public DateTime lastExecutionTime => _windowBackgroundCoroutineRunner?.LastExecutionTime ?? DateTime.MinValue;
 
         [FoldoutGroup("Execution", false, -1000)]
         [ReadOnly]
         [PropertyOrder(-2)]
         [ShowInInspector]
-        public double executionTime => _coroutineRunner?.ExecutionTime ?? 0f;
+        public double executionTime => _windowBackgroundCoroutineRunner?.ExecutionTime ?? 0f;
 
         protected virtual void DrawSceneGUI()
         {
@@ -83,16 +83,16 @@ namespace Appalachia.Editing.Core.Windows
 
         public void ExecuteCoroutine(Func<IEnumerator> coroutine)
         {
-            if (_coroutineRunner == null)
+            if (_windowBackgroundCoroutineRunner == null)
             {
-                _coroutineRunner = new AppaCoroutineRunner();
+                _windowBackgroundCoroutineRunner = new AppaWindowBackgroundCoroutineRunner();
             }
 
-            _coroutineRunner.CancelOnError = cancelOnError;
-            _coroutineRunner.ForceCancelImmediately = forceCancelImmediately;
-            _coroutineRunner.StepSize = stepSize;
+            _windowBackgroundCoroutineRunner.CancelOnError = cancelOnError;
+            _windowBackgroundCoroutineRunner.ForceCancelImmediately = forceCancelImmediately;
+            _windowBackgroundCoroutineRunner.StepSize = stepSize;
 
-            _coroutineRunner.ExecuteCoroutine(coroutine);
+            _windowBackgroundCoroutineRunner.ExecuteCoroutine(coroutine);
         }
 
         public void SafeRepaint(bool forceRepaint = false)

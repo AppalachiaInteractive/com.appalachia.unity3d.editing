@@ -8,7 +8,7 @@ namespace Appalachia.Editing.Visualizers
 {
     internal static partial class PKG
     {
-        public const int Priority = -384000;
+        public const int Priority = -383000;
         public const string Name = "Visualizers";
         public const string Prefix = Root + Name + "/";
         public const string Root = "Appalachia/";
