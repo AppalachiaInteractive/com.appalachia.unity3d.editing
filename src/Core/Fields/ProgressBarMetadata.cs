@@ -43,26 +43,7 @@ namespace Appalachia.Editing.Core.Fields
             Draw(value, text, GUILayout.Width(width));
         }
 
-        public void DrawInContext<TC>(TC context, IAppalachiaWindow window)
-            where TC : AppaMenuContext
-        {
-            if (!context.NeedsProgressDraw)
-            {
-                Draw(0);
-                return;
-            }
-
-            DrawDynamic(context.ProgressVerb, context.GetProgress, window);
-        }
-
-        public void ResetTime()
-        {
-            _progressStartTime = 0f;
-        }
-        
-        public void DrawDynamic(string verb, 
-            Func<AppaProgress> progressGetter,
-            IAppalachiaWindow window)
+        public void DrawDynamic(string verb, Func<AppaProgress> progressGetter, IAppalachiaWindow window)
         {
             if (_progressStartTime == 0f)
             {
@@ -91,7 +72,7 @@ namespace Appalachia.Editing.Core.Fields
 
             if (progressMessage != default)
             {
-                messageContent = $"{progressMessage.message}";
+                messageContent = progressMessage.message;
 
                 if (progressMessage.progress > 0)
                 {
@@ -104,15 +85,20 @@ namespace Appalachia.Editing.Core.Fields
                         progressPercentage = progressMessage.progress;
                     }
                 }
+                else
+                {
+                    progressMessage.progress = 0f;
+                }
             }
 
-            var forceRepaint = false;
-
-            if (_lastMessageContent != messageContent)
+            if (string.IsNullOrWhiteSpace(messageContent))
             {
-                forceRepaint = true;
-                _lastMessageContent = messageContent;
+                messageContent = _lastMessageContent;
             }
+
+            var forceRepaint = _lastMessageContent != messageContent;
+
+            _lastMessageContent = messageContent;
 
             string message = null;
 
@@ -130,10 +116,27 @@ namespace Appalachia.Editing.Core.Fields
             window.SafeRepaint(forceRepaint);
         }
 
+        public void DrawInContext<TC>(TC context, IAppalachiaWindow window)
+            where TC : AppaMenuContext
+        {
+            if (!context.NeedsProgressDraw)
+            {
+                Draw(0);
+                return;
+            }
+
+            DrawDynamic(context.ProgressVerb, context.GetProgress, window);
+        }
+
         public void Reset()
         {
             _progressStartTime = 0f;
             _lastMessageContent = null;
+        }
+
+        public void ResetTime()
+        {
+            _progressStartTime = 0f;
         }
     }
 }
