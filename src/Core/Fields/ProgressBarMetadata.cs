@@ -71,9 +71,16 @@ namespace Appalachia.Editing.Core.Fields
 
             var elapsedTime = Time.realtimeSinceStartup - _progressStartTime;
 
-            var loopTime = 2f;
+            var loopTime = 4f;
 
-            var progressPercentage = (elapsedTime % loopTime) / loopTime;
+            var progressPercentage = (elapsedTime % loopTime) / (.5f * loopTime);
+
+            if (progressPercentage > 1f)
+            {
+                var part = progressPercentage % 1f;
+
+                progressPercentage = 1f - part;
+            }
 
             progressPercentage = Math.Max(0f, Math.Min(.999f, progressPercentage));
 
@@ -84,7 +91,7 @@ namespace Appalachia.Editing.Core.Fields
 
             if (progressMessage != default)
             {
-                messageContent = $"{progressMessage.message}...";
+                messageContent = $"{progressMessage.message}";
 
                 if (progressMessage.progress > 0)
                 {
