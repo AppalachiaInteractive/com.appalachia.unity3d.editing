@@ -99,7 +99,7 @@ namespace Appalachia.Editing.Core.Windows
         {
             if (CanRepaint() && ShouldRepaint(forceRepaint))
             {
-                ExecuteRepaint();
+               ExecuteRepaint();
             }
             else
             {
