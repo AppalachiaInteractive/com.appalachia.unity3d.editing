@@ -74,7 +74,7 @@ namespace Appalachia.Editing.Core.Fields
             {
                 messageContent = progressMessage.message;
 
-                if (progressMessage.progress > 0)
+                if (progressMessage.progress >= 0)
                 {
                     if (progressMessage.progress > 1)
                     {
