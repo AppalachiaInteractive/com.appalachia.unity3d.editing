@@ -109,9 +109,9 @@ namespace Appalachia.Editing.Core.Windows.PaneBased.Panes
                             menuScrollView.scrollPosition.y = Mathf.Clamp(currentScrollY + shift, 0, 10000);
                         }
                     }
-                }
 
-                window.SafeRepaint();
+                    window.SafeRepaint();
+                }
             }
         }
 
