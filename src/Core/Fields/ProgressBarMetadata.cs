@@ -11,12 +11,13 @@ namespace Appalachia.Editing.Core.Fields
     [Serializable]
     public class ProgressBarMetadata : EditorUIFieldMetadata<ProgressBarMetadata>
     {
-        private float _progressStartTime;
+        private double _lastRepaintTime;
+        private double _progressStartTime;
         private string _lastMessageContent;
 
         protected override GUIStyle DefaultStyle => EditorStyles.label;
 
-        public void Draw(float value, string text, params GUILayoutOption[] options)
+        public void Draw(double value, string text, params GUILayoutOption[] options)
         {
             hasBeenDrawn = true;
 
@@ -27,17 +28,17 @@ namespace Appalachia.Editing.Core.Fields
                 text = value.ToString("N3");
             }
 
-            EditorGUI.ProgressBar(p, value, text);
+            EditorGUI.ProgressBar(p, (float) value, text);
             APPAGUI.SPACE.SIZE.ProgressBarFooter.MAKE();
         }
 
-        public void Draw(float value, string text = null)
+        public void Draw(double value, string text = null)
         {
             hasBeenDrawn = true;
             Draw(value, text, GUILayout.ExpandWidth(true));
         }
 
-        public void Draw(float width, float value, string text = null)
+        public void Draw(float width, double value, string text = null)
         {
             hasBeenDrawn = true;
             Draw(value, text, GUILayout.Width(width));
@@ -47,7 +48,7 @@ namespace Appalachia.Editing.Core.Fields
         {
             if (_progressStartTime == 0f)
             {
-                _progressStartTime = Time.realtimeSinceStartup;
+                _progressStartTime = Time.realtimeSinceStartupAsDouble;
             }
 
             var elapsedTime = Time.realtimeSinceStartup - _progressStartTime;
@@ -96,9 +97,7 @@ namespace Appalachia.Editing.Core.Fields
                 messageContent = _lastMessageContent;
             }
 
-            var forceRepaint = _lastMessageContent != messageContent;
-
-            _lastMessageContent = messageContent;
+            var forceRepaint = ShouldForceRepaint(messageContent);
 
             string message = null;
 
@@ -137,6 +136,24 @@ namespace Appalachia.Editing.Core.Fields
         public void ResetTime()
         {
             _progressStartTime = 0f;
+        }
+
+        private bool ShouldForceRepaint(string messageContent)
+        {
+            var elapsedSinceRepaint = Time.realtimeSinceStartup - _lastRepaintTime;
+
+            var forceRepaint = _lastMessageContent != messageContent;
+
+            forceRepaint |= elapsedSinceRepaint > 1f;
+
+            _lastMessageContent = messageContent;
+
+            if (forceRepaint)
+            {
+                _lastRepaintTime = Time.realtimeSinceStartupAsDouble;
+            }
+
+            return forceRepaint;
         }
     }
 }
