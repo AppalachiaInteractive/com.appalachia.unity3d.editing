@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Appalachia.Editing.Core.Fields;
 using Unity.Profiling;
 using UnityEditor;
@@ -182,7 +183,7 @@ namespace Appalachia.Editing.Core.Layout
             UIFieldMetadataManager fieldMetadataManager,
             string identifierPrefix,
             T instance,
-            params RowButton<T>[] buttonDatas)
+            IEnumerable<RowButton<T>> buttonDatas)
         {
             using (_PRF_DrawButtonRow.Auto())
             {
@@ -199,15 +200,16 @@ namespace Appalachia.Editing.Core.Layout
 
                 using var horizontalScope = new GUILayout.HorizontalScope(GUILayout.ExpandWidth(true));
 
-                for (var index = 0; index < buttonDatas.Length; index++)
+                var buttonDataArray = buttonDatas.ToArray();
+                for (var index = 0; index < buttonDataArray.Length; index++)
                 {
-                    var buttonData = buttonDatas[index];
+                    var buttonData = buttonDataArray[index];
 
                     IButtonMetadata button;
 
                     var identifier = $"{identifierPrefix}.{buttonData.label}";
 
-                    if (buttonDatas.Length == 1)
+                    if (buttonDataArray.Length == 1)
                     {
                         button = fieldMetadataManager.Get<MiniButtonLeftMetadata>(
                             identifier,
@@ -221,7 +223,7 @@ namespace Appalachia.Editing.Core.Layout
                             f => OnCreateButton(buttonData, f)
                         );
                     }
-                    else if (index == (buttonDatas.Length - 1))
+                    else if (index == (buttonDataArray.Length - 1))
                     {
                         button = fieldMetadataManager.Get<MiniButtonLeftMetadata>(
                             identifier,

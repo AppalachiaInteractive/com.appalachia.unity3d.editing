@@ -201,7 +201,6 @@ namespace Appalachia.Editing.Core.Windows.PaneBased.Panes
         {
             var menuSelection = context.GetMenuSelection(0);
             var menuItemIndex = menuSelection.currentIndex;
-
             var visibility = menuSelection.IsVisible(menuItemIndex);
 
             DrawSelectedContent(visibility);

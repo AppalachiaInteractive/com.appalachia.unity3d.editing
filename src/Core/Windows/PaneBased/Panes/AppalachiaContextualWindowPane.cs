@@ -59,6 +59,8 @@ namespace Appalachia.Editing.Core.Windows.PaneBased.Panes
         }
 
         private ProgressBarMetadata _progressBar;
+
+        protected virtual bool ShowResetContextButton { get; } = true;
         
         public override void OnBeforeDrawPaneContentStart(out bool shouldDraw)
         {
@@ -77,7 +79,7 @@ namespace Appalachia.Editing.Core.Windows.PaneBased.Panes
 
                 using (new GUILayout.HorizontalScope())
                 {
-                    if (resetContext.Button())
+                    if (ShowResetContextButton && resetContext.Button())
                     {
                         context.Reset();
                         shouldDraw = false;
