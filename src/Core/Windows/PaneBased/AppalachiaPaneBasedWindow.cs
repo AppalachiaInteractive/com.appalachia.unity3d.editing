@@ -1,3 +1,4 @@
+using System;
 using Appalachia.Core.Aspects.Tracing;
 using Appalachia.Core.Preferences;
 using Appalachia.Editing.Core.Windows.PaneBased.Panes;
@@ -63,6 +64,11 @@ namespace Appalachia.Editing.Core.Windows.PaneBased
                     CloseWindow();
                 }
             }
+        }
+
+        private void OnInspectorUpdate()
+        {
+            mainPane?.OnInspectorUpdate();
         }
 
         public static TW Get(string title)

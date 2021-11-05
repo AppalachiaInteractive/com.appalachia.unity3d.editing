@@ -447,6 +447,20 @@ namespace Appalachia.Editing.Core.Windows.PaneBased.Panes
             }
         }
 
+        private void DrawInitializationUI()
+        {
+            if (!FullyInitialized)
+            {
+                _progressBar ??= fieldMetadataManager.Get<ProgressBarMetadata>(PaneName + "Initializing...");
+
+                _progressBar.DrawDynamic("Initializing", GetInitializationProgress, window);
+            }
+        }
+
+        public virtual void OnInspectorUpdate()
+        {
+        }
+        
         public void OnDrawGUI()
         {
             using (_TRACE_OnDrawGUI.Auto())
@@ -454,10 +468,8 @@ namespace Appalachia.Editing.Core.Windows.PaneBased.Panes
             {
                 if (!FullyInitialized)
                 {
-                    _progressBar ??= fieldMetadataManager.Get<ProgressBarMetadata>(PaneName + "Initializing...");
-
-                    _progressBar.DrawDynamic("Initializing", GetInitializationProgress, window);
-
+                    DrawInitializationUI();
+                    
                     return;
                 }
 

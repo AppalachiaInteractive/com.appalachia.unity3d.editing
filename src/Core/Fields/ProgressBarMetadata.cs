@@ -11,7 +11,6 @@ namespace Appalachia.Editing.Core.Fields
     [Serializable]
     public class ProgressBarMetadata : EditorUIFieldMetadata<ProgressBarMetadata>
     {
-        private double _lastRepaintTime;
         private double _progressStartTime;
         private string _lastMessageContent;
 
@@ -97,8 +96,6 @@ namespace Appalachia.Editing.Core.Fields
                 messageContent = _lastMessageContent;
             }
 
-            var forceRepaint = ShouldForceRepaint(messageContent);
-
             string message = null;
 
             if (messageContent != null)
@@ -112,7 +109,7 @@ namespace Appalachia.Editing.Core.Fields
 
             Draw(progressPercentage, message);
 
-            window.SafeRepaint(forceRepaint);
+            window.SafeRepaint();
         }
 
         public void DrawInContext<TC>(TC context, IAppalachiaWindow window)
@@ -136,24 +133,6 @@ namespace Appalachia.Editing.Core.Fields
         public void ResetTime()
         {
             _progressStartTime = 0f;
-        }
-
-        private bool ShouldForceRepaint(string messageContent)
-        {
-            var elapsedSinceRepaint = Time.realtimeSinceStartup - _lastRepaintTime;
-
-            var forceRepaint = _lastMessageContent != messageContent;
-
-            forceRepaint |= elapsedSinceRepaint > 1f;
-
-            _lastMessageContent = messageContent;
-
-            if (forceRepaint)
-            {
-                _lastRepaintTime = Time.realtimeSinceStartupAsDouble;
-            }
-
-            return forceRepaint;
         }
     }
 }

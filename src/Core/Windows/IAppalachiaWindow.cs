@@ -6,6 +6,6 @@ namespace Appalachia.Editing.Core.Windows
     public interface IAppalachiaWindow
     {
         void ExecuteCoroutine(Func<IEnumerator> coroutine);
-        void SafeRepaint(bool forceRepaint = false);
+        void SafeRepaint();
     }
 }
