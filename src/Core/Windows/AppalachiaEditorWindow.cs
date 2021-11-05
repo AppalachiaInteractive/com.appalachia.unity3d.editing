@@ -95,19 +95,15 @@ namespace Appalachia.Editing.Core.Windows
             _windowBackgroundCoroutineRunner.ExecuteCoroutine(coroutine);
         }
 
-        public void SafeRepaint(bool forceRepaint = false)
+        public void SafeRepaint()
         {
-            if (CanRepaint() && ShouldRepaint(forceRepaint))
+            if (CanRepaint() && ShouldRepaint())
             {
                ExecuteRepaint();
             }
             else
             {
-                if (forceRepaint)
-                {
-                    _lastRepaintTime = 0f;
-                }
-
+                _lastRepaintTime = 0f;
                 _hasRepaintBeenRequested = true;
             }
         }
@@ -160,7 +156,7 @@ namespace Appalachia.Editing.Core.Windows
                 return false;
             }
 
-            if (!ShouldRepaint(false))
+            if (!ShouldRepaint())
             {
                 return false;
             }
@@ -201,9 +197,10 @@ namespace Appalachia.Editing.Core.Windows
             }
         }
 
-        private bool ShouldRepaint(bool forceRepaint)
+        private bool ShouldRepaint()
         {
-            if (forceRepaint)
+            return true;
+            /*if (forceRepaint)
             {
                 return true;
             }
@@ -215,7 +212,7 @@ namespace Appalachia.Editing.Core.Windows
                 return true;
             }
 
-            return false;
+            return false;*/
         }
 
         protected static void OpenWindow<T>()
