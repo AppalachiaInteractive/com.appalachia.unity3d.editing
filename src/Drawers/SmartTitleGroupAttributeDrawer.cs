@@ -1,6 +1,7 @@
 #region
 
 using Appalachia.Core.Attributes.Editing;
+using Appalachia.Editing.Core.Layout;
 using Appalachia.Editing.Core.State;
 using Appalachia.Editing.Drawers.Contexts;
 using Unity.Profiling;
@@ -47,7 +48,7 @@ namespace Appalachia.Editing.Drawers
                     );
                 }
 
-                UIStateStacks.indentLevel.Push(EditorGUI.indentLevel + (Attribute.Indent ? 1 : 0));
+                APPAGUI.StateStacks.indentLevel.Push(EditorGUI.indentLevel + (Attribute.Indent ? 1 : 0));
 
                 for (var index = 0; index < Property.Children.Count; ++index)
                 {
@@ -55,7 +56,7 @@ namespace Appalachia.Editing.Drawers
                     child.Draw(child.Label);
                 }
 
-                UIStateStacks.indentLevel.Pop();
+                APPAGUI.StateStacks.indentLevel.Pop();
             }
         }
     }

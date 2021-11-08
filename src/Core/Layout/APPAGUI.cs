@@ -8,7 +8,7 @@ using UnityEngine;
 
 namespace Appalachia.Editing.Core.Layout
 {
-    public static class APPAGUI
+    public static partial class APPAGUI
     {
         public enum GUILayoutOptionType
         {
@@ -495,6 +495,7 @@ namespace Appalachia.Editing.Core.Layout
                 PreferencesEndVertical = 4,
                 PreferencesLeftPaddingBottom = 6,
                 PreferencesLeftPaddingInner = 6,
+                LineHeight = 20,
                 PreferencesLeftPaddingTop = 6,
                 PreferencesLeftPaddingUnder = 2,
                 PreferencesPaddingVertical = 4,

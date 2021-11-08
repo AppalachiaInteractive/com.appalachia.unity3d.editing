@@ -1,4 +1,5 @@
 using System;
+using Appalachia.Editing.Core.Layout;
 using Appalachia.Editing.Core.State;
 using UnityEditor;
 using UnityEngine;
@@ -28,11 +29,11 @@ namespace Appalachia.Editing.Core.Fields
             where T : Object
         {
             hasBeenDrawn = true;
-            UIStateStacks.labelWidth.Push(prefixLabelWidth);
+            APPAGUI.StateStacks.labelWidth.Push(prefixLabelWidth);
 
             var result = EditorGUILayout.ObjectField(content, obj, typeof(T), allowSceneObjects);
 
-            UIStateStacks.labelWidth.Pop();
+            APPAGUI.StateStacks.labelWidth.Pop();
 
             return (T) result;
         }

@@ -1,4 +1,5 @@
 using System;
+using Appalachia.Editing.Core.Layout;
 using Appalachia.Editing.Core.State;
 using Appalachia.Utility.Colors;
 using UnityEditor;
@@ -16,12 +17,12 @@ namespace Appalachia.Editing.Core.Fields
 
             if (contentColor != Color.clear)
             {
-                UIStateStacks.contentColor.Push(contentColor.ScaleA(enabled ? 1f : .5f));
+                APPAGUI.StateStacks.contentColor.Push(contentColor.ScaleA(enabled ? 1f : .5f));
             }
 
             if (backgroundColor != Color.clear)
             {
-                UIStateStacks.backgroundColor.Push(backgroundColor.ScaleA(enabled ? 1f : .25f));
+                APPAGUI.StateStacks.backgroundColor.Push(backgroundColor.ScaleA(enabled ? 1f : .25f));
             }
 
             using var scope = new EditorGUI.DisabledScope(!enabled);
@@ -30,12 +31,12 @@ namespace Appalachia.Editing.Core.Fields
 
             if (contentColor != Color.clear)
             {
-                UIStateStacks.contentColor.Pop();
+                APPAGUI.StateStacks.contentColor.Pop();
             }
 
             if (backgroundColor != Color.clear)
             {
-                UIStateStacks.backgroundColor.Pop();
+                APPAGUI.StateStacks.backgroundColor.Pop();
             }
 
             return result;

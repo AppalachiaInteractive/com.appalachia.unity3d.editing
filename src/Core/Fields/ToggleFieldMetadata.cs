@@ -1,4 +1,5 @@
 using System;
+using Appalachia.Editing.Core.Layout;
 using Appalachia.Editing.Core.State;
 using UnityEditor;
 using UnityEngine;
@@ -16,11 +17,11 @@ namespace Appalachia.Editing.Core.Fields
 
             //using (new EditorGUILayout.HorizontalScope())
             {
-                UIStateStacks.labelWidth.Push(prefixLabelWidth);
+                APPAGUI.StateStacks.labelWidth.Push(prefixLabelWidth);
 
                 var result = EditorGUILayout.Toggle(content, value, style, layout);
 
-                UIStateStacks.labelWidth.Pop();
+                APPAGUI.StateStacks.labelWidth.Pop();
 
                 return result;
             }
@@ -31,13 +32,13 @@ namespace Appalachia.Editing.Core.Fields
             hasBeenDrawn = true;
             if (contentColor != Color.clear)
             {
-                UIStateStacks.contentColor.Push(contentColor);
+                APPAGUI.StateStacks.contentColor.Push(contentColor);
             }
 
             var result = Toggle(value);
             if (contentColor != Color.clear)
             {
-                UIStateStacks.contentColor.Pop();
+                APPAGUI.StateStacks.contentColor.Pop();
             }
 
             return result;

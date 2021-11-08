@@ -1,6 +1,7 @@
 #region
 
 using Appalachia.Core.Attributes.Editing;
+using Appalachia.Editing.Core.Layout;
 using Appalachia.Editing.Core.State;
 using Appalachia.Editing.Drawers.Contexts;
 using Sirenix.OdinInspector.Editor;
@@ -60,9 +61,9 @@ namespace Appalachia.Editing.Drawers
 
                     var labelWidth = labelText.Length * 8.0f;
 
-                    UIStateStacks.labelWidth.Push(labelWidth);
+                    APPAGUI.StateStacks.labelWidth.Push(labelWidth);
                     buttonResult = GUILayout.Button(labelText, _miniButtonStyle, _buttonOptions);
-                    UIStateStacks.labelWidth.Pop();
+                    APPAGUI.StateStacks.labelWidth.Pop();
                 }
 
                 if (buttonResult)
@@ -174,15 +175,15 @@ namespace Appalachia.Editing.Drawers
             {
                 if (color.HasValue)
                 {
-                    //UIStateStacks.foregroundColor.Push(Color.white);
-                    UIStateStacks.color.Push(color.Value);
+                    //APPAGUI.StateStacks.foregroundColor.Push(Color.white);
+                    APPAGUI.StateStacks.color.Push(color.Value);
                 }
 
                 if (disabled.HasValue)
                 {
-                    UIStateStacks.guiEnabled.Push(!disabled.Value);
+                    APPAGUI.StateStacks.guiEnabled.Push(!disabled.Value);
 
-                    //UIStateStacks.guiEnabled.Push(true);
+                    //APPAGUI.StateStacks.guiEnabled.Push(true);
                 }
 
                 GUIHelper.PushIsBoldLabel(Attribute.Bold);
@@ -197,12 +198,12 @@ namespace Appalachia.Editing.Drawers
 
                 if (disabled.HasValue)
                 {
-                    UIStateStacks.guiEnabled.Pop();
+                    APPAGUI.StateStacks.guiEnabled.Pop();
                 }
 
                 if (color.HasValue)
                 {
-                    UIStateStacks.color.Pop();
+                    APPAGUI.StateStacks.color.Pop();
                 }
             }
         }

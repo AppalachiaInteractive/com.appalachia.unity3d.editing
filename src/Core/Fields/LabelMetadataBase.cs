@@ -1,3 +1,4 @@
+using Appalachia.Editing.Core.Layout;
 using Appalachia.Editing.Core.State;
 using Unity.Profiling;
 using UnityEditor;
@@ -117,7 +118,7 @@ namespace Appalachia.Editing.Core.Fields
 
                 if (contentColor != Color.clear)
                 {
-                    UIStateStacks.contentColor.Push(contentColor);
+                    APPAGUI.StateStacks.contentColor.Push(contentColor);
                 }
 
                 content.text = prefixLabel;
@@ -126,7 +127,7 @@ namespace Appalachia.Editing.Core.Fields
 
                 if (contentColor != Color.clear)
                 {
-                    UIStateStacks.contentColor.Pop();
+                    APPAGUI.StateStacks.contentColor.Pop();
                 }
             }
         }
@@ -155,14 +156,14 @@ namespace Appalachia.Editing.Core.Fields
 
                 if (contentColor != Color.clear)
                 {
-                    UIStateStacks.contentColor.Push(contentColor);
+                    APPAGUI.StateStacks.contentColor.Push(contentColor);
                 }
 
                 Draw(labelValue, selectable);
 
                 if (contentColor != Color.clear)
                 {
-                    UIStateStacks.contentColor.Pop();
+                    APPAGUI.StateStacks.contentColor.Pop();
                 }
             }
         }
@@ -197,7 +198,7 @@ namespace Appalachia.Editing.Core.Fields
 
                 if (contentColor != Color.clear)
                 {
-                    UIStateStacks.contentColor.Push(contentColor);
+                    APPAGUI.StateStacks.contentColor.Push(contentColor);
                 }
 
                 content.text = labelValue;
@@ -206,7 +207,7 @@ namespace Appalachia.Editing.Core.Fields
 
                 if (contentColor != Color.clear)
                 {
-                    UIStateStacks.contentColor.Pop();
+                    APPAGUI.StateStacks.contentColor.Pop();
                 }
             }
         }

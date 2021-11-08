@@ -88,7 +88,7 @@ namespace Appalachia.Editing.Core.Windows.PaneBased.Panes
 
                     var isGUIEnabled = !context.IsLocked;
                     
-                    using (UIStateStacks.guiEnabled.Auto(isGUIEnabled))
+                    using (APPAGUI.StateStacks.guiEnabled.Auto(isGUIEnabled))
                     {
                         DrawContextButtons();
                     }

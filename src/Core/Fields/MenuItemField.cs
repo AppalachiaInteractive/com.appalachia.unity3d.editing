@@ -45,10 +45,10 @@ namespace Appalachia.Editing.Core.Fields
             }
 
             var pushedBackgroundColor = false;
-            if (isSelected && (UIStateStacks.backgroundColor.Current == Color.white))
+            if (isSelected && (APPAGUI.StateStacks.backgroundColor.Current == Color.white))
             {
                 var bgColor = ColorPalette.Default.ui.Middle.ScaleAlpha(.2f);
-                UIStateStacks.backgroundColor.Push(bgColor);
+                APPAGUI.StateStacks.backgroundColor.Push(bgColor);
                 pushedBackgroundColor = true;
             }
 
@@ -83,7 +83,7 @@ namespace Appalachia.Editing.Core.Fields
 
             if (pushedBackgroundColor)
             {
-                UIStateStacks.backgroundColor.Pop();
+                APPAGUI.StateStacks.backgroundColor.Pop();
             }
 
             return result;
@@ -104,24 +104,24 @@ namespace Appalachia.Editing.Core.Fields
 
             if (backgroundColor != Color.clear)
             {
-                UIStateStacks.backgroundColor.Push(backgroundColor);
+                APPAGUI.StateStacks.backgroundColor.Push(backgroundColor);
             }
 
             if (foregroundColor != Color.clear)
             {
-                UIStateStacks.color.Push(foregroundColor);
+                APPAGUI.StateStacks.color.Push(foregroundColor);
             }
 
             var result = Draw(menuItem, isSelected, icon);
 
             if (backgroundColor != Color.clear)
             {
-                UIStateStacks.color.Pop();
+                APPAGUI.StateStacks.color.Pop();
             }
 
             if (foregroundColor != Color.clear)
             {
-                UIStateStacks.backgroundColor.Pop();
+                APPAGUI.StateStacks.backgroundColor.Pop();
             }
 
             return result;
@@ -140,14 +140,14 @@ namespace Appalachia.Editing.Core.Fields
 
             if (backgroundColor != Color.clear)
             {
-                UIStateStacks.backgroundColor.Push(backgroundColor);
+                APPAGUI.StateStacks.backgroundColor.Push(backgroundColor);
             }
 
             var result = Draw(menuItem, isSelected, icon);
 
             if (backgroundColor != Color.clear)
             {
-                UIStateStacks.backgroundColor.Pop();
+                APPAGUI.StateStacks.backgroundColor.Pop();
             }
 
             return result;
@@ -166,14 +166,14 @@ namespace Appalachia.Editing.Core.Fields
 
             if (foregroundColor != Color.clear)
             {
-                UIStateStacks.color.Push(foregroundColor);
+                APPAGUI.StateStacks.color.Push(foregroundColor);
             }
 
             var result = Draw(menuItem, isSelected, icon);
 
             if (foregroundColor != Color.clear)
             {
-                UIStateStacks.color.Pop();
+                APPAGUI.StateStacks.color.Pop();
             }
 
             return result;

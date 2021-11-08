@@ -237,7 +237,7 @@ namespace Appalachia.Editing.Core.Common
                         var enableIf = prefsEnabledIf[preferenceIndex];
                         var enabled = (enableIf == null) || enableIf();
 
-                        using (UIStateStacks.guiEnabled.Auto(enabled))
+                        using (APPAGUI.StateStacks.guiEnabled.Auto(enabled))
                         {
                             if (preference.Draw())
                             {
@@ -295,7 +295,7 @@ namespace Appalachia.Editing.Core.Common
                         {
                             APPAGUI.SPACE.SIZE.PreferencesLeftPaddingInner.MAKE();
 
-                            using (UIStateStacks.guiEnabled.Auto(enabled))
+                            using (APPAGUI.StateStacks.guiEnabled.Auto(enabled))
                             {
                                 if (preference.IsAwake && preference.Draw())
                                 {

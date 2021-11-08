@@ -1,3 +1,4 @@
+using Appalachia.Editing.Core.Layout;
 using Appalachia.Editing.Core.State;
 using UnityEditor;
 using UnityEngine;
@@ -21,9 +22,9 @@ namespace Appalachia.Editing.Core.Fields
             }
             else
             {
-                UIStateStacks.labelWidth.Push(prefixLabelWidth);
+                APPAGUI.StateStacks.labelWidth.Push(prefixLabelWidth);
                 EditorGUILayout.PrefixLabel(content, style, _prefixStyle);
-                UIStateStacks.labelWidth.Pop();
+                APPAGUI.StateStacks.labelWidth.Pop();
             }
         }
 

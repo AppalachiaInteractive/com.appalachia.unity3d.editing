@@ -1,6 +1,7 @@
 #region
 
 using Appalachia.Core.Attributes.Editing;
+using Appalachia.Editing.Core.Layout;
 using Appalachia.Editing.Core.State;
 using Appalachia.Editing.Drawers.Contexts;
 using Sirenix.OdinInspector;
@@ -83,11 +84,11 @@ namespace Appalachia.Editing.Drawers
             {
                 if (context.Size < 0.0)
                 {
-                    UIStateStacks.labelWidth.Push(GUIHelper.BetterLabelWidth + context.Size);
+                    APPAGUI.StateStacks.labelWidth.Push(GUIHelper.BetterLabelWidth + context.Size);
                 }
                 else
                 {
-                    UIStateStacks.labelWidth.Push(context.Size);
+                    APPAGUI.StateStacks.labelWidth.Push(context.Size);
                 }
 
                 GUIHelper.PushIsBoldLabel(Attribute.Bold);
@@ -365,7 +366,7 @@ namespace Appalachia.Editing.Drawers
 
                 GUIHelper.PopIsBoldLabel();
 
-                UIStateStacks.labelWidth.Pop();
+                APPAGUI.StateStacks.labelWidth.Pop();
             }
         }
     }

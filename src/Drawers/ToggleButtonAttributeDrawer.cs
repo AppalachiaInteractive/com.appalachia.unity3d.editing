@@ -1,4 +1,5 @@
 using Appalachia.Core.Attributes.Editing;
+using Appalachia.Editing.Core.Layout;
 using Appalachia.Editing.Core.State;
 using Appalachia.Editing.Drawers.Contexts;
 using Appalachia.Utility.Colors;
@@ -42,7 +43,7 @@ namespace Appalachia.Editing.Drawers
                 GUIHelper.PopLabelColor();
                 EditorGUILayout.EndVertical();
 
-                UIStateStacks.color.Push(color);
+                APPAGUI.StateStacks.color.Push(color);
 
                 if (GUILayout.Button(
                     context.LabelHelper.GetValue(),
@@ -71,7 +72,7 @@ namespace Appalachia.Editing.Drawers
                     }
                 }
 
-                UIStateStacks.color.Pop();
+                APPAGUI.StateStacks.color.Pop();
 
                 EditorGUILayout.EndHorizontal();
             }
