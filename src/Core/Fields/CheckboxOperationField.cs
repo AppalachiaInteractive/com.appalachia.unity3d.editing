@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics;
 using Appalachia.Editing.Core.Operations;
 using Sirenix.OdinInspector;
 
@@ -20,7 +21,7 @@ namespace Appalachia.Editing.Core.Fields
         [InlineProperty]
         public T value;
 
-        public static implicit operator T(CheckboxOperationField<T> field)
+        [DebuggerStepThrough] public static implicit operator T(CheckboxOperationField<T> field)
         {
             return field.value;
         }

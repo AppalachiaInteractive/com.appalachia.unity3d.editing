@@ -1,7 +1,9 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using Appalachia.Editing.Core.Fields;
+using Appalachia.Utility.Execution;
 using Unity.Profiling;
 using UnityEditor;
 using UnityEngine;
@@ -10,11 +12,6 @@ namespace Appalachia.Editing.Core.Layout
 {
     public static partial class APPAGUI
     {
-        public class Exit : Exception
-        {
-            
-        }
-        
         public enum GUILayoutOptionType
         {
             Width,
@@ -27,7 +24,7 @@ namespace Appalachia.Editing.Core.Layout
             ExpandWidth
         }
 
-#region Profiling And Tracing Markers
+        #region Profiling And Tracing Markers
 
         private const string _PRF_PFX = nameof(APPAGUI) + ".";
 
@@ -51,7 +48,9 @@ namespace Appalachia.Editing.Core.Layout
         private static int CurrentCacheIndex;
         private static readonly ProfilerMarker _PRF_DrawButtonRow = new(_PRF_PFX + nameof(DrawButtonRow));
 
-#endregion
+        #endregion
+
+        #region Constants and Static Readonly
 
         private const float _H1 = 1f;
         private const float _H1T = .3f;
@@ -65,6 +64,18 @@ namespace Appalachia.Editing.Core.Layout
         private const float _H4 = 0f;
         private const float _H4T = .1f;
         private const float _H4TSoft = _H4T * .5f;
+
+        #endregion
+
+        static APPAGUI()
+        {
+            GUILayoutOptionsInstanceCache[0] = new GUILayoutOptionsInstance();
+            for (var index = 1; index < 30; ++index)
+            {
+                GUILayoutOptionsInstanceCache[index] = new GUILayoutOptionsInstance();
+                GUILayoutOptionsInstanceCache[index].Parent = GUILayoutOptionsInstanceCache[index - 1];
+            }
+        }
 
         public static Color LineColorH1
         {
@@ -174,14 +185,9 @@ namespace Appalachia.Editing.Core.Layout
             =>
                 EditorPrefs.GetString("kScriptsDefaultApp");
 
-        static APPAGUI()
+        public static EditorGUI.DisabledScope Disabled()
         {
-            GUILayoutOptionsInstanceCache[0] = new GUILayoutOptionsInstance();
-            for (var index = 1; index < 30; ++index)
-            {
-                GUILayoutOptionsInstanceCache[index] = new GUILayoutOptionsInstance();
-                GUILayoutOptionsInstanceCache[index].Parent = GUILayoutOptionsInstanceCache[index - 1];
-            }
+            return new(true);
         }
 
         public static void DrawButtonRow<T>(
@@ -197,13 +203,13 @@ namespace Appalachia.Editing.Core.Layout
                     f.AlterContent(c => c.text = buttonData.label);
                 }
 
-                using var outerScope = new GUILayout.HorizontalScope();
+                using var outerScope = Horizontal();
 
                 SPACE.MAKE(SPACE.SIZE.ButtonPaddingLeft);
 
-                using var verticalScope = new GUILayout.VerticalScope();
+                using var verticalScope = Vertical();
 
-                using var horizontalScope = new GUILayout.HorizontalScope(GUILayout.ExpandWidth(true));
+                using var horizontalScope = Horizontal(GUILayout.ExpandWidth(true));
 
                 var buttonDataArray = buttonDatas.ToArray();
                 for (var index = 0; index < buttonDataArray.Length; index++)
@@ -250,7 +256,7 @@ namespace Appalachia.Editing.Core.Layout
                     {
                         buttonData.action(instance);
 
-                        throw new APPAGUI.Exit();
+                        throw new Exit();
                     }
                 }
 
@@ -321,14 +327,19 @@ namespace Appalachia.Editing.Core.Layout
                 color = LineColorH3;
             }
 
-            using (new GUILayout.VerticalScope())
-            using (new GUILayout.HorizontalScope())
+            using (Vertical())
+            using (Horizontal())
             {
                 EditorGUILayout.Space(bufferSize, false);
                 var expandableRect = GetExpandableHeightRect(lineThickness);
                 DrawSolidRect(expandableRect, color);
                 EditorGUILayout.Space(bufferSize, false);
             }
+        }
+
+        public static EditorGUI.DisabledScope Enabled()
+        {
+            return new(false);
         }
 
         /// <summary>
@@ -353,6 +364,15 @@ namespace Appalachia.Editing.Core.Layout
             return layoutOptionsInstance;
         }
 
+        public static IDisposable ForceEnable()
+        {
+            return new CacheDisposable<bool>(
+                GUI.enabled,
+                () => GUI.enabled = true,
+                init => GUI.enabled = init
+            );
+        }
+
         public static Rect GetExpandableHeightRect(float thickness = 1f)
         {
             return GUILayoutUtility.GetRect(thickness, thickness, ExpandWidth());
@@ -372,6 +392,45 @@ namespace Appalachia.Editing.Core.Layout
             var layoutOptionsInstance = GUILayoutOptionsInstanceCache[CurrentCacheIndex++];
             layoutOptionsInstance.SetValue(GUILayoutOptionType.Height, height);
             return layoutOptionsInstance;
+        }
+
+        public static GUILayout.HorizontalScope Horizontal(params GUILayoutOption[] options)
+        {
+            return new(options);
+        }
+
+        public static GUILayout.HorizontalScope Horizontal(GUIStyle style, params GUILayoutOption[] options)
+        {
+            return new(style, options);
+        }
+
+        public static GUILayout.HorizontalScope Horizontal(
+            string text,
+            GUIStyle style,
+            params GUILayoutOption[] options)
+        {
+            return new(text, style, options);
+        }
+
+        public static GUILayout.HorizontalScope Horizontal(
+            Texture image,
+            GUIStyle style,
+            params GUILayoutOption[] options)
+        {
+            return new(image, style, options);
+        }
+
+        public static GUILayout.HorizontalScope Horizontal(
+            GUIContent content,
+            GUIStyle style,
+            params GUILayoutOption[] options)
+        {
+            return new(content, style, options);
+        }
+
+        public static EditorGUI.IndentLevelScope Indent()
+        {
+            return new();
         }
 
         /// <summary>
@@ -422,6 +481,11 @@ namespace Appalachia.Editing.Core.Layout
         {
         }
 
+        public static void Separator()
+        {
+            EditorGUILayout.Separator();
+        }
+
         public static void SplitByColumns(int columns, int items, Action<IReadOnlyList<int>> columnDrawer)
         {
             SplitByAxis(columns, items, columnDrawer, true);
@@ -430,6 +494,40 @@ namespace Appalachia.Editing.Core.Layout
         public static void SplitByRows(int rows, int items, Action<IReadOnlyList<int>> rowDrawer)
         {
             SplitByAxis(rows, items, rowDrawer, false);
+        }
+
+        public static GUILayout.VerticalScope Vertical(params GUILayoutOption[] options)
+        {
+            return new(options);
+        }
+
+        public static GUILayout.VerticalScope Vertical(GUIStyle style, params GUILayoutOption[] options)
+        {
+            return new(style, options);
+        }
+
+        public static GUILayout.VerticalScope Vertical(
+            string text,
+            GUIStyle style,
+            params GUILayoutOption[] options)
+        {
+            return new(text, style, options);
+        }
+
+        public static GUILayout.VerticalScope Vertical(
+            Texture image,
+            GUIStyle style,
+            params GUILayoutOption[] options)
+        {
+            return new(image, style, options);
+        }
+
+        public static GUILayout.VerticalScope Vertical(
+            GUIContent content,
+            GUIStyle style,
+            params GUILayoutOption[] options)
+        {
+            return new(content, style, options);
         }
 
         /// <summary>
@@ -468,10 +566,8 @@ namespace Appalachia.Editing.Core.Layout
                 minorAxisDivisions = Mathf.Max(minorAxisDivisions, itemIndicesByMajorIndex[majorIndex].Count);
             }
 
-            using GUI.Scope outerScope =
-                verticalFirst ? new GUILayout.VerticalScope() : new GUILayout.HorizontalScope();
-            using GUI.Scope innerScope =
-                verticalFirst ? new GUILayout.HorizontalScope() : new GUILayout.VerticalScope();
+            using GUI.Scope outerScope = verticalFirst ? Vertical() : Horizontal();
+            using GUI.Scope innerScope = verticalFirst ? Horizontal() : Vertical();
 
             for (var majorIndex = 0; majorIndex < majorAxisDivisions; majorIndex++)
             {
@@ -480,6 +576,8 @@ namespace Appalachia.Editing.Core.Layout
                 drawer(itemIndices);
             }
         }
+
+        #region Nested Types
 
         public static class SPACE
         {
@@ -503,6 +601,7 @@ namespace Appalachia.Editing.Core.Layout
                 PreferencesLeftPaddingBottom = 6,
                 PreferencesLeftPaddingInner = 6,
                 LineHeight = 20,
+                DoubleLineHeight = 40,
                 PreferencesLeftPaddingTop = 6,
                 PreferencesLeftPaddingUnder = 2,
                 PreferencesPaddingVertical = 4,
@@ -538,6 +637,10 @@ namespace Appalachia.Editing.Core.Layout
             }
         }
 
+        public class Exit : Exception
+        {
+        }
+
         /// <summary>
         ///     A GUILayoutOptions instance with an implicit operator to be converted to a GUILayoutOption[] array.
         /// </summary>
@@ -547,6 +650,34 @@ namespace Appalachia.Editing.Core.Layout
             public GUILayoutOptionsInstance Parent;
             public GUILayoutOptionType GUILayoutOptionType;
             private float value;
+
+            /// <summary>
+            ///     Gets or creates the cached GUILayoutOption array based on the layout options specified.
+            /// </summary>
+            [DebuggerStepThrough]
+            public static implicit operator GUILayoutOption[](GUILayoutOptionsInstance options)
+            {
+                return options.GetCachedOptions();
+            }
+
+            /// <summary>Returns a hash code for this instance.</summary>
+            [DebuggerStepThrough]
+            public override int GetHashCode()
+            {
+                var num1 = 0;
+                var num2 = 17;
+                for (var layoutOptionsInstance = this;
+                    layoutOptionsInstance != null;
+                    layoutOptionsInstance = layoutOptionsInstance.Parent)
+                {
+                    num2 = (num2 * 29) +
+                           GUILayoutOptionType.GetHashCode() +
+                           (value.GetHashCode() * 17) +
+                           num1++;
+                }
+
+                return num2;
+            }
 
             /// <summary>
             ///     Option passed to a control to allow or disallow vertical expansion.
@@ -643,6 +774,7 @@ namespace Appalachia.Editing.Core.Layout
             /// <summary>
             ///     Determines whether the instance is equals another instance.
             /// </summary>
+            [DebuggerStepThrough]
             public bool Equals(GUILayoutOptionsInstance other)
             {
                 var layoutOptionsInstance1 = this;
@@ -663,24 +795,6 @@ namespace Appalachia.Editing.Core.Layout
                 }
 
                 return (layoutOptionsInstance2 == null) && (layoutOptionsInstance1 == null);
-            }
-
-            /// <summary>Returns a hash code for this instance.</summary>
-            public override int GetHashCode()
-            {
-                var num1 = 0;
-                var num2 = 17;
-                for (var layoutOptionsInstance = this;
-                    layoutOptionsInstance != null;
-                    layoutOptionsInstance = layoutOptionsInstance.Parent)
-                {
-                    num2 = (num2 * 29) +
-                           GUILayoutOptionType.GetHashCode() +
-                           (value.GetHashCode() * 17) +
-                           num1++;
-                }
-
-                return num2;
             }
 
             private GUILayoutOptionsInstance Clone()
@@ -757,14 +871,8 @@ namespace Appalachia.Editing.Core.Layout
 
                 return guiLayoutOptionArray;
             }
-
-            /// <summary>
-            ///     Gets or creates the cached GUILayoutOption array based on the layout options specified.
-            /// </summary>
-            public static implicit operator GUILayoutOption[](GUILayoutOptionsInstance options)
-            {
-                return options.GetCachedOptions();
-            }
         }
+
+        #endregion
     }
 }

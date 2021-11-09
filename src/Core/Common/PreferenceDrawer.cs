@@ -224,7 +224,7 @@ namespace Appalachia.Editing.Core.Common
 
                 var changed = false;
 
-                using (scope = new GUILayout.HorizontalScope(bgStyle))
+                using (scope = APPAGUI.Horizontal(bgStyle))
                 {
                     var drawCount = 0;
                     var levelCount = 0;
@@ -250,7 +250,7 @@ namespace Appalachia.Editing.Core.Common
                         if (drawCount >= turnoverCount)
                         {
                             scope.Dispose();
-                            scope = new GUILayout.HorizontalScope(bgStyle);
+                            scope = APPAGUI.Horizontal(bgStyle);
 
                             drawCount = 0;
                             levelCount += 1;
@@ -275,7 +275,7 @@ namespace Appalachia.Editing.Core.Common
                 var bgStyle =
                     _fieldMetadataManager.Background(ColorPalette.Default.highlight.Middle.ScaleA(.25f));
 
-                using (new GUILayout.VerticalScope(bgStyle))
+                using (APPAGUI.Vertical(bgStyle))
                 {
                     var changed = false;
                     APPAGUI.SPACE.SIZE.PreferencesLeftPaddingTop.MAKE();
@@ -291,7 +291,7 @@ namespace Appalachia.Editing.Core.Common
                             continue;
                         }
 
-                        using (new GUILayout.HorizontalScope())
+                        using (APPAGUI.Horizontal())
                         {
                             APPAGUI.SPACE.SIZE.PreferencesLeftPaddingInner.MAKE();
 

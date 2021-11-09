@@ -7,6 +7,7 @@ Shader "appalachia/utility/AOFromNormal"
       _AO("Global Tiling", Range( .1 , 5)) = 1
    }
 
+   
    SubShader {
       Pass {
          ZTest Always Cull Off ZWrite Off

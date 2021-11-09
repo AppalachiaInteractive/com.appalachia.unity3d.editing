@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Appalachia.Core.Aspects.Tracing;
-using Appalachia.Core.Extensions;
+using Appalachia.Core.Preferences;
 using Appalachia.Editing.Core.Fields;
 using Appalachia.Utility.Extensions;
 using Unity.Profiling;
@@ -11,7 +11,7 @@ namespace Appalachia.Editing.Core.Windows.PaneBased.Panes
 {
     public abstract class AppalachiaTabPaneParent : AppalachiaWindowPane
     {
-#region Profiling And Tracing Markers
+        #region Profiling And Tracing Markers
 
         private const string _PRF_PFX = nameof(AppalachiaTabPaneParent) + ".";
         private const string _TRACE_PFX = nameof(AppalachiaTabPaneParent) + ".";
@@ -22,7 +22,13 @@ namespace Appalachia.Editing.Core.Windows.PaneBased.Panes
         private static readonly ProfilerMarker _PRF_DrawAppalachiaTabbedWindowPane =
             new(_PRF_PFX + nameof(DrawAppalachiaTabbedWindowPane));
 
-#endregion
+        #endregion
+
+        #region Preferences
+
+        private PREF<int> _tabIndex;
+
+        #endregion
 
         public string[] TabNames { get; set; }
         public abstract float TabHeight { get; }
@@ -33,8 +39,21 @@ namespace Appalachia.Editing.Core.Windows.PaneBased.Panes
 
         public abstract int TabColumns { get; set; }
 
-        public abstract int TabIndex { get; set; }
         public virtual bool DrawTabsBeforeContent => true;
+
+        public int TabIndex
+        {
+            get
+            {
+                if (_tabIndex == null)
+                {
+                    _tabIndex = PREFS.REG($"{PKG.Prefs.Group}/Tab State", PaneName, 0);
+                }
+
+                return _tabIndex;
+            }
+            set => _tabIndex.v = value;
+        }
 
         public virtual void OnDrawTabsEnd()
         {
@@ -66,7 +85,7 @@ namespace Appalachia.Editing.Core.Windows.PaneBased.Panes
                 {
                     return;
                 }
-                
+
                 OnDrawTabsStart();
 
                 TabIndex = Style == PaneParentStyle.Toolbar

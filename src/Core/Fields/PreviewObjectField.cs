@@ -1,4 +1,5 @@
 using Appalachia.Core.Extensions;
+using Appalachia.Editing.Core.Layout;
 using UnityEditor;
 using UnityEngine;
 using Object = UnityEngine.Object;
@@ -16,7 +17,7 @@ namespace Appalachia.Editing.Core.Fields
         
         public TT Draw(TT value) 
         {
-            using (new GUILayout.HorizontalScope())
+            using (APPAGUI.Horizontal())
             {
                 DrawPrefixLabel();
             

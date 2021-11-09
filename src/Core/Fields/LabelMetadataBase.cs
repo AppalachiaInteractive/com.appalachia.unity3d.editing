@@ -52,7 +52,7 @@ namespace Appalachia.Editing.Core.Fields
 
                 InitializePrefixLabel();
 
-                using (new GUILayout.VerticalScope())
+                using (APPAGUI.Vertical())
                 {
                     OnBeforeDraw();
 
@@ -71,7 +71,7 @@ namespace Appalachia.Editing.Core.Fields
                         }
                         else
                         {
-                            using (new GUILayout.HorizontalScope())
+                            using (APPAGUI.Horizontal())
                             {
                                 DrawPrefixLabel(selectable);
 

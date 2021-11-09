@@ -1,3 +1,5 @@
+using System.Diagnostics;
+
 namespace Appalachia.Editing.Labels
 {
     public struct LabelAssignmentTerm
@@ -12,7 +14,7 @@ namespace Appalachia.Editing.Labels
 
         public readonly string term;
 
-        public override string ToString()
+        [DebuggerStepThrough] public override string ToString()
         {
             return $"{term} ({allowedMagnitude:F1}m)";
         }

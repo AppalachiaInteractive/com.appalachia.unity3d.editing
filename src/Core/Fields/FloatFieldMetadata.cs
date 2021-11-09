@@ -1,3 +1,4 @@
+using Appalachia.Editing.Core.Layout;
 using Sirenix.Utilities.Editor;
 using UnityEditor;
 using UnityEngine;
@@ -10,7 +11,7 @@ namespace Appalachia.Editing.Core.Fields
 
         public float Draw(float value)
         {
-            using (new GUILayout.HorizontalScope())
+            using (APPAGUI.Horizontal())
             {
                 DrawPrefixLabel();
                 return EditorGUILayout.FloatField(value, style, layout);

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using UnityEngine;
 
 // Container for a simple debug entry
@@ -40,12 +41,12 @@ namespace Appalachia.Editing.Debugging.IngameDebugConsole
         }
 
         // Check if two entries have the same origin
-        public bool Equals(DebugLogEntry other)
+        [DebuggerStepThrough] public bool Equals(DebugLogEntry other)
         {
             return (other != null) && (logString == other.logString) && (stackTrace == other.stackTrace);
         }
 
-        public override int GetHashCode()
+        [DebuggerStepThrough] public override int GetHashCode()
         {
             if (hashValue == HASH_NOT_CALCULATED)
             {
@@ -60,7 +61,7 @@ namespace Appalachia.Editing.Debugging.IngameDebugConsole
             return hashValue;
         }
 
-        public override string ToString()
+        [DebuggerStepThrough] public override string ToString()
         {
             if (completeLog == null)
             {

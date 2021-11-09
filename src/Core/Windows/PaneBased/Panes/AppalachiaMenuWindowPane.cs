@@ -140,7 +140,7 @@ namespace Appalachia.Editing.Core.Windows.PaneBased.Panes
                         );
                     }
 
-                    using (new GUILayout.VerticalScope(APPAGUI.Width(context.MenuWidth).ExpandWidth(false)))
+                    using (APPAGUI.Vertical(APPAGUI.Width(context.MenuWidth).ExpandWidth(false)))
                     {
                         PreferencesDrawer.DrawPreferenceFields(false);
 

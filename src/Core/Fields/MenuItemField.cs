@@ -54,7 +54,7 @@ namespace Appalachia.Editing.Core.Fields
 
             bool result;
 
-            using (new GUILayout.HorizontalScope())
+            using (APPAGUI.Horizontal())
             {
                 var spaceSize = APPAGUI.SPACE.SIZE.MenuItemPaddingLeft.MAKE_GET();
                 var stripSize = APPAGUI.SPACE.SIZE.MenuItemSelectionStrip.MAKE_GET();

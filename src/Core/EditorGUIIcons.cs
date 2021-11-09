@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
+using Appalachia.Editing.Core.Layout;
 using Appalachia.Utility.Constants.Icons;
 using UnityEditor;
 using UnityEngine;
@@ -10021,7 +10022,7 @@ namespace Appalachia.Editing.Core
             {
                 EditorGUILayout.LabelField(text, EditorStyles.whiteLargeLabel);
 
-                using (new GUILayout.HorizontalScope())
+                using (APPAGUI.Horizontal())
                 {
                     EditorGUILayout.LabelField(subheader, EditorStyles.whiteMiniLabel);
 

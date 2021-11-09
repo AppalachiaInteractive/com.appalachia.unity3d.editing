@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Diagnostics;
+using UnityEngine;
 
 namespace Appalachia.Editing.Debugging.Graphy.Util
 {
@@ -83,7 +84,7 @@ namespace Appalachia.Editing.Debugging.Graphy.Util
         /// <returns>
         ///     A cached number string if within the buffer ranges.
         /// </returns>
-        public static string ToStringNonAlloc(this int value)
+        [DebuggerStepThrough] public static string ToStringNonAlloc(this int value)
         {
             if ((value < 0) && (-value <= m_negativeBuffer.Length))
             {

@@ -1,4 +1,5 @@
-﻿using System.Text.RegularExpressions;
+﻿using System.Diagnostics;
+using System.Text.RegularExpressions;
 using Appalachia.CI.Integration.Assets;
 using UnityEditor;
 using UnityEngine;
@@ -238,7 +239,7 @@ namespace Appalachia.Editing.Debugging.IngameDebugConsole
         }
 
         // Return a string containing complete information about the debug entry
-        public override string ToString()
+        [DebuggerStepThrough] public override string ToString()
         {
             return logEntry.ToString();
         }

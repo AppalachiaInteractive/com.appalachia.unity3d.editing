@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Diagnostics;
+using UnityEngine;
 
 namespace Appalachia.Editing.Debugging.Graphy.Util
 {
@@ -68,7 +69,7 @@ namespace Appalachia.Editing.Debugging.Graphy.Util
             m_positiveBuffer = new string[0];
         }
 
-        public static string ToStringNonAlloc(this float value)
+        [DebuggerStepThrough] public static string ToStringNonAlloc(this float value)
         {
             var valIndex = value.ToIndex();
 
@@ -85,7 +86,7 @@ namespace Appalachia.Editing.Debugging.Graphy.Util
             return value.ToString();
         }
 
-        public static string ToStringNonAlloc(this float value, string format)
+        [DebuggerStepThrough] public static string ToStringNonAlloc(this float value, string format)
         {
             var valIndex = value.ToIndex();
 

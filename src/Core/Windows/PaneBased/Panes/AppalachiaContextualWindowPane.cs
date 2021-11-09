@@ -77,7 +77,7 @@ namespace Appalachia.Editing.Core.Windows.PaneBased.Panes
 
                 APPAGUI.SPACE.SIZE.ButtonPaddingLeft.MAKE();
 
-                using (new GUILayout.HorizontalScope())
+                using (APPAGUI.Horizontal())
                 {
                     if (ShowResetContextButton && resetContext.Button())
                     {

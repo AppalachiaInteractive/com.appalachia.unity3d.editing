@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using Appalachia.Core.Aspects;
 using Appalachia.Core.Aspects.Tracing;
 using Appalachia.Core.Context.Elements.Progress;
@@ -194,22 +195,22 @@ namespace Appalachia.Editing.Core.Windows.PaneBased.Panes
             return default;
         }
 
-        public static bool operator >(AppalachiaWindowPane left, AppalachiaWindowPane right)
+        [DebuggerStepThrough] public static bool operator >(AppalachiaWindowPane left, AppalachiaWindowPane right)
         {
             return Comparer<AppalachiaWindowPane>.Default.Compare(left, right) > 0;
         }
 
-        public static bool operator >=(AppalachiaWindowPane left, AppalachiaWindowPane right)
+        [DebuggerStepThrough] public static bool operator >=(AppalachiaWindowPane left, AppalachiaWindowPane right)
         {
             return Comparer<AppalachiaWindowPane>.Default.Compare(left, right) >= 0;
         }
 
-        public static bool operator <(AppalachiaWindowPane left, AppalachiaWindowPane right)
+        [DebuggerStepThrough] public static bool operator <(AppalachiaWindowPane left, AppalachiaWindowPane right)
         {
             return Comparer<AppalachiaWindowPane>.Default.Compare(left, right) < 0;
         }
 
-        public static bool operator <=(AppalachiaWindowPane left, AppalachiaWindowPane right)
+        [DebuggerStepThrough] public static bool operator <=(AppalachiaWindowPane left, AppalachiaWindowPane right)
         {
             return Comparer<AppalachiaWindowPane>.Default.Compare(left, right) <= 0;
         }
@@ -544,7 +545,7 @@ namespace Appalachia.Editing.Core.Windows.PaneBased.Panes
             }
         }
 
-        public int CompareTo(object obj)
+        [DebuggerStepThrough] public int CompareTo(object obj)
         {
             if (ReferenceEquals(null, obj))
             {
@@ -561,7 +562,7 @@ namespace Appalachia.Editing.Core.Windows.PaneBased.Panes
                 : throw new ArgumentException($"Object must be of type {nameof(AppalachiaWindowPane)}");
         }
 
-        public int CompareTo(AppalachiaWindowPane other)
+        [DebuggerStepThrough] public int CompareTo(AppalachiaWindowPane other)
         {
             if (ReferenceEquals(this, other))
             {

@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics;
 using UnityEngine;
 
 namespace Appalachia.Editing.Labels
@@ -20,19 +21,19 @@ namespace Appalachia.Editing.Labels
         public readonly string baseTerm;
         public readonly Vector3 multiplier;
 
-        public bool Equals(LabelAssignmentCollection other)
+        [DebuggerStepThrough] public bool Equals(LabelAssignmentCollection other)
         {
             return (baseTerm == other.baseTerm) &&
                    multiplier.Equals(other.multiplier) &&
                    Equals(terms, other.terms);
         }
 
-        public override bool Equals(object obj)
+        [DebuggerStepThrough] public override bool Equals(object obj)
         {
             return obj is LabelAssignmentCollection other && Equals(other);
         }
 
-        public override int GetHashCode()
+        [DebuggerStepThrough] public override int GetHashCode()
         {
             unchecked
             {
@@ -43,12 +44,12 @@ namespace Appalachia.Editing.Labels
             }
         }
 
-        public static bool operator ==(LabelAssignmentCollection left, LabelAssignmentCollection right)
+        [DebuggerStepThrough] public static bool operator ==(LabelAssignmentCollection left, LabelAssignmentCollection right)
         {
             return left.Equals(right);
         }
 
-        public static bool operator !=(LabelAssignmentCollection left, LabelAssignmentCollection right)
+        [DebuggerStepThrough] public static bool operator !=(LabelAssignmentCollection left, LabelAssignmentCollection right)
         {
             return !left.Equals(right);
         }
