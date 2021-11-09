@@ -14,6 +14,14 @@ C:/Users/Chris/com.appalachia/unity3d/appa/Assets/Appalachia.Editing
 ## Releasing
 | Hash | Date | Author | Changes |
 |------|------|--------|---------|
+| eb65fb48915f6b38566db9ad8b810d6771fb4ea1 | 2021-11-08 | Chris Schubert | Upgrading to new logging library |
+| 94a14679385208afacbc4c83ae98438f9f9a7b55 | 2021-11-07 | Chris Schubert | Fixing shader includes and automatic references for resources |
+
+
+ ## Tag: `v0.2.0`
+| Hash | Date | Author | Changes |
+|------|------|--------|---------|
+| e90d74d1686376b38611e92557fff2d0ce80feae | 2021-11-06 | Chris Schubert | Updating changelog and releaselog |
 | c5dbe4f84c617ebdd9d9e9ce410719cae4807fd9 | 2021-11-06 | Chris Schubert | Updating changelog and releaselog |
 | 48a5c69a785c05a329cd5d24fab1ef9e907da73f | 2021-11-06 | Chris Schubert | Updating changelog and releaselog |
 | cf2b4cf0016a9e986dfb8a3381c5d8ba7a066161 | 2021-11-05 | Chris Schubert | Updating changelog and releaselog |
