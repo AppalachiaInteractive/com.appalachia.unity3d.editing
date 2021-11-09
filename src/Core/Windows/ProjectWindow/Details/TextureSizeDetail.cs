@@ -23,7 +23,7 @@ namespace Appalachia.Editing.Core.Windows.ProjectWindow.Details
                 return string.Empty;
             }
 
-            return string.Format("{0}x{1}", texture.width, texture.height);
+            return $"{texture.width}x{texture.height}";
         }
 
         [InitializeOnLoadMethod]

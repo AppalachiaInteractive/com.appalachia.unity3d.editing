@@ -1,4 +1,5 @@
 using Appalachia.Core.Attributes.Editing;
+using Appalachia.Utility.Logging;
 using Appalachia.Utility.Reflection.Extensions;
 using UnityEditor;
 using UnityEngine;
@@ -72,17 +73,17 @@ namespace Appalachia.Editing.Drawers.Simple
 
         private void LogErrorMessage(SerializedProperty editorFoldout)
         {
-            Debug.LogError("<color=red><b>Possible improper usage of method button attribute!</b></color>");
+            AppaLog.Error("<color=red><b>Possible improper usage of method button attribute!</b></color>");
 #if NET_4_6
-            Debug.LogError($"Got field name: <b>{editorFoldout.name}</b>, Expected: <b>editorFoldout</b>");
-            Debug.LogError(
-                $"Please see <b>{"Usage"}</b> at <b><i><color=blue>{"https://github.com/GlassToeStudio/UnityMethodButtonAttribute/blob/master/README.md"}</color></i></b>"
+            AppaLog.Error($"Got field name: <b>{editorFoldout.name}</b>, Expected: <b>editorFoldout</b>");
+            AppaLog.Error(
+                "Please see <b>Usage</b> at <b><i><color=blue>https://github.com/GlassToeStudio/UnityMethodButtonAttribute/blob/master/README.md</color></i></b>"
             );
 #else
-            Debug.LogError(
+            AppaLog.Error(
                 string.Format("Got field name: <b>{0}</b>, Expected: <b>editorFoldout</b>", editorFoldout.name)
             );
-            Debug.LogError(
+            AppaLog.Error(
                 "Please see <b>\"Usage\"</b> at <b><i><color=blue>\"https://github.com/GlassToeStudio/UnityMethodButtonAttribute/blob/master/README.md \"</color></i></b>"
             );
 #endif

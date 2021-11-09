@@ -12,6 +12,7 @@ using System.IO;
 using System.Reflection;
 using System.Text;
 using Appalachia.CI.Integration;
+using Appalachia.Utility.Logging;
 using UnityEngine;
 #if UNITY_EDITOR && UNITY_2021_1_OR_NEWER
 using SystemInfo = UnityEngine.Device.SystemInfo; // To support Device Simulator on Unity 2021.1+
@@ -203,7 +204,7 @@ namespace Appalachia.Editing.Debugging.IngameDebugConsole
                 }
                 catch (Exception e)
                 {
-                    Debug.LogError(
+                    AppaLog.Error(
                         "Couldn't search assembly for [ConsoleMethod] attributes: " + assemblyName + "\n" + e
                     );
                 }
@@ -418,7 +419,7 @@ namespace Appalachia.Editing.Debugging.IngameDebugConsole
         {
             if (instance == null)
             {
-                Debug.LogError("Instance can't be null!");
+                AppaLog.Error("Instance can't be null!");
                 return;
             }
 
@@ -444,13 +445,13 @@ namespace Appalachia.Editing.Debugging.IngameDebugConsole
         {
             if (type == null)
             {
-                Debug.LogError("Parameter type can't be null!");
+                AppaLog.Error("Parameter type can't be null!");
                 return;
             }
 
             if (parseFunction == null)
             {
-                Debug.LogError("Parameter parseFunction can't be null!");
+                AppaLog.Error("Parameter parseFunction can't be null!");
                 return;
             }
 
@@ -543,7 +544,7 @@ namespace Appalachia.Editing.Debugging.IngameDebugConsole
 
                 if (matchingMethods.Count == 0)
                 {
-                    Debug.LogWarning(string.Concat("ERROR: can't find command '", _command, "'"));
+                   AppaLog.Warning(string.Concat("ERROR: can't find command '", _command, "'"));
                 }
                 else
                 {
@@ -574,7 +575,7 @@ namespace Appalachia.Editing.Debugging.IngameDebugConsole
                         stringBuilder.Append("\n    - ").Append(matchingMethods[i].signature);
                     }
 
-                    Debug.LogWarning(stringBuilder.ToString());
+                   AppaLog.Warning(stringBuilder.ToString());
 
                     // The log that lists method signature(s) for this command should automatically be expanded for better UX
                     if (DebugLogManager.instance)
@@ -634,7 +635,7 @@ namespace Appalachia.Editing.Debugging.IngameDebugConsole
 
             if (methodToExecute == null)
             {
-                Debug.LogWarning(
+               AppaLog.Warning(
                     !string.IsNullOrEmpty(errorMessage) ? errorMessage : "ERROR: something went wrong"
                 );
             }
@@ -647,11 +648,11 @@ namespace Appalachia.Editing.Debugging.IngameDebugConsole
                     // Print the returned value to the console
                     if ((result == null) || result.Equals(null))
                     {
-                        Debug.Log("Returned: null");
+                        AppaLog.Info("Returned: null");
                     }
                     else
                     {
-                        Debug.Log("Returned: " + result);
+                        AppaLog.Info("Returned: " + result);
                     }
                 }
             }
@@ -847,7 +848,7 @@ namespace Appalachia.Editing.Debugging.IngameDebugConsole
                 }
             }
 
-            Debug.Log(stringBuilder.ToString());
+            AppaLog.Info(stringBuilder.ToString());
 
             // After typing help, the log that lists all the commands should automatically be expanded for better UX
             if (DebugLogManager.instance)
@@ -872,7 +873,7 @@ namespace Appalachia.Editing.Debugging.IngameDebugConsole
 
             if (matchingMethods.Count == 0)
             {
-                Debug.LogWarning(string.Concat("ERROR: can't find command '", commandName, "'"));
+               AppaLog.Warning(string.Concat("ERROR: can't find command '", commandName, "'"));
             }
             else
             {
@@ -890,7 +891,7 @@ namespace Appalachia.Editing.Debugging.IngameDebugConsole
                     stringBuilder.Append("\n    - ").Append(matchingMethods[i].signature);
                 }
 
-                Debug.Log(stringBuilder.ToString());
+                AppaLog.Info(stringBuilder.ToString());
 
                 if (DebugLogManager.instance)
                 {
@@ -964,7 +965,7 @@ namespace Appalachia.Editing.Debugging.IngameDebugConsole
             stringBuilder.Append("Cubemap Array Textures: ")
                          .Append(SystemInfo.supportsCubemapArrayTextures ? "supported" : "not supported");
 
-            Debug.Log(stringBuilder.ToString());
+            AppaLog.Info(stringBuilder.ToString());
 
             // After typing sysinfo, the log that lists system information should automatically be expanded for better UX
             if (DebugLogManager.instance)
@@ -1632,7 +1633,7 @@ namespace Appalachia.Editing.Debugging.IngameDebugConsole
             );
             if (method == null)
             {
-                Debug.LogError(methodName + " does not exist in " + ownerType);
+                AppaLog.Error(methodName + " does not exist in " + ownerType);
                 return;
             }
 
@@ -1648,14 +1649,14 @@ namespace Appalachia.Editing.Debugging.IngameDebugConsole
         {
             if (string.IsNullOrEmpty(command))
             {
-                Debug.LogError("Command name can't be empty!");
+                AppaLog.Error("Command name can't be empty!");
                 return;
             }
 
             command = command.Trim();
             if (command.IndexOf(' ') >= 0)
             {
-                Debug.LogError("Command name can't contain whitespace: " + command);
+                AppaLog.Error("Command name can't contain whitespace: " + command);
                 return;
             }
 
@@ -1672,7 +1673,7 @@ namespace Appalachia.Editing.Debugging.IngameDebugConsole
             {
                 if (parameters[i].ParameterType.IsByRef)
                 {
-                    Debug.LogError("Command can't have 'out' or 'ref' parameters");
+                    AppaLog.Error("Command can't have 'out' or 'ref' parameters");
                     return;
                 }
 
@@ -1686,7 +1687,7 @@ namespace Appalachia.Editing.Debugging.IngameDebugConsole
                 }
                 else
                 {
-                    Debug.LogError(
+                    AppaLog.Error(
                         string.Concat(
                             "Parameter ",
                             parameters[i].Name,

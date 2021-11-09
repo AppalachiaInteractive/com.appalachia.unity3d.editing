@@ -5,6 +5,7 @@ using Appalachia.Editing.Debugging.Graphy.Audio;
 using Appalachia.Editing.Debugging.Graphy.Fps;
 using Appalachia.Editing.Debugging.Graphy.Ram;
 using Appalachia.Editing.Debugging.Graphy.Util;
+using Appalachia.Utility.Logging;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -695,7 +696,7 @@ namespace Appalachia.Editing.Debugging.Graphy
                     break;
 
                 default:
-                    Debug.LogWarning(
+                   AppaLog.Warning(
                         "[GraphyManager]::SetPreset - Tried to set a preset that is not supported."
                     );
                     break;

@@ -1,4 +1,5 @@
 using System;
+using Appalachia.Utility.Logging;
 using UnityEngine;
 
 namespace Appalachia.Editing.Debugging
@@ -150,7 +151,7 @@ namespace Appalachia.Editing.Debugging
             }
             catch (Exception ex)
             {
-                Debug.LogError(ex);
+                AppaLog.Error(ex);
             }
         }
     }

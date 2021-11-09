@@ -5,6 +5,7 @@ using Appalachia.Core.Behaviours;
 using Appalachia.Editing.Debugging.Graphy.Audio;
 using Appalachia.Editing.Debugging.Graphy.Fps;
 using Appalachia.Editing.Debugging.Graphy.Ram;
+using Appalachia.Utility.Logging;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -525,13 +526,13 @@ namespace Appalachia.Editing.Debugging.Graphy
                     switch (debugPacket.MessageType)
                     {
                         case MessageType.Log:
-                            Debug.Log(message);
+                            AppaLog.Info(message);
                             break;
                         case MessageType.Warning:
-                            Debug.LogWarning(message);
+                           AppaLog.Warning(message);
                             break;
                         case MessageType.Error:
-                            Debug.LogError(message);
+                            AppaLog.Error(message);
                             break;
                     }
                 }

@@ -3,6 +3,7 @@
 #region
 
 using System;
+using Appalachia.Utility.Logging;
 using Unity.Profiling;
 using UnityEditor;
 using UnityEngine;
@@ -895,7 +896,7 @@ namespace Appalachia.Editing.Debugging.Handle
             var gameObject = (GameObject) EditorGUIUtility.Load("SceneView/HandlesGO.fbx");
             if (!(bool) gameObject)
             {
-                Debug.Log("Couldn't find SceneView/HandlesGO.fbx");
+                AppaLog.Info("Couldn't find SceneView/HandlesGO.fbx");
             }
 
             gameObject.SetActive(false);

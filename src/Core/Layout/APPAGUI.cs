@@ -10,6 +10,11 @@ namespace Appalachia.Editing.Core.Layout
 {
     public static partial class APPAGUI
     {
+        public class Exit : Exception
+        {
+            
+        }
+        
         public enum GUILayoutOptionType
         {
             Width,
@@ -244,6 +249,8 @@ namespace Appalachia.Editing.Core.Layout
                     if (button.Button(isEnabled, backgroundColor: color))
                     {
                         buttonData.action(instance);
+
+                        throw new APPAGUI.Exit();
                     }
                 }
 

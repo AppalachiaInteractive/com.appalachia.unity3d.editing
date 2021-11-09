@@ -3,6 +3,7 @@ using Appalachia.Core.Extensions;
 using Appalachia.Editing.Assets.Context;
 using Appalachia.Editing.Core.Windows;
 using Appalachia.Utility.Extensions;
+using Appalachia.Utility.Logging;
 using Sirenix.OdinInspector;
 using UnityEditor;
 using UnityEngine;
@@ -29,7 +30,7 @@ namespace Appalachia.Editing.Assets.Windows
 
                 if (prefab == null)
                 {
-                    Debug.LogWarning($"Was not able to find prefab from tree {tree.name}.");
+                   AppaLog.Warning($"Was not able to find prefab from tree {tree.name}.");
                     break;
                 }
 
@@ -39,7 +40,7 @@ namespace Appalachia.Editing.Assets.Windows
 
                 if ((objs == null) || (objs.Length == 0))
                 {
-                    Debug.LogWarning(
+                   AppaLog.Warning(
                         $"Was not able to find objects for prefab {prefab.name} at [{assetPath}]."
                     );
                     break;
@@ -57,7 +58,7 @@ namespace Appalachia.Editing.Assets.Windows
                     }
                     else
                     {
-                        Debug.LogWarning($"Was not able to find mesh on object {obj.name} at {assetPath}");
+                       AppaLog.Warning($"Was not able to find mesh on object {obj.name} at {assetPath}");
                     }
                 }
 
@@ -69,7 +70,7 @@ namespace Appalachia.Editing.Assets.Windows
                 }
                 else
                 {
-                    Debug.LogWarning($"Was not able to find mesh on prefab {prefab.name}");
+                   AppaLog.Warning($"Was not able to find mesh on prefab {prefab.name}");
                 }
             }
         }

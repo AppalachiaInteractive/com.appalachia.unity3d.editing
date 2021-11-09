@@ -3,6 +3,7 @@ using Appalachia.Editing.Core.Layout;
 using Appalachia.Editing.Core.State;
 using Appalachia.Editing.Drawers.Contexts;
 using Appalachia.Utility.Colors;
+using Appalachia.Utility.Logging;
 using Sirenix.OdinInspector.Editor;
 using Sirenix.Utilities;
 using Sirenix.Utilities.Editor;
@@ -68,7 +69,7 @@ namespace Appalachia.Editing.Drawers
                     }
                     else
                     {
-                        Debug.LogError("No method found.");
+                        AppaLog.Error("No method found.");
                     }
                 }
 

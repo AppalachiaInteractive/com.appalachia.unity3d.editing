@@ -1,6 +1,6 @@
-using System;
 using Appalachia.Core.Aspects.Tracing;
 using Appalachia.Core.Preferences;
+using Appalachia.Editing.Core.Layout;
 using Appalachia.Editing.Core.Windows.PaneBased.Panes;
 using Unity.Profiling;
 using UnityEngine;
@@ -11,7 +11,7 @@ namespace Appalachia.Editing.Core.Windows.PaneBased
         where TW : AppalachiaPaneBasedWindow<TW, TP>
         where TP : AppalachiaWindowPane, new()
     {
-#region Profiling And Tracing Markers
+        #region Profiling And Tracing Markers
 
         private const string _PRF_PFX = nameof(AppalachiaPaneBasedWindow<TW, TP>) + ".";
         private const string _TRACE_PFX = nameof(AppalachiaPaneBasedWindow<TW, TP>) + ".";
@@ -22,9 +22,11 @@ namespace Appalachia.Editing.Core.Windows.PaneBased
         private static readonly TraceMarker _TRACE_Get = new(_TRACE_PFX + nameof(Get));
         private static readonly ProfilerMarker _PRF_Get = new(_PRF_PFX + nameof(Get));
 
-#endregion
+        #endregion
 
         public TP mainPane;
+
+        #region Event Functions
 
         private void OnEnable()
         {
@@ -42,26 +44,32 @@ namespace Appalachia.Editing.Core.Windows.PaneBased
             using (_TRACE_OnGUI.Auto())
             using (_PRF_OnGUI.Auto())
             {
-                if (mainPane == null)
+                try
                 {
-                    mainPane = new TP();
+                    if (mainPane == null)
+                    {
+                        mainPane = new TP();
+                    }
+
+                    if (!mainPane.FullyInitialized && !mainPane.PaneIsInitializing)
+                    {
+                        ExecuteCoroutine(() => mainPane.Initialize());
+                    }
+
+                    if (mainPane.window == null)
+                    {
+                        mainPane.window = this;
+                    }
+
+                    mainPane.OnDrawGUI();
+
+                    if (GUILayout.Button("Close"))
+                    {
+                        CloseWindow();
+                    }
                 }
-
-                if (!mainPane.FullyInitialized && !mainPane.PaneIsInitializing)
+                catch (APPAGUI.Exit)
                 {
-                    ExecuteCoroutine(() => mainPane.Initialize());
-                }
-
-                if (mainPane.window == null)
-                {
-                    mainPane.window = this;
-                }
-
-                mainPane.OnDrawGUI();
-
-                if (GUILayout.Button("Close"))
-                {
-                    CloseWindow();
                 }
             }
         }
@@ -70,6 +78,8 @@ namespace Appalachia.Editing.Core.Windows.PaneBased
         {
             mainPane?.OnInspectorUpdate();
         }
+
+        #endregion
 
         public static TW Get(string title)
         {

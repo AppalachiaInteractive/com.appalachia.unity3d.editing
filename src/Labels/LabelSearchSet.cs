@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using Appalachia.CI.Integration.Assets;
 using Appalachia.Core.Attributes.Editing;
+using Appalachia.Utility.Logging;
 using Sirenix.OdinInspector;
 using UnityEngine;
 using Object = UnityEngine.Object;
@@ -152,7 +153,7 @@ namespace Appalachia.Editing.Labels
                 }
                 catch (Exception ex)
                 {
-                    Debug.LogError(ex);
+                    AppaLog.Error(ex);
                     return null;
                 }
             }
@@ -229,7 +230,7 @@ namespace Appalachia.Editing.Labels
                 if (log)
                 {
                     _logBuilder.AppendLine("  No search terms.");
-                    Debug.Log($"FAIL: {_logBuilder}");
+                    AppaLog.Info($"FAIL: {_logBuilder}");
                 }
 
                 return false;
@@ -286,7 +287,7 @@ namespace Appalachia.Editing.Labels
             {
                 if (log)
                 {
-                    Debug.LogWarning($"FAIL: {_logBuilder}");
+                   AppaLog.Warning($"FAIL: {_logBuilder}");
                 }
 
                 return false;
@@ -297,7 +298,7 @@ namespace Appalachia.Editing.Labels
                 if (log)
                 {
                     _logBuilder.AppendLine("  No exclusion terms.");
-                    Debug.Log($"PASS: {_logBuilder}");
+                    AppaLog.Info($"PASS: {_logBuilder}");
                 }
 
                 return true;
@@ -348,11 +349,11 @@ namespace Appalachia.Editing.Labels
 
                 if (excluded)
                 {
-                    Debug.LogWarning($"FAIL: {_logBuilder}");
+                   AppaLog.Warning($"FAIL: {_logBuilder}");
                 }
                 else
                 {
-                    Debug.Log($"PASS: {_logBuilder}");
+                    AppaLog.Info($"PASS: {_logBuilder}");
                 }
             }
 

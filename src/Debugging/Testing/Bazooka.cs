@@ -10,6 +10,7 @@ using Appalachia.Simulation.Core;
 using Appalachia.Utility.Colors;
 using Appalachia.Utility.Constants;
 using Appalachia.Utility.Extensions;
+using Appalachia.Utility.Logging;
 using Sirenix.OdinInspector;
 using Unity.Profiling;
 using UnityEditor;
@@ -517,7 +518,7 @@ namespace Appalachia.Editing.Debugging.Testing
 
                 if ((c == null) || (rb == null))
                 {
-                    Debug.LogWarning("No collider or rigidbody!");
+                   AppaLog.Warning("No collider or rigidbody!");
                     return;
                 }
 

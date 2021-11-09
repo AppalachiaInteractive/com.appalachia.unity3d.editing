@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Text;
 using Appalachia.CI.Integration.FileSystem;
 using Appalachia.Core.Behaviours;
+using Appalachia.Utility.Logging;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -458,10 +459,10 @@ namespace Appalachia.Editing.Debugging.IngameDebugConsole
 #endif*/
 
             //Debug.LogAssertion( "assert" );
-            //Debug.LogError( "error" );
-            //Debug.LogException( new System.IO.EndOfStreamException() );
-            //Debug.LogWarning( "warning" );
-            //Debug.Log( "log" );
+            //AppaLog.Error( "error" );
+            //AppaLog.Exception( new System.IO.EndOfStreamException() );
+            //AppaLog.Warning( "warning" );
+            //AppaLog.Info( "log" );
         }
 
         private void OnDisable()
@@ -1545,7 +1546,7 @@ namespace Appalachia.Editing.Debugging.IngameDebugConsole
         private void SaveLogsToFile(string filePath)
         {
             AppaFile.WriteAllText(filePath, GetAllLogs());
-            Debug.Log("Logs saved to: " + filePath);
+            AppaLog.Info("Logs saved to: " + filePath);
         }
 
         // If a cutout is intersecting with debug window on notch screens, shift the window downwards

@@ -4,6 +4,7 @@ using Appalachia.Core.Attributes.Editing;
 using Appalachia.Editing.Core.Layout;
 using Appalachia.Editing.Core.State;
 using Appalachia.Editing.Drawers.Contexts;
+using Appalachia.Utility.Logging;
 using Sirenix.OdinInspector.Editor;
 using Sirenix.Utilities;
 using Sirenix.Utilities.Editor;
@@ -152,7 +153,7 @@ namespace Appalachia.Editing.Drawers
                 }
                 else
                 {
-                    Debug.LogError(logErrorString);
+                    AppaLog.Error(logErrorString);
                 }
             }
         }

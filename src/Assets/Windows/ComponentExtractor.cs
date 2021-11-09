@@ -6,6 +6,7 @@ using Appalachia.Core.Extensions;
 using Appalachia.Editing.Core.Common;
 using Appalachia.Editing.Core.Windows;
 using Appalachia.Utility.Extensions;
+using Appalachia.Utility.Logging;
 using Sirenix.OdinInspector;
 using TreeEditor;
 using UnityEditor;
@@ -171,7 +172,7 @@ namespace Appalachia.Editing.Assets.Windows
 
         private void SaveAsset(Object objectToSave, string path)
         {
-            Debug.Log($"Saving {objectToSave.name} at [{path}].");
+            AppaLog.Info($"Saving {objectToSave.name} at [{path}].");
 
             try
             {

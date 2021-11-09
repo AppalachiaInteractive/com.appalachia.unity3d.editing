@@ -29,7 +29,7 @@ namespace Appalachia.Editing.Core.Windows.ProjectWindow.Details
                     numKeys += curve.length;
                 }
 
-                return string.Format("{0:D}", numKeys);
+                return $"{numKeys:D}";
             }
 
             return string.Empty;

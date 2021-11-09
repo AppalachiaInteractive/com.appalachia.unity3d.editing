@@ -21,7 +21,7 @@ namespace Appalachia.Editing.Core.Windows.ProjectWindow.Details
             var clip = AssetDatabaseManager.LoadAssetAtPath<AnimationClip>(assetPath);
             if (clip != null)
             {
-                return string.Format("{0:F3}", clip.length);
+                return $"{clip.length:F3}";
             }
 
             return string.Empty;

@@ -5,6 +5,7 @@
 using System;
 using Appalachia.Core.Behaviours;
 using Appalachia.Core.Labels;
+using Appalachia.Utility.Logging;
 using Unity.Profiling;
 using UnityEngine;
 
@@ -125,7 +126,7 @@ namespace Appalachia.Editing.Core.Behaviours
 
                         if (hasOtherComponentThatDoesNotExcludeObject)
                         {
-                            Debug.LogError("EditorOnly Object CONFLICT!", this);
+                            AppaLog.Error("EditorOnly Object CONFLICT!", this);
                         }
                         else
                         {

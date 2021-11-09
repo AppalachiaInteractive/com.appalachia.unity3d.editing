@@ -1,6 +1,7 @@
 using Appalachia.CI.Constants;
 using Appalachia.CI.Integration.Assets;
 using Appalachia.Editing.Core.Windows;
+using Appalachia.Utility.Logging;
 using UnityEditor;
 using UnityEngine;
 
@@ -85,7 +86,7 @@ namespace Appalachia.Editing.Assets.Windows
                 }
             }
 
-            Debug.Log(
+            AppaLog.Info(
                 $"Searched {_goCount} GameObjects, {_componentsCount} components, found {_missingCount} missing"
             );
         }
@@ -109,14 +110,14 @@ namespace Appalachia.Editing.Assets.Windows
                         t = parent;
                     }
 
-                    Debug.Log(s + " has an empty script attached in position: " + i, g);
+                    AppaLog.Info(s + " has an empty script attached in position: " + i, g);
                 }
             }
 
             // Now recurse through each child GO (if there are any):
             foreach (Transform childT in g.transform)
             {
-                //Debug.Log("Searching " + childT.name  + " " );
+                //AppaLog.Info("Searching " + childT.name  + " " );
                 FindInGO(childT.gameObject);
             }
         }
@@ -132,7 +133,7 @@ namespace Appalachia.Editing.Assets.Windows
                 FindInGO(g);
             }
 
-            Debug.Log(
+            AppaLog.Info(
                 $"Searched {_goCount} GameObjects, {_componentsCount} components, found {_missingCount} missing"
             );
         }

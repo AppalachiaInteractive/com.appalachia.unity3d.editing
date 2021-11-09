@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Appalachia.Utility.Logging;
 using Sirenix.OdinInspector;
 using UnityEngine;
 
@@ -122,7 +123,7 @@ namespace Appalachia.Editing.Debugging
             }
             catch (Exception ex)
             {
-                Debug.LogError(ex);
+                AppaLog.Error(ex);
             }
         }
     }

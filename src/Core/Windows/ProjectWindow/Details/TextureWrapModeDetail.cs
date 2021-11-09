@@ -28,7 +28,7 @@ namespace Appalachia.Editing.Core.Windows.ProjectWindow.Details
                 return _wrapModeStrings[wu];
             }
 
-            return string.Format("{0}|{1}", _wrapModeStrings[wu], _wrapModeStrings[wv]);
+            return $"{_wrapModeStrings[wu]}|{_wrapModeStrings[wv]}";
         }
 
         [InitializeOnLoadMethod]

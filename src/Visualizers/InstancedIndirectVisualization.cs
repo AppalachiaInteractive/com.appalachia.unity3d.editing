@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Appalachia.Core.Attributes;
 using Appalachia.Editing.Core.Behaviours;
+using Appalachia.Utility.Logging;
 using Sirenix.OdinInspector;
 using Unity.Collections.LowLevel.Unsafe;
 using UnityEngine;
@@ -94,7 +95,7 @@ namespace Appalachia.Editing.Visualizers
 
             if ((visualizationMaterial == null) || !visualizationMaterial.enableInstancing)
             {
-                Debug.LogError("Visualization material must be assigned with one with instancing enabled.");
+                AppaLog.Error("Visualization material must be assigned with one with instancing enabled.");
 
                 return;
             }

@@ -10,6 +10,7 @@ using Appalachia.Core.Math.Stats.Implementations;
 using Appalachia.Editing.Assets;
 using Appalachia.Editing.Core;
 using Appalachia.Utility.Extensions;
+using Appalachia.Utility.Logging;
 using Sirenix.OdinInspector;
 using UnityEditor;
 using UnityEngine;
@@ -326,8 +327,8 @@ namespace Appalachia.Editing.Labels
 
                     //var median = statsTracker[termIndex].Median;
 
-                    //Debug.Log($"[{term}]:  [ {count} ]  ||  Min: {min:F1}  Max: {max:F1}  Mean: {average:F1}  Median: {median:F1}");
-                    Debug.Log(
+                    //AppaLog.Info($"[{term}]:  [ {count} ]  ||  Min: {min:F1}  Max: {max:F1}  Mean: {average:F1}  Median: {median:F1}");
+                    AppaLog.Info(
                         $"[{term}]:  [ {count} ]  ||  Min: {min:F1}  Max: {max:F1}  Mean: {average:F1}"
                     );
                 }

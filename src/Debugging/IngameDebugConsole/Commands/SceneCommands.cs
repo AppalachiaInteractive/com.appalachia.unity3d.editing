@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using Appalachia.Utility.Logging;
+using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.Scripting;
 
@@ -52,7 +53,7 @@ namespace Appalachia.Editing.Debugging.IngameDebugConsole.Commands
         {
             if (SceneManager.GetSceneByName(sceneName).IsValid())
             {
-                Debug.Log("Scene " + sceneName + " is already loaded");
+                AppaLog.Info("Scene " + sceneName + " is already loaded");
                 return;
             }
 
