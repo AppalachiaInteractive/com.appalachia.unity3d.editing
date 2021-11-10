@@ -15,6 +15,7 @@ C:/Users/Chris/com.appalachia/unity3d/appa/Assets/Appalachia.Editing
 `0.2.0`
 | Hash | Date | Author | Changes |
 |------|------|--------|---------|
+| 1c9a048a61b8d3dc7c8fe5167c33a7405f5f07af | 2021-11-09 | Chris Schubert | Updating changelog and releaselog |
 | f6043c23eef165beae88c62c87cff94bbdc3a758 | 2021-11-09 | Chris Schubert | APPAGUI updates and Debugger stepthroughs |
 | b7e281dee37d6cec054df4243646db83a85dc16d | 2021-11-08 | Chris Schubert | Updating changelog and releaselog |
 | eb65fb48915f6b38566db9ad8b810d6771fb4ea1 | 2021-11-08 | Chris Schubert | Upgrading to new logging library |
