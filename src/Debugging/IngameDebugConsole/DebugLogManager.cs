@@ -1,6 +1,4 @@
-﻿#if ENABLE_INPUT_SYSTEM && !ENABLE_LEGACY_INPUT_MANAGER
-#endif
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Text;
@@ -407,12 +405,8 @@ namespace Appalachia.Editing.Debugging.IngameDebugConsole
 
             nullPointerEventData = new PointerEventData(null);
 
-
-#if ENABLE_INPUT_SYSTEM && !ENABLE_LEGACY_INPUT_MANAGER
-
             // On new Input System, scroll sensitivity is much higher than legacy Input system
             logItemsScrollRect.scrollSensitivity *= 0.25f;
-#endif
         }
 
         public void Toggle()
@@ -449,19 +443,6 @@ namespace Appalachia.Editing.Debugging.IngameDebugConsole
                 "Saves logs to the specified file",
                 SaveLogsToFile
             );
-
-/*#if ENABLE_INPUT_SYSTEM && !ENABLE_LEGACY_INPUT_MANAGER
-            if (toggleWithKey)
-            {
-                toggleBinding.Enable();
-            }
-#endif*/
-
-            //Debug.LogAssertion( "assert" );
-            //AppaLog.Error( "error" );
-            //AppaLog.Exception( new System.IO.EndOfStreamException() );
-            //AppaLog.Warn( "warning" );
-            //AppaLog.Info( "log" );
         }
 
         private void OnDisable()
@@ -475,13 +456,6 @@ namespace Appalachia.Editing.Debugging.IngameDebugConsole
 #endif
 
             DebugLogConsole.RemoveCommand("logs.save");
-
-/*#if ENABLE_INPUT_SYSTEM && !ENABLE_LEGACY_INPUT_MANAGER
-            if (toggleBinding.enabled)
-            {
-                toggleBinding.Disable();
-            }
-#endif*/
         }
 
         private void Start()
@@ -520,27 +494,7 @@ namespace Appalachia.Editing.Debugging.IngameDebugConsole
         {
             screenDimensionsChanged = true;
         }
-
-#if !ENABLE_INPUT_SYSTEM || ENABLE_LEGACY_INPUT_MANAGER
-		private void Update()
-		{
-			// Toggling the console with toggleKey is handled in Update instead of LateUpdate because
-			// when we hide the console, we don't want the commandInputField to capture the toggleKey.
-			// InputField captures input in LateUpdate so deactivating it in Update ensures that
-			// no further input is captured
-			if( toggleWithKey )
-			{
-				if( Input.GetKeyDown( toggleKey ) )
-				{
-					if( isLogWindowVisible )
-						HideLogWindow();
-					else
-						ShowLogWindow();
-				}
-			}
-		}
-#endif
-
+        
         private void LateUpdate()
         {
 #if UNITY_EDITOR
@@ -703,15 +657,9 @@ namespace Appalachia.Editing.Debugging.IngameDebugConsole
 
             if (isLogWindowVisible && commandInputField.isFocused && (commandHistory.Count > 0))
             {
-#if ENABLE_INPUT_SYSTEM && !ENABLE_LEGACY_INPUT_MANAGER
-                if (Keyboard.current != null)
-#endif
+                if (Keyboard.current != null) 
                 {
-#if ENABLE_INPUT_SYSTEM && !ENABLE_LEGACY_INPUT_MANAGER
                     if (Keyboard.current[Key.UpArrow].wasPressedThisFrame)
-#else
-					if( Input.GetKeyDown( KeyCode.UpArrow ) )
-#endif
                     {
                         if (commandHistoryIndex == -1)
                         {
@@ -726,12 +674,9 @@ namespace Appalachia.Editing.Debugging.IngameDebugConsole
                         commandInputField.text = commandHistory[commandHistoryIndex];
                         commandInputField.caretPosition = commandInputField.text.Length;
                     }
-#if ENABLE_INPUT_SYSTEM && !ENABLE_LEGACY_INPUT_MANAGER
                     else if (Keyboard.current[Key.DownArrow].wasPressedThisFrame &&
                              (commandHistoryIndex != -1))
-#else
-					else if( Input.GetKeyDown( KeyCode.DownArrow ) && commandHistoryIndex != -1 )
-#endif
+
                     {
                         if (++commandHistoryIndex < commandHistory.Count)
                         {
