@@ -9,9 +9,7 @@ using Appalachia.Utility.Logging;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-#if GRAPHY_NEW_INPUT
 
-#endif
 
 namespace Appalachia.Editing.Debugging.Graphy
 {
@@ -696,7 +694,7 @@ namespace Appalachia.Editing.Debugging.Graphy
                     break;
 
                 default:
-                   AppaLog.Warning(
+                   AppaLog.Warn(
                         "[GraphyManager]::SetPreset - Tried to set a preset that is not supported."
                     );
                     break;

@@ -8,10 +8,12 @@ namespace Appalachia.Editing.Debugging.Graphy
 {
     internal static partial class PKG
     {
-        public const int Priority = -302000;
+        public const int Priority = -304000;
         public const string Name = "Debugging/Graphy";
         public const string Prefix = Root + Name + "/";
         public const string Root = "Appalachia/";
+        public const string Version = "0.2.0";
+        public const string BuildDate = "2021-11-12T21:38:46.6395459Z";
         
         public static partial class Prefs
         {
@@ -31,14 +33,14 @@ namespace Appalachia.Editing.Debugging.Graphy
                 public const string Base =  "Assets/" + Prefix;
             }
 
-            public static partial class GameObject
+            public static partial class GameObjects
             {
                 public const int Priority = PKG.Priority;
                 public const string Base = "GameObject/" + Prefix;
                     
                 public static partial class Create
                 {
-                    public const int Priority = GameObject.Priority + 0;
+                    public const int Priority = GameObjects.Priority + 0;
                     public const string Base =  "GameObject/Create/" + Prefix;
                 }
             }

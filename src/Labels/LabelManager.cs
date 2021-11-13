@@ -1,18 +1,17 @@
+#if UNITY_EDITOR
+
 #region
 
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using Appalachia.CI.Integration.Assets;
-using Appalachia.Core.Extensions;
 using Appalachia.Core.Math.Stats;
 using Appalachia.Core.Math.Stats.Implementations;
-using Appalachia.Editing.Assets;
 using Appalachia.Editing.Core;
 using Appalachia.Utility.Extensions;
 using Appalachia.Utility.Logging;
 using Sirenix.OdinInspector;
-using UnityEditor;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
@@ -149,9 +148,7 @@ namespace Appalachia.Editing.Labels
 
                         labelDatas.Clear();
                         return;
-                    }
-
-                    ;
+                    };
 
                     progress.Increment1AndShowProgressBasic();
 
@@ -203,6 +200,7 @@ namespace Appalachia.Editing.Labels
             }
         }
 
+#if UNITY_EDITOR
         [UnityEditor.MenuItem(PKG.Menu.Appalachia.Tools.Base + "Label Assembly Prefabs", priority = -1050)]
         public static void MENU_LabelAssemblyPrefabs()
         {
@@ -226,6 +224,7 @@ namespace Appalachia.Editing.Labels
         {
             ProcessLabelAssignments(LabelSets.instance.vegetations);
         }
+#endif
 
         public static void RegisterEnumTypeLabels<T>(T value, string label)
         {
@@ -249,6 +248,7 @@ namespace Appalachia.Editing.Labels
             }
         }
 
+#if UNITY_EDITOR
         private static void ProcessLabelAssignments(LabelAssignmentCollection collection)
         {
             var assets = AssetDatabaseManager.FindAssets($"l:{collection.baseTerm} t:Prefab");
@@ -334,5 +334,8 @@ namespace Appalachia.Editing.Labels
                 }
             }
         }
+#endif
     }
 }
+
+#endif

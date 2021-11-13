@@ -1,14 +1,11 @@
 ﻿using System.Diagnostics;
 using System.Text.RegularExpressions;
 using Appalachia.CI.Integration.Assets;
-using UnityEditor;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-#if UNITY_EDITOR
 
-#endif
 
 // A UI element to show information about a debug entry
 namespace Appalachia.Editing.Debugging.IngameDebugConsole
@@ -187,7 +184,7 @@ namespace Appalachia.Editing.Debugging.IngameDebugConsole
                     var line = logEntry.stackTrace.Substring(regex.Index + 4, regex.Length - 5);
                     var lineSeparator = line.IndexOf(':');
                     var script =
-                        AssetDatabaseManager.LoadAssetAtPath<MonoScript>(line.Substring(0, lineSeparator));
+                        AssetDatabaseManager.LoadAssetAtPath<UnityEditor.MonoScript>(line.Substring(0, lineSeparator));
                     if (script != null)
                     {
                         AssetDatabaseManager.OpenAsset(script, int.Parse(line.Substring(lineSeparator + 1)));

@@ -1,6 +1,6 @@
-﻿using System;
+﻿#if UNITY_EDITOR
+using System;
 using System.Collections.Generic;
-using UnityEditor;
 using UnityEngine;
 
 namespace Appalachia.Editing.Core.Menus
@@ -11,20 +11,20 @@ namespace Appalachia.Editing.Core.Menus
         {
             try
             {
-                AssetDatabase.StartAssetEditing();
+                UnityEditor.AssetDatabase.StartAssetEditing();
 
                 ForEachComponent(action);
             }
             finally
             {
-                AssetDatabase.StopAssetEditing();
-                AssetDatabase.Refresh();
+                UnityEditor.AssetDatabase.StopAssetEditing();
+                UnityEditor.AssetDatabase.Refresh();
             }
         }
 
         public static void ForEachComponent<T>(Action<T> action)
         {
-            var objs = Selection.objects;
+            var objs = UnityEditor.Selection.objects;
 
             foreach (var obj in objs)
             {
@@ -50,12 +50,12 @@ namespace Appalachia.Editing.Core.Menus
 
         public static void ForEachEmbedded<T>(Action<T> action)
         {
-            var objs = Selection.objects;
+            var objs = UnityEditor.Selection.objects;
 
             foreach (var obj in objs)
             {
-                var path = AssetDatabase.GetAssetPath(obj);
-                var subAssets = AssetDatabase.LoadAllAssetRepresentationsAtPath(path);
+                var path = UnityEditor.AssetDatabase.GetAssetPath(obj);
+                var subAssets = UnityEditor.AssetDatabase.LoadAllAssetRepresentationsAtPath(path);
 
                 if (subAssets.Length == 0)
                 {
@@ -74,12 +74,12 @@ namespace Appalachia.Editing.Core.Menus
 
         public static void ForEachEmbeddedAll<T>(Action<List<T>> action)
         {
-            var objs = Selection.objects;
+            var objs = UnityEditor.Selection.objects;
 
             foreach (var obj in objs)
             {
-                var path = AssetDatabase.GetAssetPath(obj);
-                var subAssets = AssetDatabase.LoadAllAssetRepresentationsAtPath(path);
+                var path = UnityEditor.AssetDatabase.GetAssetPath(obj);
+                var subAssets = UnityEditor.AssetDatabase.LoadAllAssetRepresentationsAtPath(path);
 
                 if (subAssets.Length == 0)
                 {
@@ -104,7 +104,7 @@ namespace Appalachia.Editing.Core.Menus
 
         public static IEnumerable<T> ForEachGameObjectSelection<T>(Func<GameObject, T> function)
         {
-            var objs = Selection.gameObjects;
+            var objs = UnityEditor.Selection.gameObjects;
 
             foreach (var obj in objs)
             {
@@ -114,7 +114,7 @@ namespace Appalachia.Editing.Core.Menus
 
         public static void ForEachGameObjectSelection(Action<GameObject> action)
         {
-            var objs = Selection.gameObjects;
+            var objs = UnityEditor.Selection.gameObjects;
 
             foreach (var obj in objs)
             {
@@ -123,3 +123,5 @@ namespace Appalachia.Editing.Core.Menus
         }
     }
 }
+
+#endif

@@ -5,7 +5,6 @@
 using System;
 using Appalachia.Utility.Logging;
 using Unity.Profiling;
-using UnityEditor;
 using UnityEngine;
 using UnityEngine.Rendering;
 
@@ -152,46 +151,46 @@ namespace Appalachia.Editing.Debugging.Handle
             using (_PRF_DrawHandleLine.Auto())
             {
                 var capID = GUIUtility.GetControlID(FocusType.Passive);
-                var handleSize = HandleUtility.GetHandleSize(end) * capSize;
+                var handleSize = UnityEditor.HandleUtility.GetHandleSize(end) * capSize;
                 var handleRotation = Quaternion.LookRotation(forward, up);
 
-                var originalColor = Handles.color;
+                var originalColor = UnityEditor.Handles.color;
 
-                Handles.color = color;
+               UnityEditor.Handles.color = color;
 
                 DrawLine(start, end, color);
 
                 switch (capType)
                 {
                     case HandleCapType.Arrow:
-                        Handles.ArrowHandleCap(capID, end, handleRotation, handleSize, EventType.Repaint);
+                       UnityEditor.Handles.ArrowHandleCap(capID, end, handleRotation, handleSize, EventType.Repaint);
                         break;
                     case HandleCapType.Circle:
-                        Handles.CircleHandleCap(capID, end, handleRotation, handleSize, EventType.Repaint);
+                       UnityEditor.Handles.CircleHandleCap(capID, end, handleRotation, handleSize, EventType.Repaint);
                         break;
                     case HandleCapType.Cone:
-                        Handles.ConeHandleCap(capID, end, handleRotation, handleSize, EventType.Repaint);
+                       UnityEditor.Handles.ConeHandleCap(capID, end, handleRotation, handleSize, EventType.Repaint);
                         break;
                     case HandleCapType.Cube:
-                        Handles.CubeHandleCap(capID, end, handleRotation, handleSize, EventType.Repaint);
+                       UnityEditor.Handles.CubeHandleCap(capID, end, handleRotation, handleSize, EventType.Repaint);
                         break;
                     case HandleCapType.Cylinder:
-                        Handles.CylinderHandleCap(capID, end, handleRotation, handleSize, EventType.Repaint);
+                       UnityEditor.Handles.CylinderHandleCap(capID, end, handleRotation, handleSize, EventType.Repaint);
                         break;
                     case HandleCapType.Dot:
-                        Handles.DotHandleCap(capID, end, handleRotation, handleSize, EventType.Repaint);
+                       UnityEditor.Handles.DotHandleCap(capID, end, handleRotation, handleSize, EventType.Repaint);
                         break;
                     case HandleCapType.Rectangle:
-                        Handles.RectangleHandleCap(capID, end, handleRotation, handleSize, EventType.Repaint);
+                       UnityEditor.Handles.RectangleHandleCap(capID, end, handleRotation, handleSize, EventType.Repaint);
                         break;
                     case HandleCapType.Sphere:
-                        Handles.SphereHandleCap(capID, end, handleRotation, handleSize, EventType.Repaint);
+                       UnityEditor.Handles.SphereHandleCap(capID, end, handleRotation, handleSize, EventType.Repaint);
                         break;
                     default:
                         throw new ArgumentOutOfRangeException(nameof(capType), capType, null);
                 }
 
-                Handles.color = originalColor;
+               UnityEditor.Handles.color = originalColor;
             }
         }
 
@@ -212,9 +211,9 @@ namespace Appalachia.Editing.Debugging.Handle
             {
                 using (HandleState.New(color, false, CompareFunction.LessEqual))
                 {
-                    Handles.DrawLine(pos1, pos2);
-                    Handles.zTest = CompareFunction.Greater;
-                    Handles.color = color * zFailAmount;
+                   UnityEditor.Handles.DrawLine(pos1, pos2);
+                   UnityEditor.Handles.zTest = CompareFunction.Greater;
+                   UnityEditor.Handles.color = color * zFailAmount;
 
                     //Handles.DrawLine(pos1, pos2);
                 }
@@ -238,7 +237,7 @@ namespace Appalachia.Editing.Debugging.Handle
             {
                 using (HandleState.New(color, false))
                 {
-                    Handles.DrawSolidDisc(center, normal, radius);
+                   UnityEditor.Handles.DrawSolidDisc(center, normal, radius);
                 }
             }
         }
@@ -262,13 +261,13 @@ namespace Appalachia.Editing.Debugging.Handle
             {
                 using (HandleState.New(color, false, CompareFunction.LessEqual))
                 {
-                    Handles.DrawSolidDisc(center, normal, radius);
+                   UnityEditor.Handles.DrawSolidDisc(center, normal, radius);
 
                     if (ignoreZFail)
                     {
-                        Handles.zTest = CompareFunction.Greater;
-                        Handles.color = color * zFailAmount;
-                        Handles.DrawSolidDisc(center, normal, radius);
+                       UnityEditor.Handles.zTest = CompareFunction.Greater;
+                       UnityEditor.Handles.color = color * zFailAmount;
+                       UnityEditor.Handles.DrawSolidDisc(center, normal, radius);
                     }
                 }
             }
@@ -312,10 +311,10 @@ namespace Appalachia.Editing.Debugging.Handle
             {
                 using (HandleState.New(color, false, CompareFunction.LessEqual))
                 {
-                    Handles.SphereHandleCap(0, center, Quaternion.identity, radius, EventType.Layout);
-                    Handles.zTest = CompareFunction.Greater;
-                    Handles.color = color * zFailAmount;
-                    Handles.SphereHandleCap(0, center, Quaternion.identity, radius, EventType.Layout);
+                   UnityEditor.Handles.SphereHandleCap(0, center, Quaternion.identity, radius, EventType.Layout);
+                   UnityEditor.Handles.zTest = CompareFunction.Greater;
+                   UnityEditor.Handles.color = color * zFailAmount;
+                   UnityEditor.Handles.SphereHandleCap(0, center, Quaternion.identity, radius, EventType.Layout);
                 }
             }
         }
@@ -332,10 +331,10 @@ namespace Appalachia.Editing.Debugging.Handle
             {
                 using (HandleState.New(color, false, CompareFunction.LessEqual))
                 {
-                    Handles.DrawWireArc(center, normal, from, angle, radius);
-                    Handles.zTest = CompareFunction.Greater;
-                    Handles.color = color * zFailAmount;
-                    Handles.DrawWireArc(center, normal, from, angle, radius);
+                   UnityEditor.Handles.DrawWireArc(center, normal, from, angle, radius);
+                   UnityEditor.Handles.zTest = CompareFunction.Greater;
+                   UnityEditor.Handles.color = color * zFailAmount;
+                   UnityEditor.Handles.DrawWireArc(center, normal, from, angle, radius);
                 }
             }
         }
@@ -436,12 +435,12 @@ namespace Appalachia.Editing.Debugging.Handle
 
                     using (_PRF_DrawWireCubeMasked_ZTest.Auto())
                     {
-                        Handles.zTest = CompareFunction.Greater;
+                       UnityEditor.Handles.zTest = CompareFunction.Greater;
                     }
 
                     using (_PRF_DrawWireCubeMasked_Color.Auto())
                     {
-                        Handles.color = color * zFailAmount;
+                       UnityEditor.Handles.color = color * zFailAmount;
                     }
 
                     using (_PRF_DrawWireCubeMasked_InternalDraw.Auto())
@@ -458,7 +457,7 @@ namespace Appalachia.Editing.Debugging.Handle
             {
                 using (HandleState.New(color, false))
                 {
-                    Handles.DrawWireDisc(center, normal, radius);
+                   UnityEditor.Handles.DrawWireDisc(center, normal, radius);
                 }
             }
         }
@@ -482,12 +481,12 @@ namespace Appalachia.Editing.Debugging.Handle
             {
                 using (HandleState.New(color, false, CompareFunction.LessEqual))
                 {
-                    Handles.DrawWireDisc(center, normal, radius);
+                   UnityEditor.Handles.DrawWireDisc(center, normal, radius);
                     if (ignoreZFail)
                     {
-                        Handles.zTest = CompareFunction.Greater;
-                        Handles.color = color * zFailAmount;
-                        Handles.DrawWireDisc(center, normal, radius);
+                       UnityEditor.Handles.zTest = CompareFunction.Greater;
+                       UnityEditor.Handles.color = color * zFailAmount;
+                       UnityEditor.Handles.DrawWireDisc(center, normal, radius);
                     }
                 }
             }
@@ -613,14 +612,14 @@ namespace Appalachia.Editing.Debugging.Handle
             {
                 using (HandleState.New(color, false, CompareFunction.LessEqual))
                 {
-                    Handles.DrawWireDisc(center, Vector3.up,      radius);
-                    Handles.DrawWireDisc(center, Vector3.right,   radius);
-                    Handles.DrawWireDisc(center, Vector3.forward, radius);
-                    Handles.zTest = CompareFunction.Greater;
-                    Handles.color = color * zFailAmount;
-                    Handles.DrawWireDisc(center, Vector3.up,      radius);
-                    Handles.DrawWireDisc(center, Vector3.right,   radius);
-                    Handles.DrawWireDisc(center, Vector3.forward, radius);
+                   UnityEditor.Handles.DrawWireDisc(center, Vector3.up,      radius);
+                   UnityEditor.Handles.DrawWireDisc(center, Vector3.right,   radius);
+                   UnityEditor.Handles.DrawWireDisc(center, Vector3.forward, radius);
+                   UnityEditor.Handles.zTest = CompareFunction.Greater;
+                   UnityEditor.Handles.color = color * zFailAmount;
+                   UnityEditor.Handles.DrawWireDisc(center, Vector3.up,      radius);
+                   UnityEditor.Handles.DrawWireDisc(center, Vector3.right,   radius);
+                   UnityEditor.Handles.DrawWireDisc(center, Vector3.forward, radius);
                 }
             }
         }
@@ -633,7 +632,7 @@ namespace Appalachia.Editing.Debugging.Handle
             GUI.contentColor = textColor;
             GUI.backgroundColor = backgroundColor;
 
-            Handles.Label(position, TempContent(text), BaseLabelStyle);
+           UnityEditor.Handles.Label(position, TempContent(text), BaseLabelStyle);
 
             GUI.backgroundColor = bg;
             GUI.contentColor = cc;
@@ -647,7 +646,7 @@ namespace Appalachia.Editing.Debugging.Handle
             GUI.contentColor = textColor;
             GUI.backgroundColor = backgroundColor;
 
-            Handles.Label(position, TempContent(image), BaseLabelStyle);
+           UnityEditor.Handles.Label(position, TempContent(image), BaseLabelStyle);
 
             GUI.backgroundColor = bg;
             GUI.contentColor = cc;
@@ -711,7 +710,7 @@ namespace Appalachia.Editing.Debugging.Handle
             /// </summary>
             /// <param name="matrix">The matrix to use for displaying UnityEditor.Handles inside the scope block.</param>
             /// <param name="color">The color to use for displaying UnityEditor.Handles inside the scope block.</param>
-            public UnifiedDrawingScope(Color color) : this(color, Handles.matrix)
+            public UnifiedDrawingScope(Color color) : this(color, UnityEditor.Handles.matrix)
             {
             }
 
@@ -720,7 +719,7 @@ namespace Appalachia.Editing.Debugging.Handle
             /// </summary>
             /// <param name="matrix">The matrix to use for displaying UnityEditor.Handles inside the scope block.</param>
             /// <param name="color">The color to use for displaying UnityEditor.Handles inside the scope block.</param>
-            public UnifiedDrawingScope(Matrix4x4 matrix) : this(Handles.color, matrix)
+            public UnifiedDrawingScope(Matrix4x4 matrix) : this(UnityEditor.Handles.color, matrix)
             {
             }
 
@@ -732,12 +731,12 @@ namespace Appalachia.Editing.Debugging.Handle
             public UnifiedDrawingScope(Color color, Matrix4x4 matrix)
             {
                 _isDisposed = false;
-                _originalHandlesColor = Handles.color;
-                _originalHandlesMatrix = Handles.matrix;
-                _originalGizmosColor = Handles.color;
-                _originalGizmosMatrix = Handles.matrix;
-                Handles.matrix = matrix;
-                Handles.color = color;
+                _originalHandlesColor = UnityEditor.Handles.color;
+                _originalHandlesMatrix = UnityEditor.Handles.matrix;
+                _originalGizmosColor = UnityEditor.Handles.color;
+                _originalGizmosMatrix = UnityEditor.Handles.matrix;
+               UnityEditor.Handles.matrix = matrix;
+               UnityEditor.Handles.color = color;
                 Gizmos.matrix = matrix;
                 Gizmos.color = color;
                 _currentUnifiedMatrix = matrix;
@@ -781,9 +780,9 @@ namespace Appalachia.Editing.Debugging.Handle
                 get => _currentUnifiedColor;
                 set
                 {
-                    if (Handles.color != value)
+                    if (UnityEditor.Handles.color != value)
                     {
-                        Handles.color = value;
+                       UnityEditor.Handles.color = value;
                     }
 
                     if (Gizmos.color != value)
@@ -803,7 +802,7 @@ namespace Appalachia.Editing.Debugging.Handle
                 get => _currentUnifiedMatrix;
                 set
                 {
-                    Handles.matrix = value;
+                   UnityEditor.Handles.matrix = value;
                     Gizmos.matrix = value;
                     _currentUnifiedMatrix = value;
                 }
@@ -823,8 +822,8 @@ namespace Appalachia.Editing.Debugging.Handle
                 }
 
                 _isDisposed = true;
-                Handles.color = _originalHandlesColor;
-                Handles.matrix = _originalHandlesMatrix;
+               UnityEditor.Handles.color = _originalHandlesColor;
+               UnityEditor.Handles.matrix = _originalHandlesMatrix;
                 Gizmos.color = _originalGizmosColor;
                 Gizmos.matrix = _originalGizmosMatrix;
             }
@@ -893,7 +892,7 @@ namespace Appalachia.Editing.Debugging.Handle
                 return;
             }
 
-            var gameObject = (GameObject) EditorGUIUtility.Load("SceneView/HandlesGO.fbx");
+            var gameObject = (GameObject) UnityEditor.EditorGUIUtility.Load("SceneView/HandlesGO.fbx");
             if (!(bool) gameObject)
             {
                 AppaLog.Info("Couldn't find SceneView/HandlesGO.fbx");
@@ -964,16 +963,16 @@ namespace Appalachia.Editing.Debugging.Handle
         {
             Shader.SetGlobalColor(HandleColor, realHandleColor);
             Shader.SetGlobalFloat(HandleSize, size);
-            var matrix4x4 = Handles.matrix * Matrix4x4.TRS(position, rotation, Vector3.one);
+            var matrix4x4 = UnityEditor.Handles.matrix * Matrix4x4.TRS(position, rotation, Vector3.one);
             Shader.SetGlobalMatrix(ObjectToWorld, matrix4x4);
-            HandleUtility.handleMaterial.SetInt(HandleZTest, (int) Handles.zTest);
-            HandleUtility.handleMaterial.SetPass(0);
+            UnityEditor.HandleUtility.handleMaterial.SetInt(HandleZTest, (int) UnityEditor.Handles.zTest);
+            UnityEditor.HandleUtility.handleMaterial.SetPass(0);
             return matrix4x4;
         }
 
         internal static Color realHandleColor =>
-            (Handles.color * new Color(1f,      1f,   1f,   0.5f)) +
-            (Handles.lighting ? new Color(0.0f, 0.0f, 0.0f, 0.5f) : new Color(0.0f, 0.0f, 0.0f, 0.0f));
+            (UnityEditor.Handles.color * new Color(1f,      1f,   1f,   0.5f)) +
+            (UnityEditor.Handles.lighting ? new Color(0.0f, 0.0f, 0.0f, 0.5f) : new Color(0.0f, 0.0f, 0.0f, 0.0f));
 
         #endregion
     }

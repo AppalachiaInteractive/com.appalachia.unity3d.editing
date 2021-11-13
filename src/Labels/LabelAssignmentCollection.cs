@@ -1,3 +1,4 @@
+#if UNITY_EDITOR
 using System;
 using System.Diagnostics;
 using UnityEngine;
@@ -55,3 +56,5 @@ namespace Appalachia.Editing.Labels
         }
     }
 }
+
+#endif

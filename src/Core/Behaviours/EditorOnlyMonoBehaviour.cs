@@ -1,5 +1,3 @@
-#if UNITY_EDITOR
-
 #region
 
 using System;
@@ -26,9 +24,11 @@ namespace Appalachia.Editing.Core.Behaviours
         private static readonly ProfilerMarker _PRF_Start = new(_PRF_PFX + nameof(Start));
         private static readonly ProfilerMarker _PRF_Reset = new(_PRF_PFX + "Reset");
         protected static bool VSP_ENABLING;
+#if UNITY_EDITOR
 
         private static readonly ProfilerMarker _PRF_Ensure_EditorTag =
             new(_PRF_PFX + nameof(EnsureCorrectEditorTag));
+#endif
 
 #endregion
 
@@ -49,6 +49,7 @@ namespace Appalachia.Editing.Core.Behaviours
         protected virtual void Internal_Start()
         {
         }
+#if UNITY_EDITOR
 
         public void EnsureCorrectEditorTag()
         {
@@ -140,6 +141,7 @@ namespace Appalachia.Editing.Core.Behaviours
                 }
             }
         }
+#endif
 
         protected void Awake()
         {
@@ -151,10 +153,12 @@ namespace Appalachia.Editing.Core.Behaviours
                     return;
                 }
 
+#if UNITY_EDITOR
                 if (!VSP_ENABLING && !Application.isPlaying)
                 {
                     EnsureCorrectEditorTag();
                 }
+#endif
 
                 Internal_Awake();
             }
@@ -170,10 +174,12 @@ namespace Appalachia.Editing.Core.Behaviours
                     return;
                 }
 
+#if UNITY_EDITOR
                 if (!Application.isPlaying)
                 {
                     EnsureCorrectEditorTag();
                 }
+#endif
 
                 Internal_OnEnable();
             }
@@ -189,10 +195,12 @@ namespace Appalachia.Editing.Core.Behaviours
                     return;
                 }
 
+#if UNITY_EDITOR
                 if (!Application.isPlaying)
                 {
                     EnsureCorrectEditorTag();
                 }
+#endif
 
                 Internal_Reset();
             }
@@ -208,15 +216,15 @@ namespace Appalachia.Editing.Core.Behaviours
                     return;
                 }
 
+#if UNITY_EDITOR
                 if (!Application.isPlaying)
                 {
                     EnsureCorrectEditorTag();
                 }
+#endif
 
                 Internal_Start();
             }
         }
     }
 }
-
-#endif

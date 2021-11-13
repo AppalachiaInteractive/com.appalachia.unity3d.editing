@@ -1,3 +1,4 @@
+#if UNITY_EDITOR
 namespace Appalachia.Editing.Labels
 {
     public enum LabelMatchStyle
@@ -7,3 +8,5 @@ namespace Appalachia.Editing.Labels
         MoreThanOne = 30
     }
 }
+
+#endif

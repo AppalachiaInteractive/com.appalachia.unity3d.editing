@@ -5,8 +5,7 @@
 using System;
 using Appalachia.CI.Integration.Assets;
 using Appalachia.Core.Extensions;
-using UnityEditor;
-using UnityEditor.SceneManagement;
+using Appalachia.Utility.Extensions;
 using UnityEngine;
 
 #endregion
@@ -24,7 +23,7 @@ namespace Appalachia.Editing.Scene.Prefabs
             _scene = scene;
             _path = AssetDatabaseManager.GetAssetPath(prefab);
 
-            if (EditorSceneManager.IsPreviewScene(_scene))
+            if (UnityEditor.SceneManagement.EditorSceneManager.IsPreviewScene(_scene))
             {
                 var sceneObjects = _scene.GetRootGameObjects();
 
@@ -34,7 +33,7 @@ namespace Appalachia.Editing.Scene.Prefabs
                 }
             }
 
-            PrefabUtility.LoadPrefabContentsIntoPreviewScene(_path, _scene);
+            UnityEditor.PrefabUtility.LoadPrefabContentsIntoPreviewScene(_path, _scene);
             var objs = _scene.GetRootGameObjects();
             Mutable = objs[0];
             _onDispose = onDispose;
@@ -49,9 +48,9 @@ namespace Appalachia.Editing.Scene.Prefabs
 
         public void Dispose()
         {
-            if (PrefabUtility.HasPrefabInstanceAnyOverrides(Mutable, false))
+            if (UnityEditor.PrefabUtility.HasPrefabInstanceAnyOverrides(Mutable, false))
             {
-                PrefabUtility.SaveAsPrefabAsset(Mutable, _path);
+                UnityEditor.PrefabUtility.SaveAsPrefabAsset(Mutable, _path);
                 _prefab = AssetDatabaseManager.LoadAssetAtPath<GameObject>(_path);
             }
 

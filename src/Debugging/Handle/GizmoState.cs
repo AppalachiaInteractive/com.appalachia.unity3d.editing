@@ -1,3 +1,4 @@
+#if UNITY_EDITOR
 using System;
 using Appalachia.Core.ObjectPooling;
 using Unity.Profiling;
@@ -105,3 +106,5 @@ namespace Appalachia.Editing.Debugging.Handle
         }
     }
 }
+
+#endif

@@ -3,9 +3,6 @@
 using Unity.Profiling;
 using UnityEngine;
 
-#if UNITY_EDITOR
-
-#endif
 
 #endregion
 

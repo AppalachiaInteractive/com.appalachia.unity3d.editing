@@ -23,26 +23,6 @@ namespace Appalachia.Editing.Debugging.Graphy
 
             //===== CONTENT REGION ========================================================================
 
-            GUILayout.Space(20);
-
-#region Section -> Logo
-
-            if (GraphyEditorStyle.DebuggerLogoTexture != null)
-            {
-                GUILayout.Label(
-                    GraphyEditorStyle.DebuggerLogoTexture,
-                    new GUIStyle(GUI.skin.GetStyle("Label")) {alignment = TextAnchor.UpperCenter}
-                );
-
-                GUILayout.Space(10);
-            }
-            else
-            {
-                EditorGUILayout.LabelField("[ GRAPHY - DEBUGGER ]", GraphyEditorStyle.HeaderStyle1);
-            }
-
-#endregion
-
             GUILayout.Space(5); //Extra pixels added when the logo is used.
 
 #region Section -> Settings

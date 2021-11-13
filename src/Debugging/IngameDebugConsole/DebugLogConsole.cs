@@ -12,6 +12,7 @@ using System.IO;
 using System.Reflection;
 using System.Text;
 using Appalachia.CI.Integration;
+using Appalachia.CI.Integration.Assets;
 using Appalachia.Utility.Logging;
 using UnityEngine;
 #if UNITY_EDITOR && UNITY_2021_1_OR_NEWER
@@ -544,7 +545,7 @@ namespace Appalachia.Editing.Debugging.IngameDebugConsole
 
                 if (matchingMethods.Count == 0)
                 {
-                   AppaLog.Warning(string.Concat("ERROR: can't find command '", _command, "'"));
+                   AppaLog.Warn(string.Concat("ERROR: can't find command '", _command, "'"));
                 }
                 else
                 {
@@ -575,7 +576,7 @@ namespace Appalachia.Editing.Debugging.IngameDebugConsole
                         stringBuilder.Append("\n    - ").Append(matchingMethods[i].signature);
                     }
 
-                   AppaLog.Warning(stringBuilder.ToString());
+                   AppaLog.Warn(stringBuilder.ToString());
 
                     // The log that lists method signature(s) for this command should automatically be expanded for better UX
                     if (DebugLogManager.instance)
@@ -635,7 +636,7 @@ namespace Appalachia.Editing.Debugging.IngameDebugConsole
 
             if (methodToExecute == null)
             {
-               AppaLog.Warning(
+               AppaLog.Warn(
                     !string.IsNullOrEmpty(errorMessage) ? errorMessage : "ERROR: something went wrong"
                 );
             }
@@ -873,7 +874,7 @@ namespace Appalachia.Editing.Debugging.IngameDebugConsole
 
             if (matchingMethods.Count == 0)
             {
-               AppaLog.Warning(string.Concat("ERROR: can't find command '", commandName, "'"));
+               AppaLog.Warn(string.Concat("ERROR: can't find command '", commandName, "'"));
             }
             else
             {

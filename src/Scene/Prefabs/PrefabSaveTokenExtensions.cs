@@ -1,7 +1,8 @@
+#if UNITY_EDITOR
+
 #region
 
 using Appalachia.CI.Integration.Assets;
-using UnityEditor;
 using UnityEngine;
 
 #endregion
@@ -47,7 +48,7 @@ namespace Appalachia.Editing.Scene.Prefabs
             this GameObject prefab,
             UnityEngine.SceneManagement.Scene previewScene)
         {
-            if (!PrefabUtility.IsPartOfPrefabAsset(prefab))
+            if (!UnityEditor.PrefabUtility.IsPartOfPrefabAsset(prefab))
             {
                 return null;
             }
@@ -57,7 +58,7 @@ namespace Appalachia.Editing.Scene.Prefabs
 
         public static PrefabSaveToken ToMutable(this GameObject prefab)
         {
-            if (!PrefabUtility.IsPartOfPrefabAsset(prefab))
+            if (!UnityEditor.PrefabUtility.IsPartOfPrefabAsset(prefab))
             {
                 return null;
             }
@@ -66,3 +67,5 @@ namespace Appalachia.Editing.Scene.Prefabs
         }
     }
 }
+
+#endif

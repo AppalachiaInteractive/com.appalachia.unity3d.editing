@@ -1,4 +1,5 @@
 using System;
+using Appalachia.Core.Collections;
 using Appalachia.Core.Preferences;
 using Appalachia.Core.Scriptables;
 using Sirenix.OdinInspector;
@@ -10,10 +11,11 @@ namespace Appalachia.Editing.Core
     [Serializable]
     [HideDuplicateReferenceBox]
     [HideReferenceObjectPicker]
-    public abstract class MetadataLookupSelection<TS, T, TValue> : AppalachiaObject<T>
-        where TS : MetadataLookupSelection<TS, T, TValue>
-        where T : AppalachiaMetadataCollection<T, TValue>
+    public abstract class MetadataLookupSelection<TS, T, TValue, TL> : AppalachiaObject<T>
+        where TS : MetadataLookupSelection<TS, T, TValue, TL>
+        where T : AppalachiaMetadataCollection<T, TValue, TL>
         where TValue : AppalachiaObject<TValue>, ICategorizable
+        where TL : AppaList<TValue>, new()
     {
         protected Action<TValue> _selection;
         protected T _instance;

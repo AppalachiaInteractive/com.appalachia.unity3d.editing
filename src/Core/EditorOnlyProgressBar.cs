@@ -1,15 +1,10 @@
 #region
 
 using System;
-using Appalachia.CI.Constants;
 using Unity.Mathematics;
-using UnityEditor;
 
 #endregion
 
-#if UNITY_EDITOR
-
-#endif
 
 namespace Appalachia.Editing.Core
 {
@@ -106,12 +101,12 @@ namespace Appalachia.Editing.Core
             {
                 if (_cancellable)
                 {
-                    _cancelled = EditorUtility.DisplayCancelableProgressBar(title, info, current / total);
+                    _cancelled = UnityEditor.EditorUtility.DisplayCancelableProgressBar(title, info, current / total);
                     _hasShownBar = true;
                 }
                 else
                 {
-                    EditorUtility.DisplayProgressBar(title, info, current / total);
+                    UnityEditor.EditorUtility.DisplayProgressBar(title, info, current / total);
                     _hasShownBar = true;
                 }
             }
@@ -123,7 +118,7 @@ namespace Appalachia.Editing.Core
 #if UNITY_EDITOR
             if (_hasShownBar)
             {
-                EditorUtility.ClearProgressBar();
+                UnityEditor.EditorUtility.ClearProgressBar();
             }
 #endif
         }
@@ -135,12 +130,15 @@ namespace Appalachia.Editing.Core
 #endif
         }
 
+#if UNITY_EDITOR
         [UnityEditor.MenuItem(
-            PKG.Menu.Appalachia.Tools.Base + "Clear Progress Bar"
+            PKG.Menu.Appalachia.RootTools.Base + "Clear Progress Bar",
+            priority = PKG.Menu.Appalachia.RootTools.Priority
         )]
         public static void ClearProgressBar()
         {
-            EditorUtility.ClearProgressBar();
+            UnityEditor.EditorUtility.ClearProgressBar();
         }
+#endif
     }
 }

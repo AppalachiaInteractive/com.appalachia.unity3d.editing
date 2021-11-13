@@ -7,7 +7,6 @@ using System.Text;
 using Appalachia.CI.Integration.FileSystem;
 using Appalachia.Core.Behaviours;
 using Appalachia.Utility.Logging;
-using UnityEditor;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
@@ -461,7 +460,7 @@ namespace Appalachia.Editing.Debugging.IngameDebugConsole
             //Debug.LogAssertion( "assert" );
             //AppaLog.Error( "error" );
             //AppaLog.Exception( new System.IO.EndOfStreamException() );
-            //AppaLog.Warning( "warning" );
+            //AppaLog.Warn( "warning" );
             //AppaLog.Info( "log" );
         }
 
@@ -502,7 +501,7 @@ namespace Appalachia.Editing.Debugging.IngameDebugConsole
 #if UNITY_EDITOR
         private void OnValidate()
         {
-            if (EditorApplication.isPlaying)
+            if (UnityEditor.EditorApplication.isPlaying)
             {
                 resizeButton.sprite = enableHorizontalResizing
                     ? resizeIconAllDirections

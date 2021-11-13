@@ -1,6 +1,6 @@
 using Appalachia.Core.Extensions;
+using Appalachia.Utility.Extensions;
 using Unity.Profiling;
-using UnityEditor;
 using UnityEngine;
 
 namespace Appalachia.Editing.Core.Behaviours
@@ -50,7 +50,7 @@ namespace Appalachia.Editing.Core.Behaviours
                 if ((_instance != null) && (_instance != this))
                 {
 #if UNITY_EDITOR
-                    Selection.objects = new Object[] {_instance.gameObject};
+                    UnityEditor.Selection.objects = new Object[] {_instance.gameObject};
 #endif
                     this.DestroySafely();
                 }

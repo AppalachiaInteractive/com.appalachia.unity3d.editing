@@ -6,7 +6,6 @@ using Appalachia.Core.Debugging;
 using Appalachia.Core.Scriptables;
 using Appalachia.Core.Shading;
 using Sirenix.OdinInspector;
-using UnityEditor;
 using UnityEngine;
 
 namespace Appalachia.Editing.Debugging
@@ -49,14 +48,14 @@ namespace Appalachia.Editing.Debugging
         [Button]
         public void SelectShader()
         {
-            Selection.activeObject = debugShader;
+            UnityEditor.Selection.activeObject = debugShader;
         }
 
         public void Update()
         {
             Initialize();
 
-            if (SceneView.lastActiveSceneView != null)
+            if (UnityEditor.SceneView.lastActiveSceneView != null)
             {
                 if (debugMode == DebugMode.Off)
                 {
@@ -64,15 +63,15 @@ namespace Appalachia.Editing.Debugging
                     {
                         _enabled = false;
 
-                        SceneView.lastActiveSceneView.SetSceneViewShaderReplace(null, null);
-                        SceneView.lastActiveSceneView.Repaint();
+                        UnityEditor.SceneView.lastActiveSceneView.SetSceneViewShaderReplace(null, null);
+                        UnityEditor.SceneView.lastActiveSceneView.Repaint();
                     }
                 }
                 else
                 {
                     _enabled = true;
 
-                    SceneView.lastActiveSceneView.SetSceneViewShaderReplace(debugShader, null);
+                    UnityEditor.SceneView.lastActiveSceneView.SetSceneViewShaderReplace(debugShader, null);
 
                     var mode = 0;
 
@@ -89,7 +88,7 @@ namespace Appalachia.Editing.Debugging
                     Shader.SetGlobalFloat(GSPL.Get(GSC.DEBUG._DEBUG_MIN),  remap.x);
                     Shader.SetGlobalFloat(GSPL.Get(GSC.DEBUG._DEBUG_MAX),  remap.y);
 
-                    SceneView.lastActiveSceneView.Repaint();
+                    UnityEditor.SceneView.lastActiveSceneView.Repaint();
                 }
             }
         }
@@ -105,8 +104,8 @@ namespace Appalachia.Editing.Debugging
                 GSPL.Include(debugShader);
                 remap = new Vector2(0f, 1f);
 
-                SceneView.lastActiveSceneView.SetSceneViewShaderReplace(null, null);
-                SceneView.lastActiveSceneView.Repaint();
+                UnityEditor.SceneView.lastActiveSceneView.SetSceneViewShaderReplace(null, null);
+                UnityEditor.SceneView.lastActiveSceneView.Repaint();
             }
         }
     }

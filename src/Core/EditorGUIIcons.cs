@@ -1,14 +1,11 @@
+#if UNITY_EDITOR
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
-using Appalachia.Editing.Core.Layout;
 using Appalachia.Utility.Constants.Icons;
-using UnityEditor;
 using UnityEngine;
-#if UNITY_EDITOR
-
-#endif
+using UnityEditor;
 
 namespace Appalachia.Editing.Core
 {
@@ -18,7 +15,7 @@ namespace Appalachia.Editing.Core
         public const int VALUE_COUNT = 1875;
         public const string VALUE_COUNT_STRING = "1875";
 
-#region Enumerations
+        #region Enumerations
 
         public enum Enum
         {
@@ -1898,7 +1895,6 @@ namespace Appalachia.Editing.Core
             winbtn_win_restore = 2040651108,
             winbtn_win_restore_a = 74028220,
             winbtn_win_restore_h = 1848286081,
-
         }
 
         internal enum SortEnum
@@ -3779,12 +3775,11 @@ namespace Appalachia.Editing.Core
             winbtn_win_restore = 1873,
             winbtn_win_restore_a = 1874,
             winbtn_win_restore_h = 1875,
-
         }
 
-#endregion
+        #endregion
 
-#region Constants
+        #region Constants
 
         public const string _help = "_help";
         public const string _menu = "_menu";
@@ -5662,12 +5657,10 @@ namespace Appalachia.Editing.Core
         public const string winbtn_win_restore_a = "winbtn_win_restore_a";
         public const string winbtn_win_restore_h = "winbtn_win_restore_h";
 
+        #endregion
 
-#endregion
+        #region Initialization
 
-#region Initialization
-
-#if UNITY_EDITOR
         public static readonly Dictionary<Enum, string> _iconLookup;
         public static readonly Dictionary<string, Enum> _reverseIconLookup;
 
@@ -9429,77 +9422,49 @@ namespace Appalachia.Editing.Core
             _reverseIconLookup.Add(winbtn_win_restore_a, Enum.winbtn_win_restore_a);
             _iconLookup.Add(Enum.winbtn_win_restore_h, winbtn_win_restore_h);
             _reverseIconLookup.Add(winbtn_win_restore_h, Enum.winbtn_win_restore_h);
-
         }
-#endif
 
-#endregion
+        #endregion
 
-#region Methods
+        #region Methods
 
         public static GUIContent GetIconContent(Enum icon)
         {
-#if UNITY_EDITOR
-            return UnityEditor.EditorGUIUtility.IconContent(_iconLookup[icon]);
-#else
-        return GUIContent.none;
-#endif
+            return EditorGUIUtility.IconContent(_iconLookup[icon]);
         }
 
         public static GUIContent GetIconContent(Enum icon, string tooltip)
         {
-#if UNITY_EDITOR
-            return UnityEditor.EditorGUIUtility.IconContent(_iconLookup[icon], tooltip);
-#else
-        return GUIContent.none;
-#endif
+            return EditorGUIUtility.IconContent(_iconLookup[icon], tooltip);
         }
 
         public static GUIContent GetIconContent(string iconName)
         {
-#if UNITY_EDITOR
-            return UnityEditor.EditorGUIUtility.IconContent(iconName);
-#else
-        return GUIContent.none;
-#endif
+            return EditorGUIUtility.IconContent(iconName);
         }
 
         public static GUIContent GetIconContent(string iconName, string tooltip)
         {
-#if UNITY_EDITOR
-            return UnityEditor.EditorGUIUtility.IconContent(iconName, tooltip);
-#else
-        return GUIContent.none;
-#endif
+            return EditorGUIUtility.IconContent(iconName, tooltip);
         }
 
         public static string GetIconName(Enum icon)
         {
-#if UNITY_EDITOR
             return _iconLookup[icon];
-#else
-        return null;
-#endif
         }
 
         public static Enum GetIconEnum(string name)
         {
-#if UNITY_EDITOR
             return _reverseIconLookup[name];
-#else
-        return default;
-#endif
         }
 
-#endregion
+        #endregion
 
-#region UI
+        #region UI
 
-
-#if UNITY_EDITOR
         public class EditorGUIIconViewer : EditorWindow
         {
-#region UI Constants
+            #region UI Constants
 
             private const string _headerText = "EditorGUI Icons";
 
@@ -9530,9 +9495,9 @@ namespace Appalachia.Editing.Core
             private const float _regexLabelSize = 18f;
             private const float _selectedIconLabelSize = 130f;
 
-#endregion
+            #endregion
 
-#region Icons
+            #region Icons
 
             private const string _regenerateButtonIconName = "sceneviewtools on";
             private const string _resetButtonIconName = "grid.erasertool";
@@ -9542,17 +9507,17 @@ namespace Appalachia.Editing.Core
             private const string _regexInvalidIconName = "p4_deletedlocal";
             private const string _regexMissingIconName = "testignored";
 
-#endregion
+            #endregion
 
-#region State
+            #region State
 
             private static Enum[] _enums;
             private static string[] _iconNames;
             private static GUIContent[] _icons;
 
-#endregion
+            #endregion
 
-#region UI State
+            #region UI State
 
             private string _searchFilter = "";
             private Color _backgroundColor = new(0.1647059f, 0.1647059f, 0.1647059f, 1f);
@@ -9568,11 +9533,11 @@ namespace Appalachia.Editing.Core
             private string _lastSelection = "";
             private GUIContent _lastSelectionContent;
 
-#endregion
+            #endregion
 
-#region Layout
+            #region Layout
 
-#region Fields
+            #region Fields
 
             private static readonly GUILayoutOption[] _expandWidth = {GUILayout.ExpandWidth(true)};
             private GUILayoutOption[] _iconLayout = {GUILayout.Width(_defaultIconSize)};
@@ -9595,9 +9560,9 @@ namespace Appalachia.Editing.Core
                 GUILayout.Width(_selectedIconLabelSize)
             };
 
-#endregion
+            #endregion
 
-#region Properties
+            #region Properties
 
             private GUILayoutOption[] iconSizeLabelLayout
             {
@@ -9680,21 +9645,21 @@ namespace Appalachia.Editing.Core
                 }
             }
 
-#endregion
+            #endregion
 
-#endregion
+            #endregion
 
-#region Style
+            #region Style
 
-#region Fields
+            #region Fields
 
             private GUIStyle _scrollViewStyle;
             private GUIStyle _iconStyle;
             private GUIStyle _regexIconStyle;
 
-#endregion
+            #endregion
 
-#region Properties
+            #region Properties
 
             private GUIStyle scrollViewStyle
             {
@@ -9759,13 +9724,13 @@ namespace Appalachia.Editing.Core
                 }
             }
 
-#endregion
+            #endregion
 
-#endregion
+            #endregion
 
-#region Content
+            #region Content
 
-#region Fields
+            #region Fields
 
             private GUIContent _regenerateButtonContent;
             private GUIContent _resetButtonContent;
@@ -9776,9 +9741,9 @@ namespace Appalachia.Editing.Core
             private GUIContent _regexValidLabel;
             private GUIContent _selectedIconLabel;
 
-#endregion
+            #endregion
 
-#region Properties
+            #region Properties
 
             private GUIContent regenerateButtonContent
             {
@@ -9911,11 +9876,11 @@ namespace Appalachia.Editing.Core
                 }
             }
 
-#endregion
+            #endregion
 
-#endregion
+            #endregion
 
-#region Editor Window API
+            #region Editor Window API
 
             private void OnEnable()
             {
@@ -9973,7 +9938,6 @@ namespace Appalachia.Editing.Core
                     EditorGUILayout.Space(_horizontalSpacer * 4, false);
                 };
 
-
                 DrawHeader(_headerText, _subheaderText, drawButtons);
 
                 DrawSettings();
@@ -10004,25 +9968,25 @@ namespace Appalachia.Editing.Core
                 GUIUtility.ExitGUI();
             }
 
-#endregion
+            #endregion
 
-#region UI Menu Items
+            #region UI Menu Items
 
-            [UnityEditor.MenuItem(PKG.Menu.Appalachia.Tools.Base + "EditorGUI Icons/Explore", priority = PKG.Priority + 22)]
+            [MenuItem(PKG.Menu.Appalachia.Tools.Base + "EditorGUI Icons/Explore", priority = PKG.Priority + 22)]
             internal static void ExploreEditorGUIIcons()
             {
                 GetWindow<EditorGUIIconViewer>(false, "EditorGUI Icons", true);
             }
 
-#endregion
+            #endregion
 
-#region UI Parts
+            #region UI Parts
 
             private void DrawHeader(string text, string subheader, Action additional)
             {
                 EditorGUILayout.LabelField(text, EditorStyles.whiteLargeLabel);
 
-                using (APPAGUI.Horizontal())
+                using (new GUILayout.HorizontalScope())
                 {
                     EditorGUILayout.LabelField(subheader, EditorStyles.whiteMiniLabel);
 
@@ -10071,7 +10035,6 @@ namespace Appalachia.Editing.Core
 
                 if (_lastBackgroundColor != _backgroundColor)
                 {
-                
                     PaintTex(scrollViewStyle.normal.background, _backgroundColor);
                     _lastBackgroundColor = _backgroundColor;
                 }
@@ -10199,9 +10162,9 @@ namespace Appalachia.Editing.Core
                 }
             }
 
-#endregion
+            #endregion
 
-#region UI Helper Methods
+            #region UI Helper Methods
 
             private Texture2D MakeTex(int width, int height, Color col)
             {
@@ -10236,6 +10199,7 @@ namespace Appalachia.Editing.Core
                 {
                     try
                     {
+                        // ReSharper disable once ReturnValueOfPureMethodIsNotUsed
                         Regex.Match("", _searchFilter);
                         _regexState = RegexState.Valid;
                     }
@@ -10249,7 +10213,6 @@ namespace Appalachia.Editing.Core
                     _regexState = RegexState.Missing;
                 }
             }
-
 
             public static void HorizontalLineSeparator(Color color, int lineWidth = 1)
             {
@@ -10296,11 +10259,11 @@ namespace Appalachia.Editing.Core
                 Missing
             }
 
-#endregion
+            #endregion
         }
-#endif  
 
-
-#endregion
+        #endregion
     }
 }
+
+#endif

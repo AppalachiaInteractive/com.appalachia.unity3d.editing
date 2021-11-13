@@ -1,3 +1,4 @@
+#if UNITY_EDITOR
 using Appalachia.Core.Labels;
 using Appalachia.Core.Scriptables;
 using UnityEngine;
@@ -64,3 +65,5 @@ namespace Appalachia.Editing.Labels
         }
     }
 }
+
+#endif

@@ -20,27 +20,7 @@ namespace Appalachia.Editing.Debugging.Graphy
             var defaultFieldWidth = EditorGUIUtility.fieldWidth;
 
             //===== CONTENT REGION ========================================================================
-
-            GUILayout.Space(20);
-
-#region Section -> Logo
-
-            if (GraphyEditorStyle.ManagerLogoTexture != null)
-            {
-                GUILayout.Label(
-                    GraphyEditorStyle.ManagerLogoTexture,
-                    new GUIStyle(GUI.skin.GetStyle("Label")) {alignment = TextAnchor.UpperCenter}
-                );
-
-                GUILayout.Space(10);
-            }
-            else
-            {
-                EditorGUILayout.LabelField("[ GRAPHY - MANAGER ]", GraphyEditorStyle.HeaderStyle1);
-            }
-
-#endregion
-
+            
             GUILayout.Space(5); //Extra pixels added when the logo is used.
 
 #region Section -> Settings
@@ -97,87 +77,6 @@ namespace Appalachia.Editing.Debugging.Graphy
             EditorGUILayout.EndHorizontal();
 
             GUILayout.Space(10);
-
-            m_enableHotkeys.boolValue = EditorGUILayout.Toggle(
-                new GUIContent(
-                    "Enable Hotkeys",
-                    "If ticked, it will enable the hotkeys to be able to modify Graphy in runtime with custom keyboard shortcuts."
-                ),
-                m_enableHotkeys.boolValue
-            );
-
-            if (m_enableHotkeys.boolValue)
-            {
-                EditorGUILayout.BeginHorizontal();
-
-                EditorGUIUtility.labelWidth = 130;
-                EditorGUIUtility.fieldWidth = 35;
-
-                EditorGUILayout.PropertyField(
-                    m_toggleModeKeyCode,
-                    new GUIContent(
-                        "Toggle Mode Key",
-                        "If ticked, it will require clicking this key and the other ones you have set up."
-                    )
-                );
-
-                EditorGUIUtility.labelWidth = 30;
-                EditorGUIUtility.fieldWidth = 35;
-
-                m_toggleModeCtrl.boolValue = EditorGUILayout.Toggle(
-                    new GUIContent(
-                        "Ctrl",
-                        "If ticked, it will require clicking Ctrl and the other keys you have set up."
-                    ),
-                    m_toggleModeCtrl.boolValue
-                );
-
-                m_toggleModeAlt.boolValue = EditorGUILayout.Toggle(
-                    new GUIContent(
-                        "Alt",
-                        "If ticked, it will require clicking Alt and the other keys you have set up."
-                    ),
-                    m_toggleModeAlt.boolValue
-                );
-
-                EditorGUILayout.EndHorizontal();
-
-                EditorGUILayout.BeginHorizontal();
-
-                EditorGUIUtility.labelWidth = 130;
-                EditorGUIUtility.fieldWidth = 35;
-
-                EditorGUILayout.PropertyField(
-                    m_toggleActiveKeyCode,
-                    new GUIContent(
-                        "Toggle Active Key",
-                        "If ticked, it will require clicking this key and the other ones you have set up."
-                    )
-                );
-
-                EditorGUIUtility.labelWidth = 30;
-                EditorGUIUtility.fieldWidth = 35;
-
-                m_toggleActiveCtrl.boolValue = EditorGUILayout.Toggle(
-                    new GUIContent(
-                        "Ctrl",
-                        "If ticked, it will require clicking Ctrl and the other kesy you have set up."
-                    ),
-                    m_toggleActiveCtrl.boolValue
-                );
-
-                m_toggleActiveAlt.boolValue = EditorGUILayout.Toggle(
-                    new GUIContent(
-                        "Alt",
-                        "If ticked, it will require clicking Alt and the other keys you have set up."
-                    ),
-                    m_toggleActiveAlt.boolValue
-                );
-
-                EditorGUILayout.EndHorizontal();
-            }
-
-            GUILayout.Space(15);
 
             EditorGUIUtility.labelWidth = 155;
             EditorGUIUtility.fieldWidth = 35;
@@ -533,18 +432,6 @@ namespace Appalachia.Editing.Debugging.Graphy
             m_background = serObj.FindProperty("m_background");
             m_backgroundColor = serObj.FindProperty("m_backgroundColor");
 
-            m_enableHotkeys = serObj.FindProperty("m_enableHotkeys");
-
-            m_toggleModeKeyCode = serObj.FindProperty("m_toggleModeKeyCode");
-
-            m_toggleModeCtrl = serObj.FindProperty("m_toggleModeCtrl");
-            m_toggleModeAlt = serObj.FindProperty("m_toggleModeAlt");
-
-            m_toggleActiveKeyCode = serObj.FindProperty("m_toggleActiveKeyCode");
-
-            m_toggleActiveCtrl = serObj.FindProperty("m_toggleActiveCtrl");
-            m_toggleActiveAlt = serObj.FindProperty("m_toggleActiveAlt");
-
             m_graphModulePosition = serObj.FindProperty("m_graphModulePosition");
 
 #endregion
@@ -633,16 +520,6 @@ namespace Appalachia.Editing.Debugging.Graphy
 
         private SerializedProperty m_background;
         private SerializedProperty m_backgroundColor;
-
-        private SerializedProperty m_enableHotkeys;
-
-        private SerializedProperty m_toggleModeKeyCode;
-        private SerializedProperty m_toggleModeCtrl;
-        private SerializedProperty m_toggleModeAlt;
-
-        private SerializedProperty m_toggleActiveKeyCode;
-        private SerializedProperty m_toggleActiveCtrl;
-        private SerializedProperty m_toggleActiveAlt;
 
         private SerializedProperty m_graphModulePosition;
 

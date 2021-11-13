@@ -3,7 +3,6 @@
 using System.Collections.Generic;
 using Appalachia.Core.Behaviours;
 using Appalachia.Core.Debugging;
-using Appalachia.Core.Extensions;
 using Appalachia.Core.Layers;
 using Appalachia.Core.Types.Enums;
 using Appalachia.Simulation.Core;
@@ -13,7 +12,6 @@ using Appalachia.Utility.Extensions;
 using Appalachia.Utility.Logging;
 using Sirenix.OdinInspector;
 using Unity.Profiling;
-using UnityEditor;
 using UnityEngine;
 
 namespace Appalachia.Editing.Debugging.Testing
@@ -42,7 +40,7 @@ namespace Appalachia.Editing.Debugging.Testing
         private static readonly ProfilerMarker _PRF_OnDrawGizmosSelected =
             new(_PRF_PFX + nameof(OnDrawGizmosSelected));
 
-        private static readonly ProfilerMarker _PRF_Update = new(_PRF_PFX + nameof(Update));
+        private static readonly ProfilerMarker _PRF_Update = new(_PRF_PFX + nameof(UnityEngine.PlayerLoop.Update));
         private static readonly ProfilerMarker _PRF_FindMissileRoot = new(_PRF_PFX + nameof(FindMissileRoot));
 
         #endregion
@@ -256,193 +254,8 @@ namespace Appalachia.Editing.Debugging.Testing
 
         public event OnPreFire OnPreFire;
 
-        [Button(ButtonSizes.Large)]
-        [LabelText("Drop")]
-        [GUIColor(nameof(_drop))]
-        public void Drop()
-        {
-            using (_PRF_Drop.Auto())
-            {
-                _generationQueued = true;
-                _fireStrength = 0.05f;
-            }
-        }
+        #region Event Functions
 
-        [Button(ButtonSizes.Large)]
-        [LabelText("Fire!!!")]
-        [GUIColor(nameof(_fire))]
-        public void Fire()
-        {
-            using (_PRF_Fire.Auto())
-            {
-                _generationQueued = true;
-                _fireStrength = 1.0f;
-            }
-        }
-
-        public void OnEnable()
-        {
-            using (_PRF_OnEnable.Auto())
-            {
-                _t = transform;
-
-                FindOrphanedMissiles();
-            }
-        }
-
-        [Button(ButtonSizes.Large)]
-        [LabelText("Fire")]
-        [GUIColor(nameof(_softFire))]
-        public void SoftFire()
-        {
-            using (_PRF_SoftFire.Auto())
-            {
-                _generationQueued = true;
-                _fireStrength = 0.25f;
-            }
-        }
-
-        [ButtonGroup]
-        private void CheckOutstandingMissiles()
-        {
-            using (_PRF_CheckOutstandingMissiles.Auto())
-            {
-                if (!limited)
-                {
-                    return;
-                }
-
-                if (_backupMissiles == null)
-                {
-                    _backupMissiles = new Queue<Missile>();
-                }
-
-                if (_missiles == null)
-                {
-                    _missiles = new Queue<Missile>();
-                }
-
-                FindOrphanedMissiles();
-
-                while (_missiles.Count > 0)
-                {
-                    var missile = _missiles.Dequeue();
-
-                    if (missile.go == null)
-                    {
-                        continue;
-                    }
-
-                    if ((missile.age > maxLife) ||
-                        ((_missiles.Count + _backupMissiles.Count) > outstandingFires))
-                    {
-                        missile.Destroy();
-                    }
-                    else if ((missile.go.transform.position.y < -1000) ||
-                             (missile.rb.velocity.magnitude > 250f))
-                    {
-                        missile.Destroy();
-                    }
-                    else
-                    {
-                        _backupMissiles.Enqueue(missile);
-                    }
-                }
-
-                var t = _missiles;
-                _missiles = _backupMissiles;
-                _backupMissiles = t;
-            }
-        }
-
-        [ButtonGroup]
-        private void DestroyAllMissiles()
-        {
-            using (_PRF_CheckOutstandingMissiles.Auto())
-            {
-                FindOrphanedMissiles();
-
-                while (_missiles.Count > 0)
-                {
-                    var missile = _missiles.Dequeue();
-
-                    missile.Destroy();
-                }
-            }
-        }
-
-        private void FindMissileRoot()
-        {
-            using (_PRF_FindMissileRoot.Auto())
-            {
-                if (missileRoot == null)
-                {
-                    missileRoot = GameObject.Find("_missiles");
-
-                    if (missileRoot == null)
-                    {
-                        missileRoot = new GameObject("_missiles");
-                        var mrt = missileRoot.transform;
-                        mrt.position = Vector3.zero;
-                        mrt.rotation = Quaternion.identity;
-                        mrt.localScale = Vector3.one;
-                    }
-                }
-
-                missileRoot.hideFlags = HideFlags.DontSave;
-            }
-        }
-
-        [ButtonGroup]
-        private void FindOrphanedMissiles()
-        {
-            using (_PRF_FindOrphanedMissiles.Auto())
-            {
-                if (_missiles == null)
-                {
-                    _missiles = new Queue<Missile>();
-                }
-
-                FindMissileRoot();
-
-                if (_missiles.Count != missileRoot.transform.childCount)
-                {
-                    _missiles.Clear();
-
-                    for (var i = 0; i < missileRoot.transform.childCount; i++)
-                    {
-                        var child = missileRoot.transform.GetChild(i);
-                        var childObject = child.gameObject;
-                        var missile = childObject.GetComponent<Missile>();
-
-                        if (missile == null)
-                        {
-                            missile = childObject.AddComponent<Missile>();
-                            missile.Initialize(
-                                childObject,
-                                child.GetComponent<Rigidbody>(),
-                                child.GetComponent<Collider>()
-                            );
-                        }
-
-                        _missiles.Enqueue(missile);
-                    }
-                }
-            }
-        }
-
-        private void OnDrawGizmosSelected()
-        {
-            using (_PRF_OnDrawGizmosSelected.Auto())
-            {
-                if (!GizmoCameraChecker.ShouldRenderGizmos())
-                {
-                    return;
-                }
-
-                Gizmos.DrawRay(_t.position, missile_forceVector);
-            }
-        }
 #if UNITY_EDITOR
         private void Update()
 #else
@@ -465,10 +278,12 @@ namespace Appalachia.Editing.Debugging.Testing
                     return;
                 }
 
+#if UNITY_EDITOR
                 if (!PhysicsSimulator.IsSimulationActive)
                 {
                     PhysicsSimulator.SetEnabled(true);
                 }
+#endif
 
                 _generationQueued = false;
 
@@ -518,7 +333,7 @@ namespace Appalachia.Editing.Debugging.Testing
 
                 if ((c == null) || (rb == null))
                 {
-                   AppaLog.Warning("No collider or rigidbody!");
+                    AppaLog.Warn("No collider or rigidbody!");
                     return;
                 }
 
@@ -682,40 +497,230 @@ namespace Appalachia.Editing.Debugging.Testing
             }
         }
 
+        public void OnEnable()
+        {
+            using (_PRF_OnEnable.Auto())
+            {
+                _t = transform;
+
+                FindOrphanedMissiles();
+            }
+        }
+
+        private void OnDrawGizmosSelected()
+        {
+            using (_PRF_OnDrawGizmosSelected.Auto())
+            {
+                if (!GizmoCameraChecker.ShouldRenderGizmos())
+                {
+                    return;
+                }
+
+                Gizmos.DrawRay(_t.position, missile_forceVector);
+            }
+        }
+
+        #endregion
+
+        [Button(ButtonSizes.Large)]
+        [LabelText("Drop")]
+        [GUIColor(nameof(_drop))]
+        public void Drop()
+        {
+            using (_PRF_Drop.Auto())
+            {
+                _generationQueued = true;
+                _fireStrength = 0.05f;
+            }
+        }
+
+        [Button(ButtonSizes.Large)]
+        [LabelText("Fire!!!")]
+        [GUIColor(nameof(_fire))]
+        public void Fire()
+        {
+            using (_PRF_Fire.Auto())
+            {
+                _generationQueued = true;
+                _fireStrength = 1.0f;
+            }
+        }
+
+        [Button(ButtonSizes.Large)]
+        [LabelText("Fire")]
+        [GUIColor(nameof(_softFire))]
+        public void SoftFire()
+        {
+            using (_PRF_SoftFire.Auto())
+            {
+                _generationQueued = true;
+                _fireStrength = 0.25f;
+            }
+        }
+
+        [ButtonGroup]
+        private void CheckOutstandingMissiles()
+        {
+            using (_PRF_CheckOutstandingMissiles.Auto())
+            {
+                if (!limited)
+                {
+                    return;
+                }
+
+                if (_backupMissiles == null)
+                {
+                    _backupMissiles = new Queue<Missile>();
+                }
+
+                if (_missiles == null)
+                {
+                    _missiles = new Queue<Missile>();
+                }
+
+                FindOrphanedMissiles();
+
+                while (_missiles.Count > 0)
+                {
+                    var missile = _missiles.Dequeue();
+
+                    if (missile.go == null)
+                    {
+                        continue;
+                    }
+
+                    if ((missile.age > maxLife) ||
+                        ((_missiles.Count + _backupMissiles.Count) > outstandingFires))
+                    {
+                        missile.Destroy();
+                    }
+                    else if ((missile.go.transform.position.y < -1000) ||
+                             (missile.rb.velocity.magnitude > 250f))
+                    {
+                        missile.Destroy();
+                    }
+                    else
+                    {
+                        _backupMissiles.Enqueue(missile);
+                    }
+                }
+
+                var t = _missiles;
+                _missiles = _backupMissiles;
+                _backupMissiles = t;
+            }
+        }
+
+        [ButtonGroup]
+        private void DestroyAllMissiles()
+        {
+            using (_PRF_CheckOutstandingMissiles.Auto())
+            {
+                FindOrphanedMissiles();
+
+                while (_missiles.Count > 0)
+                {
+                    var missile = _missiles.Dequeue();
+
+                    missile.Destroy();
+                }
+            }
+        }
+
+        private void FindMissileRoot()
+        {
+            using (_PRF_FindMissileRoot.Auto())
+            {
+                if (missileRoot == null)
+                {
+                    missileRoot = GameObject.Find("_missiles");
+
+                    if (missileRoot == null)
+                    {
+                        missileRoot = new GameObject("_missiles");
+                        var mrt = missileRoot.transform;
+                        mrt.position = Vector3.zero;
+                        mrt.rotation = Quaternion.identity;
+                        mrt.localScale = Vector3.one;
+                    }
+                }
+
+                missileRoot.hideFlags = HideFlags.DontSave;
+            }
+        }
+
+        [ButtonGroup]
+        private void FindOrphanedMissiles()
+        {
+            using (_PRF_FindOrphanedMissiles.Auto())
+            {
+                if (_missiles == null)
+                {
+                    _missiles = new Queue<Missile>();
+                }
+
+                FindMissileRoot();
+
+                if (_missiles.Count != missileRoot.transform.childCount)
+                {
+                    _missiles.Clear();
+
+                    for (var i = 0; i < missileRoot.transform.childCount; i++)
+                    {
+                        var child = missileRoot.transform.GetChild(i);
+                        var childObject = child.gameObject;
+                        var missile = childObject.GetComponent<Missile>();
+
+                        if (missile == null)
+                        {
+                            missile = childObject.AddComponent<Missile>();
+                            missile.Initialize(
+                                childObject,
+                                child.GetComponent<Rigidbody>(),
+                                child.GetComponent<Collider>()
+                            );
+                        }
+
+                        _missiles.Enqueue(missile);
+                    }
+                }
+            }
+        }
+
 #if UNITY_EDITOR
-        [MenuItem(PKG.Menu.Appalachia.Tools.Base + "Bazooka!/Fire!!!!" + SHC.CTRL_ALT_SHFT_F)]
+        [UnityEditor.MenuItem(PKG.Menu.Appalachia.Tools.Base + "Bazooka!/Fire!!!!" + SHC.CTRL_ALT_SHFT_F)]
         private static void MenuFire()
         {
             instance._generationQueued = true;
             instance._fireStrength = 1.0f;
         }
 
-        [MenuItem(PKG.Menu.Appalachia.Tools.Base + "Bazooka!/Fire" + SHC.CTRL_ALT_SHFT_R)]
+        [UnityEditor.MenuItem(PKG.Menu.Appalachia.Tools.Base + "Bazooka!/Fire" + SHC.CTRL_ALT_SHFT_R)]
         private static void MenuSoftFire()
         {
             instance._generationQueued = true;
             instance._fireStrength = 0.25f;
         }
 
-        [MenuItem(PKG.Menu.Appalachia.Tools.Base + "Bazooka!/Drop Bomb!" + SHC.CTRL_ALT_SHFT_D)]
+        [UnityEditor.MenuItem(PKG.Menu.Appalachia.Tools.Base + "Bazooka!/Drop Bomb!" + SHC.CTRL_ALT_SHFT_D)]
         private static void MenuDrop()
         {
             instance._generationQueued = true;
             instance._fireStrength = 0.05f;
         }
 
-        [MenuItem(PKG.Menu.Appalachia.Tools.Base + "Bazooka!/Destroy Missiles!" + SHC.CTRL_ALT_SHFT_C)]
+        [UnityEditor.MenuItem(PKG.Menu.Appalachia.Tools.Base + "Bazooka!/Destroy Missiles!" + SHC.CTRL_ALT_SHFT_C)]
         private static void MenuClear()
         {
             instance.DestroyAllMissiles();
         }
 
-        [MenuItem(PKG.Menu.Appalachia.Tools.Base + "Bazooka!/Load Missile!" + SHC.CTRL_ALT_SHFT_M)]
+        [UnityEditor.MenuItem(PKG.Menu.Appalachia.Tools.Base + "Bazooka!/Load Missile!" + SHC.CTRL_ALT_SHFT_M)]
         private static void MenuSetMissile()
         {
-            if ((Selection.gameObjects != null) && (Selection.gameObjects.Length == 1))
+            if ((UnityEditor.Selection.gameObjects != null) && (UnityEditor.Selection.gameObjects.Length == 1))
             {
-                instance.prefab = Selection.gameObjects[0];
+                instance.prefab = UnityEditor.Selection.gameObjects[0];
             }
         }
 #endif

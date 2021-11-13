@@ -1,3 +1,4 @@
+#if UNITY_EDITOR
 namespace Appalachia.Editing.Labels
 {
     public enum LabelApplicationMode
@@ -9,3 +10,5 @@ namespace Appalachia.Editing.Labels
         QueryOnly = 40
     }
 }
+
+#endif

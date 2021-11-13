@@ -1,3 +1,5 @@
+#if UNITY_EDITOR
+
 #region
 
 using System;
@@ -287,7 +289,7 @@ namespace Appalachia.Editing.Labels
             {
                 if (log)
                 {
-                   AppaLog.Warning($"FAIL: {_logBuilder}");
+                    AppaLog.Warn($"FAIL: {_logBuilder}");
                 }
 
                 return false;
@@ -349,7 +351,7 @@ namespace Appalachia.Editing.Labels
 
                 if (excluded)
                 {
-                   AppaLog.Warning($"FAIL: {_logBuilder}");
+                    AppaLog.Warn($"FAIL: {_logBuilder}");
                 }
                 else
                 {
@@ -539,3 +541,5 @@ namespace Appalachia.Editing.Labels
         }
     }
 }
+
+#endif

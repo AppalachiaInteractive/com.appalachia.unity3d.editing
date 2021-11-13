@@ -529,7 +529,7 @@ namespace Appalachia.Editing.Debugging.Graphy
                             AppaLog.Info(message);
                             break;
                         case MessageType.Warning:
-                           AppaLog.Warning(message);
+                           AppaLog.Warn(message);
                             break;
                         case MessageType.Error:
                             AppaLog.Error(message);

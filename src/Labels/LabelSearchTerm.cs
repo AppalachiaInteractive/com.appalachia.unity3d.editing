@@ -1,3 +1,5 @@
+#if UNITY_EDITOR
+
 #region
 
 using System;
@@ -44,3 +46,5 @@ namespace Appalachia.Editing.Labels
         }
     }
 }
+
+#endif
