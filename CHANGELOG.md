@@ -1,6 +1,6 @@
 ```
 C:/Users/Chris/com.appalachia/unity3d/appa/Assets/Appalachia.Editing
- Let's go!  
+Let's go!  
  ________   ___  ___   ________   ________    ________   _______    ________      
 |\   ____\ |\  \|\  \ |\   __  \ |\   ___  \ |\   ____\ |\  ___ \  |\   ____\     
 \ \  \___| \ \  \\\  \\ \  \|\  \\ \  \\ \  \\ \  \___| \ \   __/| \ \  \___|_    
@@ -14,6 +14,8 @@ C:/Users/Chris/com.appalachia/unity3d/appa/Assets/Appalachia.Editing
 ## Releasing
 | Hash | Date | Author | Changes |
 |------|------|--------|---------|
+| d64f71b65d2be80ed89bd7f3b52fd79431ff4a33 | 2021-11-13 | Chris Schubert | Removing outdated compiler switches |
+| 933397aa213cf1317aedf1f25de7a1121bd4b495 | 2021-11-13 | Chris Schubert | Updating changelog and releaselog |
 | 712ae5cdc118ac10a4fe23f4da1beef166f0c628 | 2021-11-13 | Chris Schubert | Updating changelog and releaselog |
 | 4f5eda612e842607d13e063fc7887054bfd7912e | 2021-11-13 | Chris Schubert | EXR to gitlfs |
 | 5d8dc9309ed23c3e239335737968e427321ad235 | 2021-11-13 | Chris Schubert | Editor exlusions fro runtime build |
