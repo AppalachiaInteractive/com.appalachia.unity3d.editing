@@ -14,6 +14,15 @@ C:/Users/Chris/com.appalachia/unity3d/appa/Assets/Appalachia.Editing
 ## Releasing
 | Hash | Date | Author | Changes |
 |------|------|--------|---------|
+| 4f5eda612e842607d13e063fc7887054bfd7912e | 2021-11-13 | Chris Schubert | EXR to gitlfs |
+| 5d8dc9309ed23c3e239335737968e427321ad235 | 2021-11-13 | Chris Schubert | Editor exlusions fro runtime build |
+| ad8deeb21e8f8c6ce2c0335ca29b99d2123f8342 | 2021-11-13 | Chris Schubert | Editor exclusions for runtime build. |
+
+
+ ## Tag: `v0.2.0`
+| Hash | Date | Author | Changes |
+|------|------|--------|---------|
+| afc163c19d22ee51495030c9420b5b1c3b914d29 | 2021-11-09 | Chris Schubert | Updating changelog and releaselog |
 | 1c9a048a61b8d3dc7c8fe5167c33a7405f5f07af | 2021-11-09 | Chris Schubert | Updating changelog and releaselog |
 | f6043c23eef165beae88c62c87cff94bbdc3a758 | 2021-11-09 | Chris Schubert | APPAGUI updates and Debugger stepthroughs |
 | b7e281dee37d6cec054df4243646db83a85dc16d | 2021-11-08 | Chris Schubert | Updating changelog and releaselog |
