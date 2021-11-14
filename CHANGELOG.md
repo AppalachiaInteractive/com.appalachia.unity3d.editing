@@ -14,6 +14,7 @@ Let's go!
 ## Releasing
 | Hash | Date | Author | Changes |
 |------|------|--------|---------|
+| a8b94e89298ceaddceacb3ee378cbb31c840b8d8 | 2021-11-13 | Chris Schubert | Updating changelog and releaselog |
 | d64f71b65d2be80ed89bd7f3b52fd79431ff4a33 | 2021-11-13 | Chris Schubert | Removing outdated compiler switches |
 | 933397aa213cf1317aedf1f25de7a1121bd4b495 | 2021-11-13 | Chris Schubert | Updating changelog and releaselog |
 | 712ae5cdc118ac10a4fe23f4da1beef166f0c628 | 2021-11-13 | Chris Schubert | Updating changelog and releaselog |
