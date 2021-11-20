@@ -15,6 +15,8 @@ Development environment loaded!
 `0.2.0`
 | Hash | Date | Author | Changes |
 |------|------|--------|---------|
+| 3a8e0e9fdb797a99a6119f930b8c276510966cb0 | 2021-11-20 | Chris Schubert | Expanding initialization setup class, and fixing some initialization in appa object bases |
+| 5d978189837f663688ce37e336f2c4db35660866 | 2021-11-20 | Chris Schubert | Updating changelog and releaselog |
 | 284e42c0b68d78822a1a4bb91bde15e0af6eade4 | 2021-11-20 | Chris Schubert | Updating changelog and releaselog |
 | a29a00c91ab4cf5b3b54548981eb5d45c5eb1f34 | 2021-11-20 | Chris Schubert | Packaging updates and formatting for titles |
 | 73cfced968cf2d3e2bd80a56be3fc4643c1134c6 | 2021-11-20 | Chris Schubert | Updating changelog and releaselog |
