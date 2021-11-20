@@ -175,8 +175,10 @@ namespace Appalachia.Editing.Debugging.Graphy
 
         #region Methods -> Unity Callbacks
 
-        private void Start()
+        protected override void Start()
         {
+            base.Start();
+            
             m_fpsMonitor = GetComponentInChildren<G_FpsMonitor>();
             m_ramMonitor = GetComponentInChildren<G_RamMonitor>();
             m_audioMonitor = GetComponentInChildren<G_AudioMonitor>();

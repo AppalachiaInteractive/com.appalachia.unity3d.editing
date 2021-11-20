@@ -27,8 +27,10 @@ namespace Appalachia.Editing.Debugging.Testing
 
         private Transform _t;
 
-        public void OnEnable()
+        protected override void OnEnable()
         {
+            base.OnEnable();
+            
             _t = transform;
             _t.rotation = Quaternion.identity;
         }

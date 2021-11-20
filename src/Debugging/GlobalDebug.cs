@@ -6,6 +6,8 @@ using Appalachia.Core.Debugging;
 using Appalachia.Core.Scriptables;
 using Appalachia.Core.Shading;
 using Sirenix.OdinInspector;
+using Unity.Profiling;
+using UnityEditor;
 using UnityEngine;
 
 namespace Appalachia.Editing.Debugging
@@ -13,6 +15,8 @@ namespace Appalachia.Editing.Debugging
     [Serializable]
     public class GlobalDebug : SingletonAppalachiaObject<GlobalDebug>
     {
+        #region Fields and Autoproperties
+
         [BoxGroup("Debug/Mesh")]
         [HideLabel]
         [EnableIf(nameof(enableDebugMesh))]
@@ -41,73 +45,101 @@ namespace Appalachia.Editing.Debugging
 
         private bool _enabled;
         private bool _initialized;
+
+        #endregion
+
         private bool enableAny => debugMode != DebugMode.Off;
         private bool enableDebugMesh => debugMode == DebugMode.DebugMesh;
         private bool enableDebugMotion => debugMode == DebugMode.DebugMotion;
 
+        public override void Initialize()
+        {
+            using (_PRF_Initialize.Auto())
+            {
+                base.Initialize();
+
+                if (!_initialized)
+                {
+                    _initialized = true;
+                    _enabled = false;
+
+                    //debugShader = GSR.instance.debugShader;
+                    GSPL.Include(debugShader);
+                    remap = new Vector2(0f, 1f);
+
+                    SceneView.lastActiveSceneView.SetSceneViewShaderReplace(null, null);
+                    SceneView.lastActiveSceneView.Repaint();
+                }
+            }
+        }
+
         [Button]
         public void SelectShader()
         {
-            UnityEditor.Selection.activeObject = debugShader;
+            using (_PRF_SelectShader.Auto())
+            {
+                Selection.activeObject = debugShader;
+            }
         }
 
         public void Update()
         {
-            Initialize();
-
-            if (UnityEditor.SceneView.lastActiveSceneView != null)
+            using (_PRF_Update.Auto())
             {
-                if (debugMode == DebugMode.Off)
+                Initialize();
+
+                if (SceneView.lastActiveSceneView != null)
                 {
-                    if (_enabled)
+                    if (debugMode == DebugMode.Off)
                     {
-                        _enabled = false;
+                        if (_enabled)
+                        {
+                            _enabled = false;
 
-                        UnityEditor.SceneView.lastActiveSceneView.SetSceneViewShaderReplace(null, null);
-                        UnityEditor.SceneView.lastActiveSceneView.Repaint();
+                            SceneView.lastActiveSceneView.SetSceneViewShaderReplace(null, null);
+                            SceneView.lastActiveSceneView.Repaint();
+                        }
                     }
-                }
-                else
-                {
-                    _enabled = true;
-
-                    UnityEditor.SceneView.lastActiveSceneView.SetSceneViewShaderReplace(debugShader, null);
-
-                    var mode = 0;
-
-                    if (debugMode == DebugMode.DebugMotion)
+                    else
                     {
-                        mode = (int) debugMotion;
-                    }
-                    else if (debugMode == DebugMode.DebugMesh)
-                    {
-                        mode = (int) debugMesh;
-                    }
+                        _enabled = true;
 
-                    Shader.SetGlobalFloat(GSPL.Get(GSC.DEBUG._DEBUG_MODE), mode);
-                    Shader.SetGlobalFloat(GSPL.Get(GSC.DEBUG._DEBUG_MIN),  remap.x);
-                    Shader.SetGlobalFloat(GSPL.Get(GSC.DEBUG._DEBUG_MAX),  remap.y);
+                        SceneView.lastActiveSceneView.SetSceneViewShaderReplace(debugShader, null);
 
-                    UnityEditor.SceneView.lastActiveSceneView.Repaint();
+                        var mode = 0;
+
+                        if (debugMode == DebugMode.DebugMotion)
+                        {
+                            mode = (int) debugMotion;
+                        }
+                        else if (debugMode == DebugMode.DebugMesh)
+                        {
+                            mode = (int) debugMesh;
+                        }
+
+                        Shader.SetGlobalFloat(GSPL.Get(GSC.DEBUG._DEBUG_MODE), mode);
+                        Shader.SetGlobalFloat(GSPL.Get(GSC.DEBUG._DEBUG_MIN),  remap.x);
+                        Shader.SetGlobalFloat(GSPL.Get(GSC.DEBUG._DEBUG_MAX),  remap.y);
+
+                        SceneView.lastActiveSceneView.Repaint();
+                    }
                 }
             }
         }
 
-        private void Initialize()
-        {
-            if (!_initialized)
-            {
-                _initialized = true;
-                _enabled = false;
+        #region Profiling
 
-                //debugShader = GSR.instance.debugShader;
-                GSPL.Include(debugShader);
-                remap = new Vector2(0f, 1f);
+        private const string _PRF_PFX = nameof(GlobalDebug) + ".";
 
-                UnityEditor.SceneView.lastActiveSceneView.SetSceneViewShaderReplace(null, null);
-                UnityEditor.SceneView.lastActiveSceneView.Repaint();
-            }
-        }
+        private static readonly ProfilerMarker _PRF_SelectShader =
+            new ProfilerMarker(_PRF_PFX + nameof(SelectShader));
+
+        private static readonly ProfilerMarker _PRF_Update = new ProfilerMarker(_PRF_PFX + nameof(Update));
+
+        private static readonly ProfilerMarker _PRF_Initialize =
+            new ProfilerMarker(_PRF_PFX + nameof(Initialize));
+
+        #endregion
     }
 }
 #endif

@@ -162,8 +162,10 @@ namespace Appalachia.Editing.Visualizers
             Regenerate();
         }
 
-        private void OnDisable()
+        protected override void OnDisable()
         {
+            base.OnDisable();
+            
             indirectDataBuffer?.Release();
             indirectDataBuffer = null;
             _transforms = null;

@@ -11,10 +11,10 @@ namespace Appalachia.Editing.Core
     [Serializable]
     [HideDuplicateReferenceBox]
     [HideReferenceObjectPicker]
-    public abstract class MetadataLookupSelection<TS, T, TValue, TL> : AppalachiaObject<T>
+    public abstract class MetadataLookupSelection<TS, T, TValue, TL> : AppalachiaObject
         where TS : MetadataLookupSelection<TS, T, TValue, TL>
         where T : AppalachiaMetadataCollection<T, TValue, TL>
-        where TValue : AppalachiaObject<TValue>, ICategorizable
+        where TValue : AppalachiaObject, ICategorizable
         where TL : AppaList<TValue>, new()
     {
         protected Action<TValue> _selection;

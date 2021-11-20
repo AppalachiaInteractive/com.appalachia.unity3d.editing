@@ -10221,6 +10221,11 @@ namespace Appalachia.Editing.Core
 
             public static void DrawUIBox(Rect rect, Color borderColor, float size = 1.5f)
             {
+                if (Event.current.type != EventType.Repaint)
+                {
+                    return;
+                }
+
                 var left = new Rect(rect.xMin - size,   rect.yMin - size, size, rect.height + (2 * size));
                 var right = new Rect(rect.xMax,         rect.yMin - size, size, rect.height + (2 * size));
                 var top = new Rect(rect.xMin - size,    rect.yMin - size, rect.width + (2 * size), size);

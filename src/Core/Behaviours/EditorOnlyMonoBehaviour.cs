@@ -143,10 +143,12 @@ namespace Appalachia.Editing.Core.Behaviours
         }
 #endif
 
-        protected void Awake()
+        protected override void Awake()
         {
             using (_PRF_Awake.Auto())
             {
+                base.Awake();
+                
                 VSP_ENABLING = false; //VegetationSystemPro.EXECUTING_ENABLE;
                 if (VSP_ENABLING)
                 {
@@ -164,10 +166,12 @@ namespace Appalachia.Editing.Core.Behaviours
             }
         }
 
-        protected void OnEnable()
+        protected override void OnEnable()
         {
             using (_PRF_OnEnable.Auto())
             {
+                base.OnEnable();
+                
                 VSP_ENABLING = false; //VegetationSystemPro.EXECUTING_ENABLE;
                 if (VSP_ENABLING)
                 {
@@ -185,10 +189,12 @@ namespace Appalachia.Editing.Core.Behaviours
             }
         }
 
-        protected void Reset()
+        protected override void Reset()
         {
             using (_PRF_Reset.Auto())
             {
+                base.Reset();
+                
                 VSP_ENABLING = false; //VegetationSystemPro.EXECUTING_ENABLE;
                 if (VSP_ENABLING)
                 {
@@ -206,10 +212,12 @@ namespace Appalachia.Editing.Core.Behaviours
             }
         }
 
-        protected void Start()
+        protected override void Start()
         {
             using (_PRF_Start.Auto())
             {
+                base.Start();
+                
                 VSP_ENABLING = false; //VegetationSystemPro.EXECUTING_ENABLE;
                 if (VSP_ENABLING)
                 {

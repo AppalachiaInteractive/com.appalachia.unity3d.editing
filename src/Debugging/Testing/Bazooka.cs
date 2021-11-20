@@ -497,10 +497,12 @@ namespace Appalachia.Editing.Debugging.Testing
             }
         }
 
-        public void OnEnable()
+        protected override void OnEnable()
         {
             using (_PRF_OnEnable.Auto())
             {
+                base.OnEnable();
+                
                 _t = transform;
 
                 FindOrphanedMissiles();

@@ -305,8 +305,10 @@ namespace Appalachia.Editing.Debugging.IngameDebugConsole
 		private DebugLogLogcatListener logcatListener;
 #endif
 
-        protected override void OnAwake()
+        protected override void Awake()
         {
+            base.Awake();
+            
             pooledLogEntries = new List<DebugLogEntry>(16);
             pooledLogItems = new List<DebugLogItem>(16);
             commandSuggestionInstances = new List<Text>(8);
@@ -421,8 +423,10 @@ namespace Appalachia.Editing.Debugging.IngameDebugConsole
             }
         }
         
-        private void OnEnable()
+        protected override void OnEnable()
         {
+            base.OnEnable();
+            
             // Intercept debug entries
             Application.logMessageReceivedThreaded -= ReceivedLog;
             Application.logMessageReceivedThreaded += ReceivedLog;
@@ -445,8 +449,10 @@ namespace Appalachia.Editing.Debugging.IngameDebugConsole
             );
         }
 
-        private void OnDisable()
+        protected override void OnDisable()
         {
+            base.OnDisable();
+            
             // Stop receiving debug entries
             Application.logMessageReceivedThreaded -= ReceivedLog;
 
@@ -458,8 +464,10 @@ namespace Appalachia.Editing.Debugging.IngameDebugConsole
             DebugLogConsole.RemoveCommand("logs.save");
         }
 
-        private void Start()
+        protected override void Start()
         {
+            base.Start();
+            
             if ((enablePopup && startInPopupMode) || (!enablePopup && startMinimized))
             {
                 HideLogWindow();

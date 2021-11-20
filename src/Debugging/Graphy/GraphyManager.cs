@@ -522,13 +522,15 @@ namespace Appalachia.Editing.Debugging.Graphy
 
         #region Methods -> Unity Callbacks
 
-        private void Start()
+        protected override void Start()
         {
+            base.Start();
             Init();
         }
 
-        private void OnDestroy()
+        protected override void OnDestroy()
         {
+            base.OnDestroy();
             G_IntString.Dispose();
             G_FloatString.Dispose();
         }
