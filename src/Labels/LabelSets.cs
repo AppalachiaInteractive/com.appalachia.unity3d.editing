@@ -12,8 +12,10 @@ namespace Appalachia.Editing.Labels
         public LabelAssignmentCollection trees;
         public LabelAssignmentCollection vegetations;
 
-        private void Awake()
+        protected override void Awake()
         {
+            base.Awake();
+            
             if (vegetations == default)
             {
                 vegetations = new LabelAssignmentCollection(
