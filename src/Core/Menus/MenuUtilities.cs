@@ -1,6 +1,7 @@
 ﻿#if UNITY_EDITOR
 using System;
 using System.Collections.Generic;
+using Appalachia.CI.Integration.Assets;
 using UnityEngine;
 
 namespace Appalachia.Editing.Core.Menus
@@ -11,14 +12,14 @@ namespace Appalachia.Editing.Core.Menus
         {
             try
             {
-                UnityEditor.AssetDatabase.StartAssetEditing();
+                AssetDatabaseManager.StartAssetEditing();
 
                 ForEachComponent(action);
             }
             finally
             {
-                UnityEditor.AssetDatabase.StopAssetEditing();
-                UnityEditor.AssetDatabase.Refresh();
+                AssetDatabaseManager.StopAssetEditing();
+                AssetDatabaseManager.Refresh();
             }
         }
 
@@ -54,8 +55,8 @@ namespace Appalachia.Editing.Core.Menus
 
             foreach (var obj in objs)
             {
-                var path = UnityEditor.AssetDatabase.GetAssetPath(obj);
-                var subAssets = UnityEditor.AssetDatabase.LoadAllAssetRepresentationsAtPath(path);
+                var path = AssetDatabaseManager.GetAssetPath(obj);
+                var subAssets = AssetDatabaseManager.LoadAllAssetRepresentationsAtPath(path);
 
                 if (subAssets.Length == 0)
                 {
@@ -78,8 +79,8 @@ namespace Appalachia.Editing.Core.Menus
 
             foreach (var obj in objs)
             {
-                var path = UnityEditor.AssetDatabase.GetAssetPath(obj);
-                var subAssets = UnityEditor.AssetDatabase.LoadAllAssetRepresentationsAtPath(path);
+                var path = AssetDatabaseManager.GetAssetPath(obj);
+                var subAssets = AssetDatabaseManager.LoadAllAssetRepresentationsAtPath(path);
 
                 if (subAssets.Length == 0)
                 {
