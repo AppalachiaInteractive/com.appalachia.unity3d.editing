@@ -13,6 +13,7 @@
 `0.2.0`
 | Hash | Date | Author | Changes |
 |------|------|--------|---------|
+| 474c8ca86a3e01cef3c9102c3c0177524b346e89 | 2021-12-02 | Chris Schubert | Updating changelog and releaselog |
 | 721f04fae588bd7f4f4bdec6765d2305febaa3a1 | 2021-12-02 | Chris Schubert | General code cleanup |
 | 1d40e90bcb10c6120c4c8b25e4eb53a03fbb8114 | 2021-11-21 | Chris Schubert | Updating changelog and releaselog |
 | 4cec9465e64188eb9da7a52a0ff93ab2b9d29ae5 | 2021-11-21 | Chris Schubert | Updating asset manager usages |
