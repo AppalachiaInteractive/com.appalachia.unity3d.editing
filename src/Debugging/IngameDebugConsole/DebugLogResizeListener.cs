@@ -1,10 +1,11 @@
-﻿using UnityEngine;
+﻿using Appalachia.Core.Behaviours;
+using UnityEngine;
 using UnityEngine.EventSystems;
 
 // Listens to drag event on the DebugLogManager's resize button
 namespace Appalachia.Editing.Debugging.IngameDebugConsole
 {
-    public class DebugLogResizeListener : MonoBehaviour, IBeginDragHandler, IDragHandler
+    public class DebugLogResizeListener: AppalachiaBehaviour, IBeginDragHandler, IDragHandler
     {
 #pragma warning disable 0649
         [SerializeField] private DebugLogManager debugManager;

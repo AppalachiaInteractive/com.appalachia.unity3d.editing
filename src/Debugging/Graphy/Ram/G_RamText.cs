@@ -1,10 +1,11 @@
-﻿using Appalachia.Editing.Debugging.Graphy.Util;
+﻿using Appalachia.Core.Behaviours;
+using Appalachia.Editing.Debugging.Graphy.Util;
 using UnityEngine;
 using UnityEngine.UI;
 
 namespace Appalachia.Editing.Debugging.Graphy.Ram
 {
-    public class G_RamText : MonoBehaviour
+    public class G_RamText: AppalachiaBehaviour
     {
         #region Methods -> Public
 
@@ -58,8 +59,10 @@ namespace Appalachia.Editing.Debugging.Graphy.Ram
 
         #region Methods -> Unity Callbacks
 
-        private void Awake()
+        protected override void Awake()
         {
+            base.Awake();
+            
             Init();
         }
 

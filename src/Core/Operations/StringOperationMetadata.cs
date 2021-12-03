@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.IO;
+using Appalachia.CI.Integration.FileSystem;
 using Appalachia.Core.Extensions;
 using Appalachia.Utility.Extensions;
 
@@ -127,9 +128,9 @@ namespace Appalachia.Editing.Core.Operations
                         return input;
                     }
 
-                    var d = Path.GetDirectoryName(input);
-                    var n = Path.GetFileNameWithoutExtension(input);
-                    var e = Path.GetExtension(input);
+                    var d = AppaPath.GetDirectoryName(input);
+                    var n = AppaPath.GetFileNameWithoutExtension(input);
+                    var e = AppaPath.GetExtension(input);
 
                     return $"{d}{n}{Arguments[0].StringArgument}{e}";
 

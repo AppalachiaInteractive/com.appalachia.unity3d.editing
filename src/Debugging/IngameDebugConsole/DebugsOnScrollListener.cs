@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using Appalachia.Core.Behaviours;
+using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
@@ -9,7 +10,7 @@ using UnityEngine.UI;
 // snap to bottom shall be true, otherwise it shall be false
 namespace Appalachia.Editing.Debugging.IngameDebugConsole
 {
-    public class DebugsOnScrollListener : MonoBehaviour, IScrollHandler, IBeginDragHandler, IEndDragHandler
+    public class DebugsOnScrollListener: AppalachiaBehaviour, IScrollHandler, IBeginDragHandler, IEndDragHandler
     {
         public DebugLogManager debugLogManager;
         public ScrollRect debugsScrollRect;

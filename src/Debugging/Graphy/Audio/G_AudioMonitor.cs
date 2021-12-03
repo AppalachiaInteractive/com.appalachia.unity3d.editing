@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using Appalachia.Core.Behaviours;
+using UnityEngine;
 using UnityEngine.SceneManagement;
 
 namespace Appalachia.Editing.Debugging.Graphy.Audio
@@ -8,7 +9,7 @@ namespace Appalachia.Editing.Debugging.Graphy.Audio
     ///     If you're using a custom audio engine (like FMOD or WWise) it won't work,
     ///     although you can always adapt it.
     /// </summary>
-    public class G_AudioMonitor : MonoBehaviour
+    public class G_AudioMonitor: AppalachiaBehaviour
     {
         #region Variables -> Private
 
@@ -53,8 +54,10 @@ namespace Appalachia.Editing.Debugging.Graphy.Audio
 
         #region Methods -> Unity Callbacks
 
-        private void Awake()
+        protected override void Awake()
         {
+            base.Awake();
+            
             Init();
         }
 
@@ -112,8 +115,10 @@ namespace Appalachia.Editing.Debugging.Graphy.Audio
             }
         }
 
-        private void OnDestroy()
+        protected override void OnDestroy()
         {
+            base.OnDestroy();
+            
             SceneManager.sceneLoaded -= OnSceneLoaded;
         }
 

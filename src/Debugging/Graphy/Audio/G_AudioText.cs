@@ -1,10 +1,11 @@
-﻿using Appalachia.Editing.Debugging.Graphy.Util;
+﻿using Appalachia.Core.Behaviours;
+using Appalachia.Editing.Debugging.Graphy.Util;
 using UnityEngine;
 using UnityEngine.UI;
 
 namespace Appalachia.Editing.Debugging.Graphy.Audio
 {
-    public class G_AudioText : MonoBehaviour
+    public class G_AudioText: AppalachiaBehaviour
     {
         #region Variables -> Serialized Private
 
@@ -50,8 +51,9 @@ namespace Appalachia.Editing.Debugging.Graphy.Audio
 
         #region Methods -> Unity Callbacks
 
-        private void Awake()
+        protected override void Awake()
         {
+            base.Awake();
             Init();
         }
 

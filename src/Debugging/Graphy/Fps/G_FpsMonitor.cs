@@ -1,9 +1,10 @@
 using System;
+using Appalachia.Core.Behaviours;
 using UnityEngine;
 
 namespace Appalachia.Editing.Debugging.Graphy.Fps
 {
-    public class G_FpsMonitor : MonoBehaviour
+    public class G_FpsMonitor: AppalachiaBehaviour
     {
         #region Methods -> Public
 
@@ -52,8 +53,10 @@ namespace Appalachia.Editing.Debugging.Graphy.Fps
 
         #region Methods -> Unity Callbacks
 
-        private void Awake()
+        protected override void Awake()
         {
+            base.Awake();
+            
             Init();
         }
 

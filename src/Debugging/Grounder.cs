@@ -1,11 +1,12 @@
 using System;
+using Appalachia.Core.Behaviours;
 using Appalachia.Utility.Logging;
 using UnityEngine;
 
 namespace Appalachia.Editing.Debugging
 {
     [ExecuteAlways]
-    public class Grounder : MonoBehaviour
+    public class Grounder: AppalachiaBehaviour
     {
         public bool freeze;
         public bool locked;

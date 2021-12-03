@@ -52,7 +52,7 @@ namespace Appalachia.Editing.Debugging
         private bool enableDebugMesh => debugMode == DebugMode.DebugMesh;
         private bool enableDebugMotion => debugMode == DebugMode.DebugMotion;
 
-        public override void Initialize()
+        protected override void Initialize()
         {
             using (_PRF_Initialize.Auto())
             {

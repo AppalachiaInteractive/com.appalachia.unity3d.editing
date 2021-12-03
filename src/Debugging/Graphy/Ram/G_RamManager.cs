@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Appalachia.Core.Behaviours;
 using Appalachia.Editing.Debugging.Graphy.UI;
 using Appalachia.Editing.Debugging.Graphy.Util;
 using UnityEngine;
@@ -6,7 +7,7 @@ using UnityEngine.UI;
 
 namespace Appalachia.Editing.Debugging.Graphy.Ram
 {
-    public class G_RamManager : MonoBehaviour, IMovable, IModifiableState
+    public class G_RamManager: AppalachiaBehaviour, IMovable, IModifiableState
     {
         /* ----- TODO: ----------------------------
          * Add summaries to the variables.
@@ -43,13 +44,15 @@ namespace Appalachia.Editing.Debugging.Graphy.Ram
 
         #region Methods -> Unity Callbacks
 
-        private void Awake()
+        protected override void Awake()
         {
+            base.Awake();
             Init();
         }
 
-        private void Start()
+        protected override void Start()
         {
+            base.Start();
             UpdateParameters();
         }
 

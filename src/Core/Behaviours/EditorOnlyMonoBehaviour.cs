@@ -3,6 +3,7 @@
 using System;
 using Appalachia.Core.Behaviours;
 using Appalachia.Core.Labels;
+using Appalachia.Utility.Extensions;
 using Appalachia.Utility.Logging;
 using Unity.Profiling;
 using UnityEngine;
@@ -95,7 +96,7 @@ namespace Appalachia.Editing.Core.Behaviours
                         if (!hasOtherComponentThatDoesNotExcludeObject)
                         {
                             gameObject.tag = TAGS.EditorOnly;
-                            SetDirty();
+                           this.MarkAsModified();
                         }
                     }
                         break;
@@ -132,7 +133,7 @@ namespace Appalachia.Editing.Core.Behaviours
                         else
                         {
                             gameObject.tag = TAGS.EditorOnly;
-                            SetDirty();
+                           this.MarkAsModified();
                         }
                     }
                         break;

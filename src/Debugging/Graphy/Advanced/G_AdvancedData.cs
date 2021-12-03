@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Text;
+using Appalachia.Core.Behaviours;
 using Appalachia.Editing.Debugging.Graphy.UI;
 using Appalachia.Editing.Debugging.Graphy.Util;
 using UnityEngine;
@@ -11,7 +12,7 @@ using UnityEngine.UI;
 
 namespace Appalachia.Editing.Debugging.Graphy.Advanced
 {
-    public class G_AdvancedData : MonoBehaviour, IMovable, IModifiableState
+    public class G_AdvancedData: AppalachiaBehaviour, IMovable, IModifiableState
     {
         #region Methods -> Private
 
@@ -140,8 +141,10 @@ namespace Appalachia.Editing.Debugging.Graphy.Advanced
 
         #region Methods -> Unity Callbacks
 
-        private void OnEnable()
+        protected override void OnEnable()
         {
+            base.OnEnable();
+            
             Init();
         }
 

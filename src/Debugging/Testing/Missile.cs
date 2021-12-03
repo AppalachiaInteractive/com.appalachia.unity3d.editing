@@ -1,10 +1,11 @@
+using Appalachia.Core.Behaviours;
 using Appalachia.Core.Extensions;
 using Appalachia.Utility.Extensions;
 using UnityEngine;
 
 namespace Appalachia.Editing.Debugging.Testing
 {
-    public class Missile : MonoBehaviour
+    public class Missile: AppalachiaBehaviour
     {
         public bool keepAlive;
         public Collider c;

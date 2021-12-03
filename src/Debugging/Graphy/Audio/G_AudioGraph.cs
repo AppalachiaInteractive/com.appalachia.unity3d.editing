@@ -96,8 +96,9 @@ namespace Appalachia.Editing.Debugging.Graphy.Audio
 
         #region Methods -> Unity Callbacks
 
-        private void OnEnable()
+        protected override void OnEnable()
         {
+            base.OnEnable();
             /* ----- NOTE: ----------------------------
              * We used to Init() here regardless of
              * whether this module was enabled.

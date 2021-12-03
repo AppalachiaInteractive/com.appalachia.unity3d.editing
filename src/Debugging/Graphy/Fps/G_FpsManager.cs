@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Appalachia.Core.Behaviours;
 using Appalachia.Editing.Debugging.Graphy.UI;
 using Appalachia.Editing.Debugging.Graphy.Util;
 using UnityEngine;
@@ -6,7 +7,7 @@ using UnityEngine.UI;
 
 namespace Appalachia.Editing.Debugging.Graphy.Fps
 {
-    public class G_FpsManager : MonoBehaviour, IMovable, IModifiableState
+    public class G_FpsManager: AppalachiaBehaviour, IMovable, IModifiableState
     {
         #region Variables -> Serialized Private
 
@@ -37,13 +38,15 @@ namespace Appalachia.Editing.Debugging.Graphy.Fps
 
         #region Methods -> Unity Callbacks
 
-        private void Awake()
+        protected override void Awake()
         {
+            base.Awake();
             Init();
         }
 
-        private void Start()
+        protected override void Start()
         {
+            base.Start();
             UpdateParameters();
         }
 

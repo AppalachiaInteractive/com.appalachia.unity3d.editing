@@ -5,7 +5,7 @@ using UnityEngine.EventSystems;
 
 namespace IngameDebugConsole
 {
-	public class DebugLogItemCopyWebGL : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
+	public class DebugLogItemCopyWebGL: AppalachiaBehaviour, IPointerDownHandler, IPointerUpHandler
 	{
 		[DllImport( "__Internal" )]
 		private static extern void IngameDebugConsoleStartCopy( string textToCopy );

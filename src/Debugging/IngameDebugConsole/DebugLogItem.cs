@@ -1,6 +1,7 @@
 ﻿using System.Diagnostics;
 using System.Text.RegularExpressions;
 using Appalachia.CI.Integration.Assets;
+using Appalachia.Core.Behaviours;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
@@ -10,7 +11,7 @@ using UnityEngine.UI;
 // A UI element to show information about a debug entry
 namespace Appalachia.Editing.Debugging.IngameDebugConsole
 {
-    public class DebugLogItem : MonoBehaviour, IPointerClickHandler
+    public class DebugLogItem: AppalachiaBehaviour, IPointerClickHandler
     {
 #region Platform Specific Elements
 

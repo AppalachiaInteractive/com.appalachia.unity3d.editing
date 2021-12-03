@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Appalachia.Core.Behaviours;
 using Appalachia.Editing.Debugging.Graphy.UI;
 using Appalachia.Editing.Debugging.Graphy.Util;
 using UnityEngine;
@@ -6,7 +7,7 @@ using UnityEngine.UI;
 
 namespace Appalachia.Editing.Debugging.Graphy.Audio
 {
-    public class G_AudioManager : MonoBehaviour, IMovable, IModifiableState
+    public class G_AudioManager : AppalachiaBehaviour, IMovable, IModifiableState
     {
         #region Variables -> Serialized Private
 
@@ -36,13 +37,16 @@ namespace Appalachia.Editing.Debugging.Graphy.Audio
 
         #region Methods -> Unity Callbacks
 
-        private void Awake()
+        protected override void Awake()
         {
+            base.Awake();
+
             Init();
         }
 
-        private void Start()
+        protected override void Start()
         {
+            base.Start();
             UpdateParameters();
         }
 

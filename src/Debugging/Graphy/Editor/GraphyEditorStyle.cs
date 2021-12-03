@@ -41,8 +41,8 @@ namespace Appalachia.Editing.Debugging.Graphy
             }
             else
             {
-                m_headerStyle1 = EditorStyles.boldLabel;
-                m_headerStyle2 = EditorStyles.boldLabel;
+                m_headerStyle1 = new(EditorStyles.boldLabel);
+                m_headerStyle2 = new(EditorStyles.boldLabel);
             }
 
             m_foldoutStyle = new GUIStyle(EditorStyles.foldout)

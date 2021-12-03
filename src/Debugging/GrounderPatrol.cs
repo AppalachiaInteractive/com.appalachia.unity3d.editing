@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Appalachia.Core.Behaviours;
 using Appalachia.Utility.Logging;
 using Sirenix.OdinInspector;
 using UnityEngine;
@@ -7,7 +8,7 @@ using UnityEngine;
 namespace Appalachia.Editing.Debugging
 {
     [ExecuteAlways]
-    public class GrounderPatrol : MonoBehaviour
+    public class GrounderPatrol: AppalachiaBehaviour
     {
         public bool freeze;
         public bool pointsAreRelative = true;

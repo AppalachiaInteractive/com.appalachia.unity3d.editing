@@ -1,8 +1,9 @@
-﻿using UnityEngine;
+﻿using Appalachia.Core.Behaviours;
+using UnityEngine;
 
 namespace Appalachia.Editing.Debugging.Graphy.Graph
 {
-    public abstract class G_Graph : MonoBehaviour
+    public abstract class G_Graph: AppalachiaBehaviour
     {
         #region Methods -> Protected
 

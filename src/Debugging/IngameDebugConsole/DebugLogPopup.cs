@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using Appalachia.Core.Behaviours;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
@@ -6,7 +7,7 @@ using UnityEngine.UI;
 // Manager class for the debug popup
 namespace Appalachia.Editing.Debugging.IngameDebugConsole
 {
-    public class DebugLogPopup : MonoBehaviour,
+    public class DebugLogPopup: AppalachiaBehaviour,
                                  IPointerClickHandler,
                                  IBeginDragHandler,
                                  IDragHandler,
@@ -216,8 +217,10 @@ namespace Appalachia.Editing.Debugging.IngameDebugConsole
             }
         }
 
-        private void Awake()
+        protected override void Awake()
         {
+            base.Awake();
+            
             popupTransform = (RectTransform) transform;
             backgroundImage = GetComponent<Image>();
             canvasGroup = GetComponent<CanvasGroup>();
@@ -252,8 +255,10 @@ namespace Appalachia.Editing.Debugging.IngameDebugConsole
             }
         }
 
-        private void Reset()
+        protected override void Reset()
         {
+            base.Reset();
+            
             newInfoCount = 0;
             newWarningCount = 0;
             newErrorCount = 0;

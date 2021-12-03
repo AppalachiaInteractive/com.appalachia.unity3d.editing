@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Appalachia.Core.Behaviours;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -7,7 +8,7 @@ using UnityEngine.UI;
 // recycled within the list instead of creating a new log item at each chance
 namespace Appalachia.Editing.Debugging.IngameDebugConsole
 {
-    public class DebugLogRecycledListView : MonoBehaviour
+    public class DebugLogRecycledListView: AppalachiaBehaviour
     {
         // Log items used to visualize the debug entries at specified indices
         private readonly Dictionary<int, DebugLogItem> logItemsAtIndices = new(256);
@@ -308,8 +309,9 @@ namespace Appalachia.Editing.Debugging.IngameDebugConsole
             }
         }
 
-        private void Awake()
+        protected override void Awake()
         {
+            base.Awake();
             scrollView = viewportTransform.GetComponentInParent<ScrollRect>();
             scrollView.onValueChanged.AddListener(pos => UpdateItemsInTheList(false));
 

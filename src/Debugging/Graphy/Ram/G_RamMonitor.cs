@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using Appalachia.Core.Behaviours;
+using UnityEngine;
 using UnityEngine.Profiling;
 
 #if UNITY_5_5_OR_NEWER
@@ -7,7 +8,7 @@ using UnityEngine.Profiling;
 
 namespace Appalachia.Editing.Debugging.Graphy.Ram
 {
-    public class G_RamMonitor : MonoBehaviour
+    public class G_RamMonitor: AppalachiaBehaviour
     {
         #region Methods -> Unity Callbacks
 
