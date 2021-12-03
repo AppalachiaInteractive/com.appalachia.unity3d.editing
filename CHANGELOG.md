@@ -1,6 +1,4 @@
 ```
-C:/Users/Chris/com.appalachia/unity3d/appa/Assets/Appalachia.Editing
-Development environment loaded!  
  ________   ___  ___   ________   ________    ________   _______    ________      
 |\   ____\ |\  \|\  \ |\   __  \ |\   ___  \ |\   ____\ |\  ___ \  |\   ____\     
 \ \  \___| \ \  \\\  \\ \  \|\  \\ \  \\ \  \\ \  \___| \ \   __/| \ \  \___|_    
@@ -14,6 +12,8 @@ Development environment loaded!
 ## Releasing
 | Hash | Date | Author | Changes |
 |------|------|--------|---------|
+| 721f04fae588bd7f4f4bdec6765d2305febaa3a1 | 2021-12-02 | Chris Schubert | General code cleanup |
+| 1d40e90bcb10c6120c4c8b25e4eb53a03fbb8114 | 2021-11-21 | Chris Schubert | Updating changelog and releaselog |
 | 4cec9465e64188eb9da7a52a0ff93ab2b9d29ae5 | 2021-11-21 | Chris Schubert | Updating asset manager usages |
 | b230560b708b4754aae223e7a1bbfbaa7498c0e5 | 2021-11-20 | Chris Schubert | Updating changelog and releaselog |
 | a4dfcb34013ea75dd394b09798dbf42b2b810a5c | 2021-11-20 | Chris Schubert | Updating changelog and releaselog |
