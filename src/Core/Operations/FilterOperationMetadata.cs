@@ -3,6 +3,7 @@ using System.Collections.Generic;
 
 namespace Appalachia.Editing.Core.Operations
 {
+    [Serializable]
     public class FilterOperationMetadata : OperationMetadata<FilterOperation, bool>
     {
         public FilterOperationMetadata()

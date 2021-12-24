@@ -3,8 +3,10 @@
 using System;
 using Appalachia.Core.Attributes.Editing;
 using Appalachia.Core.Debugging;
-using Appalachia.Core.Scriptables;
+using Appalachia.Core.Objects.Initialization;
+using Appalachia.Core.Objects.Root;
 using Appalachia.Core.Shading;
+using Appalachia.Utility.Async;
 using Sirenix.OdinInspector;
 using Unity.Profiling;
 using UnityEditor;
@@ -52,27 +54,6 @@ namespace Appalachia.Editing.Debugging
         private bool enableDebugMesh => debugMode == DebugMode.DebugMesh;
         private bool enableDebugMotion => debugMode == DebugMode.DebugMotion;
 
-        protected override void Initialize()
-        {
-            using (_PRF_Initialize.Auto())
-            {
-                base.Initialize();
-
-                if (!_initialized)
-                {
-                    _initialized = true;
-                    _enabled = false;
-
-                    //debugShader = GSR.instance.debugShader;
-                    GSPL.Include(debugShader);
-                    remap = new Vector2(0f, 1f);
-
-                    SceneView.lastActiveSceneView.SetSceneViewShaderReplace(null, null);
-                    SceneView.lastActiveSceneView.Repaint();
-                }
-            }
-        }
-
         [Button]
         public void SelectShader()
         {
@@ -86,8 +67,6 @@ namespace Appalachia.Editing.Debugging
         {
             using (_PRF_Update.Auto())
             {
-                Initialize();
-
                 if (SceneView.lastActiveSceneView != null)
                 {
                     if (debugMode == DebugMode.Off)
@@ -110,11 +89,11 @@ namespace Appalachia.Editing.Debugging
 
                         if (debugMode == DebugMode.DebugMotion)
                         {
-                            mode = (int) debugMotion;
+                            mode = (int)debugMotion;
                         }
                         else if (debugMode == DebugMode.DebugMesh)
                         {
-                            mode = (int) debugMesh;
+                            mode = (int)debugMesh;
                         }
 
                         Shader.SetGlobalFloat(GSPL.Get(GSC.DEBUG._DEBUG_MODE), mode);
@@ -127,17 +106,38 @@ namespace Appalachia.Editing.Debugging
             }
         }
 
+        protected override async AppaTask Initialize(Initializer initializer)
+        {
+            using (_PRF_Initialize.Auto())
+            {
+                await base.Initialize(initializer);
+
+                if (!_initialized)
+                {
+                    _initialized = true;
+                    _enabled = false;
+
+                    //debugShader = _GSR.debugShader;
+                    GSPL.Include(debugShader);
+                    remap = new Vector2(0f, 1f);
+
+                    SceneView.lastActiveSceneView.SetSceneViewShaderReplace(null, null);
+                    SceneView.lastActiveSceneView.Repaint();
+                }
+            }
+        }
+
         #region Profiling
 
         private const string _PRF_PFX = nameof(GlobalDebug) + ".";
+
+        private static readonly ProfilerMarker _PRF_Initialize =
+            new ProfilerMarker(_PRF_PFX + nameof(Initialize));
 
         private static readonly ProfilerMarker _PRF_SelectShader =
             new ProfilerMarker(_PRF_PFX + nameof(SelectShader));
 
         private static readonly ProfilerMarker _PRF_Update = new ProfilerMarker(_PRF_PFX + nameof(Update));
-
-        private static readonly ProfilerMarker _PRF_Initialize =
-            new ProfilerMarker(_PRF_PFX + nameof(Initialize));
 
         #endregion
     }

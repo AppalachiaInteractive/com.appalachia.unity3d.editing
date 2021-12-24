@@ -3,12 +3,14 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
+using Appalachia.Core.Attributes;
 using Appalachia.Utility.Constants.Icons;
-using UnityEngine;
 using UnityEditor;
+using UnityEngine;
 
 namespace Appalachia.Editing.Core
 {
+    [CallStaticConstructorInEditor]
     public static class EditorGUIIcons
     {
         public const string BUILD_VERSION = "2021.2.0b16";

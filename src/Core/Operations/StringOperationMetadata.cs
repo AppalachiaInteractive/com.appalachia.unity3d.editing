@@ -1,11 +1,12 @@
-﻿using System.Collections.Generic;
-using System.IO;
+﻿using System;
+using System.Collections.Generic;
 using Appalachia.CI.Integration.FileSystem;
-using Appalachia.Core.Extensions;
 using Appalachia.Utility.Extensions;
+using Appalachia.Utility.Strings;
 
 namespace Appalachia.Editing.Core.Operations
 {
+    [Serializable]
     public class StringOperationMetadata : OperationMetadata<StringOperation, string>
     {
         public StringOperationMetadata()
@@ -120,7 +121,7 @@ namespace Appalachia.Editing.Core.Operations
                         return input;
                     }
 
-                    return $"{input}{Arguments[0].StringArgument}";
+                    return ZString.Format("{0}{1}", input, Arguments[0].StringArgument);
 
                 case StringOperation.AppendFileName:
                     if (string.IsNullOrEmpty(Arguments[0].StringArgument))
@@ -132,7 +133,7 @@ namespace Appalachia.Editing.Core.Operations
                     var n = AppaPath.GetFileNameWithoutExtension(input);
                     var e = AppaPath.GetExtension(input);
 
-                    return $"{d}{n}{Arguments[0].StringArgument}{e}";
+                    return ZString.Format("{0}{1}{2}{3}", d, n, Arguments[0].StringArgument, e);
 
                 case StringOperation.Prepend:
                     if (string.IsNullOrEmpty(Arguments[0].StringArgument))
@@ -140,7 +141,7 @@ namespace Appalachia.Editing.Core.Operations
                         return input;
                     }
 
-                    return $"{Arguments[0].StringArgument}{input}";
+                    return ZString.Format("{0}{1}", Arguments[0].StringArgument, input);
 
                 case StringOperation.Set:
                     if (string.IsNullOrEmpty(Arguments[0].StringArgument))
@@ -148,7 +149,7 @@ namespace Appalachia.Editing.Core.Operations
                         return input;
                     }
 
-                    return $"{Arguments[0].StringArgument}";
+                    return ZString.Format("{0}", Arguments[0].StringArgument);
             }
 
             return input;

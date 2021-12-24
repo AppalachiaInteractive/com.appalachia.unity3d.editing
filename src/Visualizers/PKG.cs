@@ -33,13 +33,13 @@ namespace Appalachia.Editing.Visualizers
         public const string NeutralResourcesLanguage = "en";
         public const string AssemblyVersion = "0.2.0.0";
         public const string AssemblyFileVersion = "0.2.0.0";
-        public const int Priority = -378000;
+        public const int Priority = -371000;
         public const string Name = "Visualizers";
         public const string Prefix = Root + Name + "/";
         public const string Root = "Appalachia/";
         public const string Version = "0.2.0";
         public const int VersionInt = 2000;
-        public const string BuildDate = "2021-11-19T00:01:27.2368814Z";
+        public const string BuildDate = "2021-12-21T00:29:23.4283134Z";
         
         public static partial class Prefs
         {

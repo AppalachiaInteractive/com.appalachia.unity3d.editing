@@ -10,7 +10,7 @@ using UnityEngine.Rendering;
 
 namespace Appalachia.Editing.Scene.Menus
 {
-    [UnityEditor.InitializeOnLoad]
+    [CallStaticConstructorInEditor]
     
     public static class HandlesMenu
     {

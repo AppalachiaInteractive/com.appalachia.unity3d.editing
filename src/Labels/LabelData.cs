@@ -4,6 +4,7 @@
 
 using System;
 using Appalachia.Core.Attributes.Editing;
+using Appalachia.Utility.Strings;
 using Sirenix.OdinInspector;
 using UnityEngine;
 
@@ -17,8 +18,10 @@ namespace Appalachia.Editing.Labels
     [LabelWidth(0)]
     [HideDuplicateReferenceBox]
     [HideReferenceObjectPicker]
-    public class LabelData
+    public sealed class LabelData
     {
+        #region Fields and Autoproperties
+
         [HorizontalGroup("B", .25f)]
         [LabelText("Apply")]
         [SmartLabel(Postfix = true)]
@@ -47,13 +50,15 @@ namespace Appalachia.Editing.Labels
         [DisableIf(nameof(_disableSwitchTo))]
         public string switchTo;
 
+        #endregion
+
         private bool _disableApply => deleteLabel || (switchTo != null);
 
         private bool _disableDelete => applyLabel || (switchTo != null);
 
         private bool _disableSwitchTo => deleteLabel || applyLabel;
 
-        private string suffixLabel => $"  {count} items";
+        private string suffixLabel => ZString.Format("  {0} items", count);
 
         private void OnApplyChanged()
         {

@@ -5,12 +5,14 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Appalachia.CI.Constants;
 using Appalachia.CI.Integration.Assets;
+using Appalachia.Core.Attributes;
 using Appalachia.Core.Math.Stats;
 using Appalachia.Core.Math.Stats.Implementations;
 using Appalachia.Editing.Core;
 using Appalachia.Utility.Extensions;
-using Appalachia.Utility.Logging;
+using Appalachia.Utility.Strings;
 using Sirenix.OdinInspector;
 using UnityEngine;
 using Object = UnityEngine.Object;
@@ -19,8 +21,31 @@ using Object = UnityEngine.Object;
 
 namespace Appalachia.Editing.Labels
 {
+    [CallStaticConstructorInEditor]
     public static class LabelManager
     {
+        static LabelManager()
+        {
+            LabelSets.InstanceAvailable += i => _labelSets = i;
+        }
+
+        private static LabelSets _labelSets;
+
+        [NonSerialized] private static AppaContext _context;
+
+        private static AppaContext Context
+        {
+            get
+            {
+                if (_context == null)
+                {
+                    _context = new AppaContext(typeof(LabelManager));
+                }
+
+                return _context;
+            }
+        }
+        
         public static bool Initialized => labelDatas?.Count > 0;
 
         public static string[] strings
@@ -148,7 +173,7 @@ namespace Appalachia.Editing.Labels
 
                         labelDatas.Clear();
                         return;
-                    };
+                    }
 
                     progress.Increment1AndShowProgressBasic();
 
@@ -204,25 +229,25 @@ namespace Appalachia.Editing.Labels
         [UnityEditor.MenuItem(PKG.Menu.Appalachia.Tools.Base + "Label Assembly Prefabs", priority = -1050)]
         public static void MENU_LabelAssemblyPrefabs()
         {
-            ProcessLabelAssignments(LabelSets.instance.assemblies);
+            ProcessLabelAssignments(_labelSets.assemblies);
         }
 
         [UnityEditor.MenuItem(PKG.Menu.Appalachia.Tools.Base + "Label Object Prefabs", priority = -1050)]
         public static void MENU_LabelObjectPrefabs()
         {
-            ProcessLabelAssignments(LabelSets.instance.objects);
+            ProcessLabelAssignments(_labelSets.objects);
         }
 
         [UnityEditor.MenuItem(PKG.Menu.Appalachia.Tools.Base + "Label Tree Prefabs", priority = -1050)]
         public static void MENU_LabelTreePrefabs()
         {
-            ProcessLabelAssignments(LabelSets.instance.trees);
+            ProcessLabelAssignments(_labelSets.trees);
         }
 
         [UnityEditor.MenuItem(PKG.Menu.Appalachia.Tools.Base + "Label Vegetation Prefabs", priority = -1050)]
         public static void MENU_LabelVegetationPrefabs()
         {
-            ProcessLabelAssignments(LabelSets.instance.vegetations);
+            ProcessLabelAssignments(_labelSets.vegetations);
         }
 #endif
 
@@ -251,7 +276,8 @@ namespace Appalachia.Editing.Labels
 #if UNITY_EDITOR
         private static void ProcessLabelAssignments(LabelAssignmentCollection collection)
         {
-            var assets = AssetDatabaseManager.FindAssets($"l:{collection.baseTerm} t:Prefab");
+            var assets =
+                AssetDatabaseManager.FindAssets(ZString.Format("l:{0} t:Prefab", collection.baseTerm));
 
             var statsTracker = new StatsTrackerCollection<floatStatsTracker, float>(collection.terms.Length);
 
@@ -327,9 +353,16 @@ namespace Appalachia.Editing.Labels
 
                     //var median = statsTracker[termIndex].Median;
 
-                    //AppaLog.Info($"[{term}]:  [ {count} ]  ||  Min: {min:F1}  Max: {max:F1}  Mean: {average:F1}  Median: {median:F1}");
-                    AppaLog.Info(
-                        $"[{term}]:  [ {count} ]  ||  Min: {min:F1}  Max: {max:F1}  Mean: {average:F1}"
+                    //Context.Log.Info($"[{term}]:  [ {count} ]  ||  Min: {min:F1}  Max: {max:F1}  Mean: {average:F1}  Median: {median:F1}");
+                    Context.Log.Info(
+                        ZString.Format(
+                            "[{0}]:  [ {1} ]  ||  Min: {2:F1}  Max: {3:F1}  Mean: {4:F1}",
+                            term,
+                            count,
+                            min,
+                            max,
+                            average
+                        )
                     );
                 }
             }

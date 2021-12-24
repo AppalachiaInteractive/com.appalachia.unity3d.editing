@@ -1,5 +1,6 @@
 #if UNITY_EDITOR
 using System.Diagnostics;
+using Appalachia.Utility.Strings;
 
 namespace Appalachia.Editing.Labels
 {
@@ -17,7 +18,7 @@ namespace Appalachia.Editing.Labels
 
         [DebuggerStepThrough] public override string ToString()
         {
-            return $"{term} ({allowedMagnitude:F1}m)";
+            return ZString.Format("{0} ({1:F1}m)", term, allowedMagnitude);
         }
     }
 }

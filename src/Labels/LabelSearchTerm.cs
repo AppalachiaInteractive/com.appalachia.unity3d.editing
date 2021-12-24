@@ -4,17 +4,25 @@
 
 using System;
 using Appalachia.Core.Attributes.Editing;
+using Appalachia.Core.Objects.Root;
 using Appalachia.Core.Preferences.Globals;
 using Sirenix.OdinInspector;
 using UnityEngine;
+using Object = UnityEngine.Object;
 
 #endregion
 
 namespace Appalachia.Editing.Labels
 {
     [Serializable]
-    public class LabelSearchTerm
+    public class LabelSearchTerm : AppalachiaBase
     {
+        public LabelSearchTerm(Object owner) : base(owner)
+        {
+        }
+
+        #region Fields and Autoproperties
+
         [ToggleLeft]
         [LabelText("Use")]
         [SmartLabel]
@@ -34,6 +42,10 @@ namespace Appalachia.Editing.Labels
         [HorizontalGroup("A" /*, .1f*/)]
         [SerializeField]
         public string label;
+
+        #endregion
+
+        public override string Name => label;
 
         private Color _labelColor =>
             enabled ? ColorPrefs.Instance.EnabledSubdued.v : ColorPrefs.Instance.DisabledImportantSubdued.v;

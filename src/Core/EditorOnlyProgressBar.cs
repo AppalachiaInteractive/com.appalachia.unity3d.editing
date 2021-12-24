@@ -1,6 +1,7 @@
 #region
 
 using System;
+using Appalachia.Utility.Strings;
 using Unity.Mathematics;
 
 #endregion
@@ -65,7 +66,7 @@ namespace Appalachia.Editing.Core
         public void Increment1AndShowProgressBasic()
         {
 #if UNITY_EDITOR
-            Increment1AndShowProgress($"{_increment} / {_total}");
+            Increment1AndShowProgress(ZString.Format("{0} / {1}", _increment, _total));
 #endif
         }
 
@@ -88,7 +89,7 @@ namespace Appalachia.Editing.Core
         public void IncrementAndShowProgressBasic(float value)
         {
 #if UNITY_EDITOR
-            IncrementAndShowProgress(value, $"{_increment} / {_total}");
+            IncrementAndShowProgress(value, ZString.Format("{0} / {1}", _increment, _total));
 #endif
         }
 

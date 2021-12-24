@@ -3,11 +3,9 @@ using Sirenix.OdinInspector;
 
 namespace Appalachia.Editing.Debugging
 {
-    public class GlobalDebugManager : EditorOnlySingletonBehaviour<GlobalDebugManager>
-    {
-        public override EditorOnlyExclusionStyle exclusionStyle =>
-            EditorOnlyExclusionStyle.ObjectIfNoConflict;
 #if UNITY_EDITOR
+    public class GlobalDebugManager : SingletonEditorOnlyAppalachiaBehaviour<GlobalDebugManager>
+    {
         [InlineProperty]
         [InlineEditor]
         [HideLabel]
@@ -17,6 +15,6 @@ namespace Appalachia.Editing.Debugging
         {
             debug.Update();
         }
-#endif
     }
+#endif
 }

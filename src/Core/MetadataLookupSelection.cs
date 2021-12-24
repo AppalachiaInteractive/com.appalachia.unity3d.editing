@@ -1,7 +1,8 @@
 using System;
 using Appalachia.Core.Collections;
+using Appalachia.Core.Objects.Root;
+using Appalachia.Core.Objects.Scriptables;
 using Appalachia.Core.Preferences;
-using Appalachia.Core.Scriptables;
 using Sirenix.OdinInspector;
 using UnityEngine;
 
@@ -11,23 +12,23 @@ namespace Appalachia.Editing.Core
     [Serializable]
     [HideDuplicateReferenceBox]
     [HideReferenceObjectPicker]
-    public abstract class MetadataLookupSelection<TS, T, TValue, TL> : AppalachiaObject
-        where TS : MetadataLookupSelection<TS, T, TValue, TL>
-        where T : AppalachiaMetadataCollection<T, TValue, TL>
-        where TValue : AppalachiaObject, ICategorizable
+    public abstract class MetadataLookupSelection<TMLS, TMC, TValue, TL> : AppalachiaObject<TMLS>
+        where TMLS : MetadataLookupSelection<TMLS, TMC, TValue, TL>
+        where TMC : AppalachiaMetadataCollection<TMC, TValue, TL>
+        where TValue : AppalachiaObject<TValue>, ICategorizable
         where TL : AppaList<TValue>, new()
     {
         protected Action<TValue> _selection;
-        protected T _instance;
+        protected TMC _instance;
 
         public PREF<Color> ButtonColor { get; set; }
         public PREF<float> ButtonColorDrop { get; set; }
         public Action<TValue> Selection => _selection;
 
-        public T Instance => _instance;
+        public TMC Instance => _instance;
 
-        public virtual TS Initialize(
-            T instance,
+        public virtual TMLS Prepare(
+            TMC instance,
             Action<TValue> select,
             PREF<Color> buttonColor,
             PREF<float> buttonColorDrop)
@@ -37,7 +38,7 @@ namespace Appalachia.Editing.Core
             ButtonColor = buttonColor;
             ButtonColorDrop = buttonColorDrop;
 
-            return this as TS;
+            return this as TMLS;
         }
 
         public Color GetButtonRowColor(int row, float drop, Color color)

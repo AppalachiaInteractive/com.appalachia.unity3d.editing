@@ -1,10 +1,12 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Appalachia.Core.Attributes.Editing;
 using Sirenix.OdinInspector;
 
 namespace Appalachia.Editing.Core.Operations
 {
     [HideReferenceObjectPicker]
+    [Serializable]
     public abstract class OperationMetadata<TI, TO>
         where TI : struct
     {
@@ -34,6 +36,7 @@ namespace Appalachia.Editing.Core.Operations
 
         [OnValueChanged(nameof(SetupOperationBase))]
         [SmartLabel]
+        [PropertyOrder(-1)]
         public TI operation;
 
         public abstract TO ApplyOperation(string input);

@@ -8,7 +8,8 @@ using System.Linq;
 using System.Text;
 using Appalachia.CI.Integration.Assets;
 using Appalachia.Core.Attributes.Editing;
-using Appalachia.Utility.Logging;
+using Appalachia.Core.Objects.Root;
+using Appalachia.Utility.Strings;
 using Sirenix.OdinInspector;
 using UnityEngine;
 using Object = UnityEngine.Object;
@@ -18,13 +19,15 @@ using Object = UnityEngine.Object;
 namespace Appalachia.Editing.Labels
 {
     [Serializable]
-    public class LabelSearchSet
+    public class LabelSearchSet : AppalachiaBase
     {
-        public LabelSearchSet()
+        public LabelSearchSet(Object owner) : base(owner)
         {
-            terms = new List<LabelSearchTerm> {new()};
+            terms = new List<LabelSearchTerm> { new(owner) };
             exclusions = new List<LabelSearchTerm>();
         }
+
+        #region Fields and Autoproperties
 
         [BoxGroup("B", ShowLabel = false)]
         [SmartLabel]
@@ -59,6 +62,10 @@ namespace Appalachia.Editing.Labels
 
         [NonSerialized] private StringBuilder _builder;
         [NonSerialized] private StringBuilder _logBuilder;
+
+        #endregion
+
+        public override string Name => GetSearchTerm();
 
         public bool CanSearch => (terms != null) && (terms.Count > 0) && terms.Any(t => t.enabled);
 
@@ -100,7 +107,7 @@ namespace Appalachia.Editing.Labels
                         }
 
                         _builder.Clear();
-                        _builder.Append($"Labels | Match If {matchStyle}: ");
+                        _builder.Append(ZString.Format("Labels | Match If {0}: ", matchStyle));
 
                         for (var i = 0; i < terms.Count; i++)
                         {
@@ -117,12 +124,12 @@ namespace Appalachia.Editing.Labels
                                 continue;
                             }
 
-                            _builder.Append($"{term.label}, ");
+                            _builder.Append(ZString.Format("{0}, ", term.label));
                         }
 
                         if (exclusions.Count > 0)
                         {
-                            _builder.Append($" | Exclude If {matchStyle}: ");
+                            _builder.Append(ZString.Format(" | Exclude If {0}: ", matchStyle));
 
                             for (var i = 0; i < exclusions.Count; i++)
                             {
@@ -139,7 +146,7 @@ namespace Appalachia.Editing.Labels
                                     continue;
                                 }
 
-                                _builder.Append($"{exclusion.label}, ");
+                                _builder.Append(ZString.Format("{0}, ", exclusion.label));
                             }
                         }
 
@@ -155,7 +162,7 @@ namespace Appalachia.Editing.Labels
                 }
                 catch (Exception ex)
                 {
-                    AppaLog.Error(ex);
+                    Context.Log.Error(ex);
                     return null;
                 }
             }
@@ -163,7 +170,7 @@ namespace Appalachia.Editing.Labels
 
         public void AddNewLabel()
         {
-            terms.Add(new LabelSearchTerm());
+            terms.Add(new LabelSearchTerm(_owner));
         }
 
         public List<GameObject> GetAssetsMatchingAll()
@@ -191,7 +198,7 @@ namespace Appalachia.Editing.Labels
             {
                 if (terms[i].enabled)
                 {
-                    _builder.Append($"l: {terms[i].label} ");
+                    _builder.Append(ZString.Format("l: {0} ", terms[i].label));
                 }
             }
 
@@ -224,7 +231,7 @@ namespace Appalachia.Editing.Labels
 
             if (log)
             {
-                _logBuilder.AppendLine($"Checking labels... [{string.Join(", ", labels)}]");
+                _logBuilder.AppendLine(ZString.Format("Checking labels... [{0}]", string.Join(", ", labels)));
             }
 
             if (termCount == 0)
@@ -232,7 +239,7 @@ namespace Appalachia.Editing.Labels
                 if (log)
                 {
                     _logBuilder.AppendLine("  No search terms.");
-                    AppaLog.Info($"FAIL: {_logBuilder}");
+                    Context.Log.Info(ZString.Format("FAIL: {0}", _logBuilder));
                 }
 
                 return false;
@@ -242,7 +249,10 @@ namespace Appalachia.Editing.Labels
             {
                 _logBuilder.AppendLine();
                 _logBuilder.AppendLine(
-                    $"  TERMS: [{string.Join(", ", terms.Where(e => e.enabled).Select(e => e.label))}]"
+                    ZString.Format(
+                        "  TERMS: [{0}]",
+                        string.Join(", ", terms.Where(e => e.enabled).Select(e => e.label))
+                    )
                 );
                 _logBuilder.AppendLine();
             }
@@ -282,14 +292,14 @@ namespace Appalachia.Editing.Labels
 
             if (log)
             {
-                _logBuilder.AppendLine($"  Inclusion check: {false}.");
+                _logBuilder.AppendLine(ZString.Format("  Inclusion check: {0}.", false));
             }
 
             if (!included)
             {
                 if (log)
                 {
-                    AppaLog.Warn($"FAIL: {_logBuilder}");
+                    Context.Log.Warn(ZString.Format("FAIL: {0}", _logBuilder));
                 }
 
                 return false;
@@ -300,7 +310,7 @@ namespace Appalachia.Editing.Labels
                 if (log)
                 {
                     _logBuilder.AppendLine("  No exclusion terms.");
-                    AppaLog.Info($"PASS: {_logBuilder}");
+                    Context.Log.Info(ZString.Format("PASS: {0}", _logBuilder));
                 }
 
                 return true;
@@ -310,7 +320,10 @@ namespace Appalachia.Editing.Labels
             {
                 _logBuilder.AppendLine();
                 _logBuilder.AppendLine(
-                    $"  EXCLUSIONS: [{string.Join(", ", exclusions.Where(e => e.enabled).Select(e => e.label))}]"
+                    ZString.Format(
+                        "  EXCLUSIONS: [{0}]",
+                        string.Join(", ", exclusions.Where(e => e.enabled).Select(e => e.label))
+                    )
                 );
                 _logBuilder.AppendLine();
             }
@@ -347,15 +360,15 @@ namespace Appalachia.Editing.Labels
 
             if (log)
             {
-                _logBuilder.AppendLine($"  Exclusion check: {excluded}.");
+                _logBuilder.AppendLine(ZString.Format("  Exclusion check: {0}.", excluded));
 
                 if (excluded)
                 {
-                    AppaLog.Warn($"FAIL: {_logBuilder}");
+                    Context.Log.Warn(ZString.Format("FAIL: {0}", _logBuilder));
                 }
                 else
                 {
-                    AppaLog.Info($"PASS: {_logBuilder}");
+                    Context.Log.Info(ZString.Format("PASS: {0}", _logBuilder));
                 }
             }
 
@@ -372,6 +385,134 @@ namespace Appalachia.Editing.Labels
             if ((terms.Count > i) && (i >= 0))
             {
                 terms.RemoveAt(i);
+            }
+        }
+
+        private static bool HasAll(
+            IEnumerable<string> labels,
+            List<LabelSearchTerm> searchTerms,
+            StringBuilder _logBuilder = null)
+        {
+            if (searchTerms.Count == 0)
+            {
+                _logBuilder?.AppendLine("    No search terms.");
+                return false;
+            }
+
+            ScanTerms(labels, searchTerms);
+
+            for (var j = 0; j < searchTerms.Count; j++)
+            {
+                var term = searchTerms[j];
+
+                if (!term.enabled)
+                {
+                    continue;
+                }
+
+                if (!term.found)
+                {
+                    _logBuilder?.AppendLine(ZString.Format("    Not Found: [{0}].", term.label));
+                    return false;
+                }
+            }
+
+            _logBuilder?.AppendLine("    Found all terms.");
+            return true;
+        }
+
+        private static bool HasAny(
+            IEnumerable<string> labels,
+            List<LabelSearchTerm> searchTerms,
+            StringBuilder _logBuilder = null)
+        {
+            if (searchTerms.Count == 0)
+            {
+                _logBuilder?.AppendLine("    No search terms.");
+                return false;
+            }
+
+            ScanTerms(labels, searchTerms);
+
+            for (var j = 0; j < searchTerms.Count; j++)
+            {
+                var term = searchTerms[j];
+
+                if (!term.enabled)
+                {
+                    continue;
+                }
+
+                if (term.found)
+                {
+                    _logBuilder?.AppendLine(ZString.Format("    Found: [{0}].", term.label));
+                    return true;
+                }
+            }
+
+            _logBuilder?.AppendLine("    Did not find term.");
+            return false;
+        }
+
+        private static bool HasMoreThanOne(
+            IEnumerable<string> labels,
+            List<LabelSearchTerm> searchTerms,
+            StringBuilder _logBuilder = null)
+        {
+            if (searchTerms.Count < 2)
+            {
+                _logBuilder?.AppendLine("    Less than 2 search terms.");
+
+                return false;
+            }
+
+            ScanTerms(labels, searchTerms);
+
+            var count = 0;
+
+            for (var j = 0; j < searchTerms.Count; j++)
+            {
+                var term = searchTerms[j];
+
+                if (!term.enabled)
+                {
+                    continue;
+                }
+
+                if (term.found)
+                {
+                    count += 1;
+                    _logBuilder?.AppendLine(ZString.Format("    Found [{0}/2]: [{1}].", count, term.label));
+                }
+            }
+
+            _logBuilder?.AppendLine(ZString.Format("    Found [{0}/2] total.", count));
+            return count > 1;
+        }
+
+        private static void ScanTerms(IEnumerable<string> labels, List<LabelSearchTerm> searchTerms)
+        {
+            for (var j = 0; j < searchTerms.Count; j++)
+            {
+                searchTerms[j].Reset();
+            }
+
+            foreach (var t in labels)
+            {
+                for (var j = 0; j < searchTerms.Count; j++)
+                {
+                    var searchTerm = searchTerms[j];
+
+                    if (!searchTerm.enabled)
+                    {
+                        continue;
+                    }
+
+                    if (t == searchTerm.label)
+                    {
+                        searchTerm.found = true;
+                    }
+                }
             }
         }
 
@@ -410,134 +551,6 @@ namespace Appalachia.Editing.Labels
         private void ResetDisplayName()
         {
             _displayName = null;
-        }
-
-        private static bool HasAll(
-            IEnumerable<string> labels,
-            List<LabelSearchTerm> searchTerms,
-            StringBuilder _logBuilder = null)
-        {
-            if (searchTerms.Count == 0)
-            {
-                _logBuilder?.AppendLine("    No search terms.");
-                return false;
-            }
-
-            ScanTerms(labels, searchTerms);
-
-            for (var j = 0; j < searchTerms.Count; j++)
-            {
-                var term = searchTerms[j];
-
-                if (!term.enabled)
-                {
-                    continue;
-                }
-
-                if (!term.found)
-                {
-                    _logBuilder?.AppendLine($"    Not Found: [{term.label}].");
-                    return false;
-                }
-            }
-
-            _logBuilder?.AppendLine("    Found all terms.");
-            return true;
-        }
-
-        private static bool HasAny(
-            IEnumerable<string> labels,
-            List<LabelSearchTerm> searchTerms,
-            StringBuilder _logBuilder = null)
-        {
-            if (searchTerms.Count == 0)
-            {
-                _logBuilder?.AppendLine("    No search terms.");
-                return false;
-            }
-
-            ScanTerms(labels, searchTerms);
-
-            for (var j = 0; j < searchTerms.Count; j++)
-            {
-                var term = searchTerms[j];
-
-                if (!term.enabled)
-                {
-                    continue;
-                }
-
-                if (term.found)
-                {
-                    _logBuilder?.AppendLine($"    Found: [{term.label}].");
-                    return true;
-                }
-            }
-
-            _logBuilder?.AppendLine("    Did not find term.");
-            return false;
-        }
-
-        private static bool HasMoreThanOne(
-            IEnumerable<string> labels,
-            List<LabelSearchTerm> searchTerms,
-            StringBuilder _logBuilder = null)
-        {
-            if (searchTerms.Count < 2)
-            {
-                _logBuilder?.AppendLine("    Less than 2 search terms.");
-
-                return false;
-            }
-
-            ScanTerms(labels, searchTerms);
-
-            var count = 0;
-
-            for (var j = 0; j < searchTerms.Count; j++)
-            {
-                var term = searchTerms[j];
-
-                if (!term.enabled)
-                {
-                    continue;
-                }
-
-                if (term.found)
-                {
-                    count += 1;
-                    _logBuilder?.AppendLine($"    Found [{count}/2]: [{term.label}].");
-                }
-            }
-
-            _logBuilder?.AppendLine($"    Found [{count}/2] total.");
-            return count > 1;
-        }
-
-        private static void ScanTerms(IEnumerable<string> labels, List<LabelSearchTerm> searchTerms)
-        {
-            for (var j = 0; j < searchTerms.Count; j++)
-            {
-                searchTerms[j].Reset();
-            }
-
-            foreach (var t in labels)
-            {
-                for (var j = 0; j < searchTerms.Count; j++)
-                {
-                    var searchTerm = searchTerms[j];
-
-                    if (!searchTerm.enabled)
-                    {
-                        continue;
-                    }
-
-                    if (t == searchTerm.label)
-                    {
-                        searchTerm.found = true;
-                    }
-                }
-            }
         }
     }
 }

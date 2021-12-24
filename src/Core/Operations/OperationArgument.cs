@@ -1,8 +1,11 @@
-﻿using Sirenix.OdinInspector;
+﻿using System;
+using Sirenix.OdinInspector;
+using UnityEngine;
 
 namespace Appalachia.Editing.Core.Operations
 {
     [HideReferenceObjectPicker]
+    [Serializable]
     public sealed class OperationArgument
     {
         public OperationArgument(string description, char argument)
@@ -41,42 +44,50 @@ namespace Appalachia.Editing.Core.Operations
         }
 
         [ShowIf(nameof(showBooleanArgument))]
-        [HideLabel]
         [HorizontalGroup]
+        [LabelText("$Description")]
         public bool BooleanArgument;
 
         [ShowIf(nameof(showCharArgument))]
-        [HideLabel]
         [HorizontalGroup]
+        [LabelText("$Description")]
         public char CharArgument;
 
         [ShowIf(nameof(showCharArrayArgument))]
         [InlineProperty]
-        [HideLabel]
         [HorizontalGroup]
+        [LabelText("$Description")]
         public char[] CharArrayArgument;
 
         [ShowIf(nameof(showIntArgument))]
-        [HideLabel]
         [HorizontalGroup]
+        [LabelText("$Description")]
         public int IntArgument;
 
-        [ReadOnly]
-        [HideLabel]
-        [HorizontalGroup]
+        [HideInInspector]
         public string Description;
 
         [ShowIf(nameof(showStringArgument))]
         [HideLabel]
         [HorizontalGroup]
+        [LabelText("$Description")]
         public string StringArgument;
 
 #pragma warning disable CS0414
 
+        [SerializeField, HideInInspector]
         private bool showCharArgument;
+
+        [SerializeField, HideInInspector]
         private bool showCharArrayArgument;
+
+        [SerializeField, HideInInspector]
         private bool showStringArgument;
+
+        [SerializeField, HideInInspector]
         private bool showBooleanArgument;
+
+        [SerializeField, HideInInspector]
         private bool showIntArgument;
 
 #pragma warning restore CS0414

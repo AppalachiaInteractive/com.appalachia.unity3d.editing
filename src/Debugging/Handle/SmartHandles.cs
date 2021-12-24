@@ -3,7 +3,7 @@
 #region
 
 using System;
-using Appalachia.Utility.Logging;
+using Appalachia.CI.Constants;
 using Unity.Profiling;
 using UnityEngine;
 using UnityEngine.Rendering;
@@ -14,13 +14,22 @@ namespace Appalachia.Editing.Debugging.Handle
 {
     public static class SmartHandles
     {
-        #region Profiling And Tracing Markers
+        [NonSerialized] private static AppaContext _context;
 
-        #region ProfileMarkers
+        private static AppaContext Context
+        {
+            get
+            {
+                if (_context == null)
+                {
+                    _context = new AppaContext(typeof(SmartHandles));
+                }
 
-        private const string _PRF_PFX = nameof(SmartHandles) + ".";
+                return _context;
+            }
+        }
 
-        #endregion
+        #region Constants and Static Readonly
 
         private static readonly ProfilerMarker _PRF_DrawHandleLine = new(_PRF_PFX + nameof(DrawHandleLine));
         private static readonly ProfilerMarker _PRF_DrawLine = new(_PRF_PFX + nameof(DrawLine));
@@ -62,6 +71,16 @@ namespace Appalachia.Editing.Debugging.Handle
         private static readonly ProfilerMarker _PRF_DrawWireCube_HandleState =
             new(_PRF_PFX + nameof(DrawWireCube_Internal) + ".HandleState");
 
+        public static float zFailAmount = .2f;
+        private static Mesh s_ConeMesh;
+        private static Mesh s_CubeMesh;
+        private static Mesh s_CylinderMesh;
+        private static Mesh s_QuadMesh;
+        private static Mesh s_SphereMesh;
+        private static Vector3 s_InitialScale;
+        private static Vector3[] _drawWireCubeArray;
+        private static Vector3[] _drawWireCubeLines;
+
         private static readonly ProfilerMarker _PRF_DrawWireCube_InternalDraw =
             new(_PRF_PFX + nameof(DrawWireCube_Internal) + ".InternalDraw");
 
@@ -77,20 +96,8 @@ namespace Appalachia.Editing.Debugging.Handle
         private static readonly ProfilerMarker _PRF_DrawWireSphereMasked =
             new(_PRF_PFX + nameof(DrawWireSphereMasked));
 
-        public static float zFailAmount = .2f;
-        private static Mesh s_ConeMesh;
-        private static Mesh s_CubeMesh;
-        private static Mesh s_CylinderMesh;
-        private static Mesh s_QuadMesh;
-        private static Mesh s_SphereMesh;
-        private static Vector3 s_InitialScale;
-        private static Vector3[] _drawWireCubeArray;
-        private static Vector3[] _drawWireCubeLines;
-
         private static readonly ProfilerMarker _PRF_DrawWireCube_Internal =
             new(_PRF_PFX + nameof(DrawWireCube_Internal));
-
-        #endregion
 
         private static readonly GUIContent s_Image = new();
 
@@ -102,7 +109,13 @@ namespace Appalachia.Editing.Debugging.Handle
         private static readonly int HandleZTest = Shader.PropertyToID("_HandleZTest");
         private static readonly int ObjectToWorld = Shader.PropertyToID("_ObjectToWorld");
 
+        #endregion
+
+        #region Static Fields and Autoproperties
+
         private static GUIStyle _baseLabelStyle;
+
+        #endregion
 
         public static GUIStyle BaseLabelStyle
         {
@@ -119,6 +132,8 @@ namespace Appalachia.Editing.Debugging.Handle
                 return _baseLabelStyle;
             }
         }
+
+        
 
         public static void DrawCube(Vector3 center, float radius)
         {
@@ -156,41 +171,89 @@ namespace Appalachia.Editing.Debugging.Handle
 
                 var originalColor = UnityEditor.Handles.color;
 
-               UnityEditor.Handles.color = color;
+                UnityEditor.Handles.color = color;
 
                 DrawLine(start, end, color);
 
                 switch (capType)
                 {
                     case HandleCapType.Arrow:
-                       UnityEditor.Handles.ArrowHandleCap(capID, end, handleRotation, handleSize, EventType.Repaint);
+                        UnityEditor.Handles.ArrowHandleCap(
+                            capID,
+                            end,
+                            handleRotation,
+                            handleSize,
+                            EventType.Repaint
+                        );
                         break;
                     case HandleCapType.Circle:
-                       UnityEditor.Handles.CircleHandleCap(capID, end, handleRotation, handleSize, EventType.Repaint);
+                        UnityEditor.Handles.CircleHandleCap(
+                            capID,
+                            end,
+                            handleRotation,
+                            handleSize,
+                            EventType.Repaint
+                        );
                         break;
                     case HandleCapType.Cone:
-                       UnityEditor.Handles.ConeHandleCap(capID, end, handleRotation, handleSize, EventType.Repaint);
+                        UnityEditor.Handles.ConeHandleCap(
+                            capID,
+                            end,
+                            handleRotation,
+                            handleSize,
+                            EventType.Repaint
+                        );
                         break;
                     case HandleCapType.Cube:
-                       UnityEditor.Handles.CubeHandleCap(capID, end, handleRotation, handleSize, EventType.Repaint);
+                        UnityEditor.Handles.CubeHandleCap(
+                            capID,
+                            end,
+                            handleRotation,
+                            handleSize,
+                            EventType.Repaint
+                        );
                         break;
                     case HandleCapType.Cylinder:
-                       UnityEditor.Handles.CylinderHandleCap(capID, end, handleRotation, handleSize, EventType.Repaint);
+                        UnityEditor.Handles.CylinderHandleCap(
+                            capID,
+                            end,
+                            handleRotation,
+                            handleSize,
+                            EventType.Repaint
+                        );
                         break;
                     case HandleCapType.Dot:
-                       UnityEditor.Handles.DotHandleCap(capID, end, handleRotation, handleSize, EventType.Repaint);
+                        UnityEditor.Handles.DotHandleCap(
+                            capID,
+                            end,
+                            handleRotation,
+                            handleSize,
+                            EventType.Repaint
+                        );
                         break;
                     case HandleCapType.Rectangle:
-                       UnityEditor.Handles.RectangleHandleCap(capID, end, handleRotation, handleSize, EventType.Repaint);
+                        UnityEditor.Handles.RectangleHandleCap(
+                            capID,
+                            end,
+                            handleRotation,
+                            handleSize,
+                            EventType.Repaint
+                        );
                         break;
                     case HandleCapType.Sphere:
-                       UnityEditor.Handles.SphereHandleCap(capID, end, handleRotation, handleSize, EventType.Repaint);
+                        UnityEditor.Handles.SphereHandleCap(
+                            capID,
+                            end,
+                            handleRotation,
+                            handleSize,
+                            EventType.Repaint
+                        );
                         break;
                     default:
                         throw new ArgumentOutOfRangeException(nameof(capType), capType, null);
                 }
 
-               UnityEditor.Handles.color = originalColor;
+                UnityEditor.Handles.color = originalColor;
             }
         }
 
@@ -211,9 +274,9 @@ namespace Appalachia.Editing.Debugging.Handle
             {
                 using (HandleState.New(color, false, CompareFunction.LessEqual))
                 {
-                   UnityEditor.Handles.DrawLine(pos1, pos2);
-                   UnityEditor.Handles.zTest = CompareFunction.Greater;
-                   UnityEditor.Handles.color = color * zFailAmount;
+                    UnityEditor.Handles.DrawLine(pos1, pos2);
+                    UnityEditor.Handles.zTest = CompareFunction.Greater;
+                    UnityEditor.Handles.color = color * zFailAmount;
 
                     //Handles.DrawLine(pos1, pos2);
                 }
@@ -237,7 +300,7 @@ namespace Appalachia.Editing.Debugging.Handle
             {
                 using (HandleState.New(color, false))
                 {
-                   UnityEditor.Handles.DrawSolidDisc(center, normal, radius);
+                    UnityEditor.Handles.DrawSolidDisc(center, normal, radius);
                 }
             }
         }
@@ -261,13 +324,13 @@ namespace Appalachia.Editing.Debugging.Handle
             {
                 using (HandleState.New(color, false, CompareFunction.LessEqual))
                 {
-                   UnityEditor.Handles.DrawSolidDisc(center, normal, radius);
+                    UnityEditor.Handles.DrawSolidDisc(center, normal, radius);
 
                     if (ignoreZFail)
                     {
-                       UnityEditor.Handles.zTest = CompareFunction.Greater;
-                       UnityEditor.Handles.color = color * zFailAmount;
-                       UnityEditor.Handles.DrawSolidDisc(center, normal, radius);
+                        UnityEditor.Handles.zTest = CompareFunction.Greater;
+                        UnityEditor.Handles.color = color * zFailAmount;
+                        UnityEditor.Handles.DrawSolidDisc(center, normal, radius);
                     }
                 }
             }
@@ -311,10 +374,22 @@ namespace Appalachia.Editing.Debugging.Handle
             {
                 using (HandleState.New(color, false, CompareFunction.LessEqual))
                 {
-                   UnityEditor.Handles.SphereHandleCap(0, center, Quaternion.identity, radius, EventType.Layout);
-                   UnityEditor.Handles.zTest = CompareFunction.Greater;
-                   UnityEditor.Handles.color = color * zFailAmount;
-                   UnityEditor.Handles.SphereHandleCap(0, center, Quaternion.identity, radius, EventType.Layout);
+                    UnityEditor.Handles.SphereHandleCap(
+                        0,
+                        center,
+                        Quaternion.identity,
+                        radius,
+                        EventType.Layout
+                    );
+                    UnityEditor.Handles.zTest = CompareFunction.Greater;
+                    UnityEditor.Handles.color = color * zFailAmount;
+                    UnityEditor.Handles.SphereHandleCap(
+                        0,
+                        center,
+                        Quaternion.identity,
+                        radius,
+                        EventType.Layout
+                    );
                 }
             }
         }
@@ -331,10 +406,10 @@ namespace Appalachia.Editing.Debugging.Handle
             {
                 using (HandleState.New(color, false, CompareFunction.LessEqual))
                 {
-                   UnityEditor.Handles.DrawWireArc(center, normal, from, angle, radius);
-                   UnityEditor.Handles.zTest = CompareFunction.Greater;
-                   UnityEditor.Handles.color = color * zFailAmount;
-                   UnityEditor.Handles.DrawWireArc(center, normal, from, angle, radius);
+                    UnityEditor.Handles.DrawWireArc(center, normal, from, angle, radius);
+                    UnityEditor.Handles.zTest = CompareFunction.Greater;
+                    UnityEditor.Handles.color = color * zFailAmount;
+                    UnityEditor.Handles.DrawWireArc(center, normal, from, angle, radius);
                 }
             }
         }
@@ -435,12 +510,12 @@ namespace Appalachia.Editing.Debugging.Handle
 
                     using (_PRF_DrawWireCubeMasked_ZTest.Auto())
                     {
-                       UnityEditor.Handles.zTest = CompareFunction.Greater;
+                        UnityEditor.Handles.zTest = CompareFunction.Greater;
                     }
 
                     using (_PRF_DrawWireCubeMasked_Color.Auto())
                     {
-                       UnityEditor.Handles.color = color * zFailAmount;
+                        UnityEditor.Handles.color = color * zFailAmount;
                     }
 
                     using (_PRF_DrawWireCubeMasked_InternalDraw.Auto())
@@ -457,7 +532,7 @@ namespace Appalachia.Editing.Debugging.Handle
             {
                 using (HandleState.New(color, false))
                 {
-                   UnityEditor.Handles.DrawWireDisc(center, normal, radius);
+                    UnityEditor.Handles.DrawWireDisc(center, normal, radius);
                 }
             }
         }
@@ -481,12 +556,12 @@ namespace Appalachia.Editing.Debugging.Handle
             {
                 using (HandleState.New(color, false, CompareFunction.LessEqual))
                 {
-                   UnityEditor.Handles.DrawWireDisc(center, normal, radius);
+                    UnityEditor.Handles.DrawWireDisc(center, normal, radius);
                     if (ignoreZFail)
                     {
-                       UnityEditor.Handles.zTest = CompareFunction.Greater;
-                       UnityEditor.Handles.color = color * zFailAmount;
-                       UnityEditor.Handles.DrawWireDisc(center, normal, radius);
+                        UnityEditor.Handles.zTest = CompareFunction.Greater;
+                        UnityEditor.Handles.color = color * zFailAmount;
+                        UnityEditor.Handles.DrawWireDisc(center, normal, radius);
                     }
                 }
             }
@@ -612,14 +687,14 @@ namespace Appalachia.Editing.Debugging.Handle
             {
                 using (HandleState.New(color, false, CompareFunction.LessEqual))
                 {
-                   UnityEditor.Handles.DrawWireDisc(center, Vector3.up,      radius);
-                   UnityEditor.Handles.DrawWireDisc(center, Vector3.right,   radius);
-                   UnityEditor.Handles.DrawWireDisc(center, Vector3.forward, radius);
-                   UnityEditor.Handles.zTest = CompareFunction.Greater;
-                   UnityEditor.Handles.color = color * zFailAmount;
-                   UnityEditor.Handles.DrawWireDisc(center, Vector3.up,      radius);
-                   UnityEditor.Handles.DrawWireDisc(center, Vector3.right,   radius);
-                   UnityEditor.Handles.DrawWireDisc(center, Vector3.forward, radius);
+                    UnityEditor.Handles.DrawWireDisc(center, Vector3.up,      radius);
+                    UnityEditor.Handles.DrawWireDisc(center, Vector3.right,   radius);
+                    UnityEditor.Handles.DrawWireDisc(center, Vector3.forward, radius);
+                    UnityEditor.Handles.zTest = CompareFunction.Greater;
+                    UnityEditor.Handles.color = color * zFailAmount;
+                    UnityEditor.Handles.DrawWireDisc(center, Vector3.up,      radius);
+                    UnityEditor.Handles.DrawWireDisc(center, Vector3.right,   radius);
+                    UnityEditor.Handles.DrawWireDisc(center, Vector3.forward, radius);
                 }
             }
         }
@@ -632,7 +707,7 @@ namespace Appalachia.Editing.Debugging.Handle
             GUI.contentColor = textColor;
             GUI.backgroundColor = backgroundColor;
 
-           UnityEditor.Handles.Label(position, TempContent(text), BaseLabelStyle);
+            UnityEditor.Handles.Label(position, TempContent(text), BaseLabelStyle);
 
             GUI.backgroundColor = bg;
             GUI.contentColor = cc;
@@ -646,7 +721,7 @@ namespace Appalachia.Editing.Debugging.Handle
             GUI.contentColor = textColor;
             GUI.backgroundColor = backgroundColor;
 
-           UnityEditor.Handles.Label(position, TempContent(image), BaseLabelStyle);
+            UnityEditor.Handles.Label(position, TempContent(image), BaseLabelStyle);
 
             GUI.backgroundColor = bg;
             GUI.contentColor = cc;
@@ -698,6 +773,8 @@ namespace Appalachia.Editing.Debugging.Handle
             return guiContentArray;
         }
 
+        #region Nested type: UnifiedDrawingScope
+
         #region UnifiedDrawingScope
 
         /// <summary>
@@ -735,13 +812,15 @@ namespace Appalachia.Editing.Debugging.Handle
                 _originalHandlesMatrix = UnityEditor.Handles.matrix;
                 _originalGizmosColor = UnityEditor.Handles.color;
                 _originalGizmosMatrix = UnityEditor.Handles.matrix;
-               UnityEditor.Handles.matrix = matrix;
-               UnityEditor.Handles.color = color;
+                UnityEditor.Handles.matrix = matrix;
+                UnityEditor.Handles.color = color;
                 Gizmos.matrix = matrix;
                 Gizmos.color = color;
                 _currentUnifiedMatrix = matrix;
                 _currentUnifiedColor = color;
             }
+
+            #region Fields and Autoproperties
 
             private readonly Color _originalGizmosColor;
             private readonly Color _originalHandlesColor;
@@ -751,6 +830,8 @@ namespace Appalachia.Editing.Debugging.Handle
 
             private Color _currentUnifiedColor;
             private Matrix4x4 _currentUnifiedMatrix;
+
+            #endregion
 
             /// <summary>
             ///     <para>The value of Gizmos.color at the time this UnifiedDrawingScope was created.</para>
@@ -782,7 +863,7 @@ namespace Appalachia.Editing.Debugging.Handle
                 {
                     if (UnityEditor.Handles.color != value)
                     {
-                       UnityEditor.Handles.color = value;
+                        UnityEditor.Handles.color = value;
                     }
 
                     if (Gizmos.color != value)
@@ -802,11 +883,13 @@ namespace Appalachia.Editing.Debugging.Handle
                 get => _currentUnifiedMatrix;
                 set
                 {
-                   UnityEditor.Handles.matrix = value;
+                    UnityEditor.Handles.matrix = value;
                     Gizmos.matrix = value;
                     _currentUnifiedMatrix = value;
                 }
             }
+
+            #region IDisposable Members
 
             /// <summary>
             ///     <para>
@@ -822,12 +905,26 @@ namespace Appalachia.Editing.Debugging.Handle
                 }
 
                 _isDisposed = true;
-               UnityEditor.Handles.color = _originalHandlesColor;
-               UnityEditor.Handles.matrix = _originalHandlesMatrix;
+                UnityEditor.Handles.color = _originalHandlesColor;
+                UnityEditor.Handles.matrix = _originalHandlesMatrix;
                 Gizmos.color = _originalGizmosColor;
                 Gizmos.matrix = _originalGizmosMatrix;
             }
+
+            #endregion
         }
+
+        #endregion
+
+        #endregion
+
+        #region Profiling
+
+        #region ProfileMarkers
+
+        private const string _PRF_PFX = nameof(SmartHandles) + ".";
+
+        #endregion
 
         #endregion
 
@@ -887,15 +984,15 @@ namespace Appalachia.Editing.Debugging.Handle
 
         internal static void Init()
         {
-            if ((bool) s_CubeMesh)
+            if ((bool)s_CubeMesh)
             {
                 return;
             }
 
-            var gameObject = (GameObject) UnityEditor.EditorGUIUtility.Load("SceneView/HandlesGO.fbx");
-            if (!(bool) gameObject)
+            var gameObject = (GameObject)UnityEditor.EditorGUIUtility.Load("SceneView/HandlesGO.fbx");
+            if (!(bool)gameObject)
             {
-                AppaLog.Info("Couldn't find SceneView/HandlesGO.fbx");
+                Context.Log.Info("Couldn't find SceneView/HandlesGO.fbx");
             }
 
             gameObject.SetActive(false);
@@ -965,14 +1062,16 @@ namespace Appalachia.Editing.Debugging.Handle
             Shader.SetGlobalFloat(HandleSize, size);
             var matrix4x4 = UnityEditor.Handles.matrix * Matrix4x4.TRS(position, rotation, Vector3.one);
             Shader.SetGlobalMatrix(ObjectToWorld, matrix4x4);
-            UnityEditor.HandleUtility.handleMaterial.SetInt(HandleZTest, (int) UnityEditor.Handles.zTest);
+            UnityEditor.HandleUtility.handleMaterial.SetInt(HandleZTest, (int)UnityEditor.Handles.zTest);
             UnityEditor.HandleUtility.handleMaterial.SetPass(0);
             return matrix4x4;
         }
 
         internal static Color realHandleColor =>
-            (UnityEditor.Handles.color * new Color(1f,      1f,   1f,   0.5f)) +
-            (UnityEditor.Handles.lighting ? new Color(0.0f, 0.0f, 0.0f, 0.5f) : new Color(0.0f, 0.0f, 0.0f, 0.0f));
+            (UnityEditor.Handles.color * new Color(1f, 1f, 1f, 0.5f)) +
+            (UnityEditor.Handles.lighting
+                ? new Color(0.0f, 0.0f, 0.0f, 0.5f)
+                : new Color(0.0f, 0.0f, 0.0f, 0.0f));
 
         #endregion
     }

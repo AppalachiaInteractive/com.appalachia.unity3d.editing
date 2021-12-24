@@ -1,15 +1,17 @@
 #region
 
 using System.Collections.Generic;
-using Appalachia.Core.Behaviours;
 using Appalachia.Core.Debugging;
 using Appalachia.Core.Layers;
+using Appalachia.Core.Objects.Initialization;
+using Appalachia.Core.Objects.Root;
 using Appalachia.Core.Types.Enums;
 using Appalachia.Simulation.Core;
+using Appalachia.Utility.Async;
 using Appalachia.Utility.Colors;
 using Appalachia.Utility.Constants;
 using Appalachia.Utility.Extensions;
-using Appalachia.Utility.Logging;
+using Appalachia.Utility.Strings;
 using Sirenix.OdinInspector;
 using Unity.Profiling;
 using UnityEngine;
@@ -22,28 +24,7 @@ namespace Appalachia.Editing.Debugging.Testing
     [ExecuteAlways]
     public class Bazooka : SingletonAppalachiaBehaviour<Bazooka>
     {
-        #region Profiling And Tracing Markers
-
-        private const string _PRF_PFX = nameof(Bazooka) + ".";
-
-        private static readonly ProfilerMarker _PRF_FindOrphanedMissiles =
-            new(_PRF_PFX + nameof(FindOrphanedMissiles));
-
-        private static readonly ProfilerMarker _PRF_CheckOutstandingMissiles =
-            new(_PRF_PFX + nameof(CheckOutstandingMissiles));
-
-        private static readonly ProfilerMarker _PRF_OnEnable = new(_PRF_PFX + nameof(OnEnable));
-        private static readonly ProfilerMarker _PRF_Fire = new(_PRF_PFX + nameof(Fire));
-        private static readonly ProfilerMarker _PRF_SoftFire = new(_PRF_PFX + nameof(SoftFire));
-        private static readonly ProfilerMarker _PRF_Drop = new(_PRF_PFX + nameof(Drop));
-
-        private static readonly ProfilerMarker _PRF_OnDrawGizmosSelected =
-            new(_PRF_PFX + nameof(OnDrawGizmosSelected));
-
-        private static readonly ProfilerMarker _PRF_Update = new(_PRF_PFX + nameof(UnityEngine.PlayerLoop.Update));
-        private static readonly ProfilerMarker _PRF_FindMissileRoot = new(_PRF_PFX + nameof(FindMissileRoot));
-
-        #endregion
+        #region Fields and Autoproperties
 
         [FoldoutGroup("General")]
         [ToggleLeft]
@@ -224,6 +205,8 @@ namespace Appalachia.Editing.Debugging.Testing
 
         private Vector3 missile_forceVector;
 
+        #endregion
+
         private bool _showMass => updateMass && exact;
 
         private bool _showMassRange => updateMass & !exact;
@@ -324,7 +307,7 @@ namespace Appalachia.Editing.Debugging.Testing
                 FindMissileRoot();
 
                 var missile = Instantiate(prefab, missileRoot.transform, true);
-                missile.name += $"_{Time.time}";
+                missile.name += ZString.Format("_{0}", Time.time);
                 missile.layer = layer.layer;
 
                 c = missile.GetComponentsInChildren<Collider>()
@@ -333,7 +316,7 @@ namespace Appalachia.Editing.Debugging.Testing
 
                 if ((c == null) || (rb == null))
                 {
-                    AppaLog.Warn("No collider or rigidbody!");
+                    Context.Log.Warn("No collider or rigidbody!");
                     return;
                 }
 
@@ -343,7 +326,7 @@ namespace Appalachia.Editing.Debugging.Testing
                 }
 
                 var missileComponent = missile.AddComponent<Missile>();
-                missileComponent.Initialize(missile, rb, c);
+                missileComponent.InitializeComponents(missile, rb, c);
 
                 _missiles.Enqueue(missileComponent);
 
@@ -497,18 +480,6 @@ namespace Appalachia.Editing.Debugging.Testing
             }
         }
 
-        protected override void OnEnable()
-        {
-            using (_PRF_OnEnable.Auto())
-            {
-                base.OnEnable();
-                
-                _t = transform;
-
-                FindOrphanedMissiles();
-            }
-        }
-
         private void OnDrawGizmosSelected()
         {
             using (_PRF_OnDrawGizmosSelected.Auto())
@@ -557,6 +528,18 @@ namespace Appalachia.Editing.Debugging.Testing
             {
                 _generationQueued = true;
                 _fireStrength = 0.25f;
+            }
+        }
+
+        protected override async AppaTask Initialize(Initializer initializer)
+        {
+            using (_PRF_Initialize.Auto())
+            {
+                await base.Initialize(initializer);
+
+                _t = transform;
+
+                FindOrphanedMissiles();
             }
         }
 
@@ -676,7 +659,7 @@ namespace Appalachia.Editing.Debugging.Testing
                         if (missile == null)
                         {
                             missile = childObject.AddComponent<Missile>();
-                            missile.Initialize(
+                            missile.InitializeComponents(
                                 childObject,
                                 child.GetComponent<Rigidbody>(),
                                 child.GetComponent<Collider>()
@@ -688,6 +671,34 @@ namespace Appalachia.Editing.Debugging.Testing
                 }
             }
         }
+
+        #region Profiling
+
+        private const string _PRF_PFX = nameof(Bazooka) + ".";
+
+        private static readonly ProfilerMarker _PRF_Initialize =
+            new ProfilerMarker(_PRF_PFX + nameof(Initialize));
+
+        private static readonly ProfilerMarker _PRF_FindOrphanedMissiles =
+            new(_PRF_PFX + nameof(FindOrphanedMissiles));
+
+        private static readonly ProfilerMarker _PRF_CheckOutstandingMissiles =
+            new(_PRF_PFX + nameof(CheckOutstandingMissiles));
+
+        private static readonly ProfilerMarker _PRF_OnEnable = new(_PRF_PFX + nameof(OnEnable));
+        private static readonly ProfilerMarker _PRF_Fire = new(_PRF_PFX + nameof(Fire));
+        private static readonly ProfilerMarker _PRF_SoftFire = new(_PRF_PFX + nameof(SoftFire));
+        private static readonly ProfilerMarker _PRF_Drop = new(_PRF_PFX + nameof(Drop));
+
+        private static readonly ProfilerMarker _PRF_OnDrawGizmosSelected =
+            new(_PRF_PFX + nameof(OnDrawGizmosSelected));
+
+        private static readonly ProfilerMarker _PRF_Update =
+            new(_PRF_PFX + nameof(UnityEngine.PlayerLoop.Update));
+
+        private static readonly ProfilerMarker _PRF_FindMissileRoot = new(_PRF_PFX + nameof(FindMissileRoot));
+
+        #endregion
 
 #if UNITY_EDITOR
         [UnityEditor.MenuItem(PKG.Menu.Appalachia.Tools.Base + "Bazooka!/Fire!!!!" + SHC.CTRL_ALT_SHFT_F)]
@@ -711,16 +722,21 @@ namespace Appalachia.Editing.Debugging.Testing
             instance._fireStrength = 0.05f;
         }
 
-        [UnityEditor.MenuItem(PKG.Menu.Appalachia.Tools.Base + "Bazooka!/Destroy Missiles!" + SHC.CTRL_ALT_SHFT_C)]
+        [UnityEditor.MenuItem(
+            PKG.Menu.Appalachia.Tools.Base + "Bazooka!/Destroy Missiles!" + SHC.CTRL_ALT_SHFT_C
+        )]
         private static void MenuClear()
         {
             instance.DestroyAllMissiles();
         }
 
-        [UnityEditor.MenuItem(PKG.Menu.Appalachia.Tools.Base + "Bazooka!/Load Missile!" + SHC.CTRL_ALT_SHFT_M)]
+        [UnityEditor.MenuItem(
+            PKG.Menu.Appalachia.Tools.Base + "Bazooka!/Load Missile!" + SHC.CTRL_ALT_SHFT_M
+        )]
         private static void MenuSetMissile()
         {
-            if ((UnityEditor.Selection.gameObjects != null) && (UnityEditor.Selection.gameObjects.Length == 1))
+            if ((UnityEditor.Selection.gameObjects != null) &&
+                (UnityEditor.Selection.gameObjects.Length == 1))
             {
                 instance.prefab = UnityEditor.Selection.gameObjects[0];
             }
