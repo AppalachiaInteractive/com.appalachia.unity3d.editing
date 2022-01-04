@@ -1,9 +1,9 @@
+#if UNITY_EDITOR
 using Appalachia.Editing.Core.Behaviours;
 using Sirenix.OdinInspector;
 
 namespace Appalachia.Editing.Debugging
 {
-#if UNITY_EDITOR
     public class GlobalDebugManager : SingletonEditorOnlyAppalachiaBehaviour<GlobalDebugManager>
     {
         [InlineProperty]
@@ -13,8 +13,14 @@ namespace Appalachia.Editing.Debugging
 
         private void Update()
         {
+            if (!DependenciesAreReady || !FullyInitialized)
+            {
+                return;
+            }
+            
             debug.Update();
         }
     }
-#endif
 }
+
+#endif

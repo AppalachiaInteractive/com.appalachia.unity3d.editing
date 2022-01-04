@@ -40,6 +40,11 @@ namespace Appalachia.Editing.Debugging.Testing
         {
             using (_PRF_Update.Auto())
             {
+                if (!DependenciesAreReady || !FullyInitialized)
+                {
+                    return;
+                }
+
                 var position = _t.position;
                 var rotation = _t.rotation;
 

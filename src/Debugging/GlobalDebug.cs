@@ -67,6 +67,11 @@ namespace Appalachia.Editing.Debugging
         {
             using (_PRF_Update.Auto())
             {
+                if (!DependenciesAreReady || !FullyInitialized)
+                {
+                    return;
+                }
+                
                 if (SceneView.lastActiveSceneView != null)
                 {
                     if (debugMode == DebugMode.Off)

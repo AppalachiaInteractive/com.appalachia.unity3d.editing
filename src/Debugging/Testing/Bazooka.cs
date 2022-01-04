@@ -247,6 +247,11 @@ namespace Appalachia.Editing.Debugging.Testing
         {
             using (_PRF_Update.Auto())
             {
+                if (!DependenciesAreReady || !FullyInitialized)
+                {
+                    return;
+                }
+                
                 if (rb != null)
                 {
                     rb.AddForce(missile_forceVector, forceMode);
@@ -627,6 +632,7 @@ namespace Appalachia.Editing.Debugging.Testing
                         mrt.position = Vector3.zero;
                         mrt.rotation = Quaternion.identity;
                         mrt.localScale = Vector3.one;
+                        mrt.SetParent(transform.parent);
                     }
                 }
 

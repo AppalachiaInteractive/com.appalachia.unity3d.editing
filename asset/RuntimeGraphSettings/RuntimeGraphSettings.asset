@@ -12,11 +12,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 168edaac4f82454392bc356e53aeb8ed, type: 3}
   m_Name: RuntimeGraphSettings
   m_EditorClassIdentifier: 
-  _initializationData:
-    _tags: []
-    _resetToken: 
   _cachedName: 
   _niceName: 
+  _initializer:
+    _tags: []
+    _resetToken: 
   _first: 0
   general:
     graphyMode: 0
