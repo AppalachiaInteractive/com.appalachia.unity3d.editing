@@ -6,6 +6,8 @@ namespace Appalachia.Editing.Visualizers
 {
     public abstract class InstancedIndirectGridVisualization : InstancedIndirectVisualization
     {
+        #region Fields and Autoproperties
+
         [PropertyOrder(-101)]
         [OnValueChanged(nameof(Regenerate))]
         [PropertyRange(.1f, 10f)]
@@ -15,6 +17,8 @@ namespace Appalachia.Editing.Visualizers
         [OnValueChanged(nameof(Regenerate))]
         [PropertyRange(.05f, 1f)]
         public float visualizationSize = .25f;
+
+        #endregion
 
         protected abstract void GetGridPosition(
             Vector3 position,
@@ -28,8 +32,8 @@ namespace Appalachia.Editing.Visualizers
             out Quaternion[] rotations,
             out Vector3[] scales)
         {
-            var xCount = (int) (bounds.size.x * visualizationDensity);
-            var zCount = (int) (bounds.size.z * visualizationDensity);
+            var xCount = (int)(bounds.size.x * visualizationDensity);
+            var zCount = (int)(bounds.size.z * visualizationDensity);
 
             visualizationCount = xCount * zCount;
 
@@ -42,8 +46,8 @@ namespace Appalachia.Editing.Visualizers
             {
                 var index = (x * zCount) + z;
 
-                var position_X = bounds.min.x + ((x / (float) xCount) * bounds.size.x);
-                var position_Z = bounds.min.z + ((z / (float) zCount) * bounds.size.z);
+                var position_X = bounds.min.x + ((x / (float)xCount) * bounds.size.x);
+                var position_Z = bounds.min.z + ((z / (float)zCount) * bounds.size.z);
 
                 var position = new Vector3(position_X, 0f, position_Z);
 

@@ -4,7 +4,6 @@
 
 using System;
 using Appalachia.CI.Integration.Assets;
-using Appalachia.Core.Extensions;
 using Appalachia.Utility.Extensions;
 using UnityEngine;
 
@@ -39,12 +38,18 @@ namespace Appalachia.Editing.Scene.Prefabs
             _onDispose = onDispose;
         }
 
+        #region Fields and Autoproperties
+
+        public GameObject Mutable { get; private set; }
+
         private Action<PrefabDisposalToken> _onDispose;
         private GameObject _prefab;
         private UnityEngine.SceneManagement.Scene _scene;
         private string _path;
 
-        public GameObject Mutable { get; private set; }
+        #endregion
+
+        #region IDisposable Members
 
         public void Dispose()
         {
@@ -62,6 +67,8 @@ namespace Appalachia.Editing.Scene.Prefabs
             Mutable = null;
             _onDispose = null;
         }
+
+        #endregion
     }
 }
 

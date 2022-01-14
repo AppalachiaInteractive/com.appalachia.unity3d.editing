@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using Appalachia.Core.Objects.Root;
 using Sirenix.OdinInspector;
-using Unity.Profiling;
 using UnityEngine;
 
 namespace Appalachia.Editing.Debugging
@@ -38,7 +37,7 @@ namespace Appalachia.Editing.Debugging
         {
             using (_PRF_Update.Auto())
             {
-                if (!DependenciesAreReady || !FullyInitialized)
+                if (ShouldSkipUpdate)
                 {
                     return;
                 }
@@ -146,13 +145,5 @@ namespace Appalachia.Editing.Debugging
         {
             origin = transform.position;
         }
-
-        #region Profiling
-
-        private const string _PRF_PFX = nameof(GrounderPatrol) + ".";
-
-        private static readonly ProfilerMarker _PRF_Update = new ProfilerMarker(_PRF_PFX + nameof(Update));
-
-        #endregion
     }
 }

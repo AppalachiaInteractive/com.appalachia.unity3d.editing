@@ -24,6 +24,16 @@ namespace Appalachia.Editing.Debugging.Testing
     [ExecuteAlways]
     public class Bazooka : SingletonAppalachiaBehaviour<Bazooka>
     {
+        public event OnPostFire OnPostFire;
+
+        public event OnPreFire OnPreFire;
+
+        #region Constants and Static Readonly
+
+        private const string MISSILES_NAME = nameof(Bazooka) + "_missiles";
+
+        #endregion
+
         #region Fields and Autoproperties
 
         [FoldoutGroup("General")]
@@ -233,9 +243,6 @@ namespace Appalachia.Editing.Debugging.Testing
         private float _scaleMin => allowedScaleRange.x;
         private int _allowedOutstandingMax => allowedOutstanding.y;
         private int _allowedOutstandingMin => allowedOutstanding.x;
-        public event OnPostFire OnPostFire;
-
-        public event OnPreFire OnPreFire;
 
         #region Event Functions
 
@@ -247,11 +254,11 @@ namespace Appalachia.Editing.Debugging.Testing
         {
             using (_PRF_Update.Auto())
             {
-                if (!DependenciesAreReady || !FullyInitialized)
+                if (ShouldSkipUpdate)
                 {
                     return;
                 }
-                
+
                 if (rb != null)
                 {
                     rb.AddForce(missile_forceVector, forceMode);
@@ -538,10 +545,10 @@ namespace Appalachia.Editing.Debugging.Testing
 
         protected override async AppaTask Initialize(Initializer initializer)
         {
+            await base.Initialize(initializer);
+
             using (_PRF_Initialize.Auto())
             {
-                await base.Initialize(initializer);
-
                 _t = transform;
 
                 FindOrphanedMissiles();
@@ -623,11 +630,11 @@ namespace Appalachia.Editing.Debugging.Testing
             {
                 if (missileRoot == null)
                 {
-                    missileRoot = GameObject.Find("_missiles");
+                    missileRoot = GameObject.Find(MISSILES_NAME);
 
                     if (missileRoot == null)
                     {
-                        missileRoot = new GameObject("_missiles");
+                        missileRoot = new GameObject(MISSILES_NAME);
                         var mrt = missileRoot.transform;
                         mrt.position = Vector3.zero;
                         mrt.rotation = Quaternion.identity;
@@ -680,29 +687,22 @@ namespace Appalachia.Editing.Debugging.Testing
 
         #region Profiling
 
-        private const string _PRF_PFX = nameof(Bazooka) + ".";
+        private static readonly ProfilerMarker _PRF_CheckOutstandingMissiles =
+            new(_PRF_PFX + nameof(CheckOutstandingMissiles));
 
-        private static readonly ProfilerMarker _PRF_Initialize =
-            new ProfilerMarker(_PRF_PFX + nameof(Initialize));
+        private static readonly ProfilerMarker _PRF_Drop = new(_PRF_PFX + nameof(Drop));
+
+        private static readonly ProfilerMarker _PRF_FindMissileRoot = new(_PRF_PFX + nameof(FindMissileRoot));
 
         private static readonly ProfilerMarker _PRF_FindOrphanedMissiles =
             new(_PRF_PFX + nameof(FindOrphanedMissiles));
 
-        private static readonly ProfilerMarker _PRF_CheckOutstandingMissiles =
-            new(_PRF_PFX + nameof(CheckOutstandingMissiles));
-
-        private static readonly ProfilerMarker _PRF_OnEnable = new(_PRF_PFX + nameof(OnEnable));
         private static readonly ProfilerMarker _PRF_Fire = new(_PRF_PFX + nameof(Fire));
-        private static readonly ProfilerMarker _PRF_SoftFire = new(_PRF_PFX + nameof(SoftFire));
-        private static readonly ProfilerMarker _PRF_Drop = new(_PRF_PFX + nameof(Drop));
 
         private static readonly ProfilerMarker _PRF_OnDrawGizmosSelected =
             new(_PRF_PFX + nameof(OnDrawGizmosSelected));
 
-        private static readonly ProfilerMarker _PRF_Update =
-            new(_PRF_PFX + nameof(UnityEngine.PlayerLoop.Update));
-
-        private static readonly ProfilerMarker _PRF_FindMissileRoot = new(_PRF_PFX + nameof(FindMissileRoot));
+        private static readonly ProfilerMarker _PRF_SoftFire = new(_PRF_PFX + nameof(SoftFire));
 
         #endregion
 

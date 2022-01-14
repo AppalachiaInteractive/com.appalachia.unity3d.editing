@@ -11,14 +11,19 @@ namespace Appalachia.Editing.Scene.Prefabs
 {
     public static class PrefabSaveTokenExtensions
     {
+        #region Static Fields and Autoproperties
+
         private static AutoDisposePreviewScene _previewScene;
+
+        #endregion
 
         public static PrefabSaveToken ToMutable(this IPrefabSaveable saveable)
         {
-            return new(saveable.Prefab, _previewScene.previewScene, disp =>
-            {
-                saveable.Prefab = disp.prefab;
-            });
+            return new(
+                saveable.Prefab,
+                _previewScene.previewScene,
+                disp => { saveable.Prefab = disp.prefab; }
+            );
         }
 
         public static PrefabSaveToken ToMutable(this IPrefabPathSaveable saveable)

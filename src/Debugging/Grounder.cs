@@ -1,6 +1,5 @@
 using System;
 using Appalachia.Core.Objects.Root;
-using Unity.Profiling;
 using UnityEngine;
 
 namespace Appalachia.Editing.Debugging
@@ -38,7 +37,7 @@ namespace Appalachia.Editing.Debugging
         {
             using (_PRF_Update.Auto())
             {
-                if (!DependenciesAreReady || !FullyInitialized)
+                if (ShouldSkipUpdate)
                 {
                     return;
                 }
@@ -174,14 +173,6 @@ namespace Appalachia.Editing.Debugging
                 }
             }
         }
-
-        #endregion
-
-        #region Profiling
-
-        private const string _PRF_PFX = nameof(Grounder) + ".";
-
-        private static readonly ProfilerMarker _PRF_Update = new ProfilerMarker(_PRF_PFX + nameof(Update));
 
         #endregion
     }

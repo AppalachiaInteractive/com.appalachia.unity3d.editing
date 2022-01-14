@@ -5,7 +5,6 @@ using Appalachia.Core.Objects.Initialization;
 using Appalachia.Core.Objects.Root;
 using Appalachia.Utility.Async;
 using Sirenix.OdinInspector;
-using Unity.Profiling;
 using UnityEngine;
 
 namespace Appalachia.Editing.Debugging.Testing
@@ -40,7 +39,7 @@ namespace Appalachia.Editing.Debugging.Testing
         {
             using (_PRF_Update.Auto())
             {
-                if (!DependenciesAreReady || !FullyInitialized)
+                if (ShouldSkipUpdate)
                 {
                     return;
                 }
@@ -96,24 +95,13 @@ namespace Appalachia.Editing.Debugging.Testing
 
         protected override async AppaTask Initialize(Initializer initializer)
         {
+            await base.Initialize(initializer);
+
             using (_PRF_Initialize.Auto())
             {
-                await base.Initialize(initializer);
-
                 _t = transform;
                 _t.rotation = Quaternion.identity;
             }
         }
-
-        #region Profiling
-
-        private const string _PRF_PFX = nameof(Spinner) + ".";
-
-        private static readonly ProfilerMarker _PRF_Update = new ProfilerMarker(_PRF_PFX + nameof(Update));
-
-        private static readonly ProfilerMarker _PRF_Initialize =
-            new ProfilerMarker(_PRF_PFX + nameof(Initialize));
-
-        #endregion
     }
 }

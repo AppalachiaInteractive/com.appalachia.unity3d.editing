@@ -24,6 +24,8 @@ namespace Appalachia.Editing.Core.Operations
             SetupOperationBase();
         }
 
+        #region Fields and Autoproperties
+
         [SmartLabel]
         [InlineProperty]
         [ListDrawerSettings(
@@ -38,6 +40,8 @@ namespace Appalachia.Editing.Core.Operations
         [SmartLabel]
         [PropertyOrder(-1)]
         public TI operation;
+
+        #endregion
 
         public abstract TO ApplyOperation(string input);
 

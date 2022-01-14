@@ -167,7 +167,7 @@ namespace Appalachia.Editing.Core.Operations
                     };
 
                 case StringOperation.PadLeftSpaces:
-                    return new[] {new OperationArgument("Padding Amount", 4)};
+                    return new[] { new OperationArgument("Padding Amount", 4) };
 
                 case StringOperation.PadRight:
                     return new[]
@@ -177,21 +177,24 @@ namespace Appalachia.Editing.Core.Operations
                     };
 
                 case StringOperation.PadRightSpaces:
-                    return new[] {new OperationArgument("Padding Amount", 4)};
+                    return new[] { new OperationArgument("Padding Amount", 4) };
 
                 case StringOperation.RemoveAt:
-                    return new[] {new OperationArgument("Start Index", 0), new OperationArgument("Count", 1)};
+                    return new[]
+                    {
+                        new OperationArgument("Start Index", 0), new OperationArgument("Count", 1)
+                    };
 
                 case StringOperation.RemoveCharacters:
-                    return new[] {new OperationArgument("Remove Values", new[] {'-', '|'})};
+                    return new[] { new OperationArgument("Remove Values", new[] { '-', '|' }) };
 
                 case StringOperation.RemoveString:
-                    return new[] {new OperationArgument("Remove Value", "abc")};
+                    return new[] { new OperationArgument("Remove Value", "abc") };
 
                 case StringOperation.ReplaceCharacters:
                     return new[]
                     {
-                        new OperationArgument("Old Values", new[] {'-', '|'}),
+                        new OperationArgument("Old Values", new[] { '-', '|' }),
                         new OperationArgument("New Value",  '_')
                     };
 
@@ -205,15 +208,15 @@ namespace Appalachia.Editing.Core.Operations
                 case StringOperation.Split:
                     return new[]
                     {
-                        new OperationArgument("Split Characters",        new[] {'_'}),
+                        new OperationArgument("Split Characters",        new[] { '_' }),
                         new OperationArgument("Take Index (Zero Based)", 1)
                     };
 
                 case StringOperation.SplitAndTakeFirst:
-                    return new[] {new OperationArgument("Split Characters", new[] {'_'})};
+                    return new[] { new OperationArgument("Split Characters", new[] { '_' }) };
 
                 case StringOperation.SplitAndTakeLast:
-                    return new[] {new OperationArgument("Split Characters", new[] {'_'})};
+                    return new[] { new OperationArgument("Split Characters", new[] { '_' }) };
 
                 case StringOperation.Substring:
                     return new[]
@@ -222,7 +225,7 @@ namespace Appalachia.Editing.Core.Operations
                     };
 
                 case StringOperation.SubstringToEnd:
-                    return new[] {new OperationArgument("Start Index", 5)};
+                    return new[] { new OperationArgument("Start Index", 5) };
 
                 case StringOperation.ToLower:
                     return null;
@@ -234,25 +237,25 @@ namespace Appalachia.Editing.Core.Operations
                     return null;
 
                 case StringOperation.Trim:
-                    return new[] {new OperationArgument("Trim Characters", new[] {' ', '-', '_', '.'})};
+                    return new[] { new OperationArgument("Trim Characters", new[] { ' ', '-', '_', '.' }) };
 
                 case StringOperation.TrimStart:
-                    return new[] {new OperationArgument("Trim Characters", new[] {' ', '-', '_', '.'})};
+                    return new[] { new OperationArgument("Trim Characters", new[] { ' ', '-', '_', '.' }) };
 
                 case StringOperation.TrimEnd:
-                    return new[] {new OperationArgument("Trim Characters", new[] {' ', '-', '_', '.'})};
+                    return new[] { new OperationArgument("Trim Characters", new[] { ' ', '-', '_', '.' }) };
 
                 case StringOperation.Append:
-                    return new[] {new OperationArgument("Append Value", "Value")};
+                    return new[] { new OperationArgument("Append Value", "Value") };
 
                 case StringOperation.AppendFileName:
-                    return new[] {new OperationArgument("Append Value", "Value")};
+                    return new[] { new OperationArgument("Append Value", "Value") };
 
                 case StringOperation.Prepend:
-                    return new[] {new OperationArgument("Prepend Value", "Value")};
+                    return new[] { new OperationArgument("Prepend Value", "Value") };
 
                 case StringOperation.Set:
-                    return new[] {new OperationArgument("Set Value", "Value")};
+                    return new[] { new OperationArgument("Set Value", "Value") };
             }
 
             return null;

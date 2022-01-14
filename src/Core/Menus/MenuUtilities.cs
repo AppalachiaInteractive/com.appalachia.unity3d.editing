@@ -37,7 +37,7 @@ namespace Appalachia.Editing.Core.Menus
                 }
                 else
                 {
-                    target = (T) (object) obj;
+                    target = (T)(object)obj;
                 }
 
                 if (target == null)

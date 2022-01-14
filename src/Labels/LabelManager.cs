@@ -29,23 +29,21 @@ namespace Appalachia.Editing.Labels
             LabelSets.InstanceAvailable += i => _labelSets = i;
         }
 
-        private static LabelSets _labelSets;
+        #region Static Fields and Autoproperties
+
+        public static List<LabelData> labelDatas = new();
 
         [NonSerialized] private static AppaContext _context;
 
-        private static AppaContext Context
-        {
-            get
-            {
-                if (_context == null)
-                {
-                    _context = new AppaContext(typeof(LabelManager));
-                }
+        private static Dictionary<Type, Dictionary<object, string>> _enumTypeLookup;
 
-                return _context;
-            }
-        }
-        
+        private static LabelSets _labelSets;
+        private static string[] _strings;
+
+        private static ValueDropdownList<string> _labelDropdownList;
+
+        #endregion
+
         public static bool Initialized => labelDatas?.Count > 0;
 
         public static string[] strings
@@ -74,12 +72,18 @@ namespace Appalachia.Editing.Labels
             }
         }
 
-        public static List<LabelData> labelDatas = new();
+        private static AppaContext Context
+        {
+            get
+            {
+                if (_context == null)
+                {
+                    _context = new AppaContext(typeof(LabelManager));
+                }
 
-        private static Dictionary<Type, Dictionary<object, string>> _enumTypeLookup;
-        private static string[] _strings;
-
-        private static ValueDropdownList<string> _labelDropdownList;
+                return _context;
+            }
+        }
 
         public static void ApplyLabelsToPrefab<T>(GameObject asset, T value)
         {
@@ -113,7 +117,7 @@ namespace Appalachia.Editing.Labels
 
             foreach (var possibleLabel in typeLookup)
             {
-                if (((T) possibleLabel.Key).Equals(value))
+                if (((T)possibleLabel.Key).Equals(value))
                 {
                     if (!labelHash.Contains(possibleLabel.Value))
                     {
@@ -151,16 +155,16 @@ namespace Appalachia.Editing.Labels
         {
             var labels = new Dictionary<string, int>();
 
-            var assetPaths = AssetDatabaseManager.FindAssets("t:Prefab")
+            var assetPaths = AssetDatabaseManager.FindAssets("t:Object")
                                                  .Select(AssetDatabaseManager.GUIDToAssetPath)
                                                  .ToArray();
 
             using (var progress = new EditorOnlyProgressBar(
-                "Building label list...",
-                assetPaths.Length,
-                true,
-                200
-            ))
+                       "Building label list...",
+                       assetPaths.Length,
+                       true,
+                       200
+                   ))
             {
                 for (var i = 0; i < assetPaths.Length; i++)
                 {
@@ -208,7 +212,7 @@ namespace Appalachia.Editing.Labels
 
             foreach (var labelSet in labels.OrderByDescending(l => l.Value))
             {
-                var newLabelData = new LabelData {label = labelSet.Key, count = labelSet.Value};
+                var newLabelData = new LabelData { label = labelSet.Key, count = labelSet.Value };
 
                 labelDatas.Add(newLabelData);
             }
@@ -224,32 +228,6 @@ namespace Appalachia.Editing.Labels
                 _labelDropdownList.Add(label.label, label.label);
             }
         }
-
-#if UNITY_EDITOR
-        [UnityEditor.MenuItem(PKG.Menu.Appalachia.Tools.Base + "Label Assembly Prefabs", priority = -1050)]
-        public static void MENU_LabelAssemblyPrefabs()
-        {
-            ProcessLabelAssignments(_labelSets.assemblies);
-        }
-
-        [UnityEditor.MenuItem(PKG.Menu.Appalachia.Tools.Base + "Label Object Prefabs", priority = -1050)]
-        public static void MENU_LabelObjectPrefabs()
-        {
-            ProcessLabelAssignments(_labelSets.objects);
-        }
-
-        [UnityEditor.MenuItem(PKG.Menu.Appalachia.Tools.Base + "Label Tree Prefabs", priority = -1050)]
-        public static void MENU_LabelTreePrefabs()
-        {
-            ProcessLabelAssignments(_labelSets.trees);
-        }
-
-        [UnityEditor.MenuItem(PKG.Menu.Appalachia.Tools.Base + "Label Vegetation Prefabs", priority = -1050)]
-        public static void MENU_LabelVegetationPrefabs()
-        {
-            ProcessLabelAssignments(_labelSets.vegetations);
-        }
-#endif
 
         public static void RegisterEnumTypeLabels<T>(T value, string label)
         {
@@ -366,6 +344,32 @@ namespace Appalachia.Editing.Labels
                     );
                 }
             }
+        }
+#endif
+
+#if UNITY_EDITOR
+        [UnityEditor.MenuItem(PKG.Menu.Appalachia.Tools.Base + "Label Assembly Prefabs", priority = -1050)]
+        public static void MENU_LabelAssemblyPrefabs()
+        {
+            ProcessLabelAssignments(_labelSets.assemblies);
+        }
+
+        [UnityEditor.MenuItem(PKG.Menu.Appalachia.Tools.Base + "Label Object Prefabs", priority = -1050)]
+        public static void MENU_LabelObjectPrefabs()
+        {
+            ProcessLabelAssignments(_labelSets.objects);
+        }
+
+        [UnityEditor.MenuItem(PKG.Menu.Appalachia.Tools.Base + "Label Tree Prefabs", priority = -1050)]
+        public static void MENU_LabelTreePrefabs()
+        {
+            ProcessLabelAssignments(_labelSets.trees);
+        }
+
+        [UnityEditor.MenuItem(PKG.Menu.Appalachia.Tools.Base + "Label Vegetation Prefabs", priority = -1050)]
+        public static void MENU_LabelVegetationPrefabs()
+        {
+            ProcessLabelAssignments(_labelSets.vegetations);
         }
 #endif
     }

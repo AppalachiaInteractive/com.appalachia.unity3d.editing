@@ -9,13 +9,18 @@ namespace Appalachia.Editing.Scene.Prefabs
 
         #endregion
 
+        #region Static Fields and Autoproperties
+
         private static UnityEngine.SceneManagement.Scene _previewScene;
+
+        #endregion
 
         public UnityEngine.SceneManagement.Scene previewScene
         {
             get
             {
-                if ((_previewScene == default) || !UnityEditor.SceneManagement.EditorSceneManager.IsPreviewScene(_previewScene))
+                if ((_previewScene == default) ||
+                    !UnityEditor.SceneManagement.EditorSceneManager.IsPreviewScene(_previewScene))
                 {
                     _previewScene = UnityEditor.SceneManagement.EditorSceneManager.NewPreviewScene();
                 }
@@ -23,6 +28,8 @@ namespace Appalachia.Editing.Scene.Prefabs
                 return _previewScene;
             }
         }
+
+        #region Nested type: Finalizer
 
         #region Nested Types
 
@@ -36,6 +43,8 @@ namespace Appalachia.Editing.Scene.Prefabs
                 }
             }
         }
+
+        #endregion
 
         #endregion
     }

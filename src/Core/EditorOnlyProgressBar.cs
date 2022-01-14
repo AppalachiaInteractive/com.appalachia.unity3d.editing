@@ -6,7 +6,6 @@ using Unity.Mathematics;
 
 #endregion
 
-
 namespace Appalachia.Editing.Core
 {
     public class EditorOnlyProgressBar : IDisposable
@@ -21,6 +20,8 @@ namespace Appalachia.Editing.Core
 #endif
         }
 
+        #region Fields and Autoproperties
+
         private readonly bool _cancellable;
         private readonly float _total;
         private readonly int _showEvery;
@@ -32,6 +33,8 @@ namespace Appalachia.Editing.Core
         private bool _hasShownBar;
         private float _increment;
         private int _counter;
+
+        #endregion
 
         public bool Cancellable => _cancellable;
 
@@ -102,7 +105,8 @@ namespace Appalachia.Editing.Core
             {
                 if (_cancellable)
                 {
-                    _cancelled = UnityEditor.EditorUtility.DisplayCancelableProgressBar(title, info, current / total);
+                    _cancelled =
+                        UnityEditor.EditorUtility.DisplayCancelableProgressBar(title, info, current / total);
                     _hasShownBar = true;
                 }
                 else
@@ -114,6 +118,15 @@ namespace Appalachia.Editing.Core
 #endif
         }
 
+        private void ShowProgress(string info)
+        {
+#if UNITY_EDITOR
+            ShowProgress(_title, info, _total, _increment);
+#endif
+        }
+
+        #region IDisposable Members
+
         public void Dispose()
         {
 #if UNITY_EDITOR
@@ -124,12 +137,9 @@ namespace Appalachia.Editing.Core
 #endif
         }
 
-        private void ShowProgress(string info)
-        {
-#if UNITY_EDITOR
-            ShowProgress(_title, info, _total, _increment);
-#endif
-        }
+        #endregion
+
+        #region Menu Items
 
 #if UNITY_EDITOR
         [UnityEditor.MenuItem(
@@ -141,5 +151,7 @@ namespace Appalachia.Editing.Core
             UnityEditor.EditorUtility.ClearProgressBar();
         }
 #endif
+
+        #endregion
     }
 }

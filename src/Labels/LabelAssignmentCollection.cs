@@ -18,23 +18,34 @@ namespace Appalachia.Editing.Labels
             this.multiplier = multiplier;
         }
 
+        #region Fields and Autoproperties
+
         public readonly LabelAssignmentTerm[] terms;
         public readonly string baseTerm;
         public readonly Vector3 multiplier;
 
-        [DebuggerStepThrough] public bool Equals(LabelAssignmentCollection other)
+        #endregion
+
+        [DebuggerStepThrough]
+        public static bool operator ==(LabelAssignmentCollection left, LabelAssignmentCollection right)
         {
-            return (baseTerm == other.baseTerm) &&
-                   multiplier.Equals(other.multiplier) &&
-                   Equals(terms, other.terms);
+            return left.Equals(right);
         }
 
-        [DebuggerStepThrough] public override bool Equals(object obj)
+        [DebuggerStepThrough]
+        public static bool operator !=(LabelAssignmentCollection left, LabelAssignmentCollection right)
+        {
+            return !left.Equals(right);
+        }
+
+        [DebuggerStepThrough]
+        public override bool Equals(object obj)
         {
             return obj is LabelAssignmentCollection other && Equals(other);
         }
 
-        [DebuggerStepThrough] public override int GetHashCode()
+        [DebuggerStepThrough]
+        public override int GetHashCode()
         {
             unchecked
             {
@@ -45,15 +56,17 @@ namespace Appalachia.Editing.Labels
             }
         }
 
-        [DebuggerStepThrough] public static bool operator ==(LabelAssignmentCollection left, LabelAssignmentCollection right)
+        #region IEquatable<LabelAssignmentCollection> Members
+
+        [DebuggerStepThrough]
+        public bool Equals(LabelAssignmentCollection other)
         {
-            return left.Equals(right);
+            return (baseTerm == other.baseTerm) &&
+                   multiplier.Equals(other.multiplier) &&
+                   Equals(terms, other.terms);
         }
 
-        [DebuggerStepThrough] public static bool operator !=(LabelAssignmentCollection left, LabelAssignmentCollection right)
-        {
-            return !left.Equals(right);
-        }
+        #endregion
     }
 }
 

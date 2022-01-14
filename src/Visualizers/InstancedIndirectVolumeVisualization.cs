@@ -6,11 +6,15 @@ namespace Appalachia.Editing.Visualizers
 {
     public abstract class InstancedIndirectVolumeVisualization : InstancedIndirectVisualization
     {
+        #region Fields and Autoproperties
+
         [OnValueChanged(nameof(Regenerate))]
         public float visualizationSize = .25f;
 
         [OnValueChanged(nameof(Regenerate))]
         public Vector3 visualizationDensity = Vector3.one;
+
+        #endregion
 
         // ReSharper disable once UnusedParameter.Global
         protected virtual void GetRotationAndScale(
@@ -32,9 +36,9 @@ namespace Appalachia.Editing.Visualizers
             out Quaternion[] rotations,
             out Vector3[] scales)
         {
-            var xCount = (int) (bounds.size.x * visualizationDensity.x);
-            var yCount = (int) (bounds.size.y * visualizationDensity.y);
-            var zCount = (int) (bounds.size.z * visualizationDensity.z);
+            var xCount = (int)(bounds.size.x * visualizationDensity.x);
+            var yCount = (int)(bounds.size.y * visualizationDensity.y);
+            var zCount = (int)(bounds.size.z * visualizationDensity.z);
 
             visualizationCount = xCount * yCount * zCount;
 
@@ -52,9 +56,9 @@ namespace Appalachia.Editing.Visualizers
             {
                 var index = (x * yCount * zCount) + (y * zCount) + z;
 
-                var position_X = bounds.min.x + ((x / (float) xCount) * bounds.size.x);
-                var position_Y = bounds.min.y + ((y / (float) yCount) * bounds.size.y);
-                var position_Z = bounds.min.z + ((z / (float) zCount) * bounds.size.z);
+                var position_X = bounds.min.x + ((x / (float)xCount) * bounds.size.x);
+                var position_Y = bounds.min.y + ((y / (float)yCount) * bounds.size.y);
+                var position_Z = bounds.min.z + ((z / (float)zCount) * bounds.size.z);
 
                 position = new Vector3(position_X, position_Y, position_Z);
                 positions[index] = position;

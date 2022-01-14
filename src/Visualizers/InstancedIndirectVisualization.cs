@@ -110,18 +110,18 @@ namespace Appalachia.Editing.Visualizers
 
         protected override async AppaTask Initialize(Initializer initializer)
         {
+            await base.Initialize(initializer);
+
             using (_PRF_Initialize.Auto())
             {
-                await base.Initialize(initializer);
-
                 Regenerate();
             }
         }
+        
 
         protected override async AppaTask WhenDisabled()
-
         {
-            using (_PRF_OnDisable.Auto())
+            using (_PRF_WhenDisabled.Auto())
             {
                 await base.WhenDisabled();
 
@@ -246,7 +246,8 @@ namespace Appalachia.Editing.Visualizers
 
         #region Profiling
 
-        private const string _PRF_PFX = nameof(InstancedIndirectVisualization) + ".";
+        private static readonly ProfilerMarker _PRF_OnPreCull =
+            new ProfilerMarker(_PRF_PFX + nameof(OnPreCull));
 
         private static readonly ProfilerMarker _PRF_RefreshBuffers =
             new ProfilerMarker(_PRF_PFX + nameof(RefreshBuffers));
@@ -256,18 +257,6 @@ namespace Appalachia.Editing.Visualizers
 
         private static readonly ProfilerMarker _PRF_UpdateBuffers =
             new ProfilerMarker(_PRF_PFX + nameof(UpdateBuffers));
-
-        private static readonly ProfilerMarker _PRF_OnPreCull =
-            new ProfilerMarker(_PRF_PFX + nameof(OnPreCull));
-
-        private static readonly ProfilerMarker _PRF_Initialize =
-            new ProfilerMarker(_PRF_PFX + nameof(Initialize));
-
-        private static readonly ProfilerMarker
-            _PRF_OnEnable = new ProfilerMarker(_PRF_PFX + nameof(OnEnable));
-
-        private static readonly ProfilerMarker _PRF_OnDisable =
-            new ProfilerMarker(_PRF_PFX + nameof(OnDisable));
 
         #endregion
     }

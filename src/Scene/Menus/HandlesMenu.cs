@@ -11,7 +11,6 @@ using UnityEngine.Rendering;
 namespace Appalachia.Editing.Scene.Menus
 {
     [CallStaticConstructorInEditor]
-    
     public static class HandlesMenu
     {
         static HandlesMenu()
@@ -26,7 +25,7 @@ namespace Appalachia.Editing.Scene.Menus
             UnityEditor.Handles.zTest = _Z_PREF.v;
         }
 
-#region Default UnityEditor.Handles ZTest
+        #region Default UnityEditor.Handles ZTest
 
         public static PREF<CompareFunction> _Z_PREF = PREFS.REG(
             PKG.Prefs.Group,
@@ -143,66 +142,66 @@ namespace Appalachia.Editing.Scene.Menus
         private static void _ZT_DIS_()
         {
             _Z_PREF.v = _ZT_DIS_v;
-           UnityEditor.Handles.zTest = _Z_PREF.v;
+            UnityEditor.Handles.zTest = _Z_PREF.v;
         }
 
         [UnityEditor.MenuItem(_ZT_NEV_m)]
         private static void _ZT_NEV_()
         {
             _Z_PREF.v = _ZT_NEV_v;
-           UnityEditor.Handles.zTest = _Z_PREF.v;
+            UnityEditor.Handles.zTest = _Z_PREF.v;
         }
 
         [UnityEditor.MenuItem(_ZT_LES_m)]
         private static void _ZT_LES_()
         {
             _Z_PREF.v = _ZT_LES_v;
-           UnityEditor.Handles.zTest = _Z_PREF.v;
+            UnityEditor.Handles.zTest = _Z_PREF.v;
         }
 
         [UnityEditor.MenuItem(_ZT_EQU_m)]
         private static void _ZT_EQU_()
         {
             _Z_PREF.v = _ZT_EQU_v;
-           UnityEditor.Handles.zTest = _Z_PREF.v;
+            UnityEditor.Handles.zTest = _Z_PREF.v;
         }
 
         [UnityEditor.MenuItem(_ZT_LEQ_m)]
         private static void _ZT_LEQ_()
         {
             _Z_PREF.v = _ZT_LEQ_v;
-           UnityEditor.Handles.zTest = _Z_PREF.v;
+            UnityEditor.Handles.zTest = _Z_PREF.v;
         }
 
         [UnityEditor.MenuItem(_ZT_GRT_m)]
         private static void _ZT_GRT_()
         {
             _Z_PREF.v = _ZT_GRT_v;
-           UnityEditor.Handles.zTest = _Z_PREF.v;
+            UnityEditor.Handles.zTest = _Z_PREF.v;
         }
 
         [UnityEditor.MenuItem(_ZT_NEQ_m)]
         private static void _ZT_NEQ_()
         {
             _Z_PREF.v = _ZT_NEQ_v;
-           UnityEditor.Handles.zTest = _Z_PREF.v;
+            UnityEditor.Handles.zTest = _Z_PREF.v;
         }
 
         [UnityEditor.MenuItem(_ZT_GRE_m)]
         private static void _ZT_GRE_()
         {
             _Z_PREF.v = _ZT_GRE_v;
-           UnityEditor.Handles.zTest = _Z_PREF.v;
+            UnityEditor.Handles.zTest = _Z_PREF.v;
         }
 
         [UnityEditor.MenuItem(_ZT_ALW_m)]
         private static void _ZT_ALW_()
         {
             _Z_PREF.v = _ZT_ALW_v;
-           UnityEditor.Handles.zTest = _Z_PREF.v;
+            UnityEditor.Handles.zTest = _Z_PREF.v;
         }
 
-#endregion
+        #endregion
     }
 }
 

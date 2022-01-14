@@ -18,11 +18,20 @@ namespace Appalachia.Editing.Core
         where TValue : AppalachiaObject<TValue>, ICategorizable
         where TL : AppaList<TValue>, new()
     {
-        protected Action<TValue> _selection;
-        protected TMC _instance;
+        #region Preferences
 
         public PREF<Color> ButtonColor { get; set; }
         public PREF<float> ButtonColorDrop { get; set; }
+
+        #endregion
+
+        #region Fields and Autoproperties
+
+        protected Action<TValue> _selection;
+        protected TMC _instance;
+
+        #endregion
+
         public Action<TValue> Selection => _selection;
 
         public TMC Instance => _instance;

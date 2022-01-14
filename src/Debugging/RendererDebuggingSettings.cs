@@ -15,7 +15,7 @@ using UnityEngine;
 namespace Appalachia.Editing.Debugging
 {
     [Serializable]
-    public class GlobalDebug : SingletonAppalachiaObject<GlobalDebug>
+    public class RendererDebuggingSettings : SingletonAppalachiaObject<RendererDebuggingSettings>
     {
         #region Fields and Autoproperties
 
@@ -71,7 +71,7 @@ namespace Appalachia.Editing.Debugging
                 {
                     return;
                 }
-                
+
                 if (SceneView.lastActiveSceneView != null)
                 {
                     if (debugMode == DebugMode.Off)
@@ -113,10 +113,10 @@ namespace Appalachia.Editing.Debugging
 
         protected override async AppaTask Initialize(Initializer initializer)
         {
+            await base.Initialize(initializer);
+
             using (_PRF_Initialize.Auto())
             {
-                await base.Initialize(initializer);
-
                 if (!_initialized)
                 {
                     _initialized = true;
@@ -133,11 +133,6 @@ namespace Appalachia.Editing.Debugging
         }
 
         #region Profiling
-
-        private const string _PRF_PFX = nameof(GlobalDebug) + ".";
-
-        private static readonly ProfilerMarker _PRF_Initialize =
-            new ProfilerMarker(_PRF_PFX + nameof(Initialize));
 
         private static readonly ProfilerMarker _PRF_SelectShader =
             new ProfilerMarker(_PRF_PFX + nameof(SelectShader));

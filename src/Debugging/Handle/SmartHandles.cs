@@ -14,23 +14,9 @@ namespace Appalachia.Editing.Debugging.Handle
 {
     public static class SmartHandles
     {
-        [NonSerialized] private static AppaContext _context;
-
-        private static AppaContext Context
-        {
-            get
-            {
-                if (_context == null)
-                {
-                    _context = new AppaContext(typeof(SmartHandles));
-                }
-
-                return _context;
-            }
-        }
-
         #region Constants and Static Readonly
 
+        [NonSerialized] private static AppaContext _context;
         private static readonly ProfilerMarker _PRF_DrawHandleLine = new(_PRF_PFX + nameof(DrawHandleLine));
         private static readonly ProfilerMarker _PRF_DrawLine = new(_PRF_PFX + nameof(DrawLine));
         private static readonly ProfilerMarker _PRF_DrawLineMasked = new(_PRF_PFX + nameof(DrawLineMasked));
@@ -133,7 +119,18 @@ namespace Appalachia.Editing.Debugging.Handle
             }
         }
 
-        
+        private static AppaContext Context
+        {
+            get
+            {
+                if (_context == null)
+                {
+                    _context = new AppaContext(typeof(SmartHandles));
+                }
+
+                return _context;
+            }
+        }
 
         public static void DrawCube(Vector3 center, float radius)
         {

@@ -13,9 +13,817 @@ namespace Appalachia.Editing.Core
     [CallStaticConstructorInEditor]
     public static class EditorGUIIcons
     {
-        public const string BUILD_VERSION = "2021.2.0b16";
+        #region Constants and Static Readonly
+
         public const int VALUE_COUNT = 1875;
+        public const string BUILD_VERSION = "2021.2.0b16";
         public const string VALUE_COUNT_STRING = "1875";
+
+        #endregion
+
+        #region Nested type: EditorGUIIconViewer
+
+        #region UI
+
+        public class EditorGUIIconViewer : EditorWindow
+        {
+            #region Menu Items
+
+            [MenuItem(
+                PKG.Menu.Appalachia.Tools.Base + "EditorGUI Icons/Explore",
+                priority = PKG.Priority + 22
+            )]
+            internal static void ExploreEditorGUIIcons()
+            {
+                GetWindow<EditorGUIIconViewer>(false, "EditorGUI Icons", true);
+            }
+
+            #endregion
+
+            #region UI Constants
+
+            private const string _headerText = "EditorGUI Icons";
+
+            private const string _subheaderText = "Build Version: " +
+                                                  BUILD_VERSION +
+                                                  " | Icon Count: " +
+                                                  VALUE_COUNT_STRING;
+
+            private const string _settingsText = "Display Settings";
+            private const string _searchText = "Search (RegEx)";
+            private const string _selectedIconText = "Selected Icon Name";
+            private const string _buttonTextPadding = "  ";
+
+            private static readonly Color lineColor = new(.22f, .22f, .22f, 1f);
+
+            private const int _defaultIconSize = 32;
+            private const int _iconPadding = 1;
+            private const float _paddingMultiplier = 3f;
+            private const int _reservedSpace = 15;
+            private const float _verticalSpacer = 8f;
+            private const float _horizontalSpacer = 4f;
+            private const float _selectionSize = 1f;
+            private const int _buttonIconSize = 16;
+            private const float _iconSizeLabelSize = 60f;
+            private const float _iconBackgroundLabelSize = 110f;
+            private const float _iconSelectedBackgroundLabelSize = 120f;
+            private const float _searchLabelSize = 120f;
+            private const float _regexLabelSize = 18f;
+            private const float _selectedIconLabelSize = 130f;
+
+            #endregion
+
+            #region Icons
+
+            private const string _regenerateButtonIconName = "sceneviewtools on";
+            private const string _resetButtonIconName = "grid.erasertool";
+            private const string _searchIconName = "searchoverlay";
+            private const string _settingsIconName = "settings";
+            private const string _regexValidIconName = "p4_checkoutremote";
+            private const string _regexInvalidIconName = "p4_deletedlocal";
+            private const string _regexMissingIconName = "testignored";
+
+            #endregion
+
+            #region State
+
+            private static Enum[] _enums;
+            private static string[] _iconNames;
+            private static GUIContent[] _icons;
+
+            #endregion
+
+            #region UI State
+
+            private string _searchFilter = "";
+            private Color _backgroundColor = new(0.1647059f, 0.1647059f, 0.1647059f, 1f);
+            private Color _selectedBackgroundColor = new(0f, 1f, 0f, .7f);
+            private int _iconSize = _defaultIconSize;
+            private bool _showSettings;
+
+            private RegexState _regexState;
+            private Vector2 _scrollPosition;
+
+            private Color _lastBackgroundColor;
+            private int _lastIconSize;
+            private string _lastSelection = "";
+            private GUIContent _lastSelectionContent;
+
+            #endregion
+
+            #region Layout
+
+            #region Fields
+
+            private static readonly GUILayoutOption[] _expandWidth = { GUILayout.ExpandWidth(true) };
+            private GUILayoutOption[] _iconLayout = { GUILayout.Width(_defaultIconSize) };
+            private GUILayoutOption[] _iconSizeLabelLayout = { GUILayout.Width(_iconSizeLabelSize) };
+            private GUILayoutOption[] _regexIconLayout = { GUILayout.Width(_regexLabelSize) };
+            private GUILayoutOption[] _searchLabelLayout = { GUILayout.Width(_searchLabelSize) };
+
+            private GUILayoutOption[] _iconBackgroundLabelLayout =
+            {
+                GUILayout.Width(_iconBackgroundLabelSize)
+            };
+
+            private GUILayoutOption[] _iconSelectedBackgroundLabelLayout =
+            {
+                GUILayout.Width(_iconSelectedBackgroundLabelSize)
+            };
+
+            private GUILayoutOption[] _selectedIconLabelLayout = { GUILayout.Width(_selectedIconLabelSize) };
+
+            #endregion
+
+            #region Properties
+
+            private GUILayoutOption[] iconSizeLabelLayout
+            {
+                get
+                {
+                    if (_iconSizeLabelLayout == null)
+                    {
+                        _iconSizeLabelLayout = new[] { GUILayout.Width(_iconSizeLabelSize) };
+                    }
+
+                    return _iconSizeLabelLayout;
+                }
+            }
+
+            private GUILayoutOption[] iconBackgroundLabelLayout
+            {
+                get
+                {
+                    if (_iconBackgroundLabelLayout == null)
+                    {
+                        _iconBackgroundLabelLayout = new[] { GUILayout.Width(_iconBackgroundLabelSize) };
+                    }
+
+                    return _iconBackgroundLabelLayout;
+                }
+            }
+
+            private GUILayoutOption[] iconSelectedBackgroundLabelLayout
+            {
+                get
+                {
+                    if (_iconSelectedBackgroundLabelLayout == null)
+                    {
+                        _iconSelectedBackgroundLabelLayout = new[]
+                        {
+                            GUILayout.Width(_iconSelectedBackgroundLabelSize)
+                        };
+                    }
+
+                    return _iconSelectedBackgroundLabelLayout;
+                }
+            }
+
+            private GUILayoutOption[] searchLabelLayout
+            {
+                get
+                {
+                    if (_searchLabelLayout == null)
+                    {
+                        _searchLabelLayout = new[] { GUILayout.Width(_searchLabelSize) };
+                    }
+
+                    return _searchLabelLayout;
+                }
+            }
+
+            private GUILayoutOption[] regexIconLayout
+            {
+                get
+                {
+                    if (_regexIconLayout == null)
+                    {
+                        _regexIconLayout = new[] { GUILayout.Width(_regexLabelSize) };
+                    }
+
+                    return _regexIconLayout;
+                }
+            }
+
+            private GUILayoutOption[] selectedIconLabelLayout
+            {
+                get
+                {
+                    if (_selectedIconLabelLayout == null)
+                    {
+                        _selectedIconLabelLayout = new[] { GUILayout.Width(_selectedIconLabelSize) };
+                    }
+
+                    return _selectedIconLabelLayout;
+                }
+            }
+
+            #endregion
+
+            #endregion
+
+            #region Style
+
+            #region Fields
+
+            private GUIStyle _scrollViewStyle;
+            private GUIStyle _iconStyle;
+            private GUIStyle _regexIconStyle;
+
+            #endregion
+
+            #region Properties
+
+            private GUIStyle scrollViewStyle
+            {
+                get
+                {
+                    if (_scrollViewStyle == null)
+                    {
+                        _scrollViewStyle = new GUIStyle(GUI.skin.scrollView);
+
+                        _scrollViewStyle.normal.background = MakeTex(1, 1, _backgroundColor);
+                    }
+
+                    return _scrollViewStyle;
+                }
+            }
+
+            private GUIStyle iconStyle
+            {
+                get
+                {
+                    if (_iconStyle == null)
+                    {
+                        _iconStyle = new GUIStyle
+                        {
+                            fixedWidth = _iconSize,
+                            padding = new RectOffset(
+                                _iconPadding,
+                                _iconPadding,
+                                _iconPadding,
+                                _iconPadding
+                            ),
+                            border = new RectOffset(0, 0, 0, 0)
+                        };
+                    }
+
+                    return _iconStyle;
+                }
+            }
+
+            private GUIStyle regexIconStyle
+            {
+                get
+                {
+                    if (_regexIconStyle == null)
+                    {
+                        _regexIconStyle = new GUIStyle
+                        {
+                            fixedWidth = _regexLabelSize,
+                            padding = new RectOffset(
+                                _iconPadding,
+                                _iconPadding,
+                                _iconPadding,
+                                _iconPadding
+                            ),
+                            border = new RectOffset(0, 0, 0, 0)
+                        };
+                    }
+
+                    return _regexIconStyle;
+                }
+            }
+
+            #endregion
+
+            #endregion
+
+            #region Content
+
+            #region Fields
+
+            private GUIContent _regenerateButtonContent;
+            private GUIContent _resetButtonContent;
+            private GUIContent _settingsLabel;
+            private GUIContent _searchLabel;
+            private GUIContent _regexInvalidLabel;
+            private GUIContent _regexMissingLabel;
+            private GUIContent _regexValidLabel;
+            private GUIContent _selectedIconLabel;
+
+            #endregion
+
+            #region Properties
+
+            private GUIContent regenerateButtonContent
+            {
+                get
+                {
+                    if (_regenerateButtonContent == null)
+                    {
+                        var regenerateButtonIcon = GetIconEnum(_regenerateButtonIconName);
+                        _regenerateButtonContent = GetIconContent(regenerateButtonIcon);
+
+                        _regenerateButtonContent.text = _buttonTextPadding +
+                                                        EditorGUIIconGenerator.regenerateButtonText;
+                    }
+
+                    return _regenerateButtonContent;
+                }
+            }
+
+            private GUIContent resetButtonContent
+            {
+                get
+                {
+                    if (_resetButtonContent == null)
+                    {
+                        var resetButtonIcon = GetIconEnum(_resetButtonIconName);
+                        _resetButtonContent = GetIconContent(resetButtonIcon);
+
+                        _resetButtonContent.text =
+                            _buttonTextPadding + EditorGUIIconGenerator.resetButtonText;
+                    }
+
+                    return _resetButtonContent;
+                }
+            }
+
+            public GUIContent settingsLabel
+            {
+                get
+                {
+                    if (_settingsLabel == null)
+                    {
+                        var settingsButtonIcon = GetIconEnum(_settingsIconName);
+                        _settingsLabel = GetIconContent(settingsButtonIcon);
+
+                        _settingsLabel.text = _buttonTextPadding + _settingsText;
+                    }
+
+                    return _settingsLabel;
+                }
+            }
+
+            public GUIContent searchLabel
+            {
+                get
+                {
+                    if (_searchLabel == null)
+                    {
+                        var searchButtonIcon = GetIconEnum(_searchIconName);
+                        _searchLabel = GetIconContent(searchButtonIcon);
+
+                        _searchLabel.text = _buttonTextPadding + _searchText;
+                    }
+
+                    return _searchLabel;
+                }
+            }
+
+            public GUIContent regexValidLabel
+            {
+                get
+                {
+                    if (_regexValidLabel == null)
+                    {
+                        _regexValidLabel = new GUIContent(GetIconContent(_regexValidIconName));
+                    }
+
+                    return _regexValidLabel;
+                }
+            }
+
+            public GUIContent regexInvalidLabel
+            {
+                get
+                {
+                    if (_regexInvalidLabel == null)
+                    {
+                        _regexInvalidLabel = new GUIContent(GetIconContent(_regexInvalidIconName));
+                    }
+
+                    return _regexInvalidLabel;
+                }
+            }
+
+            public GUIContent regexMissingLabel
+            {
+                get
+                {
+                    if (_regexMissingLabel == null)
+                    {
+                        _regexMissingLabel = new GUIContent(GetIconContent(_regexMissingIconName));
+                    }
+
+                    return _regexMissingLabel;
+                }
+            }
+
+            public GUIContent selectedIconLabel
+            {
+                get
+                {
+                    if (_selectedIconLabel == null)
+                    {
+                        _selectedIconLabel = new GUIContent(_selectedIconText);
+                    }
+
+                    return _selectedIconLabel;
+                }
+            }
+
+            public GUIContent lastSelectionContent
+            {
+                get
+                {
+                    if (_lastSelectionContent == null)
+                    {
+                        _lastSelectionContent = new GUIContent(string.Empty);
+                    }
+
+                    return _lastSelectionContent;
+                }
+            }
+
+            #endregion
+
+            #endregion
+
+            #region Editor Window API
+
+            private void OnEnable()
+            {
+                if ((Application.unityVersion != BUILD_VERSION) || (VALUE_COUNT == 0))
+                {
+                    EditorGUIIconGenerator.RegenerateIconUtilities(true);
+                    return;
+                }
+
+                _lastIconSize = 0;
+                _lastBackgroundColor = new Color();
+
+                minSize = new Vector2(640, 640);
+
+                var sortEnumValues = System.Enum.GetValues(typeof(SortEnum));
+                var sortEnumEnumerable = sortEnumValues.Cast<SortEnum>();
+                var sortEnumArray = sortEnumEnumerable.ToArray();
+                var sortEnums = sortEnumArray.ToDictionary(e => e.ToString());
+
+                _enums = System.Enum.GetValues(typeof(Enum)).Cast<Enum>().ToArray();
+
+                Array.Sort(_enums, (a, b) => sortEnums[a.ToString()].CompareTo(sortEnums[b.ToString()]));
+                _icons = new GUIContent[_enums.Length];
+                _iconNames = new string[_enums.Length];
+
+                for (var i = 0; i < _enums.Length; i++)
+                {
+                    var e = _enums[i];
+                    var iconName = GetIconName(e);
+
+                    _iconNames[i] = iconName;
+                    var content = GetIconContent(e, iconName);
+                    content.tooltip = iconName;
+                    _icons[i] = content;
+                }
+            }
+
+            private void OnGUI()
+            {
+                Action drawButtons = () =>
+                {
+                    if (GUILayout.Button(regenerateButtonContent))
+                    {
+                        EditorGUIIconGenerator.RegenerateIconUtilities(true);
+                    }
+
+                    if (GUILayout.Button(resetButtonContent))
+                    {
+                        EditorGUIIconGenerator.ResetGeneratedIconUtilities();
+                    }
+
+                    EditorGUILayout.Space(_horizontalSpacer * 4, false);
+                };
+
+                DrawHeader(_headerText, _subheaderText, drawButtons);
+
+                DrawSettings();
+
+                EditorGUILayout.Space(_verticalSpacer, false);
+
+                using (new EditorGUI.IndentLevelScope())
+                {
+                    DrawSearch();
+
+                    DrawResult();
+
+                    EditorGUILayout.Space(_verticalSpacer, false);
+                    DrawIcons();
+                }
+
+                EditorGUILayout.Space(_verticalSpacer, false);
+
+                if (GUILayout.Button("Close"))
+                {
+                    CloseWindow();
+                }
+            }
+
+            private void CloseWindow()
+            {
+                Close();
+                GUIUtility.ExitGUI();
+            }
+
+            #endregion
+
+            #region UI Parts
+
+            private void DrawHeader(string text, string subheader, Action additional)
+            {
+                EditorGUILayout.LabelField(text, EditorStyles.whiteLargeLabel);
+
+                using (new GUILayout.HorizontalScope())
+                {
+                    EditorGUILayout.LabelField(subheader, EditorStyles.whiteMiniLabel);
+
+                    if (additional != null)
+                    {
+                        additional();
+                    }
+                }
+
+                HorizontalLineSeparator(lineColor, 4);
+            }
+
+            private void DrawSettings()
+            {
+                _showSettings = EditorGUILayout.Foldout(_showSettings, settingsLabel);
+
+                if (_showSettings)
+                {
+                    using (new EditorGUILayout.HorizontalScope())
+                    using (new EditorGUI.IndentLevelScope())
+                    {
+                        EditorGUILayout.LabelField("Icon Size", iconSizeLabelLayout);
+                        _iconSize = EditorGUILayout.IntSlider(_iconSize, 8, 64);
+
+                        EditorGUILayout.Space(6f, false);
+
+                        EditorGUILayout.LabelField("Icon Background", iconBackgroundLabelLayout);
+                        _backgroundColor = EditorGUILayout.ColorField(_backgroundColor);
+
+                        EditorGUILayout.Space(6f, false);
+
+                        EditorGUILayout.LabelField("Selected Outline", iconSelectedBackgroundLabelLayout);
+                        _selectedBackgroundColor = EditorGUILayout.ColorField(_selectedBackgroundColor);
+                    }
+                }
+
+                if (_lastIconSize != _iconSize)
+                {
+                    _iconStyle = new GUIStyle(iconStyle) { fixedWidth = _iconSize };
+                    _iconLayout = new[] { GUILayout.Width(_iconSize) };
+                    _lastIconSize = _iconSize;
+                }
+
+                if (_lastBackgroundColor != _backgroundColor)
+                {
+                    PaintTex(scrollViewStyle.normal.background, _backgroundColor);
+                    _lastBackgroundColor = _backgroundColor;
+                }
+            }
+
+            private void DrawSearch()
+            {
+                CheckRegexEnumState();
+
+                using (new EditorGUILayout.HorizontalScope())
+                {
+                    EditorGUILayout.LabelField(searchLabel, searchLabelLayout);
+                    _searchFilter = EditorGUILayout.TextField(_searchFilter);
+
+                    var regexStatusLabel = _regexState == RegexState.Valid
+                        ? regexValidLabel
+                        : _regexState == RegexState.Invalid
+                            ? regexInvalidLabel
+                            : regexMissingLabel;
+
+                    EditorGUILayout.LabelField(regexStatusLabel, regexIconStyle, regexIconLayout);
+
+                    EditorGUILayout.Space(_horizontalSpacer * 10, false);
+                }
+
+                CheckRegexEnumState();
+            }
+
+            private void DrawResult()
+            {
+                using (new EditorGUILayout.HorizontalScope())
+                {
+                    EditorGUILayout.LabelField(selectedIconLabel, selectedIconLabelLayout);
+
+                    EditorGUILayout.LabelField(lastSelectionContent);
+                }
+            }
+
+            private void DrawIcons()
+            {
+                if ((_enums == null) || (_enums.Length == 0))
+                {
+                    return;
+                }
+
+                var indentOffset = EditorGUI.indentLevel * 15f;
+
+                var width = position.width - _reservedSpace - indentOffset;
+                var iconWidth = _iconSize + (_paddingMultiplier * _iconPadding);
+                var columnCount = (int)(width / iconWidth);
+
+                var iconIndex = 0;
+                var columnIndex = 0;
+
+                using (var scroll = new EditorGUILayout.ScrollViewScope(_scrollPosition, scrollViewStyle))
+                {
+                    scroll.handleScrollWheel = true;
+                    _scrollPosition = scroll.scrollPosition;
+
+                    var scope = new EditorGUILayout.HorizontalScope();
+
+                    try
+                    {
+                        while (iconIndex < _enums.Length)
+                        {
+                            var iconName = _iconNames[iconIndex];
+
+                            var regexMatch = true;
+
+                            if (_regexState == RegexState.Valid)
+                            {
+                                regexMatch = Regex.IsMatch(iconName, _searchFilter);
+                            }
+
+                            if (!string.IsNullOrWhiteSpace(_searchFilter) && !regexMatch)
+                            {
+                                iconIndex += 1;
+                                continue;
+                            }
+
+                            if (columnIndex >= columnCount)
+                            {
+                                columnIndex = 0;
+                                scope.Dispose();
+                                scope = new EditorGUILayout.HorizontalScope();
+                            }
+
+                            var icon = _icons[iconIndex];
+                            var style = iconStyle;
+
+                            //var style = _lastSelection == icon.tooltip ? selectedIconStyle : iconStyle;
+
+                            EditorGUILayout.LabelField(icon, style, _iconLayout);
+
+                            var lastRectSize = GUILayoutUtility.GetLastRect();
+                            lastRectSize.x += EditorGUI.indentLevel * 15f;
+
+                            if (icon.tooltip == _lastSelection)
+                            {
+                                DrawUIBox(lastRectSize, _selectedBackgroundColor, _selectionSize);
+                            }
+
+                            if (GUI.Button(lastRectSize, string.Empty, GUIStyle.none))
+                            {
+                                _lastSelection = icon.tooltip;
+                                EditorGUIUtility.systemCopyBuffer = _lastSelection;
+
+                                var lastSelectionEnum = GetIconEnum(_lastSelection);
+                                _lastSelectionContent =
+                                    new GUIContent(GetIconContent(lastSelectionEnum))
+                                    {
+                                        text = _buttonTextPadding + _lastSelection
+                                    };
+                            }
+
+                            columnIndex += 1;
+                            iconIndex += 1;
+                        }
+                    }
+                    finally
+                    {
+                        scope.Dispose();
+                    }
+                }
+            }
+
+            #endregion
+
+            #region UI Helper Methods
+
+            private Texture2D MakeTex(int width, int height, Color col)
+            {
+                var result = new Texture2D(width, height);
+
+                return PaintTex(result, col);
+            }
+
+            private Texture2D PaintTex(Texture2D texture, Color col)
+            {
+                if (texture == null)
+                {
+                    texture = new Texture2D(1, 1);
+                }
+
+                var pix = texture.GetPixels();
+
+                for (var i = 0; i < pix.Length; i++)
+                {
+                    pix[i] = col;
+                }
+
+                texture.SetPixels(pix);
+                texture.Apply();
+
+                return texture;
+            }
+
+            private void CheckRegexEnumState()
+            {
+                if (!string.IsNullOrWhiteSpace(_searchFilter))
+                {
+                    try
+                    {
+                        // ReSharper disable once ReturnValueOfPureMethodIsNotUsed
+                        Regex.Match("", _searchFilter);
+                        _regexState = RegexState.Valid;
+                    }
+                    catch (Exception)
+                    {
+                        _regexState = RegexState.Invalid;
+                    }
+                }
+                else
+                {
+                    _regexState = RegexState.Missing;
+                }
+            }
+
+            public static void HorizontalLineSeparator(Color color, int lineWidth = 1)
+            {
+                DrawSolidRect(GUILayoutUtility.GetRect(lineWidth, lineWidth, _expandWidth), color);
+            }
+
+            public static void DrawUIBox(Rect rect, Color borderColor, float size = 1.5f)
+            {
+                if (Event.current.type != EventType.Repaint)
+                {
+                    return;
+                }
+
+                var left = new Rect(rect.xMin - size,   rect.yMin - size, size, rect.height + (2 * size));
+                var right = new Rect(rect.xMax,         rect.yMin - size, size, rect.height + (2 * size));
+                var top = new Rect(rect.xMin - size,    rect.yMin - size, rect.width + (2 * size), size);
+                var bottom = new Rect(rect.xMin - size, rect.yMax,        rect.width + (2 * size), size);
+
+                EditorGUI.DrawRect(left,   borderColor);
+                EditorGUI.DrawRect(right,  borderColor);
+                EditorGUI.DrawRect(top,    borderColor);
+                EditorGUI.DrawRect(bottom, borderColor);
+            }
+
+            public static void DrawSolidRect(Rect rect, Color color, bool usePlaymodeTint = true)
+            {
+                if (Event.current.type != EventType.Repaint)
+                {
+                    return;
+                }
+
+                if (usePlaymodeTint)
+                {
+                    EditorGUI.DrawRect(rect, color);
+                }
+                else
+                {
+                    var oldColor = GUI.color;
+                    GUI.color = color;
+                    GUI.DrawTexture(rect, EditorGUIUtility.whiteTexture);
+                    GUI.color = oldColor;
+                }
+            }
+
+            private enum RegexState
+            {
+                Valid,
+                Invalid,
+                Missing
+            }
+
+            #endregion
+        }
+
+        #endregion
+
+        #endregion
 
         #region Enumerations
 
@@ -3908,7 +4716,10 @@ namespace Appalachia.Editing.Core
         public const string buildsettings_standalone = "buildsettings.standalone";
         public const string buildsettings_standalone_small = "buildsettings.standalone.small";
         public const string buildsettings_standalonebroadcom_small = "buildsettings.standalonebroadcom.small";
-        public const string buildsettings_standalonegles20emu_small = "buildsettings.standalonegles20emu.small";
+
+        public const string buildsettings_standalonegles20emu_small =
+            "buildsettings.standalonegles20emu.small";
+
         public const string buildsettings_standaloneglesemu = "buildsettings.standaloneglesemu";
         public const string buildsettings_standaloneglesemu_small = "buildsettings.standaloneglesemu.small";
         public const string buildsettings_switch_on = "buildsettings.switch on";
@@ -4291,27 +5102,57 @@ namespace Appalachia.Editing.Core
         public const string d_terraininspector_terraintooladd = "d_terraininspector.terraintooladd";
         public const string d_terraininspector_terraintoollower_on = "d_terraininspector.terraintoollower on";
         public const string d_terraininspector_terraintoolloweralt = "d_terraininspector.terraintoolloweralt";
-        public const string d_terraininspector_terraintoolplants_on = "d_terraininspector.terraintoolplants on";
+
+        public const string d_terraininspector_terraintoolplants_on =
+            "d_terraininspector.terraintoolplants on";
+
         public const string d_terraininspector_terraintoolplants = "d_terraininspector.terraintoolplants";
-        public const string d_terraininspector_terraintoolplantsalt_on = "d_terraininspector.terraintoolplantsalt on";
-        public const string d_terraininspector_terraintoolplantsalt = "d_terraininspector.terraintoolplantsalt";
+
+        public const string d_terraininspector_terraintoolplantsalt_on =
+            "d_terraininspector.terraintoolplantsalt on";
+
+        public const string d_terraininspector_terraintoolplantsalt =
+            "d_terraininspector.terraintoolplantsalt";
+
         public const string d_terraininspector_terraintoolraise_on = "d_terraininspector.terraintoolraise on";
         public const string d_terraininspector_terraintoolraise = "d_terraininspector.terraintoolraise";
-        public const string d_terraininspector_terraintoolsetheight_on = "d_terraininspector.terraintoolsetheight on";
-        public const string d_terraininspector_terraintoolsetheight = "d_terraininspector.terraintoolsetheight";
-        public const string d_terraininspector_terraintoolsetheightalt_on = "d_terraininspector.terraintoolsetheightalt on";
-        public const string d_terraininspector_terraintoolsetheightalt = "d_terraininspector.terraintoolsetheightalt";
-        public const string d_terraininspector_terraintoolsettings_on = "d_terraininspector.terraintoolsettings on";
+
+        public const string d_terraininspector_terraintoolsetheight_on =
+            "d_terraininspector.terraintoolsetheight on";
+
+        public const string d_terraininspector_terraintoolsetheight =
+            "d_terraininspector.terraintoolsetheight";
+
+        public const string d_terraininspector_terraintoolsetheightalt_on =
+            "d_terraininspector.terraintoolsetheightalt on";
+
+        public const string d_terraininspector_terraintoolsetheightalt =
+            "d_terraininspector.terraintoolsetheightalt";
+
+        public const string d_terraininspector_terraintoolsettings_on =
+            "d_terraininspector.terraintoolsettings on";
+
         public const string d_terraininspector_terraintoolsettings = "d_terraininspector.terraintoolsettings";
-        public const string d_terraininspector_terraintoolsmoothheight_on = "d_terraininspector.terraintoolsmoothheight on";
-        public const string d_terraininspector_terraintoolsmoothheight = "d_terraininspector.terraintoolsmoothheight";
+
+        public const string d_terraininspector_terraintoolsmoothheight_on =
+            "d_terraininspector.terraintoolsmoothheight on";
+
+        public const string d_terraininspector_terraintoolsmoothheight =
+            "d_terraininspector.terraintoolsmoothheight";
+
         public const string d_terraininspector_terraintoolsplat_on = "d_terraininspector.terraintoolsplat on";
         public const string d_terraininspector_terraintoolsplat = "d_terraininspector.terraintoolsplat";
-        public const string d_terraininspector_terraintoolsplatalt_on = "d_terraininspector.terraintoolsplatalt on";
+
+        public const string d_terraininspector_terraintoolsplatalt_on =
+            "d_terraininspector.terraintoolsplatalt on";
+
         public const string d_terraininspector_terraintoolsplatalt = "d_terraininspector.terraintoolsplatalt";
         public const string d_terraininspector_terraintooltrees_on = "d_terraininspector.terraintooltrees on";
         public const string d_terraininspector_terraintooltrees = "d_terraininspector.terraintooltrees";
-        public const string d_terraininspector_terraintooltreesalt_on = "d_terraininspector.terraintooltreesalt on";
+
+        public const string d_terraininspector_terraintooltreesalt_on =
+            "d_terraininspector.terraintooltreesalt on";
+
         public const string d_terraininspector_terraintooltreesalt = "d_terraininspector.terraintooltreesalt";
         public const string d_toggleuvoverlay = "d_toggleuvoverlay";
         public const string d_toolbar_minus = "d_toolbar minus";
@@ -4367,10 +5208,16 @@ namespace Appalachia.Editing.Core
         public const string d_unityeditor_animationwindow = "d_unityeditor.animationwindow";
         public const string d_unityeditor_consolewindow = "d_unityeditor.consolewindow";
         public const string d_unityeditor_debuginspectorwindow = "d_unityeditor.debuginspectorwindow";
-        public const string d_unityeditor_devicesimulation_simulatorwindow = "d_unityeditor.devicesimulation.simulatorwindow";
+
+        public const string d_unityeditor_devicesimulation_simulatorwindow =
+            "d_unityeditor.devicesimulation.simulatorwindow";
+
         public const string d_unityeditor_finddependencies = "d_unityeditor.finddependencies";
         public const string d_unityeditor_gameview = "d_unityeditor.gameview";
-        public const string d_unityeditor_graphs_animatorcontrollertool = "d_unityeditor.graphs.animatorcontrollertool";
+
+        public const string d_unityeditor_graphs_animatorcontrollertool =
+            "d_unityeditor.graphs.animatorcontrollertool";
+
         public const string d_unityeditor_hierarchywindow = "d_unityeditor.hierarchywindow";
         public const string d_unityeditor_historywindow = "d_unityeditor.historywindow";
         public const string d_unityeditor_inspectorwindow = "d_unityeditor.inspectorwindow";
@@ -4820,7 +5667,10 @@ namespace Appalachia.Editing.Core
         public const string assemblydefinitionasset_icon = "assemblydefinitionasset icon";
         public const string assemblydefinitionreferenceasset_icon = "assemblydefinitionreferenceasset icon";
         public const string d_assemblydefinitionasset_icon = "d_assemblydefinitionasset icon";
-        public const string d_assemblydefinitionreferenceasset_icon = "d_assemblydefinitionreferenceasset icon";
+
+        public const string d_assemblydefinitionreferenceasset_icon =
+            "d_assemblydefinitionreferenceasset icon";
+
         public const string d_navmeshagent_icon = "d_navmeshagent icon";
         public const string d_navmeshdata_icon = "d_navmeshdata icon";
         public const string d_navmeshobstacle_icon = "d_navmeshobstacle icon";
@@ -5455,27 +6305,51 @@ namespace Appalachia.Editing.Core
         public const string terraininspector_terraintoolloweralt = "terraininspector.terraintoolloweralt";
         public const string terraininspector_terraintoolplants_on = "terraininspector.terraintoolplants on";
         public const string terraininspector_terraintoolplants = "terraininspector.terraintoolplants";
-        public const string terraininspector_terraintoolplantsalt_on = "terraininspector.terraintoolplantsalt on";
+
+        public const string terraininspector_terraintoolplantsalt_on =
+            "terraininspector.terraintoolplantsalt on";
+
         public const string terraininspector_terraintoolplantsalt = "terraininspector.terraintoolplantsalt";
         public const string terraininspector_terraintoolraise_on = "terraininspector.terraintoolraise on";
         public const string terraininspector_terraintoolraise = "terraininspector.terraintoolraise";
         public const string terraininspector_terraintoolsculpt_on = "terraininspector.terraintoolsculpt on";
         public const string terraininspector_terraintoolsculpt = "terraininspector.terraintoolsculpt";
-        public const string terraininspector_terraintoolsetheight_on = "terraininspector.terraintoolsetheight on";
+
+        public const string terraininspector_terraintoolsetheight_on =
+            "terraininspector.terraintoolsetheight on";
+
         public const string terraininspector_terraintoolsetheight = "terraininspector.terraintoolsetheight";
-        public const string terraininspector_terraintoolsetheightalt_on = "terraininspector.terraintoolsetheightalt on";
-        public const string terraininspector_terraintoolsetheightalt = "terraininspector.terraintoolsetheightalt";
-        public const string terraininspector_terraintoolsettings_on = "terraininspector.terraintoolsettings on";
+
+        public const string terraininspector_terraintoolsetheightalt_on =
+            "terraininspector.terraintoolsetheightalt on";
+
+        public const string terraininspector_terraintoolsetheightalt =
+            "terraininspector.terraintoolsetheightalt";
+
+        public const string terraininspector_terraintoolsettings_on =
+            "terraininspector.terraintoolsettings on";
+
         public const string terraininspector_terraintoolsettings = "terraininspector.terraintoolsettings";
-        public const string terraininspector_terraintoolsmoothheight_on = "terraininspector.terraintoolsmoothheight on";
-        public const string terraininspector_terraintoolsmoothheight = "terraininspector.terraintoolsmoothheight";
+
+        public const string terraininspector_terraintoolsmoothheight_on =
+            "terraininspector.terraintoolsmoothheight on";
+
+        public const string terraininspector_terraintoolsmoothheight =
+            "terraininspector.terraintoolsmoothheight";
+
         public const string terraininspector_terraintoolsplat_on = "terraininspector.terraintoolsplat on";
         public const string terraininspector_terraintoolsplat = "terraininspector.terraintoolsplat";
-        public const string terraininspector_terraintoolsplatalt_on = "terraininspector.terraintoolsplatalt on";
+
+        public const string terraininspector_terraintoolsplatalt_on =
+            "terraininspector.terraintoolsplatalt on";
+
         public const string terraininspector_terraintoolsplatalt = "terraininspector.terraintoolsplatalt";
         public const string terraininspector_terraintooltrees_on = "terraininspector.terraintooltrees on";
         public const string terraininspector_terraintooltrees = "terraininspector.terraintooltrees";
-        public const string terraininspector_terraintooltreesalt_on = "terraininspector.terraintooltreesalt on";
+
+        public const string terraininspector_terraintooltreesalt_on =
+            "terraininspector.terraintooltreesalt on";
+
         public const string terraininspector_terraintooltreesalt = "terraininspector.terraintooltreesalt";
         public const string testfailed = "testfailed";
         public const string testignored = "testignored";
@@ -5548,10 +6422,16 @@ namespace Appalachia.Editing.Core
         public const string unityeditor_animationwindow = "unityeditor.animationwindow";
         public const string unityeditor_consolewindow = "unityeditor.consolewindow";
         public const string unityeditor_debuginspectorwindow = "unityeditor.debuginspectorwindow";
-        public const string unityeditor_devicesimulation_simulatorwindow = "unityeditor.devicesimulation.simulatorwindow";
+
+        public const string unityeditor_devicesimulation_simulatorwindow =
+            "unityeditor.devicesimulation.simulatorwindow";
+
         public const string unityeditor_finddependencies = "unityeditor.finddependencies";
         public const string unityeditor_gameview = "unityeditor.gameview";
-        public const string unityeditor_graphs_animatorcontrollertool = "unityeditor.graphs.animatorcontrollertool";
+
+        public const string unityeditor_graphs_animatorcontrollertool =
+            "unityeditor.graphs.animatorcontrollertool";
+
         public const string unityeditor_hierarchywindow = "unityeditor.hierarchywindow";
         public const string unityeditor_historywindow = "unityeditor.historywindow";
         public const string unityeditor_inspectorwindow = "unityeditor.inspectorwindow";
@@ -5730,8 +6610,14 @@ namespace Appalachia.Editing.Core
             _reverseIconLookup.Add(assemblylock, Enum.assemblylock);
             _iconLookup.Add(Enum.asset_store, asset_store);
             _reverseIconLookup.Add(asset_store, Enum.asset_store);
-            _iconLookup.Add(Enum.unity_assetstore_originals_logo_white, unity_assetstore_originals_logo_white);
-            _reverseIconLookup.Add(unity_assetstore_originals_logo_white, Enum.unity_assetstore_originals_logo_white);
+            _iconLookup.Add(
+                Enum.unity_assetstore_originals_logo_white,
+                unity_assetstore_originals_logo_white
+            );
+            _reverseIconLookup.Add(
+                unity_assetstore_originals_logo_white,
+                Enum.unity_assetstore_originals_logo_white
+            );
             _iconLookup.Add(Enum.audio_mixer, audio_mixer);
             _reverseIconLookup.Add(audio_mixer, Enum.audio_mixer);
             _iconLookup.Add(Enum.autolightbakingoff, autolightbakingoff);
@@ -5831,7 +6717,10 @@ namespace Appalachia.Editing.Core
             _iconLookup.Add(Enum.buildsettings_dedicatedserver, buildsettings_dedicatedserver);
             _reverseIconLookup.Add(buildsettings_dedicatedserver, Enum.buildsettings_dedicatedserver);
             _iconLookup.Add(Enum.buildsettings_dedicatedserver_small, buildsettings_dedicatedserver_small);
-            _reverseIconLookup.Add(buildsettings_dedicatedserver_small, Enum.buildsettings_dedicatedserver_small);
+            _reverseIconLookup.Add(
+                buildsettings_dedicatedserver_small,
+                Enum.buildsettings_dedicatedserver_small
+            );
             _iconLookup.Add(Enum.buildsettings_editor, buildsettings_editor);
             _reverseIconLookup.Add(buildsettings_editor, Enum.buildsettings_editor);
             _iconLookup.Add(Enum.buildsettings_editor_small, buildsettings_editor_small);
@@ -5857,13 +6746,19 @@ namespace Appalachia.Editing.Core
             _iconLookup.Add(Enum.buildsettings_gamecorescarlett, buildsettings_gamecorescarlett);
             _reverseIconLookup.Add(buildsettings_gamecorescarlett, Enum.buildsettings_gamecorescarlett);
             _iconLookup.Add(Enum.buildsettings_gamecorescarlett_small, buildsettings_gamecorescarlett_small);
-            _reverseIconLookup.Add(buildsettings_gamecorescarlett_small, Enum.buildsettings_gamecorescarlett_small);
+            _reverseIconLookup.Add(
+                buildsettings_gamecorescarlett_small,
+                Enum.buildsettings_gamecorescarlett_small
+            );
             _iconLookup.Add(Enum.buildsettings_gamecorexboxone_on, buildsettings_gamecorexboxone_on);
             _reverseIconLookup.Add(buildsettings_gamecorexboxone_on, Enum.buildsettings_gamecorexboxone_on);
             _iconLookup.Add(Enum.buildsettings_gamecorexboxone, buildsettings_gamecorexboxone);
             _reverseIconLookup.Add(buildsettings_gamecorexboxone, Enum.buildsettings_gamecorexboxone);
             _iconLookup.Add(Enum.buildsettings_gamecorexboxone_small, buildsettings_gamecorexboxone_small);
-            _reverseIconLookup.Add(buildsettings_gamecorexboxone_small, Enum.buildsettings_gamecorexboxone_small);
+            _reverseIconLookup.Add(
+                buildsettings_gamecorexboxone_small,
+                Enum.buildsettings_gamecorexboxone_small
+            );
             _iconLookup.Add(Enum.buildsettings_iphone_on, buildsettings_iphone_on);
             _reverseIconLookup.Add(buildsettings_iphone_on, Enum.buildsettings_iphone_on);
             _iconLookup.Add(Enum.buildsettings_iphone, buildsettings_iphone);
@@ -5922,14 +6817,32 @@ namespace Appalachia.Editing.Core
             _reverseIconLookup.Add(buildsettings_standalone, Enum.buildsettings_standalone);
             _iconLookup.Add(Enum.buildsettings_standalone_small, buildsettings_standalone_small);
             _reverseIconLookup.Add(buildsettings_standalone_small, Enum.buildsettings_standalone_small);
-            _iconLookup.Add(Enum.buildsettings_standalonebroadcom_small, buildsettings_standalonebroadcom_small);
-            _reverseIconLookup.Add(buildsettings_standalonebroadcom_small, Enum.buildsettings_standalonebroadcom_small);
-            _iconLookup.Add(Enum.buildsettings_standalonegles20emu_small, buildsettings_standalonegles20emu_small);
-            _reverseIconLookup.Add(buildsettings_standalonegles20emu_small, Enum.buildsettings_standalonegles20emu_small);
+            _iconLookup.Add(
+                Enum.buildsettings_standalonebroadcom_small,
+                buildsettings_standalonebroadcom_small
+            );
+            _reverseIconLookup.Add(
+                buildsettings_standalonebroadcom_small,
+                Enum.buildsettings_standalonebroadcom_small
+            );
+            _iconLookup.Add(
+                Enum.buildsettings_standalonegles20emu_small,
+                buildsettings_standalonegles20emu_small
+            );
+            _reverseIconLookup.Add(
+                buildsettings_standalonegles20emu_small,
+                Enum.buildsettings_standalonegles20emu_small
+            );
             _iconLookup.Add(Enum.buildsettings_standaloneglesemu, buildsettings_standaloneglesemu);
             _reverseIconLookup.Add(buildsettings_standaloneglesemu, Enum.buildsettings_standaloneglesemu);
-            _iconLookup.Add(Enum.buildsettings_standaloneglesemu_small, buildsettings_standaloneglesemu_small);
-            _reverseIconLookup.Add(buildsettings_standaloneglesemu_small, Enum.buildsettings_standaloneglesemu_small);
+            _iconLookup.Add(
+                Enum.buildsettings_standaloneglesemu_small,
+                buildsettings_standaloneglesemu_small
+            );
+            _reverseIconLookup.Add(
+                buildsettings_standaloneglesemu_small,
+                Enum.buildsettings_standaloneglesemu_small
+            );
             _iconLookup.Add(Enum.buildsettings_switch_on, buildsettings_switch_on);
             _reverseIconLookup.Add(buildsettings_switch_on, Enum.buildsettings_switch_on);
             _iconLookup.Add(Enum.buildsettings_switch, buildsettings_switch);
@@ -6178,8 +7091,14 @@ namespace Appalachia.Editing.Core
             _reverseIconLookup.Add(d_buildsettings_broadcom, Enum.d_buildsettings_broadcom);
             _iconLookup.Add(Enum.d_buildsettings_dedicatedserver, d_buildsettings_dedicatedserver);
             _reverseIconLookup.Add(d_buildsettings_dedicatedserver, Enum.d_buildsettings_dedicatedserver);
-            _iconLookup.Add(Enum.d_buildsettings_dedicatedserver_small, d_buildsettings_dedicatedserver_small);
-            _reverseIconLookup.Add(d_buildsettings_dedicatedserver_small, Enum.d_buildsettings_dedicatedserver_small);
+            _iconLookup.Add(
+                Enum.d_buildsettings_dedicatedserver_small,
+                d_buildsettings_dedicatedserver_small
+            );
+            _reverseIconLookup.Add(
+                d_buildsettings_dedicatedserver_small,
+                Enum.d_buildsettings_dedicatedserver_small
+            );
             _iconLookup.Add(Enum.d_buildsettings_facebook, d_buildsettings_facebook);
             _reverseIconLookup.Add(d_buildsettings_facebook, Enum.d_buildsettings_facebook);
             _iconLookup.Add(Enum.d_buildsettings_facebook_small, d_buildsettings_facebook_small);
@@ -6190,12 +7109,24 @@ namespace Appalachia.Editing.Core
             _reverseIconLookup.Add(d_buildsettings_flashplayer_small, Enum.d_buildsettings_flashplayer_small);
             _iconLookup.Add(Enum.d_buildsettings_gamecorescarlett, d_buildsettings_gamecorescarlett);
             _reverseIconLookup.Add(d_buildsettings_gamecorescarlett, Enum.d_buildsettings_gamecorescarlett);
-            _iconLookup.Add(Enum.d_buildsettings_gamecorescarlett_small, d_buildsettings_gamecorescarlett_small);
-            _reverseIconLookup.Add(d_buildsettings_gamecorescarlett_small, Enum.d_buildsettings_gamecorescarlett_small);
+            _iconLookup.Add(
+                Enum.d_buildsettings_gamecorescarlett_small,
+                d_buildsettings_gamecorescarlett_small
+            );
+            _reverseIconLookup.Add(
+                d_buildsettings_gamecorescarlett_small,
+                Enum.d_buildsettings_gamecorescarlett_small
+            );
             _iconLookup.Add(Enum.d_buildsettings_gamecorexboxone, d_buildsettings_gamecorexboxone);
             _reverseIconLookup.Add(d_buildsettings_gamecorexboxone, Enum.d_buildsettings_gamecorexboxone);
-            _iconLookup.Add(Enum.d_buildsettings_gamecorexboxone_small, d_buildsettings_gamecorexboxone_small);
-            _reverseIconLookup.Add(d_buildsettings_gamecorexboxone_small, Enum.d_buildsettings_gamecorexboxone_small);
+            _iconLookup.Add(
+                Enum.d_buildsettings_gamecorexboxone_small,
+                d_buildsettings_gamecorexboxone_small
+            );
+            _reverseIconLookup.Add(
+                d_buildsettings_gamecorexboxone_small,
+                Enum.d_buildsettings_gamecorexboxone_small
+            );
             _iconLookup.Add(Enum.d_buildsettings_iphone, d_buildsettings_iphone);
             _reverseIconLookup.Add(d_buildsettings_iphone, Enum.d_buildsettings_iphone);
             _iconLookup.Add(Enum.d_buildsettings_iphone_small, d_buildsettings_iphone_small);
@@ -6329,7 +7260,10 @@ namespace Appalachia.Editing.Core
             _iconLookup.Add(Enum.d_curvekeyframeselectedoverlay, d_curvekeyframeselectedoverlay);
             _reverseIconLookup.Add(d_curvekeyframeselectedoverlay, Enum.d_curvekeyframeselectedoverlay);
             _iconLookup.Add(Enum.d_curvekeyframesemiselectedoverlay, d_curvekeyframesemiselectedoverlay);
-            _reverseIconLookup.Add(d_curvekeyframesemiselectedoverlay, Enum.d_curvekeyframesemiselectedoverlay);
+            _reverseIconLookup.Add(
+                d_curvekeyframesemiselectedoverlay,
+                Enum.d_curvekeyframesemiselectedoverlay
+            );
             _iconLookup.Add(Enum.d_curvekeyframeweighted, d_curvekeyframeweighted);
             _reverseIconLookup.Add(d_curvekeyframeweighted, Enum.d_curvekeyframeweighted);
             _iconLookup.Add(Enum.d_customsorting, d_customsorting);
@@ -6592,8 +7526,14 @@ namespace Appalachia.Editing.Core
             _reverseIconLookup.Add(d_scene, Enum.d_scene);
             _iconLookup.Add(Enum.d_scenepicking_notpickable_mixed, d_scenepicking_notpickable_mixed);
             _reverseIconLookup.Add(d_scenepicking_notpickable_mixed, Enum.d_scenepicking_notpickable_mixed);
-            _iconLookup.Add(Enum.d_scenepicking_notpickable_mixed_hover, d_scenepicking_notpickable_mixed_hover);
-            _reverseIconLookup.Add(d_scenepicking_notpickable_mixed_hover, Enum.d_scenepicking_notpickable_mixed_hover);
+            _iconLookup.Add(
+                Enum.d_scenepicking_notpickable_mixed_hover,
+                d_scenepicking_notpickable_mixed_hover
+            );
+            _reverseIconLookup.Add(
+                d_scenepicking_notpickable_mixed_hover,
+                Enum.d_scenepicking_notpickable_mixed_hover
+            );
             _iconLookup.Add(Enum.d_scenepicking_notpickable, d_scenepicking_notpickable);
             _reverseIconLookup.Add(d_scenepicking_notpickable, Enum.d_scenepicking_notpickable);
             _iconLookup.Add(Enum.d_scenepicking_notpickable_hover, d_scenepicking_notpickable_hover);
@@ -6601,7 +7541,10 @@ namespace Appalachia.Editing.Core
             _iconLookup.Add(Enum.d_scenepicking_pickable_mixed, d_scenepicking_pickable_mixed);
             _reverseIconLookup.Add(d_scenepicking_pickable_mixed, Enum.d_scenepicking_pickable_mixed);
             _iconLookup.Add(Enum.d_scenepicking_pickable_mixed_hover, d_scenepicking_pickable_mixed_hover);
-            _reverseIconLookup.Add(d_scenepicking_pickable_mixed_hover, Enum.d_scenepicking_pickable_mixed_hover);
+            _reverseIconLookup.Add(
+                d_scenepicking_pickable_mixed_hover,
+                Enum.d_scenepicking_pickable_mixed_hover
+            );
             _iconLookup.Add(Enum.d_scenepicking_pickable, d_scenepicking_pickable);
             _reverseIconLookup.Add(d_scenepicking_pickable, Enum.d_scenepicking_pickable);
             _iconLookup.Add(Enum.d_scenepicking_pickable_hover, d_scenepicking_pickable_hover);
@@ -6686,54 +7629,186 @@ namespace Appalachia.Editing.Core
             _reverseIconLookup.Add(d_tab_prev, Enum.d_tab_prev);
             _iconLookup.Add(Enum.d_terraininspector_terraintooladd, d_terraininspector_terraintooladd);
             _reverseIconLookup.Add(d_terraininspector_terraintooladd, Enum.d_terraininspector_terraintooladd);
-            _iconLookup.Add(Enum.d_terraininspector_terraintoollower_on, d_terraininspector_terraintoollower_on);
-            _reverseIconLookup.Add(d_terraininspector_terraintoollower_on, Enum.d_terraininspector_terraintoollower_on);
-            _iconLookup.Add(Enum.d_terraininspector_terraintoolloweralt, d_terraininspector_terraintoolloweralt);
-            _reverseIconLookup.Add(d_terraininspector_terraintoolloweralt, Enum.d_terraininspector_terraintoolloweralt);
-            _iconLookup.Add(Enum.d_terraininspector_terraintoolplants_on, d_terraininspector_terraintoolplants_on);
-            _reverseIconLookup.Add(d_terraininspector_terraintoolplants_on, Enum.d_terraininspector_terraintoolplants_on);
+            _iconLookup.Add(
+                Enum.d_terraininspector_terraintoollower_on,
+                d_terraininspector_terraintoollower_on
+            );
+            _reverseIconLookup.Add(
+                d_terraininspector_terraintoollower_on,
+                Enum.d_terraininspector_terraintoollower_on
+            );
+            _iconLookup.Add(
+                Enum.d_terraininspector_terraintoolloweralt,
+                d_terraininspector_terraintoolloweralt
+            );
+            _reverseIconLookup.Add(
+                d_terraininspector_terraintoolloweralt,
+                Enum.d_terraininspector_terraintoolloweralt
+            );
+            _iconLookup.Add(
+                Enum.d_terraininspector_terraintoolplants_on,
+                d_terraininspector_terraintoolplants_on
+            );
+            _reverseIconLookup.Add(
+                d_terraininspector_terraintoolplants_on,
+                Enum.d_terraininspector_terraintoolplants_on
+            );
             _iconLookup.Add(Enum.d_terraininspector_terraintoolplants, d_terraininspector_terraintoolplants);
-            _reverseIconLookup.Add(d_terraininspector_terraintoolplants, Enum.d_terraininspector_terraintoolplants);
-            _iconLookup.Add(Enum.d_terraininspector_terraintoolplantsalt_on, d_terraininspector_terraintoolplantsalt_on);
-            _reverseIconLookup.Add(d_terraininspector_terraintoolplantsalt_on, Enum.d_terraininspector_terraintoolplantsalt_on);
-            _iconLookup.Add(Enum.d_terraininspector_terraintoolplantsalt, d_terraininspector_terraintoolplantsalt);
-            _reverseIconLookup.Add(d_terraininspector_terraintoolplantsalt, Enum.d_terraininspector_terraintoolplantsalt);
-            _iconLookup.Add(Enum.d_terraininspector_terraintoolraise_on, d_terraininspector_terraintoolraise_on);
-            _reverseIconLookup.Add(d_terraininspector_terraintoolraise_on, Enum.d_terraininspector_terraintoolraise_on);
+            _reverseIconLookup.Add(
+                d_terraininspector_terraintoolplants,
+                Enum.d_terraininspector_terraintoolplants
+            );
+            _iconLookup.Add(
+                Enum.d_terraininspector_terraintoolplantsalt_on,
+                d_terraininspector_terraintoolplantsalt_on
+            );
+            _reverseIconLookup.Add(
+                d_terraininspector_terraintoolplantsalt_on,
+                Enum.d_terraininspector_terraintoolplantsalt_on
+            );
+            _iconLookup.Add(
+                Enum.d_terraininspector_terraintoolplantsalt,
+                d_terraininspector_terraintoolplantsalt
+            );
+            _reverseIconLookup.Add(
+                d_terraininspector_terraintoolplantsalt,
+                Enum.d_terraininspector_terraintoolplantsalt
+            );
+            _iconLookup.Add(
+                Enum.d_terraininspector_terraintoolraise_on,
+                d_terraininspector_terraintoolraise_on
+            );
+            _reverseIconLookup.Add(
+                d_terraininspector_terraintoolraise_on,
+                Enum.d_terraininspector_terraintoolraise_on
+            );
             _iconLookup.Add(Enum.d_terraininspector_terraintoolraise, d_terraininspector_terraintoolraise);
-            _reverseIconLookup.Add(d_terraininspector_terraintoolraise, Enum.d_terraininspector_terraintoolraise);
-            _iconLookup.Add(Enum.d_terraininspector_terraintoolsetheight_on, d_terraininspector_terraintoolsetheight_on);
-            _reverseIconLookup.Add(d_terraininspector_terraintoolsetheight_on, Enum.d_terraininspector_terraintoolsetheight_on);
-            _iconLookup.Add(Enum.d_terraininspector_terraintoolsetheight, d_terraininspector_terraintoolsetheight);
-            _reverseIconLookup.Add(d_terraininspector_terraintoolsetheight, Enum.d_terraininspector_terraintoolsetheight);
-            _iconLookup.Add(Enum.d_terraininspector_terraintoolsetheightalt_on, d_terraininspector_terraintoolsetheightalt_on);
-            _reverseIconLookup.Add(d_terraininspector_terraintoolsetheightalt_on, Enum.d_terraininspector_terraintoolsetheightalt_on);
-            _iconLookup.Add(Enum.d_terraininspector_terraintoolsetheightalt, d_terraininspector_terraintoolsetheightalt);
-            _reverseIconLookup.Add(d_terraininspector_terraintoolsetheightalt, Enum.d_terraininspector_terraintoolsetheightalt);
-            _iconLookup.Add(Enum.d_terraininspector_terraintoolsettings_on, d_terraininspector_terraintoolsettings_on);
-            _reverseIconLookup.Add(d_terraininspector_terraintoolsettings_on, Enum.d_terraininspector_terraintoolsettings_on);
-            _iconLookup.Add(Enum.d_terraininspector_terraintoolsettings, d_terraininspector_terraintoolsettings);
-            _reverseIconLookup.Add(d_terraininspector_terraintoolsettings, Enum.d_terraininspector_terraintoolsettings);
-            _iconLookup.Add(Enum.d_terraininspector_terraintoolsmoothheight_on, d_terraininspector_terraintoolsmoothheight_on);
-            _reverseIconLookup.Add(d_terraininspector_terraintoolsmoothheight_on, Enum.d_terraininspector_terraintoolsmoothheight_on);
-            _iconLookup.Add(Enum.d_terraininspector_terraintoolsmoothheight, d_terraininspector_terraintoolsmoothheight);
-            _reverseIconLookup.Add(d_terraininspector_terraintoolsmoothheight, Enum.d_terraininspector_terraintoolsmoothheight);
-            _iconLookup.Add(Enum.d_terraininspector_terraintoolsplat_on, d_terraininspector_terraintoolsplat_on);
-            _reverseIconLookup.Add(d_terraininspector_terraintoolsplat_on, Enum.d_terraininspector_terraintoolsplat_on);
+            _reverseIconLookup.Add(
+                d_terraininspector_terraintoolraise,
+                Enum.d_terraininspector_terraintoolraise
+            );
+            _iconLookup.Add(
+                Enum.d_terraininspector_terraintoolsetheight_on,
+                d_terraininspector_terraintoolsetheight_on
+            );
+            _reverseIconLookup.Add(
+                d_terraininspector_terraintoolsetheight_on,
+                Enum.d_terraininspector_terraintoolsetheight_on
+            );
+            _iconLookup.Add(
+                Enum.d_terraininspector_terraintoolsetheight,
+                d_terraininspector_terraintoolsetheight
+            );
+            _reverseIconLookup.Add(
+                d_terraininspector_terraintoolsetheight,
+                Enum.d_terraininspector_terraintoolsetheight
+            );
+            _iconLookup.Add(
+                Enum.d_terraininspector_terraintoolsetheightalt_on,
+                d_terraininspector_terraintoolsetheightalt_on
+            );
+            _reverseIconLookup.Add(
+                d_terraininspector_terraintoolsetheightalt_on,
+                Enum.d_terraininspector_terraintoolsetheightalt_on
+            );
+            _iconLookup.Add(
+                Enum.d_terraininspector_terraintoolsetheightalt,
+                d_terraininspector_terraintoolsetheightalt
+            );
+            _reverseIconLookup.Add(
+                d_terraininspector_terraintoolsetheightalt,
+                Enum.d_terraininspector_terraintoolsetheightalt
+            );
+            _iconLookup.Add(
+                Enum.d_terraininspector_terraintoolsettings_on,
+                d_terraininspector_terraintoolsettings_on
+            );
+            _reverseIconLookup.Add(
+                d_terraininspector_terraintoolsettings_on,
+                Enum.d_terraininspector_terraintoolsettings_on
+            );
+            _iconLookup.Add(
+                Enum.d_terraininspector_terraintoolsettings,
+                d_terraininspector_terraintoolsettings
+            );
+            _reverseIconLookup.Add(
+                d_terraininspector_terraintoolsettings,
+                Enum.d_terraininspector_terraintoolsettings
+            );
+            _iconLookup.Add(
+                Enum.d_terraininspector_terraintoolsmoothheight_on,
+                d_terraininspector_terraintoolsmoothheight_on
+            );
+            _reverseIconLookup.Add(
+                d_terraininspector_terraintoolsmoothheight_on,
+                Enum.d_terraininspector_terraintoolsmoothheight_on
+            );
+            _iconLookup.Add(
+                Enum.d_terraininspector_terraintoolsmoothheight,
+                d_terraininspector_terraintoolsmoothheight
+            );
+            _reverseIconLookup.Add(
+                d_terraininspector_terraintoolsmoothheight,
+                Enum.d_terraininspector_terraintoolsmoothheight
+            );
+            _iconLookup.Add(
+                Enum.d_terraininspector_terraintoolsplat_on,
+                d_terraininspector_terraintoolsplat_on
+            );
+            _reverseIconLookup.Add(
+                d_terraininspector_terraintoolsplat_on,
+                Enum.d_terraininspector_terraintoolsplat_on
+            );
             _iconLookup.Add(Enum.d_terraininspector_terraintoolsplat, d_terraininspector_terraintoolsplat);
-            _reverseIconLookup.Add(d_terraininspector_terraintoolsplat, Enum.d_terraininspector_terraintoolsplat);
-            _iconLookup.Add(Enum.d_terraininspector_terraintoolsplatalt_on, d_terraininspector_terraintoolsplatalt_on);
-            _reverseIconLookup.Add(d_terraininspector_terraintoolsplatalt_on, Enum.d_terraininspector_terraintoolsplatalt_on);
-            _iconLookup.Add(Enum.d_terraininspector_terraintoolsplatalt, d_terraininspector_terraintoolsplatalt);
-            _reverseIconLookup.Add(d_terraininspector_terraintoolsplatalt, Enum.d_terraininspector_terraintoolsplatalt);
-            _iconLookup.Add(Enum.d_terraininspector_terraintooltrees_on, d_terraininspector_terraintooltrees_on);
-            _reverseIconLookup.Add(d_terraininspector_terraintooltrees_on, Enum.d_terraininspector_terraintooltrees_on);
+            _reverseIconLookup.Add(
+                d_terraininspector_terraintoolsplat,
+                Enum.d_terraininspector_terraintoolsplat
+            );
+            _iconLookup.Add(
+                Enum.d_terraininspector_terraintoolsplatalt_on,
+                d_terraininspector_terraintoolsplatalt_on
+            );
+            _reverseIconLookup.Add(
+                d_terraininspector_terraintoolsplatalt_on,
+                Enum.d_terraininspector_terraintoolsplatalt_on
+            );
+            _iconLookup.Add(
+                Enum.d_terraininspector_terraintoolsplatalt,
+                d_terraininspector_terraintoolsplatalt
+            );
+            _reverseIconLookup.Add(
+                d_terraininspector_terraintoolsplatalt,
+                Enum.d_terraininspector_terraintoolsplatalt
+            );
+            _iconLookup.Add(
+                Enum.d_terraininspector_terraintooltrees_on,
+                d_terraininspector_terraintooltrees_on
+            );
+            _reverseIconLookup.Add(
+                d_terraininspector_terraintooltrees_on,
+                Enum.d_terraininspector_terraintooltrees_on
+            );
             _iconLookup.Add(Enum.d_terraininspector_terraintooltrees, d_terraininspector_terraintooltrees);
-            _reverseIconLookup.Add(d_terraininspector_terraintooltrees, Enum.d_terraininspector_terraintooltrees);
-            _iconLookup.Add(Enum.d_terraininspector_terraintooltreesalt_on, d_terraininspector_terraintooltreesalt_on);
-            _reverseIconLookup.Add(d_terraininspector_terraintooltreesalt_on, Enum.d_terraininspector_terraintooltreesalt_on);
-            _iconLookup.Add(Enum.d_terraininspector_terraintooltreesalt, d_terraininspector_terraintooltreesalt);
-            _reverseIconLookup.Add(d_terraininspector_terraintooltreesalt, Enum.d_terraininspector_terraintooltreesalt);
+            _reverseIconLookup.Add(
+                d_terraininspector_terraintooltrees,
+                Enum.d_terraininspector_terraintooltrees
+            );
+            _iconLookup.Add(
+                Enum.d_terraininspector_terraintooltreesalt_on,
+                d_terraininspector_terraintooltreesalt_on
+            );
+            _reverseIconLookup.Add(
+                d_terraininspector_terraintooltreesalt_on,
+                Enum.d_terraininspector_terraintooltreesalt_on
+            );
+            _iconLookup.Add(
+                Enum.d_terraininspector_terraintooltreesalt,
+                d_terraininspector_terraintooltreesalt
+            );
+            _reverseIconLookup.Add(
+                d_terraininspector_terraintooltreesalt,
+                Enum.d_terraininspector_terraintooltreesalt
+            );
             _iconLookup.Add(Enum.d_toggleuvoverlay, d_toggleuvoverlay);
             _reverseIconLookup.Add(d_toggleuvoverlay, Enum.d_toggleuvoverlay);
             _iconLookup.Add(Enum.d_toolbar_minus, d_toolbar_minus);
@@ -6841,15 +7916,30 @@ namespace Appalachia.Editing.Core
             _iconLookup.Add(Enum.d_unityeditor_consolewindow, d_unityeditor_consolewindow);
             _reverseIconLookup.Add(d_unityeditor_consolewindow, Enum.d_unityeditor_consolewindow);
             _iconLookup.Add(Enum.d_unityeditor_debuginspectorwindow, d_unityeditor_debuginspectorwindow);
-            _reverseIconLookup.Add(d_unityeditor_debuginspectorwindow, Enum.d_unityeditor_debuginspectorwindow);
-            _iconLookup.Add(Enum.d_unityeditor_devicesimulation_simulatorwindow, d_unityeditor_devicesimulation_simulatorwindow);
-            _reverseIconLookup.Add(d_unityeditor_devicesimulation_simulatorwindow, Enum.d_unityeditor_devicesimulation_simulatorwindow);
+            _reverseIconLookup.Add(
+                d_unityeditor_debuginspectorwindow,
+                Enum.d_unityeditor_debuginspectorwindow
+            );
+            _iconLookup.Add(
+                Enum.d_unityeditor_devicesimulation_simulatorwindow,
+                d_unityeditor_devicesimulation_simulatorwindow
+            );
+            _reverseIconLookup.Add(
+                d_unityeditor_devicesimulation_simulatorwindow,
+                Enum.d_unityeditor_devicesimulation_simulatorwindow
+            );
             _iconLookup.Add(Enum.d_unityeditor_finddependencies, d_unityeditor_finddependencies);
             _reverseIconLookup.Add(d_unityeditor_finddependencies, Enum.d_unityeditor_finddependencies);
             _iconLookup.Add(Enum.d_unityeditor_gameview, d_unityeditor_gameview);
             _reverseIconLookup.Add(d_unityeditor_gameview, Enum.d_unityeditor_gameview);
-            _iconLookup.Add(Enum.d_unityeditor_graphs_animatorcontrollertool, d_unityeditor_graphs_animatorcontrollertool);
-            _reverseIconLookup.Add(d_unityeditor_graphs_animatorcontrollertool, Enum.d_unityeditor_graphs_animatorcontrollertool);
+            _iconLookup.Add(
+                Enum.d_unityeditor_graphs_animatorcontrollertool,
+                d_unityeditor_graphs_animatorcontrollertool
+            );
+            _reverseIconLookup.Add(
+                d_unityeditor_graphs_animatorcontrollertool,
+                Enum.d_unityeditor_graphs_animatorcontrollertool
+            );
             _iconLookup.Add(Enum.d_unityeditor_hierarchywindow, d_unityeditor_hierarchywindow);
             _reverseIconLookup.Add(d_unityeditor_hierarchywindow, Enum.d_unityeditor_hierarchywindow);
             _iconLookup.Add(Enum.d_unityeditor_historywindow, d_unityeditor_historywindow);
@@ -6859,11 +7949,20 @@ namespace Appalachia.Editing.Core
             _iconLookup.Add(Enum.d_unityeditor_profilerwindow, d_unityeditor_profilerwindow);
             _reverseIconLookup.Add(d_unityeditor_profilerwindow, Enum.d_unityeditor_profilerwindow);
             _iconLookup.Add(Enum.d_unityeditor_scenehierarchywindow, d_unityeditor_scenehierarchywindow);
-            _reverseIconLookup.Add(d_unityeditor_scenehierarchywindow, Enum.d_unityeditor_scenehierarchywindow);
+            _reverseIconLookup.Add(
+                d_unityeditor_scenehierarchywindow,
+                Enum.d_unityeditor_scenehierarchywindow
+            );
             _iconLookup.Add(Enum.d_unityeditor_sceneview, d_unityeditor_sceneview);
             _reverseIconLookup.Add(d_unityeditor_sceneview, Enum.d_unityeditor_sceneview);
-            _iconLookup.Add(Enum.d_unityeditor_timeline_timelinewindow, d_unityeditor_timeline_timelinewindow);
-            _reverseIconLookup.Add(d_unityeditor_timeline_timelinewindow, Enum.d_unityeditor_timeline_timelinewindow);
+            _iconLookup.Add(
+                Enum.d_unityeditor_timeline_timelinewindow,
+                d_unityeditor_timeline_timelinewindow
+            );
+            _reverseIconLookup.Add(
+                d_unityeditor_timeline_timelinewindow,
+                Enum.d_unityeditor_timeline_timelinewindow
+            );
             _iconLookup.Add(Enum.d_unityeditor_versioncontrol, d_unityeditor_versioncontrol);
             _reverseIconLookup.Add(d_unityeditor_versioncontrol, Enum.d_unityeditor_versioncontrol);
             _iconLookup.Add(Enum.d_unitylogo, d_unitylogo);
@@ -7077,7 +8176,10 @@ namespace Appalachia.Editing.Core
             _iconLookup.Add(Enum.d_align_horizontally_center, d_align_horizontally_center);
             _reverseIconLookup.Add(d_align_horizontally_center, Enum.d_align_horizontally_center);
             _iconLookup.Add(Enum.d_align_horizontally_center_active, d_align_horizontally_center_active);
-            _reverseIconLookup.Add(d_align_horizontally_center_active, Enum.d_align_horizontally_center_active);
+            _reverseIconLookup.Add(
+                d_align_horizontally_center_active,
+                Enum.d_align_horizontally_center_active
+            );
             _iconLookup.Add(Enum.d_align_horizontally_left, d_align_horizontally_left);
             _reverseIconLookup.Add(d_align_horizontally_left, Enum.d_align_horizontally_left);
             _iconLookup.Add(Enum.d_align_horizontally_left_active, d_align_horizontally_left_active);
@@ -7735,7 +8837,10 @@ namespace Appalachia.Editing.Core
             _iconLookup.Add(Enum.d_visualeffectsubgraphblock_icon, d_visualeffectsubgraphblock_icon);
             _reverseIconLookup.Add(d_visualeffectsubgraphblock_icon, Enum.d_visualeffectsubgraphblock_icon);
             _iconLookup.Add(Enum.d_visualeffectsubgraphoperator_icon, d_visualeffectsubgraphoperator_icon);
-            _reverseIconLookup.Add(d_visualeffectsubgraphoperator_icon, Enum.d_visualeffectsubgraphoperator_icon);
+            _reverseIconLookup.Add(
+                d_visualeffectsubgraphoperator_icon,
+                Enum.d_visualeffectsubgraphoperator_icon
+            );
             _iconLookup.Add(Enum.visualeffectsubgraphblock_icon, visualeffectsubgraphblock_icon);
             _reverseIconLookup.Add(visualeffectsubgraphblock_icon, Enum.visualeffectsubgraphblock_icon);
             _iconLookup.Add(Enum.visualeffectsubgraphoperator_icon, visualeffectsubgraphoperator_icon);
@@ -7744,12 +8849,24 @@ namespace Appalachia.Editing.Core
             _reverseIconLookup.Add(videoclipimporter_icon, Enum.videoclipimporter_icon);
             _iconLookup.Add(Enum.assemblydefinitionasset_icon, assemblydefinitionasset_icon);
             _reverseIconLookup.Add(assemblydefinitionasset_icon, Enum.assemblydefinitionasset_icon);
-            _iconLookup.Add(Enum.assemblydefinitionreferenceasset_icon, assemblydefinitionreferenceasset_icon);
-            _reverseIconLookup.Add(assemblydefinitionreferenceasset_icon, Enum.assemblydefinitionreferenceasset_icon);
+            _iconLookup.Add(
+                Enum.assemblydefinitionreferenceasset_icon,
+                assemblydefinitionreferenceasset_icon
+            );
+            _reverseIconLookup.Add(
+                assemblydefinitionreferenceasset_icon,
+                Enum.assemblydefinitionreferenceasset_icon
+            );
             _iconLookup.Add(Enum.d_assemblydefinitionasset_icon, d_assemblydefinitionasset_icon);
             _reverseIconLookup.Add(d_assemblydefinitionasset_icon, Enum.d_assemblydefinitionasset_icon);
-            _iconLookup.Add(Enum.d_assemblydefinitionreferenceasset_icon, d_assemblydefinitionreferenceasset_icon);
-            _reverseIconLookup.Add(d_assemblydefinitionreferenceasset_icon, Enum.d_assemblydefinitionreferenceasset_icon);
+            _iconLookup.Add(
+                Enum.d_assemblydefinitionreferenceasset_icon,
+                d_assemblydefinitionreferenceasset_icon
+            );
+            _reverseIconLookup.Add(
+                d_assemblydefinitionreferenceasset_icon,
+                Enum.d_assemblydefinitionreferenceasset_icon
+            );
             _iconLookup.Add(Enum.d_navmeshagent_icon, d_navmeshagent_icon);
             _reverseIconLookup.Add(d_navmeshagent_icon, Enum.d_navmeshagent_icon);
             _iconLookup.Add(Enum.d_navmeshdata_icon, d_navmeshdata_icon);
@@ -7805,7 +8922,10 @@ namespace Appalachia.Editing.Core
             _iconLookup.Add(Enum.animatoroverridecontroller_icon, animatoroverridecontroller_icon);
             _reverseIconLookup.Add(animatoroverridecontroller_icon, Enum.animatoroverridecontroller_icon);
             _iconLookup.Add(Enum.animatoroverridecontroller_on_icon, animatoroverridecontroller_on_icon);
-            _reverseIconLookup.Add(animatoroverridecontroller_on_icon, Enum.animatoroverridecontroller_on_icon);
+            _reverseIconLookup.Add(
+                animatoroverridecontroller_on_icon,
+                Enum.animatoroverridecontroller_on_icon
+            );
             _iconLookup.Add(Enum.areaeffector2d_icon, areaeffector2d_icon);
             _reverseIconLookup.Add(areaeffector2d_icon, Enum.areaeffector2d_icon);
             _iconLookup.Add(Enum.articulationbody_icon, articulationbody_icon);
@@ -7905,7 +9025,10 @@ namespace Appalachia.Editing.Core
             _iconLookup.Add(Enum.d_animatoroverridecontroller_icon, d_animatoroverridecontroller_icon);
             _reverseIconLookup.Add(d_animatoroverridecontroller_icon, Enum.d_animatoroverridecontroller_icon);
             _iconLookup.Add(Enum.d_animatoroverridecontroller_on_icon, d_animatoroverridecontroller_on_icon);
-            _reverseIconLookup.Add(d_animatoroverridecontroller_on_icon, Enum.d_animatoroverridecontroller_on_icon);
+            _reverseIconLookup.Add(
+                d_animatoroverridecontroller_on_icon,
+                Enum.d_animatoroverridecontroller_on_icon
+            );
             _iconLookup.Add(Enum.d_areaeffector2d_icon, d_areaeffector2d_icon);
             _reverseIconLookup.Add(d_areaeffector2d_icon, Enum.d_areaeffector2d_icon);
             _iconLookup.Add(Enum.d_articulationbody_icon, d_articulationbody_icon);
@@ -8755,7 +9878,10 @@ namespace Appalachia.Editing.Core
             _iconLookup.Add(Enum.scenepicking_notpickable_mixed, scenepicking_notpickable_mixed);
             _reverseIconLookup.Add(scenepicking_notpickable_mixed, Enum.scenepicking_notpickable_mixed);
             _iconLookup.Add(Enum.scenepicking_notpickable_mixed_hover, scenepicking_notpickable_mixed_hover);
-            _reverseIconLookup.Add(scenepicking_notpickable_mixed_hover, Enum.scenepicking_notpickable_mixed_hover);
+            _reverseIconLookup.Add(
+                scenepicking_notpickable_mixed_hover,
+                Enum.scenepicking_notpickable_mixed_hover
+            );
             _iconLookup.Add(Enum.scenepicking_notpickable, scenepicking_notpickable);
             _reverseIconLookup.Add(scenepicking_notpickable, Enum.scenepicking_notpickable);
             _iconLookup.Add(Enum.scenepicking_notpickable_hover, scenepicking_notpickable_hover);
@@ -8907,7 +10033,10 @@ namespace Appalachia.Editing.Core
             _iconLookup.Add(Enum.statemachineeditor_arrowtip, statemachineeditor_arrowtip);
             _reverseIconLookup.Add(statemachineeditor_arrowtip, Enum.statemachineeditor_arrowtip);
             _iconLookup.Add(Enum.statemachineeditor_arrowtipselected, statemachineeditor_arrowtipselected);
-            _reverseIconLookup.Add(statemachineeditor_arrowtipselected, Enum.statemachineeditor_arrowtipselected);
+            _reverseIconLookup.Add(
+                statemachineeditor_arrowtipselected,
+                Enum.statemachineeditor_arrowtipselected
+            );
             _iconLookup.Add(Enum.statemachineeditor_background, statemachineeditor_background);
             _reverseIconLookup.Add(statemachineeditor_background, Enum.statemachineeditor_background);
             _iconLookup.Add(Enum.statemachineeditor_state, statemachineeditor_state);
@@ -8921,7 +10050,10 @@ namespace Appalachia.Editing.Core
             _iconLookup.Add(Enum.statemachineeditor_statesubhover, statemachineeditor_statesubhover);
             _reverseIconLookup.Add(statemachineeditor_statesubhover, Enum.statemachineeditor_statesubhover);
             _iconLookup.Add(Enum.statemachineeditor_statesubselected, statemachineeditor_statesubselected);
-            _reverseIconLookup.Add(statemachineeditor_statesubselected, Enum.statemachineeditor_statesubselected);
+            _reverseIconLookup.Add(
+                statemachineeditor_statesubselected,
+                Enum.statemachineeditor_statesubselected
+            );
             _iconLookup.Add(Enum.statemachineeditor_upbutton, statemachineeditor_upbutton);
             _reverseIconLookup.Add(statemachineeditor_upbutton, Enum.statemachineeditor_upbutton);
             _iconLookup.Add(Enum.statemachineeditor_upbuttonhover, statemachineeditor_upbuttonhover);
@@ -9009,59 +10141,167 @@ namespace Appalachia.Editing.Core
             _iconLookup.Add(Enum.terraininspector_terraintooladd, terraininspector_terraintooladd);
             _reverseIconLookup.Add(terraininspector_terraintooladd, Enum.terraininspector_terraintooladd);
             _iconLookup.Add(Enum.terraininspector_terraintoollower_on, terraininspector_terraintoollower_on);
-            _reverseIconLookup.Add(terraininspector_terraintoollower_on, Enum.terraininspector_terraintoollower_on);
+            _reverseIconLookup.Add(
+                terraininspector_terraintoollower_on,
+                Enum.terraininspector_terraintoollower_on
+            );
             _iconLookup.Add(Enum.terraininspector_terraintoollower, terraininspector_terraintoollower);
             _reverseIconLookup.Add(terraininspector_terraintoollower, Enum.terraininspector_terraintoollower);
             _iconLookup.Add(Enum.terraininspector_terraintoolloweralt, terraininspector_terraintoolloweralt);
-            _reverseIconLookup.Add(terraininspector_terraintoolloweralt, Enum.terraininspector_terraintoolloweralt);
-            _iconLookup.Add(Enum.terraininspector_terraintoolplants_on, terraininspector_terraintoolplants_on);
-            _reverseIconLookup.Add(terraininspector_terraintoolplants_on, Enum.terraininspector_terraintoolplants_on);
+            _reverseIconLookup.Add(
+                terraininspector_terraintoolloweralt,
+                Enum.terraininspector_terraintoolloweralt
+            );
+            _iconLookup.Add(
+                Enum.terraininspector_terraintoolplants_on,
+                terraininspector_terraintoolplants_on
+            );
+            _reverseIconLookup.Add(
+                terraininspector_terraintoolplants_on,
+                Enum.terraininspector_terraintoolplants_on
+            );
             _iconLookup.Add(Enum.terraininspector_terraintoolplants, terraininspector_terraintoolplants);
-            _reverseIconLookup.Add(terraininspector_terraintoolplants, Enum.terraininspector_terraintoolplants);
-            _iconLookup.Add(Enum.terraininspector_terraintoolplantsalt_on, terraininspector_terraintoolplantsalt_on);
-            _reverseIconLookup.Add(terraininspector_terraintoolplantsalt_on, Enum.terraininspector_terraintoolplantsalt_on);
-            _iconLookup.Add(Enum.terraininspector_terraintoolplantsalt, terraininspector_terraintoolplantsalt);
-            _reverseIconLookup.Add(terraininspector_terraintoolplantsalt, Enum.terraininspector_terraintoolplantsalt);
+            _reverseIconLookup.Add(
+                terraininspector_terraintoolplants,
+                Enum.terraininspector_terraintoolplants
+            );
+            _iconLookup.Add(
+                Enum.terraininspector_terraintoolplantsalt_on,
+                terraininspector_terraintoolplantsalt_on
+            );
+            _reverseIconLookup.Add(
+                terraininspector_terraintoolplantsalt_on,
+                Enum.terraininspector_terraintoolplantsalt_on
+            );
+            _iconLookup.Add(
+                Enum.terraininspector_terraintoolplantsalt,
+                terraininspector_terraintoolplantsalt
+            );
+            _reverseIconLookup.Add(
+                terraininspector_terraintoolplantsalt,
+                Enum.terraininspector_terraintoolplantsalt
+            );
             _iconLookup.Add(Enum.terraininspector_terraintoolraise_on, terraininspector_terraintoolraise_on);
-            _reverseIconLookup.Add(terraininspector_terraintoolraise_on, Enum.terraininspector_terraintoolraise_on);
+            _reverseIconLookup.Add(
+                terraininspector_terraintoolraise_on,
+                Enum.terraininspector_terraintoolraise_on
+            );
             _iconLookup.Add(Enum.terraininspector_terraintoolraise, terraininspector_terraintoolraise);
             _reverseIconLookup.Add(terraininspector_terraintoolraise, Enum.terraininspector_terraintoolraise);
-            _iconLookup.Add(Enum.terraininspector_terraintoolsculpt_on, terraininspector_terraintoolsculpt_on);
-            _reverseIconLookup.Add(terraininspector_terraintoolsculpt_on, Enum.terraininspector_terraintoolsculpt_on);
+            _iconLookup.Add(
+                Enum.terraininspector_terraintoolsculpt_on,
+                terraininspector_terraintoolsculpt_on
+            );
+            _reverseIconLookup.Add(
+                terraininspector_terraintoolsculpt_on,
+                Enum.terraininspector_terraintoolsculpt_on
+            );
             _iconLookup.Add(Enum.terraininspector_terraintoolsculpt, terraininspector_terraintoolsculpt);
-            _reverseIconLookup.Add(terraininspector_terraintoolsculpt, Enum.terraininspector_terraintoolsculpt);
-            _iconLookup.Add(Enum.terraininspector_terraintoolsetheight_on, terraininspector_terraintoolsetheight_on);
-            _reverseIconLookup.Add(terraininspector_terraintoolsetheight_on, Enum.terraininspector_terraintoolsetheight_on);
-            _iconLookup.Add(Enum.terraininspector_terraintoolsetheight, terraininspector_terraintoolsetheight);
-            _reverseIconLookup.Add(terraininspector_terraintoolsetheight, Enum.terraininspector_terraintoolsetheight);
-            _iconLookup.Add(Enum.terraininspector_terraintoolsetheightalt_on, terraininspector_terraintoolsetheightalt_on);
-            _reverseIconLookup.Add(terraininspector_terraintoolsetheightalt_on, Enum.terraininspector_terraintoolsetheightalt_on);
-            _iconLookup.Add(Enum.terraininspector_terraintoolsetheightalt, terraininspector_terraintoolsetheightalt);
-            _reverseIconLookup.Add(terraininspector_terraintoolsetheightalt, Enum.terraininspector_terraintoolsetheightalt);
-            _iconLookup.Add(Enum.terraininspector_terraintoolsettings_on, terraininspector_terraintoolsettings_on);
-            _reverseIconLookup.Add(terraininspector_terraintoolsettings_on, Enum.terraininspector_terraintoolsettings_on);
+            _reverseIconLookup.Add(
+                terraininspector_terraintoolsculpt,
+                Enum.terraininspector_terraintoolsculpt
+            );
+            _iconLookup.Add(
+                Enum.terraininspector_terraintoolsetheight_on,
+                terraininspector_terraintoolsetheight_on
+            );
+            _reverseIconLookup.Add(
+                terraininspector_terraintoolsetheight_on,
+                Enum.terraininspector_terraintoolsetheight_on
+            );
+            _iconLookup.Add(
+                Enum.terraininspector_terraintoolsetheight,
+                terraininspector_terraintoolsetheight
+            );
+            _reverseIconLookup.Add(
+                terraininspector_terraintoolsetheight,
+                Enum.terraininspector_terraintoolsetheight
+            );
+            _iconLookup.Add(
+                Enum.terraininspector_terraintoolsetheightalt_on,
+                terraininspector_terraintoolsetheightalt_on
+            );
+            _reverseIconLookup.Add(
+                terraininspector_terraintoolsetheightalt_on,
+                Enum.terraininspector_terraintoolsetheightalt_on
+            );
+            _iconLookup.Add(
+                Enum.terraininspector_terraintoolsetheightalt,
+                terraininspector_terraintoolsetheightalt
+            );
+            _reverseIconLookup.Add(
+                terraininspector_terraintoolsetheightalt,
+                Enum.terraininspector_terraintoolsetheightalt
+            );
+            _iconLookup.Add(
+                Enum.terraininspector_terraintoolsettings_on,
+                terraininspector_terraintoolsettings_on
+            );
+            _reverseIconLookup.Add(
+                terraininspector_terraintoolsettings_on,
+                Enum.terraininspector_terraintoolsettings_on
+            );
             _iconLookup.Add(Enum.terraininspector_terraintoolsettings, terraininspector_terraintoolsettings);
-            _reverseIconLookup.Add(terraininspector_terraintoolsettings, Enum.terraininspector_terraintoolsettings);
-            _iconLookup.Add(Enum.terraininspector_terraintoolsmoothheight_on, terraininspector_terraintoolsmoothheight_on);
-            _reverseIconLookup.Add(terraininspector_terraintoolsmoothheight_on, Enum.terraininspector_terraintoolsmoothheight_on);
-            _iconLookup.Add(Enum.terraininspector_terraintoolsmoothheight, terraininspector_terraintoolsmoothheight);
-            _reverseIconLookup.Add(terraininspector_terraintoolsmoothheight, Enum.terraininspector_terraintoolsmoothheight);
+            _reverseIconLookup.Add(
+                terraininspector_terraintoolsettings,
+                Enum.terraininspector_terraintoolsettings
+            );
+            _iconLookup.Add(
+                Enum.terraininspector_terraintoolsmoothheight_on,
+                terraininspector_terraintoolsmoothheight_on
+            );
+            _reverseIconLookup.Add(
+                terraininspector_terraintoolsmoothheight_on,
+                Enum.terraininspector_terraintoolsmoothheight_on
+            );
+            _iconLookup.Add(
+                Enum.terraininspector_terraintoolsmoothheight,
+                terraininspector_terraintoolsmoothheight
+            );
+            _reverseIconLookup.Add(
+                terraininspector_terraintoolsmoothheight,
+                Enum.terraininspector_terraintoolsmoothheight
+            );
             _iconLookup.Add(Enum.terraininspector_terraintoolsplat_on, terraininspector_terraintoolsplat_on);
-            _reverseIconLookup.Add(terraininspector_terraintoolsplat_on, Enum.terraininspector_terraintoolsplat_on);
+            _reverseIconLookup.Add(
+                terraininspector_terraintoolsplat_on,
+                Enum.terraininspector_terraintoolsplat_on
+            );
             _iconLookup.Add(Enum.terraininspector_terraintoolsplat, terraininspector_terraintoolsplat);
             _reverseIconLookup.Add(terraininspector_terraintoolsplat, Enum.terraininspector_terraintoolsplat);
-            _iconLookup.Add(Enum.terraininspector_terraintoolsplatalt_on, terraininspector_terraintoolsplatalt_on);
-            _reverseIconLookup.Add(terraininspector_terraintoolsplatalt_on, Enum.terraininspector_terraintoolsplatalt_on);
+            _iconLookup.Add(
+                Enum.terraininspector_terraintoolsplatalt_on,
+                terraininspector_terraintoolsplatalt_on
+            );
+            _reverseIconLookup.Add(
+                terraininspector_terraintoolsplatalt_on,
+                Enum.terraininspector_terraintoolsplatalt_on
+            );
             _iconLookup.Add(Enum.terraininspector_terraintoolsplatalt, terraininspector_terraintoolsplatalt);
-            _reverseIconLookup.Add(terraininspector_terraintoolsplatalt, Enum.terraininspector_terraintoolsplatalt);
+            _reverseIconLookup.Add(
+                terraininspector_terraintoolsplatalt,
+                Enum.terraininspector_terraintoolsplatalt
+            );
             _iconLookup.Add(Enum.terraininspector_terraintooltrees_on, terraininspector_terraintooltrees_on);
-            _reverseIconLookup.Add(terraininspector_terraintooltrees_on, Enum.terraininspector_terraintooltrees_on);
+            _reverseIconLookup.Add(
+                terraininspector_terraintooltrees_on,
+                Enum.terraininspector_terraintooltrees_on
+            );
             _iconLookup.Add(Enum.terraininspector_terraintooltrees, terraininspector_terraintooltrees);
             _reverseIconLookup.Add(terraininspector_terraintooltrees, Enum.terraininspector_terraintooltrees);
-            _iconLookup.Add(Enum.terraininspector_terraintooltreesalt_on, terraininspector_terraintooltreesalt_on);
-            _reverseIconLookup.Add(terraininspector_terraintooltreesalt_on, Enum.terraininspector_terraintooltreesalt_on);
+            _iconLookup.Add(
+                Enum.terraininspector_terraintooltreesalt_on,
+                terraininspector_terraintooltreesalt_on
+            );
+            _reverseIconLookup.Add(
+                terraininspector_terraintooltreesalt_on,
+                Enum.terraininspector_terraintooltreesalt_on
+            );
             _iconLookup.Add(Enum.terraininspector_terraintooltreesalt, terraininspector_terraintooltreesalt);
-            _reverseIconLookup.Add(terraininspector_terraintooltreesalt, Enum.terraininspector_terraintooltreesalt);
+            _reverseIconLookup.Add(
+                terraininspector_terraintooltreesalt,
+                Enum.terraininspector_terraintooltreesalt
+            );
             _iconLookup.Add(Enum.testfailed, testfailed);
             _reverseIconLookup.Add(testfailed, Enum.testfailed);
             _iconLookup.Add(Enum.testignored, testignored);
@@ -9204,14 +10444,26 @@ namespace Appalachia.Editing.Core
             _reverseIconLookup.Add(unityeditor_consolewindow, Enum.unityeditor_consolewindow);
             _iconLookup.Add(Enum.unityeditor_debuginspectorwindow, unityeditor_debuginspectorwindow);
             _reverseIconLookup.Add(unityeditor_debuginspectorwindow, Enum.unityeditor_debuginspectorwindow);
-            _iconLookup.Add(Enum.unityeditor_devicesimulation_simulatorwindow, unityeditor_devicesimulation_simulatorwindow);
-            _reverseIconLookup.Add(unityeditor_devicesimulation_simulatorwindow, Enum.unityeditor_devicesimulation_simulatorwindow);
+            _iconLookup.Add(
+                Enum.unityeditor_devicesimulation_simulatorwindow,
+                unityeditor_devicesimulation_simulatorwindow
+            );
+            _reverseIconLookup.Add(
+                unityeditor_devicesimulation_simulatorwindow,
+                Enum.unityeditor_devicesimulation_simulatorwindow
+            );
             _iconLookup.Add(Enum.unityeditor_finddependencies, unityeditor_finddependencies);
             _reverseIconLookup.Add(unityeditor_finddependencies, Enum.unityeditor_finddependencies);
             _iconLookup.Add(Enum.unityeditor_gameview, unityeditor_gameview);
             _reverseIconLookup.Add(unityeditor_gameview, Enum.unityeditor_gameview);
-            _iconLookup.Add(Enum.unityeditor_graphs_animatorcontrollertool, unityeditor_graphs_animatorcontrollertool);
-            _reverseIconLookup.Add(unityeditor_graphs_animatorcontrollertool, Enum.unityeditor_graphs_animatorcontrollertool);
+            _iconLookup.Add(
+                Enum.unityeditor_graphs_animatorcontrollertool,
+                unityeditor_graphs_animatorcontrollertool
+            );
+            _reverseIconLookup.Add(
+                unityeditor_graphs_animatorcontrollertool,
+                Enum.unityeditor_graphs_animatorcontrollertool
+            );
             _iconLookup.Add(Enum.unityeditor_hierarchywindow, unityeditor_hierarchywindow);
             _reverseIconLookup.Add(unityeditor_hierarchywindow, Enum.unityeditor_hierarchywindow);
             _iconLookup.Add(Enum.unityeditor_historywindow, unityeditor_historywindow);
@@ -9225,7 +10477,10 @@ namespace Appalachia.Editing.Core
             _iconLookup.Add(Enum.unityeditor_sceneview, unityeditor_sceneview);
             _reverseIconLookup.Add(unityeditor_sceneview, Enum.unityeditor_sceneview);
             _iconLookup.Add(Enum.unityeditor_timeline_timelinewindow, unityeditor_timeline_timelinewindow);
-            _reverseIconLookup.Add(unityeditor_timeline_timelinewindow, Enum.unityeditor_timeline_timelinewindow);
+            _reverseIconLookup.Add(
+                unityeditor_timeline_timelinewindow,
+                Enum.unityeditor_timeline_timelinewindow
+            );
             _iconLookup.Add(Enum.unityeditor_versioncontrol, unityeditor_versioncontrol);
             _reverseIconLookup.Add(unityeditor_versioncontrol, Enum.unityeditor_versioncontrol);
             _iconLookup.Add(Enum.unitylogo, unitylogo);
@@ -9458,815 +10713,6 @@ namespace Appalachia.Editing.Core
         public static Enum GetIconEnum(string name)
         {
             return _reverseIconLookup[name];
-        }
-
-        #endregion
-
-        #region UI
-
-        public class EditorGUIIconViewer : EditorWindow
-        {
-            #region UI Constants
-
-            private const string _headerText = "EditorGUI Icons";
-
-            private const string _subheaderText = "Build Version: " +
-                                                  BUILD_VERSION +
-                                                  " | Icon Count: " +
-                                                  VALUE_COUNT_STRING;
-
-            private const string _settingsText = "Display Settings";
-            private const string _searchText = "Search (RegEx)";
-            private const string _selectedIconText = "Selected Icon Name";
-            private const string _buttonTextPadding = "  ";
-
-            private static readonly Color lineColor = new(.22f, .22f, .22f, 1f);
-
-            private const int _defaultIconSize = 32;
-            private const int _iconPadding = 1;
-            private const float _paddingMultiplier = 3f;
-            private const int _reservedSpace = 15;
-            private const float _verticalSpacer = 8f;
-            private const float _horizontalSpacer = 4f;
-            private const float _selectionSize = 1f;
-            private const int _buttonIconSize = 16;
-            private const float _iconSizeLabelSize = 60f;
-            private const float _iconBackgroundLabelSize = 110f;
-            private const float _iconSelectedBackgroundLabelSize = 120f;
-            private const float _searchLabelSize = 120f;
-            private const float _regexLabelSize = 18f;
-            private const float _selectedIconLabelSize = 130f;
-
-            #endregion
-
-            #region Icons
-
-            private const string _regenerateButtonIconName = "sceneviewtools on";
-            private const string _resetButtonIconName = "grid.erasertool";
-            private const string _searchIconName = "searchoverlay";
-            private const string _settingsIconName = "settings";
-            private const string _regexValidIconName = "p4_checkoutremote";
-            private const string _regexInvalidIconName = "p4_deletedlocal";
-            private const string _regexMissingIconName = "testignored";
-
-            #endregion
-
-            #region State
-
-            private static Enum[] _enums;
-            private static string[] _iconNames;
-            private static GUIContent[] _icons;
-
-            #endregion
-
-            #region UI State
-
-            private string _searchFilter = "";
-            private Color _backgroundColor = new(0.1647059f, 0.1647059f, 0.1647059f, 1f);
-            private Color _selectedBackgroundColor = new(0f, 1f, 0f, .7f);
-            private int _iconSize = _defaultIconSize;
-            private bool _showSettings;
-
-            private RegexState _regexState;
-            private Vector2 _scrollPosition;
-
-            private Color _lastBackgroundColor;
-            private int _lastIconSize;
-            private string _lastSelection = "";
-            private GUIContent _lastSelectionContent;
-
-            #endregion
-
-            #region Layout
-
-            #region Fields
-
-            private static readonly GUILayoutOption[] _expandWidth = {GUILayout.ExpandWidth(true)};
-            private GUILayoutOption[] _iconLayout = {GUILayout.Width(_defaultIconSize)};
-            private GUILayoutOption[] _iconSizeLabelLayout = {GUILayout.Width(_iconSizeLabelSize)};
-            private GUILayoutOption[] _regexIconLayout = {GUILayout.Width(_regexLabelSize)};
-            private GUILayoutOption[] _searchLabelLayout = {GUILayout.Width(_searchLabelSize)};
-
-            private GUILayoutOption[] _iconBackgroundLabelLayout =
-            {
-                GUILayout.Width(_iconBackgroundLabelSize)
-            };
-
-            private GUILayoutOption[] _iconSelectedBackgroundLabelLayout =
-            {
-                GUILayout.Width(_iconSelectedBackgroundLabelSize)
-            };
-
-            private GUILayoutOption[] _selectedIconLabelLayout =
-            {
-                GUILayout.Width(_selectedIconLabelSize)
-            };
-
-            #endregion
-
-            #region Properties
-
-            private GUILayoutOption[] iconSizeLabelLayout
-            {
-                get
-                {
-                    if (_iconSizeLabelLayout == null)
-                    {
-                        _iconSizeLabelLayout = new[] {GUILayout.Width(_iconSizeLabelSize)};
-                    }
-
-                    return _iconSizeLabelLayout;
-                }
-            }
-
-            private GUILayoutOption[] iconBackgroundLabelLayout
-            {
-                get
-                {
-                    if (_iconBackgroundLabelLayout == null)
-                    {
-                        _iconBackgroundLabelLayout = new[] {GUILayout.Width(_iconBackgroundLabelSize)};
-                    }
-
-                    return _iconBackgroundLabelLayout;
-                }
-            }
-
-            private GUILayoutOption[] iconSelectedBackgroundLabelLayout
-            {
-                get
-                {
-                    if (_iconSelectedBackgroundLabelLayout == null)
-                    {
-                        _iconSelectedBackgroundLabelLayout = new[]
-                        {
-                            GUILayout.Width(_iconSelectedBackgroundLabelSize)
-                        };
-                    }
-
-                    return _iconSelectedBackgroundLabelLayout;
-                }
-            }
-
-            private GUILayoutOption[] searchLabelLayout
-            {
-                get
-                {
-                    if (_searchLabelLayout == null)
-                    {
-                        _searchLabelLayout = new[] {GUILayout.Width(_searchLabelSize)};
-                    }
-
-                    return _searchLabelLayout;
-                }
-            }
-
-            private GUILayoutOption[] regexIconLayout
-            {
-                get
-                {
-                    if (_regexIconLayout == null)
-                    {
-                        _regexIconLayout = new[] {GUILayout.Width(_regexLabelSize)};
-                    }
-
-                    return _regexIconLayout;
-                }
-            }
-
-            private GUILayoutOption[] selectedIconLabelLayout
-            {
-                get
-                {
-                    if (_selectedIconLabelLayout == null)
-                    {
-                        _selectedIconLabelLayout = new[] {GUILayout.Width(_selectedIconLabelSize)};
-                    }
-
-                    return _selectedIconLabelLayout;
-                }
-            }
-
-            #endregion
-
-            #endregion
-
-            #region Style
-
-            #region Fields
-
-            private GUIStyle _scrollViewStyle;
-            private GUIStyle _iconStyle;
-            private GUIStyle _regexIconStyle;
-
-            #endregion
-
-            #region Properties
-
-            private GUIStyle scrollViewStyle
-            {
-                get
-                {
-                    if (_scrollViewStyle == null)
-                    {
-                        _scrollViewStyle = new GUIStyle(GUI.skin.scrollView)
-                        {
-                        };
-
-                        _scrollViewStyle.normal.background = MakeTex(1, 1, _backgroundColor);
-                    }
-
-                    return _scrollViewStyle;
-                }
-            }
-        
-            private GUIStyle iconStyle
-            {
-                get
-                {
-                    if (_iconStyle == null)
-                    {
-                        _iconStyle = new GUIStyle
-                        {
-                            fixedWidth = _iconSize,
-                            padding = new RectOffset(
-                                _iconPadding,
-                                _iconPadding,
-                                _iconPadding,
-                                _iconPadding
-                            ),
-                            border = new RectOffset(0, 0, 0, 0)
-                        };
-                    }
-
-                    return _iconStyle;
-                }
-            }
-
-            private GUIStyle regexIconStyle
-            {
-                get
-                {
-                    if (_regexIconStyle == null)
-                    {
-                        _regexIconStyle = new GUIStyle
-                        {
-                            fixedWidth = _regexLabelSize,
-                            padding = new RectOffset(
-                                _iconPadding,
-                                _iconPadding,
-                                _iconPadding,
-                                _iconPadding
-                            ),
-                            border = new RectOffset(0, 0, 0, 0)
-                        };
-                    }
-
-                    return _regexIconStyle;
-                }
-            }
-
-            #endregion
-
-            #endregion
-
-            #region Content
-
-            #region Fields
-
-            private GUIContent _regenerateButtonContent;
-            private GUIContent _resetButtonContent;
-            private GUIContent _settingsLabel;
-            private GUIContent _searchLabel;
-            private GUIContent _regexInvalidLabel;
-            private GUIContent _regexMissingLabel;
-            private GUIContent _regexValidLabel;
-            private GUIContent _selectedIconLabel;
-
-            #endregion
-
-            #region Properties
-
-            private GUIContent regenerateButtonContent
-            {
-                get
-                {
-                    if (_regenerateButtonContent == null)
-                    {
-                        var regenerateButtonIcon = GetIconEnum(_regenerateButtonIconName);
-                        _regenerateButtonContent = GetIconContent(regenerateButtonIcon);
-
-                        _regenerateButtonContent.text = _buttonTextPadding +
-                                                        EditorGUIIconGenerator.regenerateButtonText;
-                    }
-
-                    return _regenerateButtonContent;
-                }
-            }
-
-            private GUIContent resetButtonContent
-            {
-                get
-                {
-                    if (_resetButtonContent == null)
-                    {
-                        var resetButtonIcon = GetIconEnum(_resetButtonIconName);
-                        _resetButtonContent = GetIconContent(resetButtonIcon);
-
-                        _resetButtonContent.text =
-                            _buttonTextPadding + EditorGUIIconGenerator.resetButtonText;
-                    }
-
-                    return _resetButtonContent;
-                }
-            }
-
-            public GUIContent settingsLabel
-            {
-                get
-                {
-                    if (_settingsLabel == null)
-                    {
-                        var settingsButtonIcon = GetIconEnum(_settingsIconName);
-                        _settingsLabel = GetIconContent(settingsButtonIcon);
-
-                        _settingsLabel.text = _buttonTextPadding + _settingsText;
-                    }
-
-                    return _settingsLabel;
-                }
-            }
-
-            public GUIContent searchLabel
-            {
-                get
-                {
-                    if (_searchLabel == null)
-                    {
-                        var searchButtonIcon = GetIconEnum(_searchIconName);
-                        _searchLabel = GetIconContent(searchButtonIcon);
-
-                        _searchLabel.text = _buttonTextPadding + _searchText;
-                    }
-
-                    return _searchLabel;
-                }
-            }
-
-            public GUIContent regexValidLabel
-            {
-                get
-                {
-                    if (_regexValidLabel == null)
-                    {
-                        _regexValidLabel = new GUIContent(GetIconContent(_regexValidIconName));
-                    }
-
-                    return _regexValidLabel;
-                }
-            }
-
-            public GUIContent regexInvalidLabel
-            {
-                get
-                {
-                    if (_regexInvalidLabel == null)
-                    {
-                        _regexInvalidLabel = new GUIContent(GetIconContent(_regexInvalidIconName));
-                    }
-
-                    return _regexInvalidLabel;
-                }
-            }
-
-            public GUIContent regexMissingLabel
-            {
-                get
-                {
-                    if (_regexMissingLabel == null)
-                    {
-                        _regexMissingLabel = new GUIContent(GetIconContent(_regexMissingIconName));
-                    }
-
-                    return _regexMissingLabel;
-                }
-            }
-
-            public GUIContent selectedIconLabel
-            {
-                get
-                {
-                    if (_selectedIconLabel == null)
-                    {
-                        _selectedIconLabel = new GUIContent(_selectedIconText);
-                    }
-
-                    return _selectedIconLabel;
-                }
-            }
-
-            public GUIContent lastSelectionContent
-            {
-                get
-                {
-                    if (_lastSelectionContent == null)
-                    {
-                        _lastSelectionContent = new GUIContent(string.Empty);
-                    }
-
-                    return _lastSelectionContent;
-                }
-            }
-
-            #endregion
-
-            #endregion
-
-            #region Editor Window API
-
-            private void OnEnable()
-            {
-                if ((Application.unityVersion != BUILD_VERSION) || (VALUE_COUNT == 0))
-                {
-                    EditorGUIIconGenerator.RegenerateIconUtilities(true);
-                    return;
-                }
-
-                _lastIconSize = 0;
-                _lastBackgroundColor = new Color();
-
-                minSize = new Vector2(640, 640);
-
-                var sortEnumValues = System.Enum.GetValues(typeof(SortEnum));
-                var sortEnumEnumerable = sortEnumValues.Cast<SortEnum>();
-                var sortEnumArray = sortEnumEnumerable.ToArray();
-                var sortEnums = sortEnumArray.ToDictionary(e => e.ToString());
-
-                _enums = System.Enum.GetValues(typeof(Enum)).Cast<Enum>().ToArray();
-
-                Array.Sort(
-                    _enums,
-                    (a, b) => sortEnums[a.ToString()].CompareTo(sortEnums[b.ToString()])
-                );
-                _icons = new GUIContent[_enums.Length];
-                _iconNames = new string[_enums.Length];
-
-                for (var i = 0; i < _enums.Length; i++)
-                {
-                    var e = _enums[i];
-                    var iconName = GetIconName(e);
-
-                    _iconNames[i] = iconName;
-                    var content = GetIconContent(e, iconName);
-                    content.tooltip = iconName;
-                    _icons[i] = content;
-                }
-            }
-
-            private void OnGUI()
-            {
-                Action drawButtons = () =>
-                {
-                    if (GUILayout.Button(regenerateButtonContent))
-                    {
-                        EditorGUIIconGenerator.RegenerateIconUtilities(true);
-                    }
-
-                    if (GUILayout.Button(resetButtonContent))
-                    {
-                        EditorGUIIconGenerator.ResetGeneratedIconUtilities();
-                    }
-
-                    EditorGUILayout.Space(_horizontalSpacer * 4, false);
-                };
-
-                DrawHeader(_headerText, _subheaderText, drawButtons);
-
-                DrawSettings();
-
-                EditorGUILayout.Space(_verticalSpacer, false);
-
-                using (new EditorGUI.IndentLevelScope())
-                {
-                    DrawSearch();
-
-                    DrawResult();
-
-                    EditorGUILayout.Space(_verticalSpacer, false);
-                    DrawIcons();
-                }
-
-                EditorGUILayout.Space(_verticalSpacer, false);
-
-                if (GUILayout.Button("Close"))
-                {
-                    CloseWindow();
-                }
-            }
-
-            private void CloseWindow()
-            {
-                Close();
-                GUIUtility.ExitGUI();
-            }
-
-            #endregion
-
-            #region UI Menu Items
-
-            [MenuItem(PKG.Menu.Appalachia.Tools.Base + "EditorGUI Icons/Explore", priority = PKG.Priority + 22)]
-            internal static void ExploreEditorGUIIcons()
-            {
-                GetWindow<EditorGUIIconViewer>(false, "EditorGUI Icons", true);
-            }
-
-            #endregion
-
-            #region UI Parts
-
-            private void DrawHeader(string text, string subheader, Action additional)
-            {
-                EditorGUILayout.LabelField(text, EditorStyles.whiteLargeLabel);
-
-                using (new GUILayout.HorizontalScope())
-                {
-                    EditorGUILayout.LabelField(subheader, EditorStyles.whiteMiniLabel);
-
-                    if (additional != null)
-                    {
-                        additional();
-                    }
-                }
-
-                HorizontalLineSeparator(lineColor, 4);
-            }
-
-            private void DrawSettings()
-            {
-                _showSettings = EditorGUILayout.Foldout(_showSettings, settingsLabel);
-
-                if (_showSettings)
-                {
-                    using (new EditorGUILayout.HorizontalScope())
-                    using (new EditorGUI.IndentLevelScope())
-                    {
-                        EditorGUILayout.LabelField("Icon Size", iconSizeLabelLayout);
-                        _iconSize = EditorGUILayout.IntSlider(_iconSize, 8, 64);
-
-                        EditorGUILayout.Space(6f, false);
-
-                        EditorGUILayout.LabelField("Icon Background", iconBackgroundLabelLayout);
-                        _backgroundColor = EditorGUILayout.ColorField(_backgroundColor);
-
-                        EditorGUILayout.Space(6f, false);
-
-                        EditorGUILayout.LabelField(
-                            "Selected Outline",
-                            iconSelectedBackgroundLabelLayout
-                        );
-                        _selectedBackgroundColor = EditorGUILayout.ColorField(_selectedBackgroundColor);
-                    }
-                }
-
-                if (_lastIconSize != _iconSize)
-                {
-                    _iconStyle = new GUIStyle(iconStyle) {fixedWidth = _iconSize};
-                    _iconLayout = new[] {GUILayout.Width(_iconSize)};
-                    _lastIconSize = _iconSize;
-                }
-
-                if (_lastBackgroundColor != _backgroundColor)
-                {
-                    PaintTex(scrollViewStyle.normal.background, _backgroundColor);
-                    _lastBackgroundColor = _backgroundColor;
-                }
-            }
-
-            private void DrawSearch()
-            {
-                CheckRegexEnumState();
-
-                using (new EditorGUILayout.HorizontalScope())
-                {
-                    EditorGUILayout.LabelField(searchLabel, searchLabelLayout);
-                    _searchFilter = EditorGUILayout.TextField(_searchFilter);
-
-                    var regexStatusLabel = _regexState == RegexState.Valid
-                        ? regexValidLabel
-                        : _regexState == RegexState.Invalid
-                            ? regexInvalidLabel
-                            : regexMissingLabel;
-
-                    EditorGUILayout.LabelField(regexStatusLabel, regexIconStyle, regexIconLayout);
-
-                    EditorGUILayout.Space(_horizontalSpacer * 10, false);
-                }
-
-                CheckRegexEnumState();
-            }
-
-            private void DrawResult()
-            {
-                using (new EditorGUILayout.HorizontalScope())
-                {
-                    EditorGUILayout.LabelField(selectedIconLabel, selectedIconLabelLayout);
-
-                    EditorGUILayout.LabelField(lastSelectionContent);
-                }
-            }
-
-            private void DrawIcons()
-            {
-                if ((_enums == null) || (_enums.Length == 0))
-                {
-                    return;
-                }
-
-                var indentOffset = EditorGUI.indentLevel * 15f;
-
-                var width = position.width - _reservedSpace - indentOffset;
-                var iconWidth = _iconSize + (_paddingMultiplier * _iconPadding);
-                var columnCount = (int) (width / iconWidth);
-
-                var iconIndex = 0;
-                var columnIndex = 0;
-            
-                using (var scroll = new EditorGUILayout.ScrollViewScope(
-                    _scrollPosition, scrollViewStyle))
-                {
-                    scroll.handleScrollWheel = true;
-                    _scrollPosition = scroll.scrollPosition;
-
-                    var scope = new EditorGUILayout.HorizontalScope();
-
-                    try
-                    {
-                        while (iconIndex < _enums.Length)
-                        {
-                            var iconName = _iconNames[iconIndex];
-
-                            var regexMatch = true;
-
-                            if (_regexState == RegexState.Valid)
-                            {
-                                regexMatch = Regex.IsMatch(iconName, _searchFilter);
-                            }
-
-                            if (!string.IsNullOrWhiteSpace(_searchFilter) && !regexMatch)
-                            {
-                                iconIndex += 1;
-                                continue;
-                            }
-
-                            if (columnIndex >= columnCount)
-                            {
-                                columnIndex = 0;
-                                scope.Dispose();
-                                scope = new EditorGUILayout.HorizontalScope();
-                            }
-
-                            var icon = _icons[iconIndex];
-                            var style = iconStyle;
-
-                            //var style = _lastSelection == icon.tooltip ? selectedIconStyle : iconStyle;
-
-                            EditorGUILayout.LabelField(icon, style, _iconLayout);
-
-                            var lastRectSize = GUILayoutUtility.GetLastRect();
-                            lastRectSize.x += EditorGUI.indentLevel * 15f;
-
-                            if (icon.tooltip == _lastSelection)
-                            {
-                                DrawUIBox(lastRectSize, _selectedBackgroundColor, _selectionSize);
-                            }
-
-                            if (GUI.Button(lastRectSize, string.Empty, GUIStyle.none))
-                            {
-                                _lastSelection = icon.tooltip;
-                                EditorGUIUtility.systemCopyBuffer = _lastSelection;
-
-                                var lastSelectionEnum = GetIconEnum(_lastSelection);
-                                _lastSelectionContent =
-                                    new GUIContent(GetIconContent(lastSelectionEnum))
-                                    {
-                                        text = _buttonTextPadding + _lastSelection
-                                    };
-                            }
-
-                            columnIndex += 1;
-                            iconIndex += 1;
-                        }
-                    }
-                    finally
-                    {
-                        scope.Dispose();
-                    }
-                }
-            }
-
-            #endregion
-
-            #region UI Helper Methods
-
-            private Texture2D MakeTex(int width, int height, Color col)
-            {
-                var result = new Texture2D(width, height);
-
-                return PaintTex(result, col);
-            }
-
-            private Texture2D PaintTex(Texture2D texture, Color col)
-            {
-                if (texture == null)
-                {
-                    texture = new Texture2D(1, 1);
-                }
-
-                var pix = texture.GetPixels();
-
-                for (var i = 0; i < pix.Length; i++)
-                {
-                    pix[i] = col;
-                }
-
-                texture.SetPixels(pix);
-                texture.Apply();
-
-                return texture;
-            }
-
-            private void CheckRegexEnumState()
-            {
-                if (!string.IsNullOrWhiteSpace(_searchFilter))
-                {
-                    try
-                    {
-                        // ReSharper disable once ReturnValueOfPureMethodIsNotUsed
-                        Regex.Match("", _searchFilter);
-                        _regexState = RegexState.Valid;
-                    }
-                    catch (Exception)
-                    {
-                        _regexState = RegexState.Invalid;
-                    }
-                }
-                else
-                {
-                    _regexState = RegexState.Missing;
-                }
-            }
-
-            public static void HorizontalLineSeparator(Color color, int lineWidth = 1)
-            {
-                DrawSolidRect(GUILayoutUtility.GetRect(lineWidth, lineWidth, _expandWidth), color);
-            }
-
-            public static void DrawUIBox(Rect rect, Color borderColor, float size = 1.5f)
-            {
-                if (Event.current.type != EventType.Repaint)
-                {
-                    return;
-                }
-
-                var left = new Rect(rect.xMin - size,   rect.yMin - size, size, rect.height + (2 * size));
-                var right = new Rect(rect.xMax,         rect.yMin - size, size, rect.height + (2 * size));
-                var top = new Rect(rect.xMin - size,    rect.yMin - size, rect.width + (2 * size), size);
-                var bottom = new Rect(rect.xMin - size, rect.yMax,        rect.width + (2 * size), size);
-
-                EditorGUI.DrawRect(left,   borderColor);
-                EditorGUI.DrawRect(right,  borderColor);
-                EditorGUI.DrawRect(top,    borderColor);
-                EditorGUI.DrawRect(bottom, borderColor);
-            }
-
-            public static void DrawSolidRect(Rect rect, Color color, bool usePlaymodeTint = true)
-            {
-                if (Event.current.type != EventType.Repaint)
-                {
-                    return;
-                }
-
-                if (usePlaymodeTint)
-                {
-                    EditorGUI.DrawRect(rect, color);
-                }
-                else
-                {
-                    var oldColor = GUI.color;
-                    GUI.color = color;
-                    GUI.DrawTexture(rect, EditorGUIUtility.whiteTexture);
-                    GUI.color = oldColor;
-                }
-            }
-
-            private enum RegexState
-            {
-                Valid,
-                Invalid,
-                Missing
-            }
-
-            #endregion
         }
 
         #endregion

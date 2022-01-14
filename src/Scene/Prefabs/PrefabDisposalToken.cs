@@ -14,7 +14,11 @@ namespace Appalachia.Editing.Scene.Prefabs
             this.prefabPath = prefabPath;
         }
 
+        #region Fields and Autoproperties
+
         public GameObject prefab;
         public string prefabPath;
+
+        #endregion
     }
 }

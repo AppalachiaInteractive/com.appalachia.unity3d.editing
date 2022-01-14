@@ -43,6 +43,8 @@ namespace Appalachia.Editing.Core.Operations
             IntArgument = argument;
         }
 
+        #region Fields and Autoproperties
+
         [ShowIf(nameof(showBooleanArgument))]
         [HorizontalGroup]
         [LabelText("$Description")]
@@ -64,14 +66,15 @@ namespace Appalachia.Editing.Core.Operations
         [LabelText("$Description")]
         public int IntArgument;
 
-        [HideInInspector]
-        public string Description;
+        [HideInInspector] public string Description;
 
         [ShowIf(nameof(showStringArgument))]
         [HideLabel]
         [HorizontalGroup]
         [LabelText("$Description")]
         public string StringArgument;
+
+        #endregion
 
 #pragma warning disable CS0414
 

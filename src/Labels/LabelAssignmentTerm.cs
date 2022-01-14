@@ -12,11 +12,16 @@ namespace Appalachia.Editing.Labels
             this.allowedMagnitude = allowedMagnitude;
         }
 
+        #region Fields and Autoproperties
+
         public readonly float allowedMagnitude;
 
         public readonly string term;
 
-        [DebuggerStepThrough] public override string ToString()
+        #endregion
+
+        [DebuggerStepThrough]
+        public override string ToString()
         {
             return ZString.Format("{0} ({1:F1}m)", term, allowedMagnitude);
         }

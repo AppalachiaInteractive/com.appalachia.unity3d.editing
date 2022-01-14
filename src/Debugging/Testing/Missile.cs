@@ -44,7 +44,7 @@ namespace Appalachia.Editing.Debugging.Testing
 
         public void InitializeComponents(GameObject go, Rigidbody rb, Collider c)
         {
-            using (_PRF_Initialize.Auto())
+            using (_PRF_InitializeComponents.Auto())
             {
                 this.rb = rb;
                 this.c = c;
@@ -78,10 +78,9 @@ namespace Appalachia.Editing.Debugging.Testing
 
         #region Profiling
 
-        private const string _PRF_PFX = nameof(Missile) + ".";
         private static readonly ProfilerMarker _PRF_Destroy = new ProfilerMarker(_PRF_PFX + nameof(Destroy));
 
-        private static readonly ProfilerMarker _PRF_Initialize =
+        private static readonly ProfilerMarker _PRF_InitializeComponents =
             new ProfilerMarker(_PRF_PFX + nameof(InitializeComponents));
 
         #endregion

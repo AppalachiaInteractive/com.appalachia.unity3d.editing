@@ -4,9 +4,17 @@ namespace Appalachia.Editing.Core.Common
 {
     public static class TabTools
     {
+        #region Constants and Static Readonly
+
         public const string DELIM = "|";
 
+        #endregion
+
+        #region Static Fields and Autoproperties
+
         private static Dictionary<string, string[]> _tabLookup;
+
+        #endregion
 
         public static int GetIndex(this string[] tabs, string tabName)
         {

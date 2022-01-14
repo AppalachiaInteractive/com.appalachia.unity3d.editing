@@ -4,22 +4,30 @@ using Sirenix.OdinInspector;
 
 namespace Appalachia.Editing.Debugging
 {
-    public class GlobalDebugManager : SingletonEditorOnlyAppalachiaBehaviour<GlobalDebugManager>
+    public class RendererDebuggingManager : SingletonEditorOnlyAppalachiaBehaviour<RendererDebuggingManager>
     {
+        #region Fields and Autoproperties
+
         [InlineProperty]
         [InlineEditor]
         [HideLabel]
-        public GlobalDebug debug;
+        public RendererDebuggingSettings debug;
+
+        #endregion
+
+        #region Event Functions
 
         private void Update()
         {
-            if (!DependenciesAreReady || !FullyInitialized)
+            if (ShouldSkipUpdate)
             {
                 return;
             }
-            
+
             debug.Update();
         }
+
+        #endregion
     }
 }
 

@@ -9,19 +9,6 @@ namespace Appalachia.Editing.Debugging.Handle
 {
     internal class HandleState : SelfPoolingObject<HandleState>, IDisposable
     {
-        #region Profiling And Tracing Markers
-
-        // ReSharper disable once MemberHidesStaticFromOuterClass
-        private const string _PRF_PFX = nameof(HandleState) + ".";
-        private static readonly ProfilerMarker _PRF_HandleState = new(_PRF_PFX + nameof(HandleState));
-        private static readonly ProfilerMarker _PRF_Dispose = new(_PRF_PFX + nameof(Dispose));
-
-        private static readonly ProfilerMarker _PRF_New = new(_PRF_PFX + nameof(New));
-        private static readonly ProfilerMarker _PRF_Reset = new(_PRF_PFX + nameof(Reset));
-        private static readonly ProfilerMarker _PRF_Initialize = new(_PRF_PFX + nameof(Initialize));
-
-        #endregion
-
 #pragma warning disable 612
         public HandleState()
 #pragma warning restore 612
@@ -34,10 +21,14 @@ namespace Appalachia.Editing.Debugging.Handle
             }
         }
 
+        #region Fields and Autoproperties
+
         private bool _sRGB;
 
         private Color _color;
         private CompareFunction _zTest;
+
+        #endregion
 
         public static HandleState New()
         {
@@ -121,6 +112,8 @@ namespace Appalachia.Editing.Debugging.Handle
             }
         }
 
+        #region IDisposable Members
+
         public void Dispose()
         {
             using (_PRF_Dispose.Auto())
@@ -132,6 +125,21 @@ namespace Appalachia.Editing.Debugging.Handle
                 Return();
             }
         }
+
+        #endregion
+
+        #region Profiling
+
+        // ReSharper disable once MemberHidesStaticFromOuterClass
+        private const string _PRF_PFX = nameof(HandleState) + ".";
+        private static readonly ProfilerMarker _PRF_HandleState = new(_PRF_PFX + nameof(HandleState));
+        private static readonly ProfilerMarker _PRF_Dispose = new(_PRF_PFX + nameof(Dispose));
+
+        private static readonly ProfilerMarker _PRF_New = new(_PRF_PFX + nameof(New));
+        private static readonly ProfilerMarker _PRF_Reset = new(_PRF_PFX + nameof(Reset));
+        private static readonly ProfilerMarker _PRF_Initialize = new(_PRF_PFX + nameof(Initialize));
+
+        #endregion
     }
 }
 #endif
