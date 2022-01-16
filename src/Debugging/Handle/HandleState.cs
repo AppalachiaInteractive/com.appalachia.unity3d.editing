@@ -131,13 +131,10 @@ namespace Appalachia.Editing.Debugging.Handle
         #region Profiling
 
         // ReSharper disable once MemberHidesStaticFromOuterClass
-        private const string _PRF_PFX = nameof(HandleState) + ".";
         private static readonly ProfilerMarker _PRF_HandleState = new(_PRF_PFX + nameof(HandleState));
         private static readonly ProfilerMarker _PRF_Dispose = new(_PRF_PFX + nameof(Dispose));
 
         private static readonly ProfilerMarker _PRF_New = new(_PRF_PFX + nameof(New));
-        private static readonly ProfilerMarker _PRF_Reset = new(_PRF_PFX + nameof(Reset));
-        private static readonly ProfilerMarker _PRF_Initialize = new(_PRF_PFX + nameof(Initialize));
 
         #endregion
     }
