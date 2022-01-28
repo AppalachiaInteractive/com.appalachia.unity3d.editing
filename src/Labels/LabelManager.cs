@@ -10,6 +10,7 @@ using Appalachia.CI.Integration.Assets;
 using Appalachia.Core.Attributes;
 using Appalachia.Core.Math.Stats;
 using Appalachia.Core.Math.Stats.Implementations;
+using Appalachia.Core.Objects.Availability;
 using Appalachia.Editing.Core;
 using Appalachia.Utility.Extensions;
 using Appalachia.Utility.Strings;
@@ -26,7 +27,7 @@ namespace Appalachia.Editing.Labels
     {
         static LabelManager()
         {
-            LabelSets.InstanceAvailable += i => _labelSets = i;
+            RegisterInstanceCallbacks.WithoutSorting().When.Object<LabelSets>().IsAvailableThen( i => _labelSets = i);
         }
 
         #region Static Fields and Autoproperties

@@ -477,7 +477,7 @@ namespace Appalachia.Editing.Debugging.Testing
 
                 var missileVector = mt.TransformVector(missile_forceVector.normalized).normalized;
 
-                var hitCount = Physics.RaycastNonAlloc(_transform.position, missileVector, _hits);
+                var hitCount = Physics.RaycastNonAlloc(Transform.position, missileVector, _hits);
 
                 if (hitCount > 0)
                 {
@@ -698,9 +698,6 @@ namespace Appalachia.Editing.Debugging.Testing
             new(_PRF_PFX + nameof(FindOrphanedMissiles));
 
         private static readonly ProfilerMarker _PRF_Fire = new(_PRF_PFX + nameof(Fire));
-
-        private static readonly ProfilerMarker _PRF_OnDrawGizmosSelected =
-            new(_PRF_PFX + nameof(OnDrawGizmosSelected));
 
         private static readonly ProfilerMarker _PRF_SoftFire = new(_PRF_PFX + nameof(SoftFire));
 

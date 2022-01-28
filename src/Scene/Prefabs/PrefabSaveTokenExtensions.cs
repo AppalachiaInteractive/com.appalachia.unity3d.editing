@@ -3,6 +3,7 @@
 #region
 
 using Appalachia.CI.Integration.Assets;
+using Appalachia.Utility.Constants;
 using UnityEngine;
 
 #endregion
@@ -28,6 +29,7 @@ namespace Appalachia.Editing.Scene.Prefabs
 
         public static PrefabSaveToken ToMutable(this IPrefabPathSaveable saveable)
         {
+            using var scope = APPASERIALIZE.OnAfterDeserialize();
             var prefab = AssetDatabaseManager.LoadAssetAtPath<GameObject>(saveable.PrefabPath);
 
             return new PrefabSaveToken(prefab, _previewScene.previewScene);
@@ -44,6 +46,7 @@ namespace Appalachia.Editing.Scene.Prefabs
             this IPrefabPathSaveable saveable,
             UnityEngine.SceneManagement.Scene previewScene)
         {
+            using var scope = APPASERIALIZE.OnAfterDeserialize();
             var prefab = AssetDatabaseManager.LoadAssetAtPath<GameObject>(saveable.PrefabPath);
 
             return new PrefabSaveToken(prefab, previewScene);
