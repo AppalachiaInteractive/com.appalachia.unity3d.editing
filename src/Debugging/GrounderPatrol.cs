@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Appalachia.Core.Objects.Root;
+using Appalachia.Utility.Timing;
 using Sirenix.OdinInspector;
 using UnityEngine;
 
@@ -100,7 +101,7 @@ namespace Appalachia.Editing.Debugging
                     var newPosition = Vector3.MoveTowards(
                         position,
                         targetPosition,
-                        positionSpeed * Time.deltaTime
+                        positionSpeed * CoreClock.Instance.DeltaTime
                     );
 
                     newPosition.y = yOffset + terrain.SampleHeight(newPosition);
@@ -111,8 +112,8 @@ namespace Appalachia.Editing.Debugging
                     t.forward = Vector3.RotateTowards(
                         forward,
                         targetForward,
-                        rotationSpeed * Time.deltaTime,
-                        rotationSpeed * Time.deltaTime
+                        rotationSpeed * CoreClock.Instance.DeltaTime,
+                        rotationSpeed * CoreClock.Instance.DeltaTime
                     );
 
                     var normal = terrain.terrainData.GetInterpolatedNormal(
@@ -125,8 +126,8 @@ namespace Appalachia.Editing.Debugging
                     t.up = Vector3.RotateTowards(
                         up,
                         targetUp,
-                        rotationSpeed * Time.deltaTime,
-                        rotationSpeed * Time.deltaTime
+                        rotationSpeed * CoreClock.Instance.DeltaTime,
+                        rotationSpeed * CoreClock.Instance.DeltaTime
                     );
 
                     lastPosition = position;

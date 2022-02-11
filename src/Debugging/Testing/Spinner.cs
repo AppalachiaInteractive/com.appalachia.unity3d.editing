@@ -1,9 +1,10 @@
 using System;
 using Appalachia.Core.Attributes.Editing;
-using Appalachia.Core.Layers;
 using Appalachia.Core.Objects.Initialization;
+using Appalachia.Core.Objects.Layers;
 using Appalachia.Core.Objects.Root;
 using Appalachia.Utility.Async;
+using Appalachia.Utility.Timing;
 using Sirenix.OdinInspector;
 using UnityEngine;
 
@@ -85,7 +86,7 @@ namespace Appalachia.Editing.Debugging.Testing
                         throw new ArgumentOutOfRangeException();
                 }
 
-                var adjustment = Time.deltaTime * spinRate * 360f;
+                var adjustment = CoreClock.Instance.DeltaTime * spinRate * 360f;
 
                 _t.rotation *= Quaternion.AngleAxis(adjustment, axis);
             }

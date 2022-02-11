@@ -1,6 +1,7 @@
 using Appalachia.Core.Objects.Root;
 using Appalachia.Utility.Extensions;
 using Appalachia.Utility.Strings;
+using Appalachia.Utility.Timing;
 using Unity.Profiling;
 using UnityEngine;
 
@@ -18,7 +19,7 @@ namespace Appalachia.Editing.Debugging.Testing
 
         #endregion
 
-        public double age => Time.time - createdAt;
+        public double age => CoreClock.Instance.Time - createdAt;
 
         public void Destroy()
         {
@@ -52,7 +53,7 @@ namespace Appalachia.Editing.Debugging.Testing
 
                 var splits = go.name.Split('_');
 
-                var time = Time.time;
+                var time = CoreClock.Instance.Time;
 
                 if (splits.Length == 0)
                 {

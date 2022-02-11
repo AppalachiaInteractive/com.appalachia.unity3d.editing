@@ -2,8 +2,8 @@
 
 using System.Collections.Generic;
 using Appalachia.Core.Debugging;
-using Appalachia.Core.Layers;
 using Appalachia.Core.Objects.Initialization;
+using Appalachia.Core.Objects.Layers;
 using Appalachia.Core.Objects.Root;
 using Appalachia.Core.Types.Enums;
 using Appalachia.Simulation.Core;
@@ -12,6 +12,7 @@ using Appalachia.Utility.Colors;
 using Appalachia.Utility.Constants;
 using Appalachia.Utility.Extensions;
 using Appalachia.Utility.Strings;
+using Appalachia.Utility.Timing;
 using Sirenix.OdinInspector;
 using Unity.Profiling;
 using UnityEngine;
@@ -319,7 +320,7 @@ namespace Appalachia.Editing.Debugging.Testing
                 FindMissileRoot();
 
                 var missile = Instantiate(prefab, missileRoot.transform, true);
-                missile.name += ZString.Format("_{0}", Time.time);
+                missile.name += ZString.Format("_{0}", CoreClock.Instance.Time);
                 missile.layer = layer.layer;
 
                 c = missile.GetComponentsInChildren<Collider>()
