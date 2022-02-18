@@ -45,6 +45,7 @@ namespace Appalachia.Editing.Labels
 
         #endregion
 
+        /// <inheritdoc />
         public override string Name => label;
 
         private Color _labelColor =>

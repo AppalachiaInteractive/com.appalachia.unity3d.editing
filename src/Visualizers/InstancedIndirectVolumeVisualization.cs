@@ -4,7 +4,8 @@ using UnityEngine;
 
 namespace Appalachia.Editing.Visualizers
 {
-    public abstract class InstancedIndirectVolumeVisualization : InstancedIndirectVisualization
+    public abstract class InstancedIndirectVolumeVisualization<T> : InstancedIndirectVisualization<T>
+        where T : InstancedIndirectVolumeVisualization<T>
     {
         #region Fields and Autoproperties
 
@@ -30,6 +31,7 @@ namespace Appalachia.Editing.Visualizers
             scale = Vector3.one * visualizationSize;
         }
 
+        /// <inheritdoc />
         protected override void GetPositionData(
             Bounds bounds,
             out Vector3[] positions,

@@ -67,6 +67,7 @@ namespace Appalachia.Editing.Debugging.Handle
             }
         }
 
+        /// <inheritdoc />
         public override void Initialize()
         {
             using (_PRF_Initialize.Auto())
@@ -76,6 +77,7 @@ namespace Appalachia.Editing.Debugging.Handle
             }
         }
 
+        /// <inheritdoc />
         public override void Reset()
         {
             using (_PRF_Reset.Auto())
@@ -102,9 +104,10 @@ namespace Appalachia.Editing.Debugging.Handle
 
         #region Profiling
 
+        private static readonly ProfilerMarker _PRF_Dispose = new(_PRF_PFX + nameof(Dispose));
+
         // ReSharper disable once MemberHidesStaticFromOuterClass\
         private static readonly ProfilerMarker _PRF_GizmoState = new(_PRF_PFX + nameof(GizmoState));
-        private static readonly ProfilerMarker _PRF_Dispose = new(_PRF_PFX + nameof(Dispose));
 
         private static readonly ProfilerMarker _PRF_New = new(_PRF_PFX + nameof(New));
 

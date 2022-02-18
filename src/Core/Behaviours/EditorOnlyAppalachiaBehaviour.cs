@@ -15,21 +15,25 @@ namespace Appalachia.Editing.Core.Behaviours
     public abstract class EditorOnlyAppalachiaBehaviour<T> : AppalachiaBehaviour<T>
         where T : EditorOnlyAppalachiaBehaviour<T>
     {
+        /// <inheritdoc />
         protected override string GetBackgroundColor()
         {
             return Brand.EditorOnlyAppalachiaBehaviour.Banner;
         }
 
+        /// <inheritdoc />
         protected override string GetFallbackTitle()
         {
             return Brand.EditorOnlyAppalachiaBehaviour.Fallback;
         }
 
+        /// <inheritdoc />
         protected override string GetTitle()
         {
             return Brand.EditorOnlyAppalachiaBehaviour.Text;
         }
 
+        /// <inheritdoc />
         protected override string GetTitleColor()
         {
             return Brand.EditorOnlyAppalachiaBehaviour.Color;

@@ -94,6 +94,7 @@ namespace Appalachia.Editing.Debugging.Testing
 
         #endregion
 
+        /// <inheritdoc />
         protected override async AppaTask Initialize(Initializer initializer)
         {
             await base.Initialize(initializer);

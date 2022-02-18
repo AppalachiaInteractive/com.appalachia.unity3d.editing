@@ -111,6 +111,7 @@ namespace Appalachia.Editing.Debugging
             }
         }
 
+        /// <inheritdoc />
         protected override async AppaTask Initialize(Initializer initializer)
         {
             await base.Initialize(initializer);

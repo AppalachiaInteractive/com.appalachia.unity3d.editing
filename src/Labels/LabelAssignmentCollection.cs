@@ -38,12 +38,14 @@ namespace Appalachia.Editing.Labels
             return !left.Equals(right);
         }
 
+        /// <inheritdoc />
         [DebuggerStepThrough]
         public override bool Equals(object obj)
         {
             return obj is LabelAssignmentCollection other && Equals(other);
         }
 
+        /// <inheritdoc />
         [DebuggerStepThrough]
         public override int GetHashCode()
         {

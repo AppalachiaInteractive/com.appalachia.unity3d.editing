@@ -20,6 +20,7 @@ namespace Appalachia.Editing.Labels
 
         #endregion
 
+        /// <inheritdoc />
         [DebuggerStepThrough]
         public override string ToString()
         {

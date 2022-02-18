@@ -10,8 +10,8 @@ using UnityEngine.Rendering;
 
 namespace Appalachia.Editing.Visualizers
 {
-    public abstract class
-        InstancedIndirectVisualization : EditorOnlyAppalachiaBehaviour<InstancedIndirectVisualization>
+    public abstract class InstancedIndirectVisualization<T> : EditorOnlyAppalachiaBehaviour<T>
+        where T : InstancedIndirectVisualization<T>
     {
         #region Constants and Static Readonly
 
@@ -108,6 +108,7 @@ namespace Appalachia.Editing.Visualizers
         protected abstract void PrepareInitialGeneration();
         protected abstract void PrepareSubsequentGenerations();
 
+        /// <inheritdoc />
         protected override async AppaTask Initialize(Initializer initializer)
         {
             await base.Initialize(initializer);
@@ -117,14 +118,14 @@ namespace Appalachia.Editing.Visualizers
                 Regenerate();
             }
         }
-        
 
+        /// <inheritdoc />
         protected override async AppaTask WhenDisabled()
         {
+            await base.WhenDisabled();
+
             using (_PRF_WhenDisabled.Auto())
             {
-                await base.WhenDisabled();
-
                 indirectDataBuffer?.Release();
                 indirectDataBuffer = null;
                 _transforms = null;

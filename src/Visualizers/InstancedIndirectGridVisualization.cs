@@ -4,7 +4,8 @@ using UnityEngine;
 
 namespace Appalachia.Editing.Visualizers
 {
-    public abstract class InstancedIndirectGridVisualization : InstancedIndirectVisualization
+    public abstract class InstancedIndirectGridVisualization<T> : InstancedIndirectVisualization<T>
+        where T : InstancedIndirectGridVisualization<T>
     {
         #region Fields and Autoproperties
 
@@ -26,6 +27,7 @@ namespace Appalachia.Editing.Visualizers
             out Quaternion rotation,
             out Vector3 scale);
 
+        /// <inheritdoc />
         protected override void GetPositionData(
             Bounds bounds,
             out Vector3[] positions,

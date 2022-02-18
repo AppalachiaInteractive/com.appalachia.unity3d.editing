@@ -10,21 +10,25 @@ namespace Appalachia.Editing.Core.Behaviours
     public abstract class SingletonEditorOnlyAppalachiaBehaviour<T> : SingletonAppalachiaBehaviour<T>
         where T : SingletonEditorOnlyAppalachiaBehaviour<T>
     {
+        /// <inheritdoc />
         protected override string GetBackgroundColor()
         {
             return Brand.SingletonEditorOnlyAppalachiaBehaviour.Banner;
         }
 
+        /// <inheritdoc />
         protected override string GetFallbackTitle()
         {
             return Brand.SingletonEditorOnlyAppalachiaBehaviour.Fallback;
         }
 
+        /// <inheritdoc />
         protected override string GetTitle()
         {
             return Brand.SingletonEditorOnlyAppalachiaBehaviour.Text;
         }
 
+        /// <inheritdoc />
         protected override string GetTitleColor()
         {
             return Brand.SingletonEditorOnlyAppalachiaBehaviour.Color;

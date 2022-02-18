@@ -65,6 +65,7 @@ namespace Appalachia.Editing.Labels
 
         #endregion
 
+        /// <inheritdoc />
         public override string Name => GetSearchTerm();
 
         public bool CanSearch => (terms != null) && (terms.Count > 0) && terms.Any(t => t.enabled);

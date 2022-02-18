@@ -14,6 +14,7 @@ namespace Appalachia.Editing.Core.Operations
         {
         }
 
+        /// <inheritdoc />
         public override bool ApplyOperation(string input)
         {
             switch (operation)
@@ -46,6 +47,7 @@ namespace Appalachia.Editing.Core.Operations
             return false;
         }
 
+        /// <inheritdoc />
         protected override IEnumerable<OperationArgument> SetupOperation()
         {
             switch (operation)
