@@ -1,6 +1,6 @@
 #if UNITY_EDITOR
 using System;
-using Appalachia.Core.ObjectPooling;
+using Appalachia.Utility.Pooling.Objects;
 using Unity.Profiling;
 using UnityEngine;
 

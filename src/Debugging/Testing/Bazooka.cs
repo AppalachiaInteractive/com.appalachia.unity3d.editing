@@ -637,6 +637,8 @@ namespace Appalachia.Editing.Debugging.Testing
                     if (missileRoot == null)
                     {
                         missileRoot = new GameObject(MISSILES_NAME);
+                        missileRoot.SetAsSiblingTo(transform);
+                        
                         var mrt = missileRoot.transform;
                         mrt.position = Vector3.zero;
                         mrt.rotation = Quaternion.identity;
