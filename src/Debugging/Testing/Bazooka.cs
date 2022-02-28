@@ -632,21 +632,22 @@ namespace Appalachia.Editing.Debugging.Testing
             {
                 if (missileRoot == null)
                 {
-                    missileRoot = GameObject.Find(MISSILES_NAME);
-
-                    if (missileRoot == null)
+                    if (transform.parent == null)
                     {
-                        missileRoot = new GameObject(MISSILES_NAME);
-                        missileRoot.SetAsSiblingTo(transform);
-                        
-                        var mrt = missileRoot.transform;
-                        mrt.position = Vector3.zero;
-                        mrt.rotation = Quaternion.identity;
-                        mrt.localScale = Vector3.one;
-                        mrt.SetParent(transform.parent);
+                        missileRoot = new GameObject();
                     }
+                    else
+                    {
+                        transform.parent.gameObject.GetOrAddChild(ref missileRoot, MISSILES_NAME, false);
+                    }
+
+                    var mrt = missileRoot.transform;
+                    mrt.position = Vector3.zero;
+                    mrt.rotation = Quaternion.identity;
+                    mrt.localScale = Vector3.one;
                 }
 
+                missileRoot.SetAsSiblingTo(transform);
                 missileRoot.hideFlags = HideFlags.DontSave;
             }
         }
