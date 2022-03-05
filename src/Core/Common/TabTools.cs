@@ -42,10 +42,7 @@ namespace Appalachia.Editing.Core.Common
                 _tabLookup = new Dictionary<string, string[]>();
             }
 
-            if (_tabLookup.ContainsKey(tabString))
-            {
-                return _tabLookup[tabString];
-            }
+            if (_tabLookup.TryGetValue(tabString, out var result)) return result;
 
             var splits = tabString.Split(delimiter);
 
