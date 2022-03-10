@@ -87,20 +87,18 @@ namespace Appalachia.Editing.Debugging.Handle
             }
         }
 
-        #region IDisposable Members
-
-        public void Dispose()
+        protected override void Dispose(bool disposing)
         {
-            using (_PRF_Dispose.Auto())
+            if (disposing)
             {
                 Gizmos.color = _color;
                 GL.sRGBWrite = _sRGB;
 
                 Return();
             }
-        }
 
-        #endregion
+            base.Dispose(disposing);
+        }
 
         #region Profiling
 

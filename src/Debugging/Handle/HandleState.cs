@@ -114,9 +114,7 @@ namespace Appalachia.Editing.Debugging.Handle
             }
         }
 
-        #region IDisposable Members
-
-        public void Dispose()
+        protected override void Dispose(bool disposing)
         {
             using (_PRF_Dispose.Auto())
             {
@@ -124,11 +122,9 @@ namespace Appalachia.Editing.Debugging.Handle
                 GL.sRGBWrite = _sRGB;
                 UnityEditor.Handles.zTest = _zTest;
 
-                Return();
+                base.Dispose(disposing);
             }
         }
-
-        #endregion
 
         #region Profiling
 
