@@ -171,7 +171,7 @@ namespace Appalachia.Editing.Labels
 
         public void AddNewLabel()
         {
-            terms.Add(new LabelSearchTerm(_owner));
+            terms.Add(new LabelSearchTerm(Owner));
         }
 
         public List<GameObject> GetAssetsMatchingAll()
